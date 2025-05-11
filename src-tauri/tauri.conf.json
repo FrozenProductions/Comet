@@ -1,0 +1,77 @@
+{
+    "build": {
+        "beforeDevCommand": "npm run dev",
+        "beforeBuildCommand": "npm run build",
+        "devPath": "http://localhost:5173",
+        "distDir": "../dist"
+    },
+    "package": {
+        "productName": "Comet",
+        "version": "1.0.0"
+    },
+    "tauri": {
+        "allowlist": {
+            "all": false,
+            "window": {
+                "all": true,
+                "close": true,
+                "hide": true,
+                "show": true,
+                "maximize": true,
+                "minimize": true,
+                "unmaximize": true,
+                "unminimize": true,
+                "startDragging": true
+            },
+            "shell": {
+                "all": false,
+                "open": true
+            }
+        },
+        "bundle": {
+            "active": true,
+            "category": "DeveloperTool",
+            "copyright": "",
+            "deb": {
+                "depends": []
+            },
+            "externalBin": [],
+            "icon": ["../public/Icon.icns"],
+            "identifier": "com.comet.dev",
+            "longDescription": "A modern and minimalistic interface for Hydrogen executor.",
+            "macOS": {
+                "entitlements": null,
+                "exceptionDomain": "",
+                "frameworks": [],
+                "providerShortName": null,
+                "signingIdentity": null
+            },
+            "resources": [],
+            "shortDescription": "A modern and minimalistic interface for Hydrogen executor.",
+            "targets": ["dmg"],
+            "windows": {
+                "certificateThumbprint": null,
+                "digestAlgorithm": "sha256",
+                "timestampUrl": ""
+            }
+        },
+        "security": {
+            "csp": null
+        },
+        "updater": {
+            "active": false
+        },
+        "windows": [
+            {
+                "fullscreen": false,
+                "decorations": false,
+                "transparent": false,
+                "height": 800,
+                "width": 1200,
+                "minHeight": 600,
+                "minWidth": 800,
+                "title": "Comet"
+            }
+        ]
+    }
+}
