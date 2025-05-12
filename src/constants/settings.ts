@@ -49,6 +49,6 @@ export const DEFAULT_EDITOR_SETTINGS = {
     },
     interface: {
         zenMode: false,
-        showTabBar: true,
+        showTabBar: false,
     },
 };
