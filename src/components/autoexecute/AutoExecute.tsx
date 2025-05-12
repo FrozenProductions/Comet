@@ -22,6 +22,7 @@ import {
 import { toast } from "react-hot-toast";
 import { CodeEditor } from "../Workspace/Editor";
 import { motion, AnimatePresence } from "framer-motion";
+import { Header } from "../ui/Header";
 
 export const AutoExecute: React.FC = () => {
     const [files, setFiles] = useState<AutoExecuteFile[]>([]);
@@ -140,14 +141,11 @@ export const AutoExecute: React.FC = () => {
 
     return (
         <div className="h-full flex flex-col bg-ctp-base">
-            <div className="h-14 flex items-center justify-between px-4 bg-ctp-mantle border-b border-white/5">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-sm font-medium">Auto Execute</h1>
-                    <div className="text-xs text-ctp-subtext0">
-                        Scripts in this folder will be executed automatically
-                    </div>
-                </div>
-            </div>
+            <Header
+                title="Auto Execute"
+                icon={<Code2 size={16} className="text-accent" />}
+                description="Scripts in this folder will be executed automatically"
+            />
 
             <div className="flex-1 flex overflow-hidden">
                 <div className="w-72 border-r border-white/5 bg-ctp-mantle flex flex-col">

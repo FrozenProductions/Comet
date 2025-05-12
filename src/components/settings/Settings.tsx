@@ -21,6 +21,7 @@ import type { SettingsKey } from "../../types/settings";
 import type { Keybind } from "../../contexts/KeybindsContext";
 import { toast } from "react-hot-toast";
 import { SETTINGS_SECTIONS } from "../../constants/settings";
+import { Header } from "../ui/Header";
 
 export const Settings: FC = () => {
     const { settings, updateSettings } = useSettings();
@@ -648,14 +649,11 @@ export const Settings: FC = () => {
 
     return (
         <div className="h-full flex flex-col bg-ctp-base">
-            <div className="h-14 flex items-center justify-between px-4 bg-ctp-mantle border-b border-white/5">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-sm font-medium">Settings</h1>
-                    <div className="text-xs text-ctp-subtext0">
-                        Changes are saved automatically
-                    </div>
-                </div>
-            </div>
+            <Header
+                title="Settings"
+                icon={<SettingsIcon size={16} className="text-accent" />}
+                description="Changes are saved automatically"
+            />
 
             <div className="flex-1 overflow-hidden flex">
                 <div className="w-64 flex flex-col border-r border-white/5 bg-ctp-mantle">
