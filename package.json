@@ -2,7 +2,7 @@
     "name": "comet",
     "private": true,
     "version": "1.0.0",
-    "description": "A modern and minimalistic interface for Hydrogen executor.",
+    "description": "Comet - A modern, minimalist interface for Hydrogen executor developed with Tauri by Frozen Productions.",
     "author": "Frozen Productions",
     "license": "MIT",
     "type": "module",
