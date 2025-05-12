@@ -337,6 +337,7 @@ export const AutoExecute: React.FC = () => {
                                     onChange={(value) =>
                                         setEditedContent(value || "")
                                     }
+                                    showActions={false}
                                 />
                             </div>
                         </div>

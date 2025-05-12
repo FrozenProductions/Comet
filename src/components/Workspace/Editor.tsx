@@ -20,6 +20,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
     content,
     language,
     onChange,
+    showActions = true,
 }) => {
     const { setPosition } = useEditor();
     const { settings } = useSettings();
@@ -302,7 +303,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                 isVisible={isSearchVisible}
                 onClose={() => setIsSearchVisible(false)}
             />
-            <Actions getEditorContent={getEditorContent} />
+            {showActions && <Actions getEditorContent={getEditorContent} />}
         </div>
     );
 };

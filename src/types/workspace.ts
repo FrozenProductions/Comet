@@ -21,6 +21,7 @@ export interface CodeEditorProps {
     content: string;
     language: string;
     onChange: (value: string | undefined) => void;
+    showActions?: boolean;
 }
 
 export interface IntelliSenseProps {
@@ -43,4 +44,9 @@ export interface IntellisenseState {
     suggestions: Suggestion[];
     isTyping: boolean;
     lastWord: string;
+}
+
+export interface ActionMenuProps {
+    onExecute?: () => Promise<void>;
+    getEditorContent?: () => string;
 }

@@ -4,11 +4,7 @@ import { useExecute } from "../../contexts/ExecuteContext";
 import { toast } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
 import { invoke } from "@tauri-apps/api/tauri";
-
-type ActionMenuProps = {
-    onExecute?: () => Promise<void>;
-    getEditorContent?: () => string;
-};
+import type { ActionMenuProps } from "../../types/workspace";
 
 export const Actions = ({ onExecute, getEditorContent }: ActionMenuProps) => {
     const { execute, isExecuting } = useExecute();
