@@ -8,3 +8,5 @@ export const MAIN_SCREENS: SidebarItem[] = [
     { id: "AutoExecution", icon: Syringe, label: "Auto Execution" },
     { id: "Profile", icon: User, label: "Profile" },
 ];
+
+export const BUTTON_SPACING = 50;
