@@ -1,158 +1,62 @@
-import { createContext, useContext, useState, FC, ReactNode } from "react";
+import { createContext, useContext, useState } from "react";
+import type { EditorSettings, SettingsContextType } from "../types/settings";
+import { DEFAULT_EDITOR_SETTINGS } from "../constants/settings";
 
-export interface EditorSettings {
-    display: {
-        showLineNumbers: boolean;
-        wordWrap: boolean;
-    };
-    text: {
-        fontSize: number;
-        tabSize: number;
-        lineHeight: number;
-    };
-    cursor: {
-        style: "line" | "block" | "underline";
-        blinking: "blink" | "smooth" | "phase" | "expand" | "solid";
-        smoothCaret: boolean;
-    };
-    theme: "light" | "dark" | "system";
-    interface: {
-        showTabBar: boolean;
-        zenMode: boolean;
-    };
-    application: {
-        startAtLogin: boolean;
-        hardwareAcceleration: boolean;
-    };
-    developer: {
-        developerMode: boolean;
-        experimentalFeatures: boolean;
-    };
-    intellisense: {
-        enabled: boolean;
-        maxSuggestions: number;
-    };
-}
+const SettingsContext = createContext<SettingsContextType | undefined>(
+    undefined
+);
 
-const defaultSettings: EditorSettings = {
-    display: {
-        showLineNumbers: true,
-        wordWrap: false,
-    },
-    text: {
-        fontSize: 14,
-        tabSize: 2,
-        lineHeight: 1.6,
-    },
-    cursor: {
-        style: "line",
-        blinking: "smooth",
-        smoothCaret: true,
-    },
-    theme: "system",
-    interface: {
-        showTabBar: true,
-        zenMode: false,
-    },
-    application: {
-        startAtLogin: false,
-        hardwareAcceleration: true,
-    },
-    developer: {
-        developerMode: false,
-        experimentalFeatures: false,
-    },
-    intellisense: {
-        enabled: true,
-        maxSuggestions: 10,
-    },
-};
+const SETTINGS_STORAGE_KEY = "comet-settings";
 
-const SETTINGS_STORAGE_KEY = "comet_editor_settings";
-
-const loadSettings = (): EditorSettings => {
-    try {
-        const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
-        if (stored) {
-            const parsedSettings = JSON.parse(stored);
-            return {
-                ...defaultSettings,
-                display: {
-                    ...defaultSettings.display,
-                    ...parsedSettings.display,
-                },
-                text: { ...defaultSettings.text, ...parsedSettings.text },
-                interface: {
-                    ...defaultSettings.interface,
-                    ...parsedSettings.interface,
-                },
-                intellisense: {
-                    ...defaultSettings.intellisense,
-                    ...parsedSettings.intellisense,
-                },
-                application: {
-                    ...defaultSettings.application,
-                    ...parsedSettings.application,
-                },
-                developer: {
-                    ...defaultSettings.developer,
-                    ...parsedSettings.developer,
-                },
-            };
+export const SettingsProvider = ({
+    children,
+}: {
+    children: React.ReactNode;
+}) => {
+    const [settings, setSettings] = useState<EditorSettings>(() => {
+        const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (savedSettings) {
+            try {
+                return {
+                    ...DEFAULT_EDITOR_SETTINGS,
+                    ...JSON.parse(savedSettings),
+                };
+            } catch {
+                return DEFAULT_EDITOR_SETTINGS;
+            }
         }
-    } catch (error) {
-        console.error("Failed to load settings:", error);
-    }
-
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(defaultSettings));
-    return defaultSettings;
-};
-
-const SettingsContext = createContext<{
-    settings: EditorSettings;
-    updateSettings: (newSettings: Partial<EditorSettings>) => void;
-}>({
-    settings: defaultSettings,
-    updateSettings: () => {},
-});
-
-export const useSettings = () => useContext(SettingsContext);
-
-export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const [settings, setSettings] = useState<EditorSettings>(loadSettings);
+        return DEFAULT_EDITOR_SETTINGS;
+    });
 
     const updateSettings = (newSettings: Partial<EditorSettings>) => {
-        const updated = {
-            ...settings,
-            ...newSettings,
-            display: {
-                ...settings.display,
-                ...(newSettings.display || {}),
-            },
-            text: {
-                ...settings.text,
-                ...(newSettings.text || {}),
-            },
-            interface: {
-                ...settings.interface,
-                ...(newSettings.interface || {}),
-            },
-            application: {
-                ...settings.application,
-                ...(newSettings.application || {}),
-            },
-            developer: {
-                ...settings.developer,
-                ...(newSettings.developer || {}),
-            },
-            intellisense: {
-                ...settings.intellisense,
-                ...(newSettings.intellisense || {}),
-            },
-        };
-
-        setSettings(updated);
-        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(updated));
+        setSettings((prev) => {
+            const updated = {
+                ...prev,
+                ...newSettings,
+                display: {
+                    ...prev.display,
+                    ...(newSettings.display || {}),
+                },
+                text: {
+                    ...prev.text,
+                    ...(newSettings.text || {}),
+                },
+                cursor: {
+                    ...prev.cursor,
+                    ...(newSettings.cursor || {}),
+                },
+                intellisense: {
+                    ...prev.intellisense,
+                    ...(newSettings.intellisense || {}),
+                },
+                interface: {
+                    ...prev.interface,
+                    ...(newSettings.interface || {}),
+                },
+            };
+            localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(updated));
+            return updated;
+        });
     };
 
     return (
@@ -160,4 +64,12 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             {children}
         </SettingsContext.Provider>
     );
+};
+
+export const useSettings = () => {
+    const context = useContext(SettingsContext);
+    if (context === undefined) {
+        throw new Error("useSettings must be used within a SettingsProvider");
+    }
+    return context;
 };

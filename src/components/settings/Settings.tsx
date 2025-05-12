@@ -17,18 +17,10 @@ import { RadioGroup } from "../ui/RadioGroup";
 import { useSettings } from "../../contexts/SettingsContext";
 import { useKeybinds } from "../../contexts/KeybindsContext";
 import { KeybindEditor } from "./KeybindEditor";
-import type { EditorSettings } from "../../contexts/SettingsContext";
+import type { SettingsKey } from "../../types/settings";
 import type { Keybind } from "../../contexts/KeybindsContext";
 import { toast } from "react-hot-toast";
-
-type SettingsSection = {
-    id: string;
-    title: string;
-    description: string;
-    icon: typeof Code2;
-};
-
-type SettingsKey = keyof EditorSettings;
+import { SETTINGS_SECTIONS } from "../../constants/settings";
 
 export const Settings: FC = () => {
     const { settings, updateSettings } = useSettings();
@@ -49,32 +41,6 @@ export const Settings: FC = () => {
         },
         [settings, updateSettings]
     );
-    const sections: SettingsSection[] = [
-        {
-            id: "editor",
-            title: "Editor",
-            description: "Configure editor preferences",
-            icon: Code2,
-        },
-        {
-            id: "interface",
-            title: "Interface",
-            description: "Customize appearance",
-            icon: SettingsIcon,
-        },
-        {
-            id: "keybinds",
-            title: "Keyboard Shortcuts",
-            description: "Customize hotkeys",
-            icon: Keyboard,
-        },
-        {
-            id: "about",
-            title: "About",
-            description: "View app information",
-            icon: Info,
-        },
-    ];
 
     const SettingGroup: FC<{
         title: string;
@@ -711,35 +677,33 @@ export const Settings: FC = () => {
                         </div>
                     </div>
                     <div className="flex-1 overflow-y-auto">
-                        {sections
-                            .filter(
-                                (section) =>
-                                    section.title
-                                        .toLowerCase()
-                                        .includes(searchQuery) ||
-                                    section.description
-                                        .toLowerCase()
-                                        .includes(searchQuery)
-                            )
-                            .map((section) => (
-                                <motion.button
-                                    key={section.id}
-                                    onClick={() => setActiveSection(section.id)}
-                                    className={`
+                        {SETTINGS_SECTIONS.filter(
+                            (section) =>
+                                section.title
+                                    .toLowerCase()
+                                    .includes(searchQuery) ||
+                                section.description
+                                    .toLowerCase()
+                                    .includes(searchQuery)
+                        ).map((section) => (
+                            <motion.button
+                                key={section.id}
+                                onClick={() => setActiveSection(section.id)}
+                                className={`
                     w-full px-4 py-3 text-left hover:bg-ctp-surface0 transition-colors group relative
                     ${activeSection === section.id ? "bg-ctp-surface0" : ""}
                   `}
-                                    whileHover={{ x: 4 }}
-                                    transition={{
-                                        type: "spring",
-                                        stiffness: 500,
-                                        damping: 30,
-                                    }}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <section.icon
-                                            size={18}
-                                            className={`
+                                whileHover={{ x: 4 }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 500,
+                                    damping: 30,
+                                }}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <section.icon
+                                        size={18}
+                                        className={`
                         ${
                             activeSection === section.id
                                 ? "text-accent"
@@ -747,18 +711,18 @@ export const Settings: FC = () => {
                         }
                         group-hover:text-accent transition-colors
                       `}
-                                        />
-                                        <div>
-                                            <div className="text-sm font-medium text-ctp-text">
-                                                {section.title}
-                                            </div>
-                                            <div className="text-xs text-ctp-subtext0">
-                                                {section.description}
-                                            </div>
+                                    />
+                                    <div>
+                                        <div className="text-sm font-medium text-ctp-text">
+                                            {section.title}
                                         </div>
-                                        <ChevronRight
-                                            size={16}
-                                            className={`
+                                        <div className="text-xs text-ctp-subtext0">
+                                            {section.description}
+                                        </div>
+                                    </div>
+                                    <ChevronRight
+                                        size={16}
+                                        className={`
                         ml-auto opacity-0 group-hover:opacity-100 transition-all
                         ${
                             activeSection === section.id
@@ -766,16 +730,16 @@ export const Settings: FC = () => {
                                 : "text-ctp-subtext0"
                         }
                       `}
-                                        />
-                                    </div>
-                                    {activeSection === section.id && (
-                                        <motion.div
-                                            layoutId="active-indicator"
-                                            className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent-gradient"
-                                        />
-                                    )}
-                                </motion.button>
-                            ))}
+                                    />
+                                </div>
+                                {activeSection === section.id && (
+                                    <motion.div
+                                        layoutId="active-indicator"
+                                        className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent-gradient"
+                                    />
+                                )}
+                            </motion.button>
+                        ))}
                     </div>
                 </div>
 

@@ -1,0 +1,54 @@
+import { Code2, SettingsIcon, Keyboard, Info } from "lucide-react";
+import type { SettingsSection } from "../types/settings";
+
+export const SETTINGS_SECTIONS: SettingsSection[] = [
+    {
+        id: "editor",
+        title: "Editor",
+        description: "Configure editor preferences",
+        icon: Code2,
+    },
+    {
+        id: "interface",
+        title: "Interface",
+        description: "Customize appearance",
+        icon: SettingsIcon,
+    },
+    {
+        id: "keybinds",
+        title: "Keyboard Shortcuts",
+        description: "Customize hotkeys",
+        icon: Keyboard,
+    },
+    {
+        id: "about",
+        title: "About",
+        description: "View app information",
+        icon: Info,
+    },
+];
+
+export const DEFAULT_EDITOR_SETTINGS = {
+    display: {
+        showLineNumbers: true,
+        wordWrap: false,
+    },
+    text: {
+        fontSize: 14,
+        tabSize: 4,
+        lineHeight: 1.5,
+    },
+    cursor: {
+        style: "line" as const,
+        blinking: "blink" as const,
+        smoothCaret: true,
+    },
+    intellisense: {
+        enabled: true,
+        maxSuggestions: 5,
+    },
+    interface: {
+        zenMode: false,
+        showTabBar: true,
+    },
+};
