@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { AutoExecuteFile } from "../../types/autoExecute";
 import {
     getAutoExecuteFiles,
@@ -12,7 +12,7 @@ import {
     Plus,
     Trash2,
     Pencil,
-    Save,
+    Check,
     X,
     FileCode,
     AlertCircle,
@@ -23,6 +23,8 @@ import { toast } from "react-hot-toast";
 import { CodeEditor } from "../Workspace/Editor";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "../ui/Header";
+import { Tooltip } from "react-tooltip";
+import debounce from "lodash/debounce";
 
 export const AutoExecute: React.FC = () => {
     const [files, setFiles] = useState<AutoExecuteFile[]>([]);
@@ -30,6 +32,7 @@ export const AutoExecute: React.FC = () => {
         null
     );
     const [editedContent, setEditedContent] = useState("");
+    const [lastSavedContent, setLastSavedContent] = useState("");
     const [newFileName, setNewFileName] = useState("");
     const [isRenaming, setIsRenaming] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -37,6 +40,29 @@ export const AutoExecute: React.FC = () => {
     const [fileToDelete, setFileToDelete] = useState<AutoExecuteFile | null>(
         null
     );
+
+    const debouncedSave = useCallback(
+        debounce(async (content: string, fileName: string) => {
+            setIsSaving(true);
+            try {
+                await saveAutoExecuteFile(fileName, content);
+                setLastSavedContent(content);
+                await loadFiles();
+            } catch (error) {
+                console.error("Failed to save file:", error);
+                toast.error("Failed to save script");
+            } finally {
+                setIsSaving(false);
+            }
+        }, 1000),
+        []
+    );
+
+    useEffect(() => {
+        if (selectedFile && editedContent !== lastSavedContent) {
+            debouncedSave(editedContent, selectedFile.name);
+        }
+    }, [editedContent, selectedFile, lastSavedContent, debouncedSave]);
 
     const loadFiles = async () => {
         try {
@@ -58,22 +84,13 @@ export const AutoExecute: React.FC = () => {
         if (isRenaming) return;
         setSelectedFile(file);
         setEditedContent(file.content);
+        setLastSavedContent(file.content);
         setNewFileName(file.name);
     };
 
-    const handleSave = async () => {
-        if (!selectedFile || isSaving) return;
-        setIsSaving(true);
-        try {
-            await saveAutoExecuteFile(selectedFile.name, editedContent);
-            await loadFiles();
-            toast.success("Script saved");
-        } catch (error) {
-            console.error("Failed to save file:", error);
-            toast.error("Failed to save script");
-        } finally {
-            setIsSaving(false);
-        }
+    const handleContentChange = (value: string | undefined) => {
+        const newContent = value || "";
+        setEditedContent(newContent);
     };
 
     const handleDelete = async (file: AutoExecuteFile) => {
@@ -131,6 +148,7 @@ export const AutoExecute: React.FC = () => {
             const newFile = { name: newFileName, content: "", path: "" };
             setSelectedFile(newFile);
             setEditedContent("");
+            setLastSavedContent("");
             setNewFileName(newFileName);
             toast.success("New script created");
         } catch (error) {
@@ -148,28 +166,30 @@ export const AutoExecute: React.FC = () => {
             />
 
             <div className="flex-1 flex overflow-hidden">
-                <div className="w-72 border-r border-white/5 bg-ctp-mantle flex flex-col">
-                    <div className="p-4 flex items-center justify-between">
+                <div className="w-56 border-r border-white/5 bg-ctp-mantle flex flex-col">
+                    <div className="p-3 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Code2 size={18} className="text-white/50" />
+                            <Code2 size={16} className="text-white/50" />
                             <span className="text-sm font-medium">Scripts</span>
                         </div>
                         <Button
                             onClick={handleCreateNew}
                             size="sm"
-                            className="inline-flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 h-8 px-3"
+                            data-tooltip-id="autoexecute-tooltip"
+                            data-tooltip-content="New Script"
+                            className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
                         >
-                            <Plus size={14} className="stroke-[2.5]" />
-                            <span className="text-xs font-medium">
-                                New Script
-                            </span>
+                            <Plus
+                                size={14}
+                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
+                            />
                         </Button>
                     </div>
-                    <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-1">
+                    <div className="flex-1 overflow-y-auto px-1.5 pb-2 space-y-1">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center h-32 text-ctp-subtext0">
                                 <Loader2
-                                    size={24}
+                                    size={20}
                                     className="stroke-[2] mb-2 animate-spin"
                                 />
                                 <div className="text-sm">
@@ -179,7 +199,7 @@ export const AutoExecute: React.FC = () => {
                         ) : files.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-32 text-ctp-subtext0">
                                 <AlertCircle
-                                    size={24}
+                                    size={20}
                                     className="stroke-[2] mb-2"
                                 />
                                 <div className="text-sm">No scripts found</div>
@@ -194,7 +214,7 @@ export const AutoExecute: React.FC = () => {
                                     onClick={() => handleFileSelect(file)}
                                     whileHover={{ x: 4 }}
                                     className={`
-                                        group w-full flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors
+                                        group w-full flex items-center gap-1.5 p-1.5 rounded-lg cursor-pointer transition-colors
                                         ${
                                             selectedFile?.path === file.path
                                                 ? "bg-ctp-surface0"
@@ -206,7 +226,7 @@ export const AutoExecute: React.FC = () => {
                                         size={14}
                                         className="stroke-[2.5] shrink-0 text-white/50"
                                     />
-                                    <span className="truncate text-sm flex-1">
+                                    <span className="truncate text-xs flex-1">
                                         {file.name}
                                     </span>
                                     <Button
@@ -215,6 +235,8 @@ export const AutoExecute: React.FC = () => {
                                             handleDelete(file);
                                         }}
                                         variant="destructive"
+                                        data-tooltip-id="autoexecute-tooltip"
+                                        data-tooltip-content="Delete Script"
                                         className={`
                                             opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center justify-center
                                             ${
@@ -222,11 +244,11 @@ export const AutoExecute: React.FC = () => {
                                                     ? "!opacity-100"
                                                     : ""
                                             }
-                                            bg-ctp-red/10 hover:bg-ctp-red/20 text-ctp-red h-6 w-6 p-0
+                                            bg-ctp-red/10 hover:bg-ctp-red/20 text-ctp-red h-5 w-5 p-0
                                         `}
                                     >
                                         <Trash2
-                                            size={14}
+                                            size={12}
                                             className="stroke-[2.5]"
                                         />
                                     </Button>
@@ -256,29 +278,27 @@ export const AutoExecute: React.FC = () => {
                                         <Button
                                             onClick={handleRename}
                                             size="sm"
-                                            className="inline-flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 h-8 px-3"
+                                            data-tooltip-id="autoexecute-tooltip"
+                                            data-tooltip-content="Save"
+                                            className="inline-flex items-center justify-center w-8 h-8 bg-white/10 hover:bg-white/20 group"
                                         >
-                                            <Save
+                                            <Check
                                                 size={14}
-                                                className="stroke-[2.5]"
+                                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
                                             />
-                                            <span className="text-xs font-medium">
-                                                Save
-                                            </span>
                                         </Button>
                                         <Button
                                             onClick={() => setIsRenaming(false)}
                                             variant="secondary"
                                             size="sm"
-                                            className="inline-flex items-center justify-center gap-1.5 bg-ctp-surface0 hover:bg-ctp-surface1 h-8 px-3"
+                                            data-tooltip-id="autoexecute-tooltip"
+                                            data-tooltip-content="Cancel"
+                                            className="inline-flex items-center justify-center w-8 h-8 bg-ctp-surface0 hover:bg-ctp-surface1 group"
                                         >
                                             <X
                                                 size={14}
-                                                className="stroke-[2.5]"
+                                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
                                             />
-                                            <span className="text-xs font-medium">
-                                                Cancel
-                                            </span>
                                         </Button>
                                     </div>
                                 ) : (
@@ -294,47 +314,32 @@ export const AutoExecute: React.FC = () => {
                                             onClick={() => setIsRenaming(true)}
                                             size="sm"
                                             variant="secondary"
-                                            className="inline-flex items-center justify-center bg-ctp-surface0 hover:bg-ctp-surface1 h-7 w-7 p-0"
+                                            data-tooltip-id="autoexecute-tooltip"
+                                            data-tooltip-content="Rename"
+                                            className="inline-flex items-center justify-center w-7 h-7 bg-ctp-surface0 hover:bg-ctp-surface1 group p-0"
                                         >
                                             <Pencil
                                                 size={14}
-                                                className="stroke-[2.5]"
+                                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
                                             />
                                         </Button>
+                                        {isSaving && (
+                                            <div className="flex items-center gap-1.5 px-2 py-1 text-xs text-ctp-subtext0 bg-white/5 rounded-md">
+                                                <Loader2
+                                                    size={12}
+                                                    className="animate-spin stroke-[2.5]"
+                                                />
+                                                Saving...
+                                            </div>
+                                        )}
                                     </div>
                                 )}
-                                <Button
-                                    onClick={handleSave}
-                                    disabled={isSaving}
-                                    className={`
-                                        inline-flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 h-8 px-3
-                                        ${
-                                            isSaving
-                                                ? "opacity-50 cursor-not-allowed"
-                                                : ""
-                                        }
-                                    `}
-                                >
-                                    <Save
-                                        size={14}
-                                        className={`stroke-[2.5] ${
-                                            isSaving ? "animate-spin" : ""
-                                        }`}
-                                    />
-                                    <span className="text-xs font-medium">
-                                        {isSaving
-                                            ? "Saving..."
-                                            : "Save Changes"}
-                                    </span>
-                                </Button>
                             </div>
                             <div className="flex-1">
                                 <CodeEditor
                                     content={editedContent}
                                     language="lua"
-                                    onChange={(value) =>
-                                        setEditedContent(value || "")
-                                    }
+                                    onChange={handleContentChange}
                                     showActions={false}
                                 />
                             </div>
@@ -399,6 +404,14 @@ export const AutoExecute: React.FC = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            <Tooltip
+                id="autoexecute-tooltip"
+                className="!bg-ctp-mantle !px-2.5 !py-1.5 !rounded-lg !text-xs !font-medium !border !border-white/5 !shadow-lg !z-50"
+                classNameArrow="!hidden"
+                delayShow={50}
+                delayHide={0}
+            />
         </div>
     );
 };
