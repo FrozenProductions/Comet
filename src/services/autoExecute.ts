@@ -22,3 +22,7 @@ export const renameAutoExecuteFile = async (
 ): Promise<void> => {
     return invoke("rename_auto_execute_file", { oldName, newName });
 };
+
+export const openAutoExecuteDirectory = async (): Promise<void> => {
+    return invoke("open_auto_execute_directory");
+};

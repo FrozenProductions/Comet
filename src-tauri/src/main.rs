@@ -538,6 +538,7 @@ fn main() {
             auto_execute::save_auto_execute_file,
             auto_execute::delete_auto_execute_file,
             auto_execute::rename_auto_execute_file,
+            auto_execute::open_auto_execute_directory,
             open_roblox,
         ])
         .run(tauri::generate_context!())

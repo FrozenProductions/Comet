@@ -5,6 +5,7 @@ import {
     saveAutoExecuteFile,
     deleteAutoExecuteFile,
     renameAutoExecuteFile,
+    openAutoExecuteDirectory,
 } from "../../services/autoExecute";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
@@ -18,6 +19,7 @@ import {
     AlertCircle,
     Loader2,
     Code2,
+    FolderOpen,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { CodeEditor } from "../Workspace/Editor";
@@ -157,12 +159,34 @@ export const AutoExecute: React.FC = () => {
         }
     };
 
+    const handleOpenDirectory = async () => {
+        try {
+            await openAutoExecuteDirectory();
+        } catch (error) {
+            console.error("Failed to open directory:", error);
+            toast.error("Failed to open directory");
+        }
+    };
+
     return (
         <div className="h-full flex flex-col bg-ctp-base">
             <Header
                 title="Auto Execute"
                 icon={<Code2 size={16} className="text-accent" />}
                 description="Scripts in this folder will be executed automatically"
+                actions={
+                    <Button
+                        onClick={handleOpenDirectory}
+                        size="sm"
+                        variant="secondary"
+                        data-tooltip-id="autoexecute-tooltip"
+                        data-tooltip-content="Open Directory"
+                        className="inline-flex items-center justify-center gap-1.5 bg-ctp-surface0 hover:bg-ctp-surface1"
+                    >
+                        <FolderOpen size={14} className="stroke-[2.5]" />
+                        Open Directory
+                    </Button>
+                }
             />
 
             <div className="flex-1 flex overflow-hidden">

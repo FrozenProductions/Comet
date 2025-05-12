@@ -2,6 +2,7 @@ use std::fs::{self, File};
 use std::io::Read;
 use std::path::Path;
 use serde::{Deserialize, Serialize};
+use std::process::Command;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AutoExecuteFile {
@@ -99,5 +100,22 @@ pub fn rename_auto_execute_file(old_name: String, new_name: String) -> Result<()
     }
 
     fs::rename(old_path, new_path).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn open_auto_execute_directory() -> Result<(), String> {
+    let home = dirs::home_dir().ok_or("Could not find home directory")?;
+    let auto_execute_dir = home.join("Hydrogen/autoexecute");
+
+    if !auto_execute_dir.exists() {
+        fs::create_dir_all(&auto_execute_dir).map_err(|e| e.to_string())?;
+    }
+
+    Command::new("open")
+        .arg(auto_execute_dir)
+        .spawn()
+        .map_err(|e| e.to_string())?;
+
     Ok(())
 } 
