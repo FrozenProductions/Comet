@@ -5,13 +5,27 @@ import { Tabbar } from "./Tabbar";
 import { useSettings } from "../../contexts/SettingsContext";
 
 export const Workspace: FC = () => {
-    const { tabs, activeTab, createTab, closeTab, updateTab, setActiveTab } =
-        useEditor();
+    const {
+        tabs,
+        activeTab,
+        createTab,
+        closeTab,
+        updateTab,
+        setActiveTab,
+        setTabs,
+    } = useEditor();
     const { settings } = useSettings();
 
     const handleTabChange = (content: string | undefined) => {
         if (!activeTab || !content) return;
         updateTab(activeTab, { content });
+    };
+
+    const handleTabReorder = (fromIndex: number, toIndex: number) => {
+        const newTabs = [...tabs];
+        const [movedTab] = newTabs.splice(fromIndex, 1);
+        newTabs.splice(toIndex, 0, movedTab);
+        setTabs(newTabs);
     };
 
     return (
@@ -28,6 +42,7 @@ export const Workspace: FC = () => {
                                 updateTab(id, { title: newTitle })
                             }
                             onNewTab={createTab}
+                            onTabReorder={handleTabReorder}
                         />
                     </div>
                 </div>

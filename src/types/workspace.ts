@@ -11,10 +11,11 @@ export interface Tab {
 export interface TabbarProps {
     tabs: Tab[];
     activeTab: string | null;
-    onTabClick: (id: string) => void;
-    onTabClose: (id: string) => void;
-    onTabRename: (id: string, newTitle: string) => void;
+    onTabClick: (tabId: string) => void;
+    onTabClose: (tabId: string) => void;
+    onTabRename: (tabId: string, newName: string) => void;
     onNewTab: () => void;
+    onTabReorder: (fromIndex: number, toIndex: number) => void;
 }
 
 export interface CodeEditorProps {

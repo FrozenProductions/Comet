@@ -34,6 +34,7 @@ interface EditorState {
     updateTab: (id: string, updates: Partial<Tab>) => void;
     setActiveTab: (id: string) => void;
     loadTabs: (newTabs: Tab[], activeTabId: string | null) => void;
+    setTabs: (tabs: Tab[]) => void;
 }
 
 const EditorContext = createContext<EditorState | null>(null);
@@ -130,22 +131,23 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         []
     );
 
+    const value = {
+        currentPosition,
+        currentFile,
+        tabs,
+        activeTab,
+        setPosition: setCurrentPosition,
+        setFile: setCurrentFile,
+        createTab,
+        closeTab,
+        updateTab,
+        setActiveTab,
+        loadTabs,
+        setTabs,
+    };
+
     return (
-        <EditorContext.Provider
-            value={{
-                currentPosition,
-                currentFile,
-                tabs,
-                activeTab,
-                setPosition: setCurrentPosition,
-                setFile: setCurrentFile,
-                createTab,
-                closeTab,
-                updateTab,
-                setActiveTab,
-                loadTabs,
-            }}
-        >
+        <EditorContext.Provider value={value}>
             {children}
         </EditorContext.Provider>
     );

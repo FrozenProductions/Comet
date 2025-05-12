@@ -1,5 +1,5 @@
 import { FC, useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import {
     FileCode,
     X,
@@ -19,6 +19,7 @@ export const Tabbar: FC<TabbarProps> = ({
     onTabClose,
     onTabRename,
     onNewTab,
+    onTabReorder,
 }) => {
     const { settings } = useSettings();
     const [contextMenu, setContextMenu] = useState<{
@@ -30,6 +31,7 @@ export const Tabbar: FC<TabbarProps> = ({
     const [editValue, setEditValue] = useState("");
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMoreDropdown, setShowMoreDropdown] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -213,11 +215,9 @@ export const Tabbar: FC<TabbarProps> = ({
                                             onTabClick(tab.id);
                                             setShowDropdown(false);
                                         }}
-                                        onContextMenu={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleContextMenu(e, tab.id);
-                                        }}
+                                        onContextMenu={(e: React.MouseEvent) =>
+                                            handleContextMenu(e, tab.id)
+                                        }
                                     >
                                         <FileCode
                                             size={14}
@@ -308,44 +308,67 @@ export const Tabbar: FC<TabbarProps> = ({
             <div className="flex-1 min-w-0 relative">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-[calc(100%-5px)] px-2">
-                        <motion.div
+                        <Reorder.Group
                             ref={scrollContainerRef}
+                            axis="x"
+                            values={displayTabs}
+                            onReorder={(newOrder) => {
+                                const fromIndex = tabs.findIndex(
+                                    (tab) => tab.id === activeTab
+                                );
+                                const toIndex = newOrder.findIndex(
+                                    (tab) => tab.id === activeTab
+                                );
+                                if (fromIndex !== toIndex) {
+                                    onTabReorder(fromIndex, toIndex);
+                                }
+                            }}
                             className="w-full flex items-center gap-0.5 overflow-x-auto overflow-y-hidden scrollbar-none"
-                            layout
                         >
                             <AnimatePresence mode="popLayout" initial={false}>
                                 {displayTabs.map((tab) => (
-                                    <motion.div
+                                    <Reorder.Item
                                         key={tab.id}
+                                        value={tab}
                                         data-tab-id={tab.id}
+                                        dragListener={!editingTab}
+                                        onDragStart={() => setIsDragging(true)}
+                                        onDragEnd={() => setIsDragging(false)}
                                         layout="position"
                                         initial={{ opacity: 0, width: 0 }}
                                         animate={{
                                             opacity: 1,
                                             width: "auto",
+                                            transition: {
+                                                duration: 0.2,
+                                            },
                                         }}
                                         exit={{
                                             opacity: 0,
                                             width: 0,
+                                            transition: {
+                                                duration: 0.2,
+                                            },
                                         }}
-                                        transition={{
-                                            type: "spring",
-                                            stiffness: 500,
-                                            damping: 30,
-                                            opacity: { duration: 0.2 },
-                                        }}
-                                        onContextMenu={(e) =>
+                                        onContextMenu={(e: React.MouseEvent) =>
                                             handleContextMenu(e, tab.id)
                                         }
                                         className={`
-                      group flex items-center gap-1.5 px-2 h-7 rounded-md cursor-pointer transition-colors whitespace-nowrap select-none flex-shrink-0
-                      ${
-                          activeTab === tab.id
-                              ? "bg-ctp-surface0 text-ctp-text"
-                              : "text-ctp-subtext1 hover:text-ctp-text hover:bg-ctp-surface0/50"
-                      }
-                    `}
-                                        onClick={() => onTabClick(tab.id)}
+                                            group flex items-center gap-1.5 px-2 h-7 rounded-md cursor-pointer transition-colors whitespace-nowrap select-none flex-shrink-0
+                                            ${
+                                                isDragging
+                                                    ? "cursor-grabbing"
+                                                    : "cursor-grab"
+                                            }
+                                            ${
+                                                activeTab === tab.id
+                                                    ? "bg-ctp-surface0 text-ctp-text"
+                                                    : "text-ctp-subtext1 hover:text-ctp-text hover:bg-ctp-surface0/50"
+                                            }
+                                        `}
+                                        onClick={() =>
+                                            !isDragging && onTabClick(tab.id)
+                                        }
                                     >
                                         <FileCode
                                             size={13}
@@ -395,14 +418,14 @@ export const Tabbar: FC<TabbarProps> = ({
                                                 onTabClose(tab.id);
                                             }}
                                             className={`
-                        flex-shrink-0 p-0.5 rounded opacity-0 group-hover:opacity-100 
-                        hover:bg-ctp-surface1 hover:text-ctp-red 
-                        transition-all duration-150
-                      `}
+                                                flex-shrink-0 p-0.5 rounded opacity-0 group-hover:opacity-100 
+                                                hover:bg-ctp-surface1 hover:text-ctp-red 
+                                                transition-all duration-150
+                                            `}
                                         >
                                             <X size={11} />
                                         </motion.button>
-                                    </motion.div>
+                                    </Reorder.Item>
                                 ))}
                             </AnimatePresence>
 
@@ -483,7 +506,7 @@ export const Tabbar: FC<TabbarProps> = ({
                                     )}
                                 </div>
                             )}
-                        </motion.div>
+                        </Reorder.Group>
                     </div>
                 </div>
             </div>
