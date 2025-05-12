@@ -519,7 +519,7 @@ export const Settings: FC = () => {
                                     >
                                         <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
                                             <img
-                                                src="https://reactjs.org/favicon.ico"
+                                                src="/assets/react.svg"
                                                 className="w-5 h-5 group-hover:scale-110 transition-transform"
                                                 alt="React"
                                             />
@@ -539,7 +539,7 @@ export const Settings: FC = () => {
                                     >
                                         <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
                                             <img
-                                                src="https://vitejs.dev/logo.svg"
+                                                src="/assets/vite.svg"
                                                 className="w-5 h-5 group-hover:scale-110 transition-transform"
                                                 alt="Vite"
                                             />
@@ -560,7 +560,7 @@ export const Settings: FC = () => {
                                     >
                                         <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
                                             <img
-                                                src="https://tailwindcss.com/favicons/favicon-32x32.png"
+                                                src="/assets/tailwind.svg"
                                                 className="w-5 h-5 group-hover:scale-110 transition-transform"
                                                 alt="TailwindCSS"
                                             />
@@ -600,7 +600,7 @@ export const Settings: FC = () => {
                                     >
                                         <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
                                             <img
-                                                src="https://lucide.dev/logo.svg"
+                                                src="/assets/lucide.svg"
                                                 className="w-5 h-5 group-hover:scale-110 transition-transform"
                                                 alt="Lucide Icons"
                                             />
