@@ -13,7 +13,7 @@ import { IntelliSense } from "./IntelliSense";
 import { EditorSearch } from "./EditorSearch";
 import { getSuggestions } from "../../utils/suggestions";
 import * as monaco from "monaco-editor";
-import { Actions } from "../EditorActions";
+import { Actions } from "../ui/EditorActions";
 import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
 
 export const CodeEditor: FC<CodeEditorProps> = ({

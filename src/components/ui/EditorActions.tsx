@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Play, ExternalLink, Loader2 } from "lucide-react";
-import { useExecute } from "../contexts/ExecuteContext";
+import { useExecute } from "../../contexts/ExecuteContext";
 import { toast } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
 import { invoke } from "@tauri-apps/api/tauri";
