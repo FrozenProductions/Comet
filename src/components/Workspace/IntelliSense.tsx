@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { type Suggestion } from "../../utils/suggestions";
+import type { IntelliSenseProps } from "../../types/workspace";
 import {
     FileCode,
     Code2,
@@ -9,14 +9,7 @@ import {
     Hash,
 } from "lucide-react";
 import { useSettings } from "../../contexts/SettingsContext";
-
-interface IntelliSenseProps {
-    isVisible: boolean;
-    position: { x: number; y: number } | null;
-    suggestions: Suggestion[];
-    onSelect: (suggestion: string) => void;
-    onClose: () => void;
-}
+import type { Suggestion } from "../../utils/suggestions";
 
 const getIconForType = (type: Suggestion["type"]) => {
     switch (type) {

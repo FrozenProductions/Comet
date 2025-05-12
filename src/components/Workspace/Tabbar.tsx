@@ -10,22 +10,7 @@ import {
 } from "lucide-react";
 import { ContextMenu } from "../ui/ContextMenu";
 import { useSettings } from "../../contexts/SettingsContext";
-
-interface Tab {
-    id: string;
-    title: string;
-    content: string;
-    language: string;
-}
-
-interface TabbarProps {
-    tabs: Tab[];
-    activeTab: string | null;
-    onTabClick: (id: string) => void;
-    onTabClose: (id: string) => void;
-    onTabRename: (id: string, newTitle: string) => void;
-    onNewTab: () => void;
-}
+import type { Tab, TabbarProps } from "../../types/workspace";
 
 export const Tabbar: FC<TabbarProps> = ({
     tabs,

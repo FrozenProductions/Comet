@@ -1,12 +1,7 @@
 import { FC, useEffect, useState, useCallback, useRef } from "react";
 import * as monaco from "monaco-editor";
 import { X, ChevronUp, ChevronDown, CaseSensitive, Regex } from "lucide-react";
-
-interface EditorSearchProps {
-    editor: monaco.editor.IStandaloneCodeEditor | null;
-    isVisible: boolean;
-    onClose: () => void;
-}
+import type { EditorSearchProps } from "../../types/workspace";
 
 export const EditorSearch: FC<EditorSearchProps> = ({
     editor,

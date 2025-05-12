@@ -5,6 +5,7 @@ import {
     luaLanguage,
     luaLanguageConfig,
 } from "../../constants/editor";
+import { EDITOR_DEFAULT_OPTIONS } from "../../constants/workspace";
 import { useEditor } from "../../contexts/EditorContext";
 import { useSettings } from "../../contexts/SettingsContext";
 import { useKeybinds } from "../../contexts/KeybindsContext";
@@ -13,12 +14,7 @@ import { EditorSearch } from "./EditorSearch";
 import { getSuggestions } from "../../utils/suggestions";
 import * as monaco from "monaco-editor";
 import { Actions } from "../EditorActions";
-
-interface CodeEditorProps {
-    content: string;
-    language: string;
-    onChange: (value: string | undefined) => void;
-}
+import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
 
 export const CodeEditor: FC<CodeEditorProps> = ({
     content,
@@ -30,13 +26,14 @@ export const CodeEditor: FC<CodeEditorProps> = ({
     const { keybinds } = useKeybinds();
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const [intellisenseState, setIntellisenseState] = useState({
-        isVisible: false,
-        position: null as { x: number; y: number } | null,
-        suggestions: [] as any[],
-        isTyping: false,
-        lastWord: "",
-    });
+    const [intellisenseState, setIntellisenseState] =
+        useState<IntellisenseState>({
+            isVisible: false,
+            position: null,
+            suggestions: [],
+            isTyping: false,
+            lastWord: "",
+        });
 
     useEffect(() => {
         loader.init().then((monaco) => {
@@ -270,97 +267,22 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                 theme="Comet"
                 onMount={handleEditorMount}
                 options={{
+                    ...EDITOR_DEFAULT_OPTIONS,
                     fontSize: settings.text.fontSize,
-                    fontFamily: "JetBrains Mono, Consolas, monospace",
-                    minimap: {
-                        enabled: false,
-                        scale: 100,
-                        showSlider: "mouseover",
-                        renderCharacters: true,
-                        maxColumn: 80,
-                        size: "proportional",
-                        side: "right",
-                    },
-                    scrollBeyondLastLine: false,
-                    renderLineHighlight: "line",
-                    padding: { top: 10, bottom: 50 },
-                    quickSuggestions: false,
-                    parameterHints: { enabled: false },
-                    suggestOnTriggerCharacters: false,
-                    acceptSuggestionOnEnter: "off",
-                    suggestSelection: "first",
                     lineNumbers: settings.display.showLineNumbers
                         ? "on"
                         : "off",
                     wordWrap: settings.display.wordWrap ? "on" : "off",
-                    scrollbar: {
-                        vertical: "visible",
-                        horizontal: "hidden",
-                        verticalScrollbarSize: 10,
-                        horizontalScrollbarSize: 10,
-                        useShadows: false,
-                    },
-                    smoothScrolling: true,
                     tabSize: settings.text.tabSize,
-                    insertSpaces: true,
-                    roundedSelection: true,
-                    autoClosingBrackets: "always",
-                    autoClosingQuotes: "always",
                     lineDecorationsWidth: Math.floor(
                         settings.text.fontSize * 0.75
                     ),
-                    lineNumbersMinChars: 3,
-                    glyphMargin: true,
-                    folding: false,
-                    matchBrackets: "always",
                     cursorBlinking: settings.cursor.blinking,
                     cursorStyle: settings.cursor.style,
                     cursorSmoothCaretAnimation: settings.cursor.smoothCaret
                         ? "on"
                         : "off",
                     cursorWidth: settings.cursor.style === "line" ? 2 : 0,
-                    find: {
-                        addExtraSpaceOnTop: false,
-                        autoFindInSelection: "never",
-                        seedSearchStringFromSelection: "always",
-                    },
-                    contextmenu: false,
-                    links: false,
-                    suggest: {
-                        showIcons: false,
-                        showStatusBar: false,
-                        showInlineDetails: false,
-                        preview: false,
-                        showMethods: false,
-                        showFunctions: false,
-                        showConstructors: false,
-                        showDeprecated: false,
-                        showFields: false,
-                        showVariables: false,
-                        showClasses: false,
-                        showStructs: false,
-                        showInterfaces: false,
-                        showModules: false,
-                        showProperties: false,
-                        showEvents: false,
-                        showOperators: false,
-                        showUnits: false,
-                        showValues: false,
-                        showConstants: false,
-                        showEnums: false,
-                        showEnumMembers: false,
-                        showKeywords: false,
-                        showWords: false,
-                        showColors: false,
-                        showFiles: false,
-                        showReferences: false,
-                        showFolders: false,
-                        showTypeParameters: false,
-                        showSnippets: false,
-                    },
-                    stickyScroll: { enabled: false },
-                    hover: { enabled: false },
-                    multiCursorModifier: "alt",
                 }}
             />
             <IntelliSense
