@@ -296,15 +296,12 @@ export const AutoExecute: React.FC = () => {
                                             onClick={() => setIsRenaming(true)}
                                             size="sm"
                                             variant="secondary"
-                                            className="inline-flex items-center justify-center gap-1.5 bg-ctp-surface0 hover:bg-ctp-surface1 h-7 px-2"
+                                            className="inline-flex items-center justify-center bg-ctp-surface0 hover:bg-ctp-surface1 h-7 w-7 p-0"
                                         >
                                             <Pencil
-                                                size={12}
+                                                size={14}
                                                 className="stroke-[2.5]"
                                             />
-                                            <span className="text-xs font-medium">
-                                                Rename
-                                            </span>
                                         </Button>
                                     </div>
                                 )}
