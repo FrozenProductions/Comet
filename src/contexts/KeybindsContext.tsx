@@ -87,7 +87,7 @@ const defaultKeybinds: Keybind[] = [
         key: "o",
         modifiers: { cmd: true },
         action: "openRoblox",
-        description: "Open Roblox Studio",
+        description: "Open Roblox",
     },
     {
         key: ",",

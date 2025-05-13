@@ -6,11 +6,11 @@ export const useRoblox = () => {
     const openRoblox = useCallback(async () => {
         try {
             await invoke("open_roblox");
-            toast.success("Opening Roblox Studio...", {
+            toast.success("Opening Roblox...", {
                 id: "open-roblox-toast",
             });
         } catch (error) {
-            toast.error("Failed to open Roblox Studio");
+            toast.error("Failed to open Roblox");
             console.error("Failed to open Roblox:", error);
         }
     }, []);

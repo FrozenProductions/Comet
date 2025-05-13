@@ -90,7 +90,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
         {
             id: "open-roblox",
             title: "Open Roblox",
-            description: "Open Roblox Studio",
+            description: "Open Roblox",
             icon: <ExternalLink size={16} className="stroke-[2.5]" />,
             action: () => {
                 openRoblox();
