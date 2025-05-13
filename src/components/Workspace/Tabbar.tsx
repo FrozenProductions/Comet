@@ -7,9 +7,11 @@ import {
     Plus,
     ChevronDown,
     MoreHorizontal,
+    Copy,
 } from "lucide-react";
 import { ContextMenu } from "../ui/ContextMenu";
 import { useSettings } from "../../contexts/SettingsContext";
+import { useEditor } from "../../contexts/EditorContext";
 import type { Tab, TabbarProps } from "../../types/workspace";
 
 export const Tabbar: FC<TabbarProps> = ({
@@ -22,6 +24,7 @@ export const Tabbar: FC<TabbarProps> = ({
     onTabReorder,
 }) => {
     const { settings } = useSettings();
+    const { duplicateTab } = useEditor();
     const [contextMenu, setContextMenu] = useState<{
         x: number;
         y: number;
@@ -121,6 +124,11 @@ export const Tabbar: FC<TabbarProps> = ({
                 label: "Rename",
                 icon: <Edit2 size={14} className="stroke-[2.5]" />,
                 onClick: () => startRenaming(tabId),
+            },
+            {
+                label: "Duplicate",
+                icon: <Copy size={14} className="stroke-[2.5]" />,
+                onClick: () => duplicateTab(tabId),
             },
         ];
     };

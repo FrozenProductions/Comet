@@ -31,6 +31,7 @@ interface EditorState {
     setActiveTab: (id: string) => void;
     loadTabs: (newTabs: Tab[], activeTabId: string | null) => void;
     setTabs: (tabs: Tab[]) => void;
+    duplicateTab: (id: string) => void;
 }
 
 const EditorContext = createContext<EditorState | null>(null);
@@ -182,6 +183,48 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         []
     );
 
+    const duplicateTab = useCallback(
+        async (id: string) => {
+            const sourceTab = tabs.find((tab) => tab.id === id);
+            if (!sourceTab) return;
+
+            const baseName = sourceTab.title.replace(/\.lua$/, "");
+            const existingCopies = tabs
+                .map((tab) => {
+                    const match = tab.title.match(
+                        new RegExp(`^${baseName} copy( \\d+)?\.lua$`)
+                    );
+                    if (!match) return 0;
+                    return match[1] ? parseInt(match[1].trim()) : 1;
+                })
+                .filter((num) => num >= 0);
+
+            const copyNumber =
+                existingCopies.length > 0 ? Math.max(...existingCopies) + 1 : 1;
+            const newTitle =
+                copyNumber === 1
+                    ? `${baseName} copy.lua`
+                    : `${baseName} copy ${copyNumber}.lua`;
+
+            const newId = nanoid();
+            const newTab: Tab = {
+                id: newId,
+                title: newTitle,
+                content: sourceTab.content,
+                language: sourceTab.language,
+            };
+
+            try {
+                await invoke("save_tab", { tab: newTab });
+                setTabs((prev) => [...prev, newTab]);
+                setActiveTab(newId);
+            } catch (error) {
+                console.error("Failed to duplicate tab:", error);
+            }
+        },
+        [tabs]
+    );
+
     const value = {
         currentPosition,
         currentFile,
@@ -195,6 +238,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setActiveTab,
         loadTabs,
         setTabs,
+        duplicateTab,
     };
 
     return (
