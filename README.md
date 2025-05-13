@@ -1,7 +1,7 @@
 # <div align="center">Comet</div>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/FrozenProductions/Comet/refs/heads/main/public/Icon.png" alt="Comet" width="120" />
+  <img src=".github/assets/Icon.png" alt="Comet" width="120" />
 </div>
 
 <div align="center">
@@ -19,9 +19,9 @@
 ## <div align="center">✨ Preview</div>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/FrozenProductions/Comet/refs/heads/main/public/resources/comet_preview.png" alt="Comet Editor" width="800" />
+  <img src=".github/assets/comet_preview.png" alt="Comet Editor" width="800" />
   <br/><br/>
-  <img src="https://raw.githubusercontent.com/FrozenProductions/Comet/refs/heads/main/public/resources/comet_settings_preview.png" alt="Comet Settings" width="800" />
+  <img src=".github/assets/comet_settings_preview.png" alt="Comet Settings" width="800" />
 </div>
 
 ## <div align="center">⚠️ Warning</div>
