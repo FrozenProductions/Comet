@@ -1,4 +1,4 @@
-import { Code, Settings, Library, User, Syringe } from "lucide-react";
+import { Code, Settings, Library, Flag, Syringe } from "lucide-react";
 import type { SidebarItem } from "../types/sidebar";
 
 export const MAIN_SCREENS: SidebarItem[] = [
@@ -6,7 +6,7 @@ export const MAIN_SCREENS: SidebarItem[] = [
     { id: "Settings", icon: Settings, label: "Settings" },
     { id: "Library", icon: Library, label: "Script Library" },
     { id: "AutoExecution", icon: Syringe, label: "Auto Execution" },
-    { id: "Profile", icon: User, label: "Profile" },
+    { id: "FastFlags", icon: Flag, label: "Fast Flags" },
 ];
 
 export const BUTTON_SPACING = 50;

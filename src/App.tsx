@@ -10,7 +10,7 @@ import { ConnectionProvider } from "./contexts/ConnectionContext";
 import { KeybindsProvider, useKeybinds } from "./contexts/KeybindsContext";
 import { Toaster } from "./components/ui/Toast";
 import { Library } from "./components/Library";
-import { Profile } from "./components/profile/Profile";
+import { FastFlags } from "./components/fastflags/FastFlags";
 import { useSettings } from "./contexts/SettingsContext";
 import { CommandPalette } from "./components/ui/CommandPalette";
 import "react-tooltip/dist/react-tooltip.css";
@@ -35,8 +35,8 @@ const AppContent: FC = () => {
                 return <Library />;
             case "AutoExecution":
                 return <AutoExecute />;
-            case "Profile":
-                return <Profile />;
+            case "FastFlags":
+                return <FastFlags />;
             default:
                 return null;
         }

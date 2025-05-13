@@ -4,7 +4,7 @@ export type Screen =
     | "Editor"
     | "Settings"
     | "Library"
-    | "Profile"
+    | "FastFlags"
     | "AutoExecution";
 
 export interface SidebarProps {

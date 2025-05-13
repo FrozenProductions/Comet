@@ -13,7 +13,7 @@ import { useRoblox } from "../hooks/useRoblox";
 import { useScript } from "../hooks/useScript";
 import { toast } from "react-hot-toast";
 
-type Screen = "Editor" | "Settings" | "Profile" | "Library" | "AutoExecution";
+type Screen = "Editor" | "Settings" | "FastFlags" | "Library" | "AutoExecution";
 
 export type KeybindAction =
     | "newTab"
