@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Workspace } from "./components/Workspace/Workspace";
 import { Settings } from "./components/settings/Settings";
 import { EditorProvider } from "./contexts/EditorContext";
@@ -16,16 +16,14 @@ import { CommandPalette } from "./components/ui/CommandPalette";
 import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoexecute/AutoExecute";
 
-type Screen = "Editor" | "Settings" | "Profile" | "Library" | "AutoExecution";
-
 const AppContent: FC = () => {
-    const [activeScreen, setActiveScreen] = useState<Screen>("Editor");
     const { settings } = useSettings();
-    const { isCommandPaletteOpen, toggleCommandPalette } = useKeybinds();
-
-    const handleScreenChange = (screen: Screen) => {
-        setActiveScreen(screen);
-    };
+    const {
+        isCommandPaletteOpen,
+        toggleCommandPalette,
+        activeScreen,
+        handleScreenChange,
+    } = useKeybinds();
 
     const renderScreen = () => {
         switch (activeScreen) {

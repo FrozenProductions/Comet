@@ -18,10 +18,91 @@ import { useSettings } from "../../contexts/SettingsContext";
 import { useKeybinds } from "../../contexts/KeybindsContext";
 import { KeybindEditor } from "./KeybindEditor";
 import type { SettingsKey } from "../../types/settings";
-import type { Keybind } from "../../contexts/KeybindsContext";
+import type { Keybind, KeybindAction } from "../../contexts/KeybindsContext";
 import { toast } from "react-hot-toast";
 import { SETTINGS_SECTIONS } from "../../constants/settings";
 import { Header } from "../ui/Header";
+import {
+    KEYBIND_CATEGORIES,
+    KEYBIND_CATEGORY_MAPPING,
+} from "../../constants/keybinds";
+
+const getKeybindTitle = (action: KeybindAction): string => {
+    switch (action) {
+        case "newTab":
+            return "New Tab";
+        case "closeTab":
+            return "Close Tab";
+        case "executeScript":
+            return "Execute Script";
+        case "toggleZenMode":
+            return "Toggle Zen Mode";
+        case "toggleCommandPalette":
+            return "Command Palette";
+        case "openRoblox":
+            return "Open Roblox";
+        case "openSettings":
+            return "Open Settings";
+        case "nextTab":
+            return "Next Tab";
+        case "previousTab":
+            return "Previous Tab";
+        case "switchTab":
+            return "Switch to Tab";
+        default:
+            return action;
+    }
+};
+
+const KeybindSection: FC<{
+    category: string;
+    keybinds: Keybind[];
+    onEditKeybind: (keybind: Keybind) => void;
+}> = ({ category, keybinds, onEditKeybind }) => (
+    <div className="bg-ctp-mantle rounded-xl p-4 space-y-4">
+        <div className="flex items-start justify-between pb-2 border-b border-ctp-surface0">
+            <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-ctp-text truncate">
+                    {category}
+                </div>
+                <div className="text-xs text-ctp-subtext0">
+                    {category} keyboard shortcuts
+                </div>
+            </div>
+        </div>
+        <div className="space-y-3">
+            {keybinds.map((keybind) => (
+                <div
+                    key={keybind.action}
+                    className="flex items-center justify-between py-1.5"
+                >
+                    <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-ctp-text">
+                            {getKeybindTitle(keybind.action)}
+                        </div>
+                        <div className="text-xs text-ctp-subtext0">
+                            {keybind.description}
+                        </div>
+                    </div>
+                    <button
+                        className="px-2 py-1 text-xs font-medium bg-ctp-surface0 text-ctp-subtext0 rounded hover:bg-ctp-surface1 transition-colors"
+                        onClick={() => onEditKeybind(keybind)}
+                    >
+                        {[
+                            keybind.modifiers.cmd && "⌘",
+                            keybind.modifiers.shift && "⇧",
+                            keybind.modifiers.alt && "⌥",
+                            keybind.modifiers.ctrl && "⌃",
+                            keybind.key.toUpperCase(),
+                        ]
+                            .filter(Boolean)
+                            .join(" ")}
+                    </button>
+                </div>
+            ))}
+        </div>
+    </div>
+);
 
 export const Settings: FC = () => {
     const { settings, updateSettings } = useSettings();
@@ -344,6 +425,19 @@ export const Settings: FC = () => {
                     </>
                 );
             case "keybinds":
+                const categorizedKeybinds = keybinds.reduce<
+                    Record<string, Keybind[]>
+                >((acc, keybind) => {
+                    if (keybind.action === "switchTab") return acc;
+                    const category =
+                        KEYBIND_CATEGORIES[
+                            KEYBIND_CATEGORY_MAPPING[keybind.action]
+                        ];
+                    if (!acc[category]) acc[category] = [];
+                    acc[category].push(keybind);
+                    return acc;
+                }, {});
+
                 return (
                     <>
                         <div className="space-y-2 mb-4">
@@ -352,63 +446,39 @@ export const Settings: FC = () => {
                                 Keyboard Shortcuts
                             </h2>
                             <p className="text-sm text-ctp-subtext0 -mt-1">
-                                Customize keyboard shortcuts for common actions
+                                Customize keyboard shortcuts for various actions
                             </p>
                         </div>
 
                         <div className="space-y-6">
-                            <SettingGroup
-                                title="Editor Actions"
-                                description="Keyboard shortcuts for editor actions"
-                            >
-                                <div className="space-y-3">
-                                    {keybinds
-                                        .filter(
-                                            (keybind) =>
-                                                !keybind.description
-                                                    .toLowerCase()
-                                                    .includes("switch to tab")
-                                        )
-                                        .map((keybind, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-center justify-between py-2"
-                                            >
-                                                <div>
-                                                    <div className="text-sm text-ctp-text">
-                                                        {keybind.description}
-                                                    </div>
-                                                    <div className="text-xs text-ctp-subtext0">
-                                                        {[
-                                                            keybind.modifiers
-                                                                .cmd && "⌘",
-                                                            keybind.modifiers
-                                                                .shift && "⇧",
-                                                            keybind.modifiers
-                                                                .alt && "⌥",
-                                                            keybind.modifiers
-                                                                .ctrl && "⌃",
-                                                            keybind.key.toUpperCase(),
-                                                        ]
-                                                            .filter(Boolean)
-                                                            .join(" + ")}
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    onClick={() =>
-                                                        setEditingKeybind(
-                                                            keybind
-                                                        )
-                                                    }
-                                                    className="px-2 py-1 text-xs bg-white/5 hover:bg-accent-gradient hover:text-ctp-base rounded transition-colors"
-                                                >
-                                                    Edit
-                                                </button>
-                                            </div>
-                                        ))}
-                                </div>
-                            </SettingGroup>
+                            {Object.entries(categorizedKeybinds).map(
+                                ([category, categoryKeybinds]) => (
+                                    <KeybindSection
+                                        key={category}
+                                        category={category}
+                                        keybinds={categoryKeybinds}
+                                        onEditKeybind={setEditingKeybind}
+                                    />
+                                )
+                            )}
                         </div>
+
+                        <AnimatePresence>
+                            {editingKeybind && (
+                                <KeybindEditor
+                                    keybind={editingKeybind}
+                                    isOpen={true}
+                                    onClose={() => setEditingKeybind(null)}
+                                    onSave={(action, updates) => {
+                                        updateKeybind(action, updates);
+                                        setEditingKeybind(null);
+                                        toast.success(
+                                            "Keybind updated successfully"
+                                        );
+                                    }}
+                                />
+                            )}
+                        </AnimatePresence>
                     </>
                 );
             case "about":
@@ -757,15 +827,6 @@ export const Settings: FC = () => {
                     </div>
                 </div>
             </div>
-
-            {editingKeybind && (
-                <KeybindEditor
-                    isOpen={true}
-                    onClose={() => setEditingKeybind(null)}
-                    keybind={editingKeybind}
-                    onSave={updateKeybind}
-                />
-            )}
         </div>
     );
 };

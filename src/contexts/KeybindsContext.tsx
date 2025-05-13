@@ -13,6 +13,8 @@ import { useRoblox } from "../hooks/useRoblox";
 import { useScript } from "../hooks/useScript";
 import { toast } from "react-hot-toast";
 
+type Screen = "Editor" | "Settings" | "Profile" | "Library" | "AutoExecution";
+
 export type KeybindAction =
     | "newTab"
     | "closeTab"
@@ -22,7 +24,8 @@ export type KeybindAction =
     | "toggleZenMode"
     | "toggleCommandPalette"
     | "executeScript"
-    | "openRoblox";
+    | "openRoblox"
+    | "openSettings";
 
 export type Keybind = {
     key: string;
@@ -45,6 +48,8 @@ type KeybindsContextType = {
     ) => void;
     isCommandPaletteOpen: boolean;
     toggleCommandPalette: () => void;
+    activeScreen: Screen;
+    handleScreenChange: (screen: Screen) => void;
 };
 
 const defaultKeybinds: Keybind[] = [
@@ -84,6 +89,12 @@ const defaultKeybinds: Keybind[] = [
         action: "openRoblox",
         description: "Open Roblox Studio",
     },
+    {
+        key: ",",
+        modifiers: { cmd: true },
+        action: "openSettings",
+        description: "Open settings",
+    },
 ];
 
 for (let i = 1; i <= 20; i++) {
@@ -101,6 +112,8 @@ const KeybindsContext = createContext<KeybindsContextType>({
     updateKeybind: () => {},
     isCommandPaletteOpen: false,
     toggleCommandPalette: () => {},
+    activeScreen: "Editor",
+    handleScreenChange: () => {},
 });
 
 export const useKeybinds = () => useContext(KeybindsContext);
@@ -110,6 +123,7 @@ export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const { settings, updateSettings } = useSettings();
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
+    const [activeScreen, setActiveScreen] = useState<Screen>("Editor");
     const [keybinds, setKeybinds] = useState<Keybind[]>(() => {
         const saved = localStorage.getItem("keybinds");
         return saved ? JSON.parse(saved) : defaultKeybinds;
@@ -121,6 +135,10 @@ export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const toggleCommandPalette = () => {
         setIsCommandPaletteOpen((prev) => !prev);
+    };
+
+    const handleScreenChange = (screen: Screen) => {
+        setActiveScreen(screen);
     };
 
     useEffect(() => {
@@ -219,6 +237,9 @@ export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     case "openRoblox":
                         openRoblox();
                         break;
+                    case "openSettings":
+                        handleScreenChange("Settings");
+                        break;
                 }
             }
         };
@@ -272,6 +293,8 @@ export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 updateKeybind,
                 isCommandPaletteOpen,
                 toggleCommandPalette,
+                activeScreen,
+                handleScreenChange,
             }}
         >
             {children}
