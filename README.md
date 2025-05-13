@@ -16,6 +16,14 @@
   <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" />
 </div>
 
+## <div align="center">✨ Preview</div>
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/FrozenProductions/Comet/refs/heads/main/public/resources/comet_preview.png" alt="Comet Editor" width="800" />
+  <br/><br/>
+  <img src="https://raw.githubusercontent.com/FrozenProductions/Comet/refs/heads/main/public/resources/comet_settings_preview.png" alt="Comet Settings" width="800" />
+</div>
+
 ## <div align="center">⚠️ Warning</div>
 
 <div align="center">
