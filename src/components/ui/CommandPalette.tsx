@@ -33,6 +33,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [isCmdPressed, setIsCmdPressed] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const resultsContainerRef = useRef<HTMLDivElement>(null);
     const { createTab, setActiveTab, tabs } = useEditor();
@@ -139,6 +140,11 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!isOpen) return;
 
+            if (e.key === "Meta") {
+                setIsCmdPressed(true);
+                return;
+            }
+
             switch (e.key) {
                 case "Escape":
                     onClose();
@@ -189,8 +195,18 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             }
         };
 
+        const handleKeyUp = (e: KeyboardEvent) => {
+            if (e.key === "Meta") {
+                setIsCmdPressed(false);
+            }
+        };
+
         window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keyup", handleKeyUp);
+        };
     }, [isOpen, onClose, filteredItems, selectedIndex]);
 
     return (
@@ -312,7 +328,15 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                                 index && (
                                                                 <div className="flex items-center gap-1 text-xs">
                                                                     <kbd className="px-2 py-1 bg-white/5 rounded">
-                                                                        enter
+                                                                        {!searchQuery.startsWith(
+                                                                            ">"
+                                                                        ) &&
+                                                                        !searchQuery.startsWith(
+                                                                            "/"
+                                                                        ) &&
+                                                                        isCmdPressed
+                                                                            ? "⌘ + enter"
+                                                                            : "enter"}
                                                                     </kbd>
                                                                     <span>
                                                                         {!searchQuery.startsWith(
@@ -321,7 +345,9 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                                         !searchQuery.startsWith(
                                                                             "/"
                                                                         )
-                                                                            ? "to open"
+                                                                            ? isCmdPressed
+                                                                                ? "to execute"
+                                                                                : "to open"
                                                                             : "to run"}
                                                                     </span>
                                                                 </div>
