@@ -94,14 +94,12 @@ export const Tabbar: FC<TabbarProps> = ({
     if (tabs.length === 0) return null;
 
     const handleContextMenu = (e: React.MouseEvent, tabId: string) => {
-        console.log("Context menu triggered for tab:", tabId);
         e.preventDefault();
         e.stopPropagation();
         setContextMenu({ x: e.clientX, y: e.clientY, tabId });
     };
 
     const startRenaming = (tabId: string) => {
-        console.log("Starting rename for tab:", tabId);
         const tab = tabs.find((t) => t.id === tabId);
         if (tab) {
             setEditingTab(tabId);
@@ -118,7 +116,6 @@ export const Tabbar: FC<TabbarProps> = ({
     };
 
     const getContextMenuItems = (tabId: string) => {
-        console.log("Getting context menu items for tab:", tabId);
         return [
             {
                 label: "Rename",
@@ -139,10 +136,6 @@ export const Tabbar: FC<TabbarProps> = ({
                     className="flex-1 min-w-0 relative flex items-center px-3 hover:bg-ctp-surface0/50 cursor-pointer group"
                     ref={dropdownRef}
                     onContextMenu={(e) => {
-                        console.log(
-                            "Container context menu triggered, activeTab:",
-                            activeTab
-                        );
                         if (activeTab) {
                             e.preventDefault();
                             e.stopPropagation();
