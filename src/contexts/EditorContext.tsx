@@ -9,11 +9,7 @@ import {
 } from "react";
 import { nanoid } from "nanoid";
 import { invoke } from "@tauri-apps/api/tauri";
-
-interface EditorPosition {
-    lineNumber: number;
-    column: number;
-}
+import { EditorPosition } from "../types/editor";
 
 interface Tab {
     id: string;
@@ -52,12 +48,14 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
     useEffect(() => {
         const loadSavedTabs = async () => {
             try {
-                const state = await invoke<{
-                    tabs: Tab[];
+                const loadedTabs = await invoke<Tab[]>("load_tabs");
+                const tabState = await invoke<{
                     active_tab: string | null;
-                }>("load_tabs");
-                setTabs(state.tabs);
-                setActiveTab(state.active_tab);
+                    tab_order: string[];
+                }>("get_tab_state");
+
+                setTabs(loadedTabs);
+                setActiveTab(tabState.active_tab);
                 setIsInitialized(true);
             } catch (error) {
                 console.error("Failed to load tabs:", error);
@@ -72,7 +70,14 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         const saveTabs = async () => {
             try {
-                await invoke("save_tabs", { tabs, activeTab });
+                for (const tab of tabs) {
+                    await invoke("save_tab", { tab });
+                }
+
+                await invoke("save_tab_state", {
+                    activeTab,
+                    tabOrder: tabs.map((tab) => tab.id),
+                });
             } catch (error) {
                 console.error("Failed to save tabs:", error);
             }
@@ -85,43 +90,89 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const createTab = useCallback(() => {
         const id = nanoid();
+        const existingUntitled = tabs
+            .map((tab) => {
+                const match = tab.title.match(/^untitled_(\d+)\.lua$/);
+                return match ? parseInt(match[1]) : 0;
+            })
+            .filter((num) => num > 0);
+
+        const nextNumber =
+            existingUntitled.length > 0 ? Math.max(...existingUntitled) + 1 : 1;
+
+        const title = `untitled_${nextNumber}.lua`;
         const newTab: Tab = {
             id,
-            title: "untitled.lua",
+            title,
             content: "-- New File\n",
             language: "lua",
         };
         setTabs((prev) => [...prev, newTab]);
         setActiveTab(id);
         return id;
-    }, []);
+    }, [tabs]);
 
     const closeTab = useCallback(
-        (id: string) => {
-            setTabs((prev) => prev.filter((tab) => tab.id !== id));
-            if (activeTab === id) {
-                const remainingTabs = tabs.filter((tab) => tab.id !== id);
-                setActiveTab(
-                    remainingTabs.length > 0
-                        ? remainingTabs[remainingTabs.length - 1].id
-                        : null
-                );
+        async (id: string) => {
+            try {
+                const tab = tabs.find((t) => t.id === id);
+                if (tab) {
+                    await invoke("delete_tab", { title: tab.title });
+                    setTabs((prev) => prev.filter((tab) => tab.id !== id));
+                    if (activeTab === id) {
+                        const remainingTabs = tabs.filter(
+                            (tab) => tab.id !== id
+                        );
+                        setActiveTab(
+                            remainingTabs.length > 0
+                                ? remainingTabs[remainingTabs.length - 1].id
+                                : null
+                        );
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to delete tab:", error);
             }
         },
         [activeTab, tabs]
     );
 
-    const updateTab = useCallback((id: string, updates: Partial<Tab>) => {
-        setTabs((prev) => {
-            const tabIndex = prev.findIndex((tab) => tab.id === id);
+    const updateTab = useCallback(
+        async (id: string, updates: Partial<Tab>) => {
+            try {
+                const currentTab = tabs.find((tab) => tab.id === id);
+                if (!currentTab) return;
 
-            if (tabIndex === -1) return prev;
+                if (updates.title && updates.title !== currentTab.title) {
+                    await invoke("rename_tab", {
+                        oldTitle: currentTab.title,
+                        newTitle: updates.title,
+                    });
+                }
 
-            const newTabs = [...prev];
-            newTabs[tabIndex] = { ...newTabs[tabIndex], ...updates };
-            return newTabs;
-        });
-    }, []);
+                setTabs((prev) => {
+                    const tabIndex = prev.findIndex((tab) => tab.id === id);
+                    if (tabIndex === -1) return prev;
+
+                    const newTabs = [...prev];
+                    newTabs[tabIndex] = { ...newTabs[tabIndex], ...updates };
+                    return newTabs;
+                });
+
+                if (updates.content !== undefined) {
+                    await invoke("save_tab", {
+                        tab: {
+                            ...currentTab,
+                            ...updates,
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to update tab:", error);
+            }
+        },
+        [tabs]
+    );
 
     const loadTabs = useCallback(
         (newTabs: Tab[], activeTabId: string | null) => {

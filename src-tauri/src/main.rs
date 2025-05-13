@@ -2,8 +2,6 @@
 
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use std::path::PathBuf;
-use std::fs;
 use tauri::{State, Manager, Window};
 use std::thread;
 use serde::{Serialize, Deserialize};
@@ -208,43 +206,6 @@ struct Tab {
 struct TabState {
     tabs: Vec<Tab>,
     active_tab: Option<String>,
-}
-
-fn get_save_path() -> PathBuf {
-    let mut path = dirs::document_dir().expect("Failed to get Documents directory");
-    path.push("Comet");
-    fs::create_dir_all(&path).expect("Failed to create directory");
-    path.push("tabs.json");
-    path
-}
-
-#[tauri::command]
-async fn save_tabs(tabs: Vec<Tab>, active_tab: Option<String>) -> Result<(), String> {
-    let state = TabState { tabs, active_tab };
-    let path = get_save_path();
-    
-    fs::write(path, serde_json::to_string_pretty(&state).unwrap())
-        .map_err(|e| e.to_string())
-}
-
-#[tauri::command]
-async fn load_tabs() -> Result<TabState, String> {
-    let path = get_save_path();
-    
-    if path.exists() {
-        let content = fs::read_to_string(path).map_err(|e| e.to_string())?;
-        serde_json::from_str(&content).map_err(|e| e.to_string())
-    } else {
-        Ok(TabState {
-            tabs: vec![Tab {
-                id: "1".to_string(),
-                title: "untitled.lua".to_string(),
-                content: "-- New File\n".to_string(),
-                language: "lua".to_string(),
-            }],
-            active_tab: Some("1".to_string()),
-        })
-    }
 }
 
 #[tauri::command]
@@ -474,6 +435,7 @@ async fn get_script_content(slug: String) -> Result<String, String> {
 }
 
 mod auto_execute;
+mod tabs;
 
 #[tauri::command]
 async fn open_roblox() -> Result<(), String> {
@@ -526,8 +488,12 @@ fn main() {
             change_setting,
             refresh_connection,
             increment_port,
-            save_tabs,
-            load_tabs,
+            tabs::save_tab,
+            tabs::delete_tab,
+            tabs::save_tab_state,
+            tabs::load_tabs,
+            tabs::get_tab_state,
+            tabs::rename_tab,
             close_window,
             minimize_window,
             toggle_maximize_window,
@@ -542,5 +508,5 @@ fn main() {
             open_roblox,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running");
+        .expect("error while running tauri application");
 }
