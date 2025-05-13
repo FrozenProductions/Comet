@@ -238,7 +238,7 @@ export const AutoExecute: React.FC = () => {
                                     onClick={() => handleFileSelect(file)}
                                     whileHover={{ x: 4 }}
                                     className={`
-                                        group w-full flex items-center gap-1.5 p-1.5 rounded-lg cursor-pointer transition-colors
+                                        group w-full flex items-center gap-1.5 p-1.5 rounded-lg cursor-pointer transition-colors text-left
                                         ${
                                             selectedFile?.path === file.path
                                                 ? "bg-ctp-surface0"
@@ -250,7 +250,7 @@ export const AutoExecute: React.FC = () => {
                                         size={14}
                                         className="stroke-[2.5] shrink-0 text-white/50"
                                     />
-                                    <span className="truncate text-xs flex-1">
+                                    <span className="truncate text-xs text-left flex-1">
                                         {file.name}
                                     </span>
                                     <Button
