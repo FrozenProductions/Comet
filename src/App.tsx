@@ -72,14 +72,14 @@ const App: FC = () => {
     return (
         <ConnectionProvider>
             <ExecuteProvider>
-                <SettingsProvider>
-                    <EditorProvider>
+                <EditorProvider>
+                    <SettingsProvider>
                         <KeybindsProvider>
                             <AppContent />
                             <Toaster />
                         </KeybindsProvider>
-                    </EditorProvider>
-                </SettingsProvider>
+                    </SettingsProvider>
+                </EditorProvider>
             </ExecuteProvider>
         </ConnectionProvider>
     );

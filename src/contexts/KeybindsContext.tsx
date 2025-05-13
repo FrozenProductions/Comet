@@ -9,6 +9,8 @@ import {
 } from "react";
 import { useEditor } from "./EditorContext";
 import { useSettings } from "./SettingsContext";
+import { useRoblox } from "../hooks/useRoblox";
+import { useScript } from "../hooks/useScript";
 import { toast } from "react-hot-toast";
 
 export type KeybindAction =
@@ -18,7 +20,9 @@ export type KeybindAction =
     | "previousTab"
     | "switchTab"
     | "toggleZenMode"
-    | "toggleCommandPalette";
+    | "toggleCommandPalette"
+    | "executeScript"
+    | "openRoblox";
 
 export type Keybind = {
     key: string;
@@ -68,6 +72,18 @@ const defaultKeybinds: Keybind[] = [
         action: "toggleCommandPalette",
         description: "Toggle command palette",
     },
+    {
+        key: "enter",
+        modifiers: { cmd: true },
+        action: "executeScript",
+        description: "Execute current script",
+    },
+    {
+        key: "o",
+        modifiers: { cmd: true },
+        action: "openRoblox",
+        description: "Open Roblox Studio",
+    },
 ];
 
 for (let i = 1; i <= 20; i++) {
@@ -92,6 +108,8 @@ export const useKeybinds = () => useContext(KeybindsContext);
 export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const { createTab, closeTab, activeTab, tabs, setActiveTab } = useEditor();
     const { settings, updateSettings } = useSettings();
+    const { openRoblox } = useRoblox();
+    const { executeScript } = useScript();
     const [keybinds, setKeybinds] = useState<Keybind[]>(() => {
         const saved = localStorage.getItem("keybinds");
         return saved ? JSON.parse(saved) : defaultKeybinds;
@@ -195,6 +213,12 @@ export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     case "toggleCommandPalette":
                         toggleCommandPalette();
                         break;
+                    case "executeScript":
+                        executeScript();
+                        break;
+                    case "openRoblox":
+                        openRoblox();
+                        break;
                 }
             }
         };
@@ -215,6 +239,8 @@ export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setActiveTab,
         settings,
         updateSettings,
+        executeScript,
+        openRoblox,
     ]);
 
     const updateKeybind = (

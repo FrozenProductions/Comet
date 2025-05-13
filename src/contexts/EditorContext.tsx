@@ -10,6 +10,13 @@ import {
 import { nanoid } from "nanoid";
 import { invoke } from "@tauri-apps/api/tauri";
 import { EditorPosition } from "../types/editor";
+import type {
+    ScriptExecutionOptions,
+    ScriptExecutionResult,
+} from "../types/script";
+import { scriptService } from "../services/scriptService";
+import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../constants/script";
+import { toast } from "react-hot-toast";
 
 interface Tab {
     id: string;
@@ -32,6 +39,10 @@ interface EditorState {
     loadTabs: (newTabs: Tab[], activeTabId: string | null) => void;
     setTabs: (tabs: Tab[]) => void;
     duplicateTab: (id: string) => void;
+    executeTab: (id: string) => Promise<void>;
+    executeScript: (
+        options?: ScriptExecutionOptions
+    ) => Promise<ScriptExecutionResult>;
 }
 
 const EditorContext = createContext<EditorState | null>(null);
@@ -45,6 +56,58 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [tabs, setTabs] = useState<Tab[]>([]);
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
+
+    const executeScript = useCallback(
+        async ({
+            content,
+            showToast = true,
+            toastId = SCRIPT_TOAST_IDS.EXECUTE,
+        }: ScriptExecutionOptions = {}) => {
+            let scriptContent = content;
+
+            if (!scriptContent) {
+                if (!tabs.length || !activeTab) {
+                    showToast && toast.error(SCRIPT_MESSAGES.NO_SCRIPT);
+                    return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT };
+                }
+                const tab = tabs.find((t) => t.id === activeTab);
+                if (!tab) {
+                    showToast && toast.error(SCRIPT_MESSAGES.NO_SCRIPT);
+                    return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT };
+                }
+                scriptContent = tab.content;
+            }
+
+            if (!scriptContent.trim()) {
+                showToast && toast.error(SCRIPT_MESSAGES.EMPTY_SCRIPT);
+                return { success: false, error: SCRIPT_MESSAGES.EMPTY_SCRIPT };
+            }
+
+            const result = await scriptService.executeScript(scriptContent);
+
+            if (result.success) {
+                showToast &&
+                    toast.success(SCRIPT_MESSAGES.EXECUTION_SUCCESS, {
+                        id: toastId,
+                    });
+            } else {
+                showToast && toast.error(SCRIPT_MESSAGES.EXECUTION_ERROR);
+                console.error(SCRIPT_MESSAGES.EXECUTION_ERROR, result.error);
+            }
+
+            return result;
+        },
+        [activeTab, tabs]
+    );
+
+    const executeTab = useCallback(
+        async (id: string) => {
+            const tab = tabs.find((t) => t.id === id);
+            if (!tab) return;
+            await executeScript({ content: tab.content });
+        },
+        [tabs, executeScript]
+    );
 
     useEffect(() => {
         const loadSavedTabs = async () => {
@@ -239,6 +302,8 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         loadTabs,
         setTabs,
         duplicateTab,
+        executeTab,
+        executeScript,
     };
 
     return (

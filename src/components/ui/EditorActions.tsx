@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
 import { Play, ExternalLink, Loader2 } from "lucide-react";
 import { useExecute } from "../../contexts/ExecuteContext";
-import { toast } from "react-hot-toast";
+import { useRoblox } from "../../hooks/useRoblox";
+import { useScript } from "../../hooks/useScript";
 import { Tooltip } from "react-tooltip";
-import { invoke } from "@tauri-apps/api/tauri";
 import type { ActionMenuProps } from "../../types/workspace";
 
 export const Actions = ({ onExecute, getEditorContent }: ActionMenuProps) => {
-    const { execute, isExecuting } = useExecute();
+    const { isExecuting } = useExecute();
+    const { openRoblox } = useRoblox();
+    const { executeScript } = useScript();
 
     const buttonVariants = {
         initial: { opacity: 0, y: 10 },
@@ -29,23 +31,12 @@ export const Actions = ({ onExecute, getEditorContent }: ActionMenuProps) => {
                 await onExecute();
             } else if (getEditorContent) {
                 const content = getEditorContent();
-                if (!content.trim()) {
-                    toast.error("Cannot execute empty script");
-                    return;
-                }
-                await execute(content);
+                await executeScript({ content });
+            } else {
+                await executeScript();
             }
         } catch (error) {
             console.error("Execute error:", error);
-        }
-    };
-
-    const handleOpenRoblox = async () => {
-        try {
-            await invoke("open_roblox");
-        } catch (error) {
-            toast.error("Failed to open Roblox Studio");
-            console.error("Failed to open Roblox:", error);
         }
     };
 
@@ -60,7 +51,7 @@ export const Actions = ({ onExecute, getEditorContent }: ActionMenuProps) => {
                 exit="exit"
                 whileHover="hover"
                 whileTap="tap"
-                onClick={handleOpenRoblox}
+                onClick={openRoblox}
                 className="w-11 h-11 bg-white/5 text-[#c1c7e6] rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm border border-white/5 transition-colors"
             >
                 <ExternalLink size={16} className="stroke-[2.5]" />

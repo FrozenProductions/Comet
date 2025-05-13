@@ -72,6 +72,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                 keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyG,
                 command: null,
             });
+            monaco.editor.addKeybindingRule({
+                keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+                command: null,
+            });
 
             keybinds.forEach((keybind) => {
                 let monacoKey = 0;

@@ -1,8 +1,17 @@
 import { FC, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Command, Plus, Layout, FileCode } from "lucide-react";
+import {
+    Command,
+    Plus,
+    Layout,
+    FileCode,
+    Play,
+    ExternalLink,
+} from "lucide-react";
 import { useEditor } from "../../contexts/EditorContext";
 import { useSettings } from "../../contexts/SettingsContext";
+import { useRoblox } from "../../hooks/useRoblox";
+import { useScript } from "../../hooks/useScript";
 import { toast } from "react-hot-toast";
 
 type CommandItem = {
@@ -26,8 +35,10 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
     const [selectedIndex, setSelectedIndex] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const resultsContainerRef = useRef<HTMLDivElement>(null);
-    const { createTab, tabs, setActiveTab } = useEditor();
+    const { createTab, setActiveTab, tabs } = useEditor();
     const { settings, updateSettings } = useSettings();
+    const { openRoblox } = useRoblox();
+    const { executeScript } = useScript();
 
     const commands: CommandItem[] = [
         {
@@ -62,6 +73,26 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         id: "zen-mode-toast",
                     }
                 );
+                onClose();
+            },
+        },
+        {
+            id: "execute-script",
+            title: "Execute Script",
+            description: "Execute the current tab's script",
+            icon: <Play size={16} className="stroke-[2.5]" />,
+            action: () => {
+                executeScript();
+                onClose();
+            },
+        },
+        {
+            id: "open-roblox",
+            title: "Open Roblox",
+            description: "Open Roblox Studio",
+            icon: <ExternalLink size={16} className="stroke-[2.5]" />,
+            action: () => {
+                openRoblox();
                 onClose();
             },
         },
