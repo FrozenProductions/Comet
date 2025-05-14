@@ -147,7 +147,7 @@ export const FastFlags: React.FC = () => {
                 <Header
                     title="Fast Flags"
                     icon={<Flag size={16} className="text-accent" />}
-                    description="Manage roblox fast flags"
+                    description="Manage Roblox fast flags"
                 />
                 <div className="flex-1 flex items-center justify-center">
                     <Loader2
@@ -192,13 +192,14 @@ export const FastFlags: React.FC = () => {
                     <Button
                         onClick={handleOpenDirectory}
                         size="sm"
-                        variant="secondary"
                         data-tooltip-id="fastflags-tooltip"
                         data-tooltip-content="Open Directory"
-                        className="inline-flex items-center justify-center gap-1.5 bg-ctp-surface0 hover:bg-ctp-surface1"
+                        className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
                     >
-                        <FolderOpen size={14} className="stroke-[2.5]" />
-                        Open Directory
+                        <FolderOpen
+                            size={14}
+                            className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
+                        />
                     </Button>
                 }
             />
