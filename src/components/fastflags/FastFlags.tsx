@@ -15,9 +15,10 @@ import { Header } from "../ui/header";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FastFlagManager } from "./fastFlagManager";
 import { Tooltip } from "react-tooltip";
+import { Modal } from "../ui/modal";
 
 export const FastFlags: React.FC = () => {
     const {
@@ -339,70 +340,48 @@ export const FastFlags: React.FC = () => {
                 )}
             </div>
 
-            <AnimatePresence>
-                {isCreatingProfile && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-                        onClick={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setIsCreatingProfile(false);
-                            }
+            <Modal
+                isOpen={isCreatingProfile}
+                onClose={() => {
+                    setNewProfileName("");
+                    setIsCreatingProfile(false);
+                }}
+                title="Create Profile"
+                description="Enter a name for your new fast flags profile."
+            >
+                <div className="space-y-4">
+                    <Input
+                        placeholder="Profile name"
+                        value={newProfileName}
+                        onChange={(e) => setNewProfileName(e.target.value)}
+                        onKeyDown={(e) =>
+                            e.key === "Enter" && handleCreateProfile()
+                        }
+                        className="w-full bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
+                        autoFocus
+                    />
+                </div>
+                <div className="flex justify-end gap-3 mt-4">
+                    <Button
+                        onClick={() => {
+                            setNewProfileName("");
+                            setIsCreatingProfile(false);
                         }}
+                        variant="secondary"
+                        size="sm"
+                        className="bg-white/5 hover:bg-white/10"
                     >
-                        <motion.div
-                            initial={{ scale: 0.95, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.95, y: 20 }}
-                            className="bg-ctp-mantle rounded-xl p-6 max-w-md w-full mx-4 shadow-xl border border-white/5"
-                        >
-                            <h3 className="text-base font-medium text-ctp-text mb-2">
-                                Create Profile
-                            </h3>
-                            <p className="text-sm text-ctp-subtext0 mb-4">
-                                Enter a name for your new fast flags profile.
-                            </p>
-                            <div className="space-y-4">
-                                <Input
-                                    placeholder="Profile name"
-                                    value={newProfileName}
-                                    onChange={(e) =>
-                                        setNewProfileName(e.target.value)
-                                    }
-                                    onKeyDown={(e) =>
-                                        e.key === "Enter" &&
-                                        handleCreateProfile()
-                                    }
-                                    className="w-full bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
-                                    autoFocus
-                                />
-                                <div className="flex justify-end gap-3">
-                                    <Button
-                                        onClick={() => {
-                                            setNewProfileName("");
-                                            setIsCreatingProfile(false);
-                                        }}
-                                        variant="secondary"
-                                        size="sm"
-                                        className="bg-white/5 hover:bg-white/10"
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        onClick={handleCreateProfile}
-                                        size="sm"
-                                        className="bg-accent hover:bg-accent/90"
-                                    >
-                                        Create
-                                    </Button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleCreateProfile}
+                        size="sm"
+                        className="bg-accent hover:bg-accent/90"
+                    >
+                        Create
+                    </Button>
+                </div>
+            </Modal>
 
             <Tooltip
                 id="fastflags-tooltip"

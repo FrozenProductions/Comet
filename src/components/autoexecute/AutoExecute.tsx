@@ -23,10 +23,11 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { CodeEditor } from "../workspace/editor";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Header } from "../ui/header";
 import { Tooltip } from "react-tooltip";
 import debounce from "lodash/debounce";
+import { Modal } from "../ui/modal";
 
 export const AutoExecute: React.FC = () => {
     const [files, setFiles] = useState<AutoExecuteFile[]>([]);
@@ -384,50 +385,15 @@ export const AutoExecute: React.FC = () => {
                 </div>
             </div>
 
-            <AnimatePresence>
-                {fileToDelete && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.95 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0.95 }}
-                            className="bg-ctp-mantle rounded-xl p-6 max-w-md w-full mx-4 shadow-xl"
-                        >
-                            <h3 className="text-base font-medium text-ctp-text mb-2">
-                                Delete Script
-                            </h3>
-                            <p className="text-sm text-ctp-subtext0 mb-4">
-                                Are you sure you want to delete "
-                                {fileToDelete.name}"? This action cannot be
-                                undone.
-                            </p>
-                            <div className="flex justify-end gap-3">
-                                <Button
-                                    onClick={cancelDelete}
-                                    variant="secondary"
-                                    size="sm"
-                                    className="bg-ctp-surface0 hover:bg-ctp-surface1"
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    onClick={confirmDelete}
-                                    variant="destructive"
-                                    size="sm"
-                                    className="bg-ctp-red hover:bg-ctp-red/90"
-                                >
-                                    Delete
-                                </Button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <Modal
+                isOpen={!!fileToDelete}
+                onClose={cancelDelete}
+                title="Delete Script"
+                description={`Are you sure you want to delete "${fileToDelete?.name}"? This action cannot be undone.`}
+                onConfirm={confirmDelete}
+                confirmText="Delete"
+                confirmVariant="destructive"
+            />
 
             <Tooltip
                 id="autoexecute-tooltip"
