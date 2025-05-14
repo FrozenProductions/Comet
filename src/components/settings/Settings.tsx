@@ -706,6 +706,15 @@ export const Settings: FC = () => {
                                                 API & DyLib Developer
                                             </div>
                                         </div>
+                                        <div>
+                                            <div className="text-sm font-medium text-ctp-text">
+                                                MaximumADHD
+                                            </div>
+                                            <div className="text-xs text-ctp-subtext0">
+                                                Roblox FFlag Tracking System
+                                                Creator
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </SettingGroup>
