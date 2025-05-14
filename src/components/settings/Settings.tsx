@@ -11,17 +11,17 @@ import {
     Globe,
     Book,
 } from "lucide-react";
-import { Checkbox } from "../ui/Checkbox";
-import { Slider } from "../ui/Slider";
-import { RadioGroup } from "../ui/RadioGroup";
-import { useSettings } from "../../contexts/SettingsContext";
-import { useKeybinds } from "../../contexts/KeybindsContext";
-import { KeybindEditor } from "./KeybindEditor";
+import { Checkbox } from "../ui/checkbox";
+import { Slider } from "../ui/slider";
+import { RadioGroup } from "../ui/radioGroup";
+import { useSettings } from "../../contexts/settingsContext";
+import { useKeybinds } from "../../contexts/keybindsContext";
+import { KeybindEditor } from "./keybindEditor";
 import type { SettingsKey } from "../../types/settings";
-import type { Keybind, KeybindAction } from "../../contexts/KeybindsContext";
+import type { Keybind, KeybindAction } from "../../contexts/keybindsContext";
 import { toast } from "react-hot-toast";
 import { SETTINGS_SECTIONS } from "../../constants/settings";
-import { Header } from "../ui/Header";
+import { Header } from "../ui/header";
 import {
     KEYBIND_CATEGORIES,
     KEYBIND_CATEGORY_MAPPING,

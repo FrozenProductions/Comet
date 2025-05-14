@@ -8,8 +8,8 @@ import {
     Play,
     ExternalLink,
 } from "lucide-react";
-import { useEditor } from "../../contexts/EditorContext";
-import { useSettings } from "../../contexts/SettingsContext";
+import { useEditor } from "../../contexts/editorContext";
+import { useSettings } from "../../contexts/settingsContext";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
 import { toast } from "react-hot-toast";

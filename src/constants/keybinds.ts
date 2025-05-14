@@ -1,4 +1,4 @@
-import type { KeybindAction } from "../contexts/KeybindsContext";
+import type { KeybindAction } from "../contexts/keybindsContext";
 
 export const KEYBIND_CATEGORIES = {
     EDITOR: "Editor Actions",

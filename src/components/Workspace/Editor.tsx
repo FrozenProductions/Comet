@@ -6,14 +6,14 @@ import {
     luaLanguageConfig,
 } from "../../constants/editor";
 import { EDITOR_DEFAULT_OPTIONS } from "../../constants/workspace";
-import { useEditor } from "../../contexts/EditorContext";
-import { useSettings } from "../../contexts/SettingsContext";
-import { useKeybinds } from "../../contexts/KeybindsContext";
+import { useEditor } from "../../contexts/editorContext";
+import { useSettings } from "../../contexts/settingsContext";
+import { useKeybinds } from "../../contexts/keybindsContext";
 import { IntelliSense } from "./IntelliSense";
 import { EditorSearch } from "./EditorSearch";
 import { getSuggestions } from "../../utils/suggestions";
 import * as monaco from "monaco-editor";
-import { Actions } from "../ui/EditorActions";
+import { Actions } from "../ui/editorActions";
 import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
 
 export const CodeEditor: FC<CodeEditorProps> = ({

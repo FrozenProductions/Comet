@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Script } from "../../types/scriptBlox";
 import { useScriptSearch } from "../../hooks/useScriptSearch";
-import { ScriptCard } from "./ScriptCard";
+import { ScriptCard } from "./scriptCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEditor } from "../../contexts/EditorContext";
+import { useEditor } from "../../contexts/editorContext";
 import { ScriptBloxService } from "../../services/scriptBlox";
 import {
     Search,

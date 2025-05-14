@@ -7,8 +7,8 @@ import {
     useState,
     useRef,
 } from "react";
-import { useEditor } from "./EditorContext";
-import { useSettings } from "./SettingsContext";
+import { useEditor } from "./editorContext";
+import { useSettings } from "./settingsContext";
 import { useRoblox } from "../hooks/useRoblox";
 import { useScript } from "../hooks/useScript";
 import { toast } from "react-hot-toast";

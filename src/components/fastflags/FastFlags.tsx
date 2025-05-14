@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useFastFlags } from "../../contexts/FastFlagsContext";
+import { useFastFlags } from "../../contexts/fastFlagsContext";
 import { FlagValidationService } from "../../services/flagValidationService";
 import {
     Flag,
@@ -11,12 +11,12 @@ import {
     ToggleLeft,
     ListChecks,
 } from "lucide-react";
-import { Header } from "../ui/Header";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+import { Header } from "../ui/header";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { FastFlagManager } from "./FastFlagManager";
+import { FastFlagManager } from "./fastFlagManager";
 import { Tooltip } from "react-tooltip";
 
 export const FastFlags: React.FC = () => {

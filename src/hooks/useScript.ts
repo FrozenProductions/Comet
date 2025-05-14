@@ -1,4 +1,4 @@
-import { useEditor } from "../contexts/EditorContext";
+import { useEditor } from "../contexts/editorContext";
 
 export const useScript = () => {
     const { executeScript } = useEditor();

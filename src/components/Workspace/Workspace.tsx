@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { useEditor } from "../../contexts/EditorContext";
+import { useEditor } from "../../contexts/editorContext";
 import { CodeEditor } from "./Editor";
 import { Tabbar } from "./Tabbar";
-import { useSettings } from "../../contexts/SettingsContext";
+import { useSettings } from "../../contexts/settingsContext";
 
 export const Workspace: FC = () => {
     const {

@@ -8,7 +8,7 @@ import {
     Library as LibraryIcon,
     Hash,
 } from "lucide-react";
-import { useSettings } from "../../contexts/SettingsContext";
+import { useSettings } from "../../contexts/settingsContext";
 import type { Suggestion } from "../../utils/suggestions";
 
 const getIconForType = (type: Suggestion["type"]) => {

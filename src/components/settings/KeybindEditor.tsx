@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import type { Keybind, KeybindAction } from "../../contexts/KeybindsContext";
+import type { Keybind, KeybindAction } from "../../contexts/keybindsContext";
 
 type KeybindEditorProps = {
     isOpen: boolean;

@@ -9,9 +9,9 @@ import {
     MoreHorizontal,
     Copy,
 } from "lucide-react";
-import { ContextMenu } from "../ui/ContextMenu";
-import { useSettings } from "../../contexts/SettingsContext";
-import { useEditor } from "../../contexts/EditorContext";
+import { ContextMenu } from "../ui/contextMenu";
+import { useSettings } from "../../contexts/settingsContext";
+import { useEditor } from "../../contexts/editorContext";
 import type { Tab, TabbarProps } from "../../types/workspace";
 
 export const Tabbar: FC<TabbarProps> = ({

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { TrafficLights } from "./TrafficLights";
-import { useConnection } from "../contexts/ConnectionContext";
+import { useConnection } from "../contexts/connectionContext";
 import { Loader2 } from "lucide-react";
 
 export const Topbar: FC = () => {

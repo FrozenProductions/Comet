@@ -7,8 +7,8 @@ import {
     renameAutoExecuteFile,
     openAutoExecuteDirectory,
 } from "../../services/autoExecute";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
     Plus,
     Trash2,
@@ -22,9 +22,9 @@ import {
     FolderOpen,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { CodeEditor } from "../Workspace/Editor";
+import { CodeEditor } from "../workspace/Editor";
 import { motion, AnimatePresence } from "framer-motion";
-import { Header } from "../ui/Header";
+import { Header } from "../ui/header";
 import { Tooltip } from "react-tooltip";
 import debounce from "lodash/debounce";
 
