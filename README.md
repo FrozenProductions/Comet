@@ -22,9 +22,13 @@
 ## <div align="center">✨ Preview</div>
 
 <div align="center">
-  <img src=".github/assets/comet_preview.png" alt="Comet Editor" width="800" />
-  <br/><br/>
-  <img src=".github/assets/comet_settings_preview.png" alt="Comet Settings" width="800" />
+  <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+    <img src=".github/assets/preview_1.png" alt="Comet Editor" width="390" />
+    <img src=".github/assets/preview_2.png" alt="Comet Settings" width="390" />
+    <img src=".github/assets/preview_3.png" alt="Comet Scripts Library" width="390" />
+    <img src=".github/assets/preview_4.png" alt="Comet Auto Execute" width="390" />
+    <img src=".github/assets/preview_5.png" alt="Comet Fast Flags" width="390" />
+  </div>
 </div>
 
 ## <div align="center">🛠️ Tech Stack</div>
