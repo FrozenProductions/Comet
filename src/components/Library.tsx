@@ -1,4 +1,4 @@
-import { ScriptLibrary } from "./scriptslibrary/ScriptLibrary";
+import { ScriptLibrary } from "./scriptsLibrary/scriptLibrary";
 
 export const Library = () => {
     return (

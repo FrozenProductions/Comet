@@ -22,7 +22,7 @@ import {
     FolderOpen,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { CodeEditor } from "../workspace/Editor";
+import { CodeEditor } from "../workspace/editor";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "../ui/header";
 import { Tooltip } from "react-tooltip";

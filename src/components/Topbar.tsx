@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { TrafficLights } from "./TrafficLights";
+import { TrafficLights } from "./trafficLights";
 import { useConnection } from "../contexts/connectionContext";
 import { Loader2 } from "lucide-react";
 
