@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFastFlags } from "../../contexts/FastFlagsContext";
-import { FlagValidationService } from "../../services/FlagValidationService";
+import { FlagValidationService } from "../../services/flagValidationService";
 import {
     Flag,
     Plus,
