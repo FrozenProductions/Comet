@@ -200,17 +200,31 @@ export const ScriptLibrary = () => {
 
         if (isApiDown) {
             return (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <div className="w-16 h-16 mb-4 rounded-xl bg-ctp-surface0 flex items-center justify-center">
-                        <WifiOff size={24} className="text-ctp-red" />
-                    </div>
-                    <div className="text-sm font-medium text-ctp-text">
+                <div className="flex-1 flex flex-col items-center justify-center text-center">
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="w-16 h-16 rounded-xl bg-ctp-surface0 flex items-center justify-center mb-4"
+                    >
+                        <WifiOff size={32} className="text-ctp-red" />
+                    </motion.div>
+                    <motion.div
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="text-sm font-medium text-ctp-text"
+                    >
                         ScriptBlox API is Down
-                    </div>
-                    <div className="text-xs text-ctp-subtext0 mt-1 mb-4">
+                    </motion.div>
+                    <motion.div
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-xs text-ctp-subtext0 mt-1 mb-4"
+                    >
                         We are unable to reach the ScriptBlox servers. Please
                         try again later.
-                    </div>
+                    </motion.div>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -226,24 +240,38 @@ export const ScriptLibrary = () => {
 
         if (!scripts?.length) {
             return (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <div className="w-16 h-16 mb-4 rounded-xl bg-ctp-surface0 flex items-center justify-center">
-                        <Search size={24} className="text-ctp-subtext0" />
-                    </div>
-                    <div className="text-sm font-medium text-ctp-text">
+                <div className="flex-1 flex flex-col items-center justify-center text-center">
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="w-16 h-16 rounded-xl bg-ctp-surface0 flex items-center justify-center mb-4"
+                    >
+                        <Search size={32} className="text-white/50" />
+                    </motion.div>
+                    <motion.div
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="text-sm font-medium text-ctp-text"
+                    >
                         {error
                             ? "An error occurred while fetching scripts"
-                            : searchQuery
-                            ? "No scripts found"
-                            : "Search for scripts"}
-                    </div>
-                    <div className="text-xs text-ctp-subtext0 mt-1">
+                            : isLoading || !searchQuery
+                            ? "Search for scripts"
+                            : "No scripts found"}
+                    </motion.div>
+                    <motion.div
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-xs text-ctp-subtext0 mt-1"
+                    >
                         {error
                             ? error
-                            : searchQuery
-                            ? "Try a different search term or adjust your filters"
-                            : "Enter a search term to find scripts"}
-                    </div>
+                            : isLoading || !searchQuery
+                            ? "Enter a search term to find scripts"
+                            : "Try a different search term or adjust your filters"}
+                    </motion.div>
                     {error && (
                         <motion.button
                             whileHover={{ scale: 1.05 }}
@@ -513,7 +541,9 @@ export const ScriptLibrary = () => {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto">{renderContent()}</div>
+            <div className="flex-1 overflow-auto">
+                <div className="h-full flex flex-col">{renderContent()}</div>
+            </div>
 
             {totalPages > 1 && (
                 <div className="p-4 border-t border-white/5 flex items-center justify-center gap-2">
