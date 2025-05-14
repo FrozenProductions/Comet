@@ -8,8 +8,8 @@ import {
     Check,
     AlertCircle,
     Loader2,
-    ToggleLeft,
-    ListChecks,
+    User,
+    Users,
 } from "lucide-react";
 import { Header } from "../ui/header";
 import { Button } from "../ui/button";
@@ -136,7 +136,7 @@ export const FastFlags: React.FC = () => {
             <div className="h-full flex flex-col bg-ctp-base">
                 <Header
                     title="Fast Flags"
-                    icon={<ToggleLeft size={16} className="text-accent" />}
+                    icon={<Flag size={16} className="text-accent" />}
                     description="Manage roblox fast flags"
                 />
                 <div className="flex-1 flex items-center justify-center">
@@ -154,7 +154,7 @@ export const FastFlags: React.FC = () => {
             <div className="h-full flex flex-col bg-ctp-base">
                 <Header
                     title="Fast Flags"
-                    icon={<ToggleLeft size={16} className="text-accent" />}
+                    icon={<Flag size={16} className="text-accent" />}
                     description="Manage fast flags and variables"
                 />
                 <div className="flex-1 flex items-center justify-center text-ctp-red">
@@ -176,7 +176,7 @@ export const FastFlags: React.FC = () => {
         <div className="h-full flex flex-col bg-ctp-base">
             <Header
                 title="Fast Flags"
-                icon={<ToggleLeft size={16} className="text-accent" />}
+                icon={<Flag size={16} className="text-accent" />}
                 description="Manage roblox fast flags"
             />
 
@@ -184,7 +184,7 @@ export const FastFlags: React.FC = () => {
                 <div className="w-56 border-r border-white/5 bg-ctp-mantle flex flex-col">
                     <div className="p-3 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <ListChecks size={16} className="text-white/50" />
+                            <Users size={16} className="text-white/50" />
                             <span className="text-sm font-medium">
                                 Profiles
                             </span>
@@ -246,9 +246,9 @@ export const FastFlags: React.FC = () => {
                                             transition={{ duration: 0.2 }}
                                         />
                                     )}
-                                    <Flag
+                                    <User
                                         size={14}
-                                        className={`stroke-[2.5] shrink-0 ${
+                                        className={`stroke-[2.5] shrink-0 ml-1 ${
                                             activeProfileId === profile.id
                                                 ? "text-accent"
                                                 : "text-white/50"

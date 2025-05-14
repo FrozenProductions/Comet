@@ -7,9 +7,9 @@ import {
     Edit2,
     Save,
     X,
-    Flag,
     Trash2,
     AlertTriangle,
+    User,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -77,7 +77,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
         <div className="flex-1 flex flex-col bg-ctp-base">
             <div className="h-14 flex items-center justify-between px-4 border-b border-white/5">
                 <div className="flex items-center gap-2">
-                    <Flag size={16} className="text-white/50" />
+                    <User size={16} className="text-white/50" />
                     <h3 className="text-sm font-medium text-ctp-text">
                         {profile.name}
                     </h3>

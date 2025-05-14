@@ -20,6 +20,7 @@ import {
     Loader2,
     Code2,
     FolderOpen,
+    Syringe,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { CodeEditor } from "../workspace/editor";
@@ -173,7 +174,7 @@ export const AutoExecute: React.FC = () => {
         <div className="h-full flex flex-col bg-ctp-base">
             <Header
                 title="Auto Execute"
-                icon={<Code2 size={16} className="text-accent" />}
+                icon={<Syringe size={16} className="text-accent" />}
                 description="Scripts in this folder will be executed automatically"
                 actions={
                     <Button
@@ -222,7 +223,7 @@ export const AutoExecute: React.FC = () => {
                                 </div>
                             </div>
                         ) : files.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center h-32 text-ctp-subtext0">
+                            <div className="flex flex-col items-center justify-center h-full min-h-32 text-ctp-subtext0">
                                 <AlertCircle
                                     size={20}
                                     className="stroke-[2] mb-2"
