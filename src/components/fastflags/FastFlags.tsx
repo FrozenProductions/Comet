@@ -35,6 +35,10 @@ export const FastFlags: React.FC = () => {
     );
     const [isCreatingProfile, setIsCreatingProfile] = useState(false);
     const [invalidFlags, setInvalidFlags] = useState<string[]>([]);
+    const [profileToDelete, setProfileToDelete] = useState<{
+        id: string;
+        name: string;
+    } | null>(null);
 
     const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
 
@@ -81,6 +85,7 @@ export const FastFlags: React.FC = () => {
             if (selectedProfileId === profileId) {
                 setSelectedProfileId(null);
             }
+            setProfileToDelete(null);
             toast.success("Profile deleted successfully");
         } catch (error) {
             toast.error("Failed to delete profile");
@@ -270,7 +275,10 @@ export const FastFlags: React.FC = () => {
                                         <Button
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleDeleteProfile(profile.id);
+                                                setProfileToDelete({
+                                                    id: profile.id,
+                                                    name: profile.name,
+                                                });
                                             }}
                                             variant="destructive"
                                             size="sm"
@@ -382,6 +390,16 @@ export const FastFlags: React.FC = () => {
                     </Button>
                 </div>
             </Modal>
+
+            <Modal
+                isOpen={!!profileToDelete}
+                onClose={() => setProfileToDelete(null)}
+                title="Delete Profile"
+                description={`Are you sure you want to delete "${profileToDelete?.name}"? This action cannot be undone.`}
+                onConfirm={() => handleDeleteProfile(profileToDelete!.id)}
+                confirmText="Delete"
+                confirmVariant="destructive"
+            />
 
             <Tooltip
                 id="fastflags-tooltip"
