@@ -557,6 +557,7 @@ fn main() {
             activate_fast_flags_profile,
             validate_flags,
             refresh_flag_validation_cache,
+            fast_flags::cleanup_fast_flags,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

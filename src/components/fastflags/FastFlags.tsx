@@ -19,6 +19,7 @@ import { motion } from "framer-motion";
 import { FastFlagManager } from "./fastFlagManager";
 import { Tooltip } from "react-tooltip";
 import { Modal } from "../ui/modal";
+import { invoke } from "@tauri-apps/api/tauri";
 
 export const FastFlags: React.FC = () => {
     const {
@@ -84,6 +85,22 @@ export const FastFlags: React.FC = () => {
             await deleteProfile(profileId);
             if (selectedProfileId === profileId) {
                 setSelectedProfileId(null);
+            }
+            if (activeProfileId === profileId) {
+                try {
+                    const response = await invoke<{
+                        success: boolean;
+                        error?: string;
+                    }>("cleanup_fast_flags");
+                    if (response.success) {
+                        toast.success("Fast flags file cleaned up");
+                    } else {
+                        throw new Error(response.error || "Unknown error");
+                    }
+                } catch (error) {
+                    console.error("Failed to clean up fast flags file:", error);
+                    toast.error("Failed to clean up fast flags file");
+                }
             }
             setProfileToDelete(null);
             toast.success("Profile deleted successfully");

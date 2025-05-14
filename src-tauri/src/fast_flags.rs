@@ -85,4 +85,38 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
         .map_err(|e| format!("Failed to write flags file: {}", e))?;
 
     Ok(())
+}
+
+#[tauri::command]
+pub async fn cleanup_fast_flags() -> FastFlagsResponse {
+    let flags_path = match get_fast_flags_path() {
+        Ok(path) => path,
+        Err(e) => return FastFlagsResponse {
+            success: false,
+            flags: None,
+            error: Some(e),
+        },
+    };
+
+    match ensure_client_settings_dir() {
+        Ok(_) => (),
+        Err(e) => return FastFlagsResponse {
+            success: false,
+            flags: None,
+            error: Some(e),
+        },
+    }
+
+    match fs::write(&flags_path, "{}") {
+        Ok(_) => FastFlagsResponse {
+            success: true,
+            flags: None,
+            error: None,
+        },
+        Err(e) => FastFlagsResponse {
+            success: false,
+            flags: None,
+            error: Some(format!("Failed to write flags file: {}", e)),
+        },
+    }
 } 
