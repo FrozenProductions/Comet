@@ -1,3 +1,6 @@
+> [!CAUTION]
+> Using [Roblox](https://www.roblox.com) executors may result in your account being banned. Use at your own risk. The developers are not responsible for any consequences.
+
 # <div align="center">Comet</div>
 
 <div align="center">
@@ -24,12 +27,6 @@
   <img src=".github/assets/comet_settings_preview.png" alt="Comet Settings" width="800" />
 </div>
 
-## <div align="center">⚠️ Warning</div>
-
-<div align="center">
-  <strong>Using <a href="https://www.roblox.com">Roblox</a> executors may result in your account being banned. Use at your own risk. The developers are not responsible for any consequences.</strong>
-</div>
-
 ## <div align="center">🛠️ Tech Stack</div>
 
 -   **Framework**: [Tauri](https://tauri.app) - Lightweight, secure native apps
@@ -40,7 +37,10 @@
 
 ## <div align="center">🔌 Hydrogen Integration</div>
 
-Comet integrates with Hydrogen's official API through a Rust-based wrapper. The implementation can be found in:
+<div align="center">
+    Comet integrates with Hydrogen's official API through a Rust-based wrapper. The implementation can be found in:
+</div>
+<br>
 
 -   [`src-tauri/src/main.rs`](https://github.com/FrozenProductions/Comet/blob/main/src-tauri/src/main.rs) - API wrapper implementation
 -   [`public/resources/api.js`](https://github.com/FrozenProductions/Comet/blob/main/public/resources/api.js) - Official Hydrogen API
