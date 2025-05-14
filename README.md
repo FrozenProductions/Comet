@@ -64,6 +64,18 @@ npm run tauri:dev
 npm run tauri:build:universal
 ```
 
+## <div align="center">👥 Credits</div>
+
+<div align="center">
+
+|                                                                    Avatar                                                                    | Name                   | Role                                 |
+| :------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------- | :----------------------------------- |
+| <a href="https://github.com/FrozenProductions"><img src="https://github.com/FrozenProductions.png" width="50" alt="Frozen Productions"/></a> | **Frozen Productions** | Comet Developer                      |
+|               <a href="https://github.com/xGladius"><img src="https://github.com/xGladius.png" width="50" alt="xGladius"/></a>               | **xGladius**           | API & DyLib Developer                |
+|          <a href="https://github.com/MaximumADHD"><img src="https://github.com/MaximumADHD.png" width="50" alt="MaximumADHD"/></a>           | **MaximumADHD**        | Roblox FFlag Tracking System Creator |
+
+</div>
+
 ## <div align="center">📄 License</div>
 
 <div align="center">
