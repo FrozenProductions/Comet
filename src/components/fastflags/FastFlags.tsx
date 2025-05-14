@@ -205,7 +205,7 @@ export const FastFlags: React.FC = () => {
 
                     <div className="flex-1 overflow-y-auto px-1.5 pb-2 space-y-1">
                         {profiles.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center h-32 text-ctp-subtext0">
+                            <div className="h-full flex flex-col items-center justify-center text-ctp-subtext0">
                                 <AlertCircle
                                     size={20}
                                     className="stroke-[2] mb-2"
