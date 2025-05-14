@@ -372,15 +372,29 @@ export const AutoExecute: React.FC = () => {
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-full text-ctp-subtext0">
-                            <div className="w-16 h-16 rounded-xl bg-ctp-mantle flex items-center justify-center mb-4">
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="w-16 h-16 rounded-xl bg-ctp-mantle flex items-center justify-center mb-4"
+                            >
                                 <FileCode size={32} className="text-white/50" />
-                            </div>
-                            <div className="text-sm font-medium text-ctp-text">
+                            </motion.div>
+                            <motion.div
+                                initial={{ y: 10, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.1 }}
+                                className="text-sm font-medium text-ctp-text"
+                            >
                                 No script selected
-                            </div>
-                            <div className="text-xs mt-1 text-ctp-subtext0">
+                            </motion.div>
+                            <motion.div
+                                initial={{ y: 10, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="text-xs mt-1 text-ctp-subtext0"
+                            >
                                 Select a script from the sidebar to edit
-                            </div>
+                            </motion.div>
                         </div>
                     )}
                 </div>
