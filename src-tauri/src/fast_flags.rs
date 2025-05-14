@@ -119,4 +119,10 @@ pub async fn cleanup_fast_flags() -> FastFlagsResponse {
             error: Some(format!("Failed to write flags file: {}", e)),
         },
     }
+}
+
+#[tauri::command]
+pub async fn open_fast_flags_directory() -> Result<(), String> {
+    let path = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings");
+    crate::open_directory(path)
 } 

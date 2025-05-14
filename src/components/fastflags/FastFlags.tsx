@@ -10,6 +10,7 @@ import {
     Loader2,
     User,
     Users,
+    FolderOpen,
 } from "lucide-react";
 import { Header } from "../ui/header";
 import { Button } from "../ui/button";
@@ -131,6 +132,15 @@ export const FastFlags: React.FC = () => {
         }
     };
 
+    const handleOpenDirectory = async () => {
+        try {
+            await invoke("open_fast_flags_directory");
+        } catch (error) {
+            console.error("Failed to open directory:", error);
+            toast.error("Failed to open directory");
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="h-full flex flex-col bg-ctp-base">
@@ -178,6 +188,19 @@ export const FastFlags: React.FC = () => {
                 title="Fast Flags"
                 icon={<Flag size={16} className="text-accent" />}
                 description="Manage roblox fast flags"
+                actions={
+                    <Button
+                        onClick={handleOpenDirectory}
+                        size="sm"
+                        variant="secondary"
+                        data-tooltip-id="fastflags-tooltip"
+                        data-tooltip-content="Open Directory"
+                        className="inline-flex items-center justify-center gap-1.5 bg-ctp-surface0 hover:bg-ctp-surface1"
+                    >
+                        <FolderOpen size={14} className="stroke-[2.5]" />
+                        Open Directory
+                    </Button>
+                }
             />
 
             <div className="flex-1 flex overflow-hidden">

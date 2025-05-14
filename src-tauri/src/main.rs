@@ -7,6 +7,8 @@ use std::thread;
 use serde::{Serialize, Deserialize};
 use reqwest::blocking::Client as BlockingClient;
 use std::process::Command;
+use std::fs;
+use std::path::PathBuf;
 
 const HOST: &str = "127.0.0.1";
 const MIN_PORT: u16 = 6969;
@@ -487,6 +489,19 @@ async fn refresh_flag_validation_cache(state: State<'_, AppState>) -> Result<(),
     Ok(())
 }
 
+pub fn open_directory(path: PathBuf) -> Result<(), String> {
+    if !path.exists() {
+        fs::create_dir_all(&path).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
+
+    Command::new("open")
+        .arg(path)
+        .spawn()
+        .map_err(|e| format!("Failed to open directory: {}", e))?;
+
+    Ok(())
+}
+
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
@@ -558,6 +573,7 @@ fn main() {
             validate_flags,
             refresh_flag_validation_cache,
             fast_flags::cleanup_fast_flags,
+            fast_flags::open_fast_flags_directory,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

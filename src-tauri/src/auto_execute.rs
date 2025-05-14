@@ -2,13 +2,13 @@ use std::fs::{self, File};
 use std::io::Read;
 use std::path::Path;
 use serde::{Deserialize, Serialize};
-use std::process::Command;
+use dirs;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AutoExecuteFile {
-    name: String,
-    content: String,
-    path: String,
+    pub name: String,
+    pub content: String,
+    pub path: String,
 }
 
 fn read_file_content(path: &Path) -> Result<String, String> {
@@ -107,15 +107,5 @@ pub fn rename_auto_execute_file(old_name: String, new_name: String) -> Result<()
 pub fn open_auto_execute_directory() -> Result<(), String> {
     let home = dirs::home_dir().ok_or("Could not find home directory")?;
     let auto_execute_dir = home.join("Hydrogen/autoexecute");
-
-    if !auto_execute_dir.exists() {
-        fs::create_dir_all(&auto_execute_dir).map_err(|e| e.to_string())?;
-    }
-
-    Command::new("open")
-        .arg(auto_execute_dir)
-        .spawn()
-        .map_err(|e| e.to_string())?;
-
-    Ok(())
+    crate::open_directory(auto_execute_dir)
 } 
