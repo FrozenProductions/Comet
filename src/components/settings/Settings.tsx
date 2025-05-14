@@ -703,7 +703,7 @@ export const Settings: FC = () => {
                                                 xGladius
                                             </div>
                                             <div className="text-xs text-ctp-subtext0">
-                                                API & DyLib Developer
+                                                Hydrogen Developer
                                             </div>
                                         </div>
                                         <div>
