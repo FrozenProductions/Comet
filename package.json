@@ -19,6 +19,7 @@
         "@monaco-editor/react": "^4.7.0",
         "@tauri-apps/api": "^1.5.3",
         "@types/node": "^22.15.14",
+        "@types/uuid": "^10.0.0",
         "clsx": "^2.1.0",
         "framer-motion": "^12.4.3",
         "lodash": "^4.17.21",
@@ -28,7 +29,8 @@
         "react-dom": "^18.2.0",
         "react-hot-toast": "^2.5.2",
         "react-tooltip": "^5.28.1",
-        "tailwind-merge": "^2.2.1"
+        "tailwind-merge": "^2.2.1",
+        "uuid": "^11.1.0"
     },
     "devDependencies": {
         "@eslint/js": "^8.56.0",

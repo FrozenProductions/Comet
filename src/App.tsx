@@ -11,6 +11,7 @@ import { KeybindsProvider, useKeybinds } from "./contexts/KeybindsContext";
 import { Toaster } from "./components/ui/Toast";
 import { Library } from "./components/Library";
 import { FastFlags } from "./components/fastflags/FastFlags";
+import { FastFlagsProvider } from "./contexts/FastFlagsContext";
 import { useSettings } from "./contexts/SettingsContext";
 import { CommandPalette } from "./components/ui/CommandPalette";
 import "react-tooltip/dist/react-tooltip.css";
@@ -73,8 +74,10 @@ const App: FC = () => {
                 <EditorProvider>
                     <SettingsProvider>
                         <KeybindsProvider>
-                            <AppContent />
-                            <Toaster />
+                            <FastFlagsProvider>
+                                <AppContent />
+                                <Toaster />
+                            </FastFlagsProvider>
                         </KeybindsProvider>
                     </SettingsProvider>
                 </EditorProvider>

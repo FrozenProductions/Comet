@@ -92,6 +92,7 @@ impl ConnectionManager {
 struct AppState {
     connection: Arc<Mutex<ConnectionManager>>,
     status: Arc<Mutex<ConnectionStatus>>,
+    flag_validator: Arc<FlagValidator>,
 }
 
 impl AppState {
@@ -104,6 +105,7 @@ impl AppState {
                 current_port: MIN_PORT,
                 is_connecting: false,
             })),
+            flag_validator: Arc::new(FlagValidator::new()),
         }
     }
 
@@ -313,7 +315,6 @@ pub struct ScriptSearchParams {
 async fn search_scripts(params: ScriptSearchParams) -> Result<String, String> {
     let client = reqwest::Client::new();
     let mut url = reqwest::Url::parse("https://scriptblox.com/api/script/search").map_err(|e| {
-        println!("URL parse error: {:?}", e);
         e.to_string()
     })?;
 
@@ -350,8 +351,6 @@ async fn search_scripts(params: ScriptSearchParams) -> Result<String, String> {
         url.query_pairs_mut().append_pair("strict", &strict.to_string());
     }
 
-    println!("Sending request to URL: {}", url);
-
     let response = match client
         .get(url)
         .header("Accept", "application/json")
@@ -361,7 +360,6 @@ async fn search_scripts(params: ScriptSearchParams) -> Result<String, String> {
     {
         Ok(resp) => resp,
         Err(e) => {
-            println!("Request error: {:?}", e);
             if e.is_timeout() {
                 return Err("Request timed out".to_string());
             }
@@ -375,25 +373,14 @@ async fn search_scripts(params: ScriptSearchParams) -> Result<String, String> {
         }
     };
 
-    println!("Response status: {}", response.status());
-    println!("Response headers: {:#?}", response.headers());
-
     let status = response.status();
     let response_text = response.text().await.map_err(|e| {
-        println!("Failed to read response body: {:?}", e);
         format!("Failed to read response: {}", e)
     })?;
 
     if !status.is_success() {
-        println!("Error response body: {}", response_text);
         return Err(format!("API error: {} - {}", status, response_text));
-    }
-
-    println!("Response body length: {} bytes", response_text.len());
-    if response_text.len() < 1000 {
-        println!("Response body: {}", response_text);
-    }
-    
+    }    
     Ok(response_text)
 }
 
@@ -402,8 +389,6 @@ async fn get_script_content(slug: String) -> Result<String, String> {
     let client = reqwest::Client::new();
     let url = format!("https://scriptblox.com/api/script/{}", slug);
     
-    println!("Fetching script content from: {}", url);
-
     let response = match client
         .get(&url)
         .header("Accept", "application/json")
@@ -413,21 +398,16 @@ async fn get_script_content(slug: String) -> Result<String, String> {
     {
         Ok(resp) => resp,
         Err(e) => {
-            println!("Request error: {:?}", e);
             return Err(format!("Network error: {}", e));
         }
     };
 
-    println!("Response status: {}", response.status());
-
     let status = response.status();
     let response_text = response.text().await.map_err(|e| {
-        println!("Failed to read response body: {:?}", e);
         format!("Failed to read response: {}", e)
     })?;
 
     if !status.is_success() {
-        println!("Error response body: {}", response_text);
         return Err(format!("API error: {} - {}", status, response_text));
     }
     
@@ -436,6 +416,14 @@ async fn get_script_content(slug: String) -> Result<String, String> {
 
 mod auto_execute;
 mod tabs;
+mod fast_flags;
+mod fast_flags_profiles;
+mod active_profile;
+mod flag_validator;
+
+use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
+use active_profile::ActiveProfileManager;
+use flag_validator::FlagValidator;
 
 #[tauri::command]
 async fn open_roblox() -> Result<(), String> {
@@ -448,6 +436,57 @@ async fn open_roblox() -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+async fn load_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(Vec<FastFlagsProfile>, Option<String>), String> {
+    let profile_manager = FastFlagsProfileManager::new(&app_handle);
+    let active_manager = ActiveProfileManager::new(&app_handle);
+    let profiles = profile_manager.load_profiles()?;
+    let active_id = active_manager.get_active_profile_id();
+    Ok((profiles, active_id))
+}
+
+#[tauri::command]
+async fn save_fast_flags_profile(app_handle: tauri::AppHandle, profile: FastFlagsProfile) -> Result<(), String> {
+    let profile_manager = FastFlagsProfileManager::new(&app_handle);
+    profile_manager.save_profile(profile, &app_handle).await
+}
+
+#[tauri::command]
+async fn delete_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: String) -> Result<(), String> {
+    let profile_manager = FastFlagsProfileManager::new(&app_handle);
+    let active_manager = ActiveProfileManager::new(&app_handle);
+    
+    if let Some(active_id) = active_manager.get_active_profile_id() {
+        if active_id == profile_id {
+            active_manager.clear_active_profile()?;
+        }
+    }
+    
+    profile_manager.delete_profile(&profile_id)
+}
+
+#[tauri::command]
+async fn activate_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: String) -> Result<FastFlagsProfile, String> {
+    let profile_manager = FastFlagsProfileManager::new(&app_handle);
+    let active_manager = ActiveProfileManager::new(&app_handle);
+    
+    let profile = profile_manager.activate_profile(&profile_id).await?;
+    active_manager.set_active_profile_id(&profile_id)?;
+    
+    Ok(profile)
+}
+
+#[tauri::command]
+async fn validate_flags(flags: Vec<String>, state: State<'_, AppState>) -> Result<Vec<String>, String> {
+    Ok(state.flag_validator.validate_flags(&flags).await)
+}
+
+#[tauri::command]
+async fn refresh_flag_validation_cache(state: State<'_, AppState>) -> Result<(), String> {
+    state.flag_validator.refresh_cache().await;
+    Ok(())
+}
+
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
@@ -456,6 +495,7 @@ fn main() {
         .manage(app_state)
         .setup(|app| {
             let window = app.get_window("main").unwrap();
+            let state = app.state::<AppState>();
             
             thread::spawn(move || {
                 loop {
@@ -478,6 +518,11 @@ fn main() {
 
                     thread::sleep(CHECK_INTERVAL);
                 }
+            });
+
+            let flag_validator = state.flag_validator.clone();
+            tauri::async_runtime::spawn(async move {
+                flag_validator.refresh_cache().await;
             });
 
             Ok(())
@@ -506,6 +551,12 @@ fn main() {
             auto_execute::rename_auto_execute_file,
             auto_execute::open_auto_execute_directory,
             open_roblox,
+            load_fast_flags_profiles,
+            save_fast_flags_profile,
+            delete_fast_flags_profile,
+            activate_fast_flags_profile,
+            validate_flags,
+            refresh_flag_validation_cache,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
