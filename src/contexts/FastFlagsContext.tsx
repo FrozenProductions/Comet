@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { FastFlagsProfile, FastFlagsState } from "../types/FastFlags";
-import { FastFlagsProfileService } from "../services/FastFlagsProfileService";
+import { FastFlagsProfile, FastFlagsState } from "../types/fastFlags";
+import { FastFlagsProfileService } from "../services/fastFlagsProfileService";
 
 const initialState: FastFlagsState = {
     profiles: [],

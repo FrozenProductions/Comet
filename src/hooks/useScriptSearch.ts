@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Script, ScriptSearchParams } from "../types/scriptblox";
-import { ScriptBloxService } from "../services/scriptblox";
+import { Script, ScriptSearchParams } from "../types/scriptBlox";
+import { ScriptBloxService } from "../services/scriptBlox";
 
 interface ScriptSearchState {
     scripts: Script[];

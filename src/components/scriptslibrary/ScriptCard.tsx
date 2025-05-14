@@ -1,4 +1,4 @@
-import { Script } from "../../types/scriptblox";
+import { Script } from "../../types/scriptBlox";
 import { motion } from "framer-motion";
 import { Eye, Shield, Globe, AlertTriangle, Key, Code } from "lucide-react";
 

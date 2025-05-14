@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { FastFlagsProfile } from "../types/FastFlags";
+import { FastFlagsProfile } from "../types/fastFlags";
 import { v4 as uuidv4 } from "uuid";
 
 export interface LoadProfilesResponse {

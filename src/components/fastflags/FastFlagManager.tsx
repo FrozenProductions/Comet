@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FastFlagsProfile } from "../../types/FastFlags";
+import { FastFlagsProfile } from "../../types/fastFlags";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import {

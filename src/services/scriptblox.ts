@@ -2,7 +2,7 @@ import {
     ScriptSearchParams,
     ScriptSearchResponse,
     ScriptDetailResponse,
-} from "../types/scriptblox";
+} from "../types/scriptBlox";
 import { invoke } from "@tauri-apps/api/tauri";
 
 export class ScriptBloxService {

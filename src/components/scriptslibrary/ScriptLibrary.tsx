@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Script } from "../../types/scriptblox";
+import { Script } from "../../types/scriptBlox";
 import { useScriptSearch } from "../../hooks/useScriptSearch";
 import { ScriptCard } from "./ScriptCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEditor } from "../../contexts/EditorContext";
-import { ScriptBloxService } from "../../services/scriptblox";
+import { ScriptBloxService } from "../../services/scriptBlox";
 import {
     Search,
     SlidersHorizontal,
