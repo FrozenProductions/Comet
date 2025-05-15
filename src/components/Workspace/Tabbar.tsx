@@ -112,9 +112,14 @@ export const Tabbar: FC<TabbarProps> = ({
     };
 
     const handleRename = (tabId: string) => {
-        if (editValue.trim()) {
-            onTabRename(tabId, editValue.trim());
+        let newName = editValue.trim();
+        if (!newName) return setEditingTab(null);
+
+        if (!newName.toLowerCase().endsWith(".lua")) {
+            newName += ".lua";
         }
+
+        onTabRename(tabId, newName);
         setEditingTab(null);
     };
 
@@ -164,8 +169,15 @@ export const Tabbar: FC<TabbarProps> = ({
                                 ref={inputRef}
                                 type="text"
                                 value={editValue}
-                                maxLength={15}
-                                onChange={(e) => setEditValue(e.target.value)}
+                                maxLength={30}
+                                placeholder="script.lua"
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    if (value.toLowerCase().endsWith(".lua")) {
+                                        value = value.slice(0, -4);
+                                    }
+                                    setEditValue(value);
+                                }}
                                 onBlur={() => handleRename(activeTab)}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
@@ -229,10 +241,22 @@ export const Tabbar: FC<TabbarProps> = ({
                                                 ref={inputRef}
                                                 type="text"
                                                 value={editValue}
-                                                maxLength={15}
-                                                onChange={(e) =>
-                                                    setEditValue(e.target.value)
-                                                }
+                                                maxLength={30}
+                                                placeholder="script.lua"
+                                                onChange={(e) => {
+                                                    let value = e.target.value;
+                                                    if (
+                                                        value
+                                                            .toLowerCase()
+                                                            .endsWith(".lua")
+                                                    ) {
+                                                        value = value.slice(
+                                                            0,
+                                                            -4
+                                                        );
+                                                    }
+                                                    setEditValue(value);
+                                                }}
                                                 onBlur={() =>
                                                     handleRename(tab.id)
                                                 }
@@ -380,10 +404,22 @@ export const Tabbar: FC<TabbarProps> = ({
                                                 ref={inputRef}
                                                 type="text"
                                                 value={editValue}
-                                                maxLength={15}
-                                                onChange={(e) =>
-                                                    setEditValue(e.target.value)
-                                                }
+                                                maxLength={30}
+                                                placeholder="script.lua"
+                                                onChange={(e) => {
+                                                    let value = e.target.value;
+                                                    if (
+                                                        value
+                                                            .toLowerCase()
+                                                            .endsWith(".lua")
+                                                    ) {
+                                                        value = value.slice(
+                                                            0,
+                                                            -4
+                                                        );
+                                                    }
+                                                    setEditValue(value);
+                                                }}
                                                 onBlur={() =>
                                                     handleRename(tab.id)
                                                 }

@@ -42,10 +42,40 @@ fn read_file_content(path: &Path) -> Result<String, String> {
 }
 
 fn sanitize_filename(name: &str) -> String {
-    let mut sanitized = name.replace(|c: char| !c.is_alphanumeric() && c != '.' && c != '_' && c != '-', "_");
-    if !sanitized.ends_with(".lua") {
-        sanitized.push_str(".lua");
+    let mut name = name.trim().to_string();
+    
+    if name.to_lowercase().ends_with(".lua") {
+        name = name[..name.len() - 4].to_string();
     }
+
+    let sanitized = name
+        .chars()
+        .map(|c| {
+            if c.is_alphanumeric() || c == ' ' || c == '_' || c == '-' {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect::<String>();
+
+    let sanitized = sanitized
+        .split_whitespace()
+        .collect::<Vec<&str>>()
+        .join(" ");
+
+    let mut sanitized = if sanitized.len() > 100 {
+        sanitized.chars().take(100).collect::<String>().trim().to_string()
+    } else {
+        sanitized.trim().to_string()
+    };
+
+    if !sanitized.is_empty() {
+        sanitized.push_str(".lua");
+    } else {
+        sanitized = "untitled.lua".to_string();
+    }
+
     sanitized
 }
 
