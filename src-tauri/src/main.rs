@@ -480,7 +480,7 @@ async fn activate_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: S
 
 #[tauri::command]
 async fn validate_flags(flags: Vec<String>, state: State<'_, AppState>) -> Result<Vec<String>, String> {
-    Ok(state.flag_validator.validate_flags(&flags).await)
+    state.flag_validator.validate_flags(&flags).await
 }
 
 #[tauri::command]

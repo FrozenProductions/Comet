@@ -27,16 +27,20 @@ impl FlagValidator {
         }
     }
 
-    pub async fn validate_flags(&self, flags: &[String]) -> Vec<String> {
+    pub async fn validate_flags(&self, flags: &[String]) -> Result<Vec<String>, String> {
         let cache = self.cache.read().await;
-        let mut invalid_flags = Vec::new();
+        
+        if cache.mac.is_none() && cache.client.is_none() {
+            return Err("Could not fetch valid fast flags list".to_string());
+        }
 
+        let mut invalid_flags = Vec::new();
         for flag in flags {
             let is_valid = match (&cache.mac, &cache.client) {
                 (Some(mac), Some(client)) => mac.contains(flag) || client.contains(flag),
                 (Some(mac), None) => mac.contains(flag),
                 (None, Some(client)) => client.contains(flag),
-                (None, None) => true,
+                (None, None) => unreachable!(),
             };
 
             if !is_valid {
@@ -44,7 +48,7 @@ impl FlagValidator {
             }
         }
 
-        invalid_flags
+        Ok(invalid_flags)
     }
 
     pub async fn refresh_cache(&self) {

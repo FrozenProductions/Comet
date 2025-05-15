@@ -37,6 +37,7 @@ export const FastFlags: React.FC = () => {
     );
     const [isCreatingProfile, setIsCreatingProfile] = useState(false);
     const [invalidFlags, setInvalidFlags] = useState<string[]>([]);
+    const [validationError, setValidationError] = useState<string | null>(null);
     const [profileToDelete, setProfileToDelete] = useState<{
         id: string;
         name: string;
@@ -51,6 +52,7 @@ export const FastFlags: React.FC = () => {
     const validateSelectedProfileFlags = async () => {
         if (!selectedProfile) {
             setInvalidFlags([]);
+            setValidationError(null);
             return;
         }
 
@@ -60,8 +62,11 @@ export const FastFlags: React.FC = () => {
                 flags
             );
             setInvalidFlags(invalidFlags);
+            setValidationError(null);
         } catch (error) {
             console.error("Failed to validate flags:", error);
+            setValidationError("Could not fetch valid fast flags list");
+            setInvalidFlags([]);
         }
     };
 
@@ -356,6 +361,10 @@ export const FastFlags: React.FC = () => {
                             handleUpdateFlag(selectedProfile.id, key, value)
                         }
                         invalidFlags={invalidFlags}
+                        validationError={validationError}
+                        validateSelectedProfileFlags={
+                            validateSelectedProfileFlags
+                        }
                     />
                 ) : (
                     <div className="flex-1 flex items-center justify-center text-ctp-subtext0">

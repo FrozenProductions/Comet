@@ -10,27 +10,34 @@ import {
     Trash2,
     AlertTriangle,
     User,
+    RefreshCw,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Modal } from "../ui/modal";
+import { invoke } from "@tauri-apps/api/tauri";
 
 interface FastFlagManagerProps {
     profile: FastFlagsProfile;
     onUpdateFlag: (key: string, value: string | null) => Promise<void>;
     invalidFlags: string[];
+    validationError?: string | null;
+    validateSelectedProfileFlags: () => Promise<void>;
 }
 
 export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     profile,
     onUpdateFlag,
     invalidFlags,
+    validationError,
+    validateSelectedProfileFlags,
 }) => {
     const [newFlagKey, setNewFlagKey] = useState("");
     const [newFlagValue, setNewFlagValue] = useState("");
     const [editingFlagId, setEditingFlagId] = useState<string | null>(null);
     const [editValue, setEditValue] = useState("");
     const [flagToDelete, setFlagToDelete] = useState<string | null>(null);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const handleAddFlag = async () => {
         if (newFlagKey.trim() === "") {
@@ -73,6 +80,18 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
         setEditValue(String(value));
     };
 
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        try {
+            await invoke("refresh_flag_validation_cache");
+            await validateSelectedProfileFlags();
+        } catch (error) {
+            console.error("Failed to refresh flags:", error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
+
     return (
         <div className="flex-1 flex flex-col bg-ctp-base">
             <div className="h-14 flex items-center justify-between px-4 border-b border-white/5">
@@ -113,6 +132,29 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
+                {validationError && (
+                    <div className="mb-4 flex items-center justify-between p-3 rounded-lg bg-ctp-surface0 border border-ctp-yellow/20">
+                        <div className="flex items-center gap-2 text-ctp-yellow">
+                            <AlertTriangle size={16} className="shrink-0" />
+                            <span className="text-sm font-medium">
+                                {validationError}
+                            </span>
+                        </div>
+                        <Button
+                            onClick={handleRefresh}
+                            size="sm"
+                            disabled={isRefreshing}
+                            className="h-7 px-2 bg-ctp-yellow/10 hover:bg-ctp-yellow/20 text-ctp-yellow disabled:opacity-50"
+                        >
+                            <RefreshCw
+                                size={14}
+                                className={`stroke-[2.5] ${
+                                    isRefreshing ? "animate-spin" : ""
+                                }`}
+                            />
+                        </Button>
+                    </div>
+                )}
                 <div className="space-y-2">
                     {Object.entries(profile.flags).map(([key, value]) => (
                         <motion.div
