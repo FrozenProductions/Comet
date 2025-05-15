@@ -48,6 +48,12 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
         deactivateProfile,
     } = useFastFlags();
 
+    const executeCommand = (action: () => any) => async () => {
+        await Promise.resolve(action());
+        setSearchQuery("");
+        onClose();
+    };
+
     const handleClearFlags = async () => {
         try {
             await deactivateProfile();
@@ -55,7 +61,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
         } catch (error) {
             toast.error("Failed to clear fast flags");
         }
-        onClose();
     };
 
     const commands: CommandItem[] = [
@@ -64,10 +69,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             title: "New Tab",
             description: "Create a new editor tab",
             icon: <Plus size={16} className="stroke-[2.5]" />,
-            action: () => {
-                createTab();
-                onClose();
-            },
+            action: executeCommand(() => createTab()),
         },
         {
             id: "toggle-zen",
@@ -76,7 +78,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                 ? "Disable Zen Mode"
                 : "Enable Zen Mode",
             icon: <Layout size={16} className="stroke-[2.5]" />,
-            action: () => {
+            action: executeCommand(() => {
                 updateSettings({
                     interface: {
                         ...settings.interface,
@@ -91,28 +93,21 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         id: "zen-mode-toast",
                     }
                 );
-                onClose();
-            },
+            }),
         },
         {
             id: "execute-script",
             title: "Execute Script",
             description: "Execute the current tab's script",
             icon: <Play size={16} className="stroke-[2.5]" />,
-            action: () => {
-                executeScript();
-                onClose();
-            },
+            action: executeCommand(() => executeScript()),
         },
         {
             id: "open-roblox",
             title: "Open Roblox",
             description: "Open Roblox",
             icon: <ExternalLink size={16} className="stroke-[2.5]" />,
-            action: () => {
-                openRoblox();
-                onClose();
-            },
+            action: executeCommand(() => openRoblox()),
         },
         {
             id: "fast-flags",
@@ -155,10 +150,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                     title: tab.title,
                     description: `Switch to ${tab.title}`,
                     icon: <FileCode size={16} className="stroke-[2.5]" />,
-                    action: () => {
-                        setActiveTab(tab.id);
-                        onClose();
-                    },
+                    action: executeCommand(() => setActiveTab(tab.id)),
                 }));
         }
 
@@ -175,7 +167,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         title: "None",
                         description: "Clear all fast flags",
                         icon: <Flag size={16} className="stroke-[2.5]" />,
-                        action: handleClearFlags,
+                        action: executeCommand(handleClearFlags),
                     },
                     ...profiles.map((profile) => ({
                         id: `fast-flags-${profile.id}`,
@@ -195,7 +187,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                 }`}
                             />
                         ),
-                        action: async () => {
+                        action: executeCommand(async () => {
                             try {
                                 await activateProfile(profile.id);
                                 toast.success(
@@ -204,8 +196,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                             } catch (error) {
                                 toast.error("Failed to activate profile");
                             }
-                            onClose();
-                        },
+                        }),
                     })),
                 ];
             }
@@ -264,7 +255,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                     } catch (error) {
                         toast.error("Failed to activate profile");
                     }
-                    onClose();
                 },
             }));
         }
