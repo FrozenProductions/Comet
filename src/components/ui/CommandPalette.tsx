@@ -7,11 +7,13 @@ import {
     FileCode,
     Play,
     ExternalLink,
+    Flag,
 } from "lucide-react";
 import { useEditor } from "../../contexts/editorContext";
 import { useSettings } from "../../contexts/settingsContext";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
+import { useFastFlags } from "../../contexts/fastFlagsContext";
 import { toast } from "react-hot-toast";
 
 type CommandItem = {
@@ -40,6 +42,21 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
     const { settings, updateSettings } = useSettings();
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
+    const {
+        state: { profiles, activeProfileId },
+        activateProfile,
+        deactivateProfile,
+    } = useFastFlags();
+
+    const handleClearFlags = async () => {
+        try {
+            await deactivateProfile();
+            toast.success("Fast flags cleared");
+        } catch (error) {
+            toast.error("Failed to clear fast flags");
+        }
+        onClose();
+    };
 
     const commands: CommandItem[] = [
         {
@@ -97,34 +114,171 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                 onClose();
             },
         },
+        {
+            id: "fast-flags",
+            title: "Fast Flags",
+            description: activeProfileId
+                ? `Current: ${
+                      profiles.find((p) => p.id === activeProfileId)?.name ||
+                      "None"
+                  }`
+                : "Switch fast flags profile",
+            icon: (
+                <Flag
+                    size={16}
+                    className={`stroke-[2.5] ${
+                        activeProfileId ? "text-accent" : ""
+                    }`}
+                />
+            ),
+            action: () => {
+                setSearchQuery(">flags ");
+                if (inputRef.current) {
+                    const len = inputRef.current.value.length;
+                    inputRef.current.focus();
+                    inputRef.current.setSelectionRange(len, len);
+                }
+            },
+        },
     ];
 
-    const filteredItems =
-        searchQuery.startsWith(">") || searchQuery.startsWith("/")
-            ? commands.filter((command) => {
-                  const query = searchQuery.slice(1).toLowerCase().trim();
-                  if (!query) return true;
-                  return (
-                      command.title.toLowerCase().includes(query) ||
-                      command.description.toLowerCase().includes(query)
-                  );
-              })
-            : tabs
-                  .filter((tab) => {
-                      const query = searchQuery.toLowerCase().trim();
-                      if (!query) return true;
-                      return tab.title.toLowerCase().includes(query);
-                  })
-                  .map((tab) => ({
-                      id: tab.id,
-                      title: tab.title,
-                      description: `Switch to ${tab.title}`,
-                      icon: <FileCode size={16} className="stroke-[2.5]" />,
-                      action: () => {
-                          setActiveTab(tab.id);
-                          onClose();
-                      },
-                  }));
+    const getFilteredItems = () => {
+        if (!searchQuery.startsWith(">") && !searchQuery.startsWith("/")) {
+            return tabs
+                .filter((tab) => {
+                    const query = searchQuery.toLowerCase().trim();
+                    if (!query) return true;
+                    return tab.title.toLowerCase().includes(query);
+                })
+                .map((tab) => ({
+                    id: tab.id,
+                    title: tab.title,
+                    description: `Switch to ${tab.title}`,
+                    icon: <FileCode size={16} className="stroke-[2.5]" />,
+                    action: () => {
+                        setActiveTab(tab.id);
+                        onClose();
+                    },
+                }));
+        }
+
+        const query = searchQuery.slice(1).toLowerCase().trim();
+        const parts = query.split(" ");
+        const command = parts[0];
+        const param = parts.slice(1).join(" ");
+
+        if (command === "flags" || command === "f") {
+            if (!param) {
+                return [
+                    {
+                        id: "fast-flags-none",
+                        title: "None",
+                        description: "Clear all fast flags",
+                        icon: <Flag size={16} className="stroke-[2.5]" />,
+                        action: handleClearFlags,
+                    },
+                    ...profiles.map((profile) => ({
+                        id: `fast-flags-${profile.id}`,
+                        title: profile.name,
+                        description: `${
+                            activeProfileId === profile.id
+                                ? "Current profile"
+                                : "Switch to this profile"
+                        }`,
+                        icon: (
+                            <Flag
+                                size={16}
+                                className={`stroke-[2.5] ${
+                                    activeProfileId === profile.id
+                                        ? "text-accent"
+                                        : ""
+                                }`}
+                            />
+                        ),
+                        action: async () => {
+                            try {
+                                await activateProfile(profile.id);
+                                toast.success(
+                                    `Activated profile: ${profile.name}`
+                                );
+                            } catch (error) {
+                                toast.error("Failed to activate profile");
+                            }
+                            onClose();
+                        },
+                    })),
+                ];
+            }
+
+            if (
+                param.toLowerCase() === "none" ||
+                param.toLowerCase() === "clear"
+            ) {
+                return [
+                    {
+                        id: "fast-flags-none",
+                        title: "Clear Fast Flags",
+                        description: "Remove all fast flags",
+                        icon: <Flag size={16} className="stroke-[2.5]" />,
+                        action: handleClearFlags,
+                    },
+                ];
+            }
+
+            const matchingProfiles = profiles.filter((profile) =>
+                profile.name.toLowerCase().includes(param)
+            );
+
+            if (matchingProfiles.length === 0) {
+                return [
+                    {
+                        id: "fast-flags-no-match",
+                        title: "No matching profiles",
+                        description: `No profiles found matching "${param}"`,
+                        icon: <Flag size={16} className="stroke-[2.5]" />,
+                        action: () => {},
+                    },
+                ];
+            }
+
+            return matchingProfiles.map((profile) => ({
+                id: `fast-flags-${profile.id}`,
+                title: profile.name,
+                description: `${
+                    activeProfileId === profile.id
+                        ? "Current profile"
+                        : "Switch to this profile"
+                }`,
+                icon: (
+                    <Flag
+                        size={16}
+                        className={`stroke-[2.5] ${
+                            activeProfileId === profile.id ? "text-accent" : ""
+                        }`}
+                    />
+                ),
+                action: async () => {
+                    try {
+                        await activateProfile(profile.id);
+                        toast.success(`Activated profile: ${profile.name}`);
+                    } catch (error) {
+                        toast.error("Failed to activate profile");
+                    }
+                    onClose();
+                },
+            }));
+        }
+
+        return commands.filter((command) => {
+            if (!query) return true;
+            return (
+                command.title.toLowerCase().includes(query) ||
+                command.description.toLowerCase().includes(query)
+            );
+        });
+    };
+
+    const filteredItems = getFilteredItems();
 
     useEffect(() => {
         if (isOpen && inputRef.current) {

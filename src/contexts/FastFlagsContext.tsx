@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { FastFlagsProfile, FastFlagsState } from "../types/fastFlags";
 import { FastFlagsProfileService } from "../services/fastFlagsProfileService";
+import { invoke } from "@tauri-apps/api/tauri";
 
 const initialState: FastFlagsState = {
     profiles: [],
@@ -15,6 +16,7 @@ const FastFlagsContext = createContext<{
     saveProfile: (profile: FastFlagsProfile) => Promise<void>;
     deleteProfile: (profileId: string) => Promise<void>;
     activateProfile: (profileId: string) => Promise<void>;
+    deactivateProfile: () => Promise<void>;
     updateFlagValue: (
         profileId: string,
         key: string,
@@ -71,6 +73,16 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
         setState((prev) => ({ ...prev, activeProfileId: profileId }));
     };
 
+    const deactivateProfile = async () => {
+        try {
+            await invoke("cleanup_fast_flags");
+            setState((prev) => ({ ...prev, activeProfileId: null }));
+        } catch (error) {
+            console.error("Failed to deactivate profile:", error);
+            throw error;
+        }
+    };
+
     const updateFlagValue = async (
         profileId: string,
         key: string,
@@ -105,6 +117,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
                 saveProfile,
                 deleteProfile,
                 activateProfile,
+                deactivateProfile,
                 updateFlagValue,
             }}
         >
