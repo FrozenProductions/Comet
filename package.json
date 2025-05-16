@@ -29,6 +29,7 @@
         "react-dom": "^18.2.0",
         "react-hot-toast": "^2.5.2",
         "react-tooltip": "^5.28.1",
+        "react-window": "^1.8.11",
         "tailwind-merge": "^2.2.1",
         "uuid": "^11.1.0"
     },
@@ -38,6 +39,7 @@
         "@types/lodash": "^4.17.16",
         "@types/react": "^18.2.48",
         "@types/react-dom": "^18.2.18",
+        "@types/react-window": "^1.8.8",
         "@vitejs/plugin-react": "^4.2.1",
         "autoprefixer": "^10.4.17",
         "eslint": "^8.56.0",

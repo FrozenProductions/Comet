@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
     return (
-        <div className="w-[72px] h-full bg-ctp-mantle border-r border-white/5 flex flex-col items-center py-3 flex-shrink-0">
+        <div className="w-[72px] h-full bg-ctp-mantle border-r border-white/5 flex flex-col items-center py-3 flex-shrink-0 select-none">
             <div className="flex-1 flex flex-col items-center gap-[10px] relative">
                 <motion.div
                     className="absolute w-10 h-10 rounded-xl bg-accent-gradient shadow-lg shadow-white/20"

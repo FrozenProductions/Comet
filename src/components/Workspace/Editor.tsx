@@ -262,7 +262,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
     }, []);
 
     return (
-        <div className="h-full w-full relative bg-ctp-surface0/70">
+        <div className="h-full w-full relative bg-ctp-surface0/70 select-none">
             <Editor
                 height="100%"
                 width="100%"

@@ -10,6 +10,9 @@ export interface LogLine {
 export interface RobloxConsoleProps {
     isOpen: boolean;
     onToggle: () => void;
+    isFloating: boolean;
+    onFloatToggle: () => void;
+    consoleState: ConsoleState;
 }
 
 export interface ConsoleState {
@@ -18,4 +21,9 @@ export interface ConsoleState {
     startWatching: () => Promise<void>;
     stopWatching: () => Promise<void>;
     clearLogs: () => void;
+}
+
+export interface ConsolePosition {
+    x: number;
+    y: number;
 }
