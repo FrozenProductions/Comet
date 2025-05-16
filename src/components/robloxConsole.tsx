@@ -16,6 +16,7 @@ import {
     ConsolePosition,
 } from "../types/robloxConsole";
 import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
+import { useConsole } from "../contexts/consoleContext";
 
 interface ConsoleSize {
     width: number;
@@ -161,12 +162,17 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     } | null>(null);
     const consoleRef = useRef<HTMLDivElement>(null);
     const logsEndRef = useRef<HTMLDivElement>(null);
+    const { setIsFloating } = useConsole();
 
     useEffect(() => {
         if (logsEndRef.current) {
             logsEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [logs.length]);
+
+    useEffect(() => {
+        setIsFloating(isFloating);
+    }, [isFloating, setIsFloating]);
 
     const handleToggleWatch = async () => {
         try {

@@ -5,11 +5,16 @@ import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
 import { Tooltip } from "react-tooltip";
 import type { ActionMenuProps } from "../../types/workspace";
+import { useConsole } from "../../contexts/consoleContext";
+import { FC } from "react";
 
-export const Actions = ({ onExecute, getEditorContent }: ActionMenuProps) => {
+export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
+    getEditorContent,
+}) => {
     const { isExecuting } = useExecute();
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
+    const { isFloating } = useConsole();
 
     const buttonVariants = {
         initial: { opacity: 0, y: 10 },
@@ -27,9 +32,7 @@ export const Actions = ({ onExecute, getEditorContent }: ActionMenuProps) => {
 
     const handleExecute = async () => {
         try {
-            if (onExecute) {
-                await onExecute();
-            } else if (getEditorContent) {
+            if (getEditorContent) {
                 const content = getEditorContent();
                 await executeScript({ content });
             } else {
@@ -41,7 +44,11 @@ export const Actions = ({ onExecute, getEditorContent }: ActionMenuProps) => {
     };
 
     return (
-        <div className="fixed bottom-12 right-6 z-50 flex gap-3">
+        <div
+            className={`absolute right-4 ${
+                isFloating ? "bottom-6" : "bottom-12"
+            } flex items-center gap-2`}
+        >
             <motion.button
                 data-tooltip-id="action-tooltip"
                 data-tooltip-content="Open Roblox"

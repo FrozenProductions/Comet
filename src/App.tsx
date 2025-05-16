@@ -16,6 +16,7 @@ import { useSettings } from "./contexts/settingsContext";
 import { CommandPalette } from "./components/ui/commandPalette";
 import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
+import { ConsoleProvider } from "./contexts/consoleContext";
 
 const AppContent: FC = () => {
     const { settings } = useSettings();
@@ -74,10 +75,12 @@ const App: FC = () => {
                 <EditorProvider>
                     <SettingsProvider>
                         <KeybindsProvider>
-                            <FastFlagsProvider>
-                                <AppContent />
-                                <Toaster />
-                            </FastFlagsProvider>
+                            <ConsoleProvider>
+                                <FastFlagsProvider>
+                                    <AppContent />
+                                    <Toaster />
+                                </FastFlagsProvider>
+                            </ConsoleProvider>
                         </KeybindsProvider>
                     </SettingsProvider>
                 </EditorProvider>
