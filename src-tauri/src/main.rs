@@ -382,7 +382,7 @@ async fn search_scripts(params: ScriptSearchParams) -> Result<String, String> {
 
     if !status.is_success() {
         return Err(format!("API error: {} - {}", status, response_text));
-    }    
+    }
     Ok(response_text)
 }
 
@@ -390,7 +390,7 @@ async fn search_scripts(params: ScriptSearchParams) -> Result<String, String> {
 async fn get_script_content(slug: String) -> Result<String, String> {
     let client = reqwest::Client::new();
     let url = format!("https://scriptblox.com/api/script/{}", slug);
-    
+
     let response = match client
         .get(&url)
         .header("Accept", "application/json")
@@ -422,6 +422,7 @@ mod fast_flags;
 mod fast_flags_profiles;
 mod active_profile;
 mod flag_validator;
+mod roblox_logs;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use active_profile::ActiveProfileManager;
@@ -574,6 +575,8 @@ fn main() {
             refresh_flag_validation_cache,
             fast_flags::cleanup_fast_flags,
             fast_flags::open_fast_flags_directory,
+            roblox_logs::start_log_watcher,
+            roblox_logs::stop_log_watcher,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

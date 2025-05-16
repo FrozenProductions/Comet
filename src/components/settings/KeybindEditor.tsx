@@ -103,13 +103,13 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
                     <button
                         onClick={() => setRecording(true)}
                         className={`
-                            w-full px-3 py-2 rounded text-sm text-center transition-colors
-                            ${
-                                recording
-                                    ? "bg-ctp-red/10 text-ctp-red border-2 border-dashed border-ctp-red"
-                                    : "bg-ctp-surface0 hover:bg-ctp-surface1 text-ctp-text"
-                            }
-                        `}
+                    w-full px-3 py-2 rounded text-sm text-center transition-colors
+                    ${
+                        recording
+                            ? "bg-ctp-red/10 text-ctp-red border-2 border-dashed border-ctp-red"
+                            : "bg-ctp-surface0 hover:bg-ctp-surface1 text-ctp-text"
+                    }
+                  `}
                     >
                         {recording
                             ? "Press your keyboard shortcut..."

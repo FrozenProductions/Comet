@@ -1,8 +1,9 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useEditor } from "../../contexts/editorContext";
 import { CodeEditor } from "./editor";
 import { Tabbar } from "./tabBar";
 import { useSettings } from "../../contexts/settingsContext";
+import { RobloxConsole } from "../robloxConsole";
 
 export const Workspace: FC = () => {
     const {
@@ -15,6 +16,7 @@ export const Workspace: FC = () => {
         setTabs,
     } = useEditor();
     const { settings } = useSettings();
+    const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
     const handleTabChange = (content: string | undefined) => {
         if (!activeTab || !content) return;
@@ -29,7 +31,7 @@ export const Workspace: FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col overflow-hidden">
             {!settings.interface.zenMode && (
                 <div className="h-10 flex-shrink-0 flex items-stretch bg-ctp-mantle border-b border-white/5">
                     <div className="flex-1 min-w-0">
@@ -47,29 +49,37 @@ export const Workspace: FC = () => {
                     </div>
                 </div>
             )}
-            <div className="flex-1 relative bg-ctp-base">
-                {activeTab ? (
-                    <CodeEditor
-                        content={
-                            tabs.find((tab) => tab.id === activeTab)?.content ??
-                            ""
-                        }
-                        language={
-                            tabs.find((tab) => tab.id === activeTab)
-                                ?.language ?? "lua"
-                        }
-                        onChange={handleTabChange}
+            <div className="flex-1 min-h-0 relative bg-ctp-base">
+                <div className="absolute inset-0 overflow-auto">
+                    {activeTab ? (
+                        <CodeEditor
+                            content={
+                                tabs.find((tab) => tab.id === activeTab)
+                                    ?.content ?? ""
+                            }
+                            language={
+                                tabs.find((tab) => tab.id === activeTab)
+                                    ?.language ?? "lua"
+                            }
+                            onChange={handleTabChange}
+                        />
+                    ) : (
+                        <div className="flex-1 flex items-center justify-center">
+                            <button
+                                onClick={createTab}
+                                className="px-4 py-2 rounded-lg bg-ctp-surface0 text-sm text-ctp-text hover:bg-ctp-surface1 transition-colors"
+                            >
+                                Create new tab
+                            </button>
+                        </div>
+                    )}
+                </div>
+                <div className="fixed bottom-0 left-[4rem] right-0 z-[100]">
+                    <RobloxConsole
+                        isOpen={isConsoleOpen}
+                        onToggle={() => setIsConsoleOpen(!isConsoleOpen)}
                     />
-                ) : (
-                    <div className="flex-1 flex items-center justify-center">
-                        <button
-                            onClick={createTab}
-                            className="px-4 py-2 rounded-lg bg-ctp-surface0 text-sm text-ctp-text hover:bg-ctp-surface1 transition-colors"
-                        >
-                            Create new tab
-                        </button>
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );
