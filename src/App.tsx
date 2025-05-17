@@ -16,7 +16,7 @@ import { useSettings } from "./contexts/settingsContext";
 import { CommandPalette } from "./components/ui/commandPalette";
 import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
-import { ConsoleProvider } from "./contexts/consoleContext";
+import { ConsoleProvider, useConsole } from "./contexts/consoleContext";
 
 const AppContent: FC = () => {
     const { settings } = useSettings();
@@ -26,6 +26,11 @@ const AppContent: FC = () => {
         activeScreen,
         handleScreenChange,
     } = useKeybinds();
+    const { isFloating, setIsFloating } = useConsole();
+
+    const toggleFloating = () => {
+        setIsFloating(!isFloating);
+    };
 
     const renderScreen = () => {
         switch (activeScreen) {
@@ -63,6 +68,7 @@ const AppContent: FC = () => {
             <CommandPalette
                 isOpen={isCommandPaletteOpen}
                 onClose={toggleCommandPalette}
+                onFloatToggle={toggleFloating}
             />
         </div>
     );

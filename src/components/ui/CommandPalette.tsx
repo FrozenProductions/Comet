@@ -8,6 +8,8 @@ import {
     Play,
     ExternalLink,
     Flag,
+    Terminal,
+    Maximize2,
 } from "lucide-react";
 import { useEditor } from "../../contexts/editorContext";
 import { useSettings } from "../../contexts/settingsContext";
@@ -27,11 +29,13 @@ type CommandItem = {
 type CommandPaletteProps = {
     isOpen: boolean;
     onClose: () => void;
+    onFloatToggle: () => void;
 };
 
 export const CommandPalette: FC<CommandPaletteProps> = ({
     isOpen,
     onClose,
+    onFloatToggle,
 }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -93,6 +97,43 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         id: "zen-mode-toast",
                     }
                 );
+            }),
+        },
+        {
+            id: "toggle-console",
+            title: "Toggle Console",
+            description: settings.interface.showConsole
+                ? "Hide Console"
+                : "Show Console",
+            icon: <Terminal size={16} className="stroke-[2.5]" />,
+            action: executeCommand(() => {
+                updateSettings({
+                    interface: {
+                        ...settings.interface,
+                        showConsole: !settings.interface.showConsole,
+                    },
+                });
+                toast.success(
+                    !settings.interface.showConsole
+                        ? "Console shown"
+                        : "Console hidden",
+                    {
+                        id: "console-visibility-toast",
+                    }
+                );
+            }),
+        },
+        {
+            id: "toggle-console-mode",
+            title: "Toggle Console Mode",
+            description: "Switch between docked and floating console",
+            icon: <Maximize2 size={16} className="stroke-[2.5]" />,
+            action: executeCommand(() => {
+                if (settings.interface.showConsole) {
+                    onFloatToggle();
+                } else {
+                    toast.error("Console is currently hidden");
+                }
             }),
         },
         {
