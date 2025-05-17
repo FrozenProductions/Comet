@@ -16,21 +16,8 @@ import { useSettings } from "../../contexts/settingsContext";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
 import { useFastFlags } from "../../contexts/fastFlagsContext";
+import { CommandItem, CommandPaletteProps } from "../../types/commandPalette";
 import { toast } from "react-hot-toast";
-
-type CommandItem = {
-    id: string;
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    action: () => void;
-};
-
-type CommandPaletteProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    onFloatToggle: () => void;
-};
 
 export const CommandPalette: FC<CommandPaletteProps> = ({
     isOpen,
