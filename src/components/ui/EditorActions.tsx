@@ -6,6 +6,7 @@ import { useScript } from "../../hooks/useScript";
 import { Tooltip } from "react-tooltip";
 import type { ActionMenuProps } from "../../types/workspace";
 import { useConsole } from "../../contexts/consoleContext";
+import { useSettings } from "../../contexts/settingsContext";
 import { FC } from "react";
 
 export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
@@ -15,6 +16,7 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
     const { isFloating } = useConsole();
+    const { settings } = useSettings();
 
     const buttonVariants = {
         initial: { opacity: 0, y: 10 },
@@ -43,11 +45,12 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
         }
     };
 
+    const bottomSpacing: "bottom-6" | "bottom-12" =
+        settings.interface.zenMode || isFloating ? "bottom-6" : "bottom-12";
+
     return (
         <div
-            className={`absolute right-4 ${
-                isFloating ? "bottom-6" : "bottom-12"
-            } flex items-center gap-2`}
+            className={`absolute right-4 ${bottomSpacing} flex items-center gap-2`}
         >
             <motion.button
                 data-tooltip-id="action-tooltip"

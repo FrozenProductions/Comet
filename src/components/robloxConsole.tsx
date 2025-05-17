@@ -17,6 +17,7 @@ import {
 } from "../types/robloxConsole";
 import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
 import { useConsole } from "../contexts/consoleContext";
+import { useSettings } from "../contexts/settingsContext";
 
 interface ConsoleSize {
     width: number;
@@ -138,6 +139,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     onFloatToggle,
     consoleState,
 }) => {
+    const { settings } = useSettings();
     const { logs, isWatching, startWatching, stopWatching, clearLogs } =
         consoleState;
     const [position, setPosition] = useState<ConsolePosition>({
@@ -173,6 +175,23 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     useEffect(() => {
         setIsFloating(isFloating);
     }, [isFloating, setIsFloating]);
+
+    useEffect(() => {
+        if (isDragging) {
+            window.addEventListener("mousemove", handleDrag);
+            window.addEventListener("mouseup", handleDragEnd);
+        }
+        if (isResizing) {
+            window.addEventListener("mousemove", handleResize);
+            window.addEventListener("mouseup", handleResizeEnd);
+        }
+        return () => {
+            window.removeEventListener("mousemove", handleDrag);
+            window.removeEventListener("mouseup", handleDragEnd);
+            window.removeEventListener("mousemove", handleResize);
+            window.removeEventListener("mouseup", handleResizeEnd);
+        };
+    }, [isDragging, isResizing]);
 
     const handleToggleWatch = async () => {
         try {
@@ -269,22 +288,9 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
         resizeStartPos.current = null;
     };
 
-    useEffect(() => {
-        if (isDragging) {
-            window.addEventListener("mousemove", handleDrag);
-            window.addEventListener("mouseup", handleDragEnd);
-        }
-        if (isResizing) {
-            window.addEventListener("mousemove", handleResize);
-            window.addEventListener("mouseup", handleResizeEnd);
-        }
-        return () => {
-            window.removeEventListener("mousemove", handleDrag);
-            window.removeEventListener("mouseup", handleDragEnd);
-            window.removeEventListener("mousemove", handleResize);
-            window.removeEventListener("mouseup", handleResizeEnd);
-        };
-    }, [isDragging, isResizing]);
+    if (settings.interface.zenMode && !isFloating) {
+        return null;
+    }
 
     const consoleStyle = isFloating
         ? {
