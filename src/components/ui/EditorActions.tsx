@@ -46,7 +46,11 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
     };
 
     const bottomSpacing: "bottom-6" | "bottom-12" =
-        settings.interface.zenMode || isFloating ? "bottom-6" : "bottom-12";
+        settings.interface.zenMode ||
+        isFloating ||
+        !settings.interface.showConsole
+            ? "bottom-6"
+            : "bottom-12";
 
     return (
         <div

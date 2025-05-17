@@ -140,6 +140,14 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     const { logs, isWatching, startWatching, stopWatching, clearLogs } =
         consoleState;
 
+    if (!settings.interface.showConsole) {
+        return null;
+    }
+
+    if (settings.interface.zenMode && !isFloating) {
+        return null;
+    }
+
     const [position, setPosition] = useState<ConsolePosition>(() => {
         const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
         if (savedState) {
@@ -324,10 +332,6 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
         setResizeType(null);
         resizeStartPos.current = null;
     };
-
-    if (settings.interface.zenMode && !isFloating) {
-        return null;
-    }
 
     const consoleStyle = isFloating
         ? {

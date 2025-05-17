@@ -52,5 +52,6 @@ export const DEFAULT_EDITOR_SETTINGS = {
     interface: {
         zenMode: false,
         showTabBar: false,
+        showConsole: true,
     },
 };

@@ -413,6 +413,21 @@ export const Settings: FC = () => {
                                     label="Zen Mode"
                                     description="Hide sidebar and tab bar for distraction-free coding"
                                 />
+                                <Checkbox
+                                    checked={settings.interface.showConsole}
+                                    onChange={() => {
+                                        updateSettings({
+                                            interface: {
+                                                ...settings.interface,
+                                                showConsole:
+                                                    !settings.interface
+                                                        .showConsole,
+                                            },
+                                        });
+                                    }}
+                                    label="Show Console"
+                                    description="Display the Roblox console for logs and monitoring"
+                                />
                             </SettingGroup>
 
                             <SettingGroup
