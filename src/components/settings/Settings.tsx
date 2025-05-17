@@ -22,6 +22,7 @@ import type { Keybind, KeybindAction } from "../../contexts/keybindsContext";
 import { toast } from "react-hot-toast";
 import { SETTINGS_SECTIONS } from "../../constants/settings";
 import { Header } from "../ui/header";
+import { Modal } from "../ui/modal";
 import {
     KEYBIND_CATEGORIES,
     KEYBIND_CATEGORY_MAPPING,
@@ -110,6 +111,7 @@ export const Settings: FC = () => {
     const [activeSection, setActiveSection] = useState("editor");
     const [searchQuery, setSearchQuery] = useState("");
     const [editingKeybind, setEditingKeybind] = useState<Keybind | null>(null);
+    const [showZenModeConfirm, setShowZenModeConfirm] = useState(false);
 
     const handleSliderChange = useCallback(
         (key: SettingsKey, subKey: string, value: number) => {
@@ -146,6 +148,35 @@ export const Settings: FC = () => {
             <div className="space-y-3">{children}</div>
         </div>
     );
+
+    const handleZenModeToggle = () => {
+        if (!settings.interface.zenMode) {
+            setShowZenModeConfirm(true);
+        } else {
+            updateSettings({
+                interface: {
+                    ...settings.interface,
+                    zenMode: false,
+                },
+            });
+            toast.success("Zen mode disabled", {
+                id: "zen-mode-toast",
+            });
+        }
+    };
+
+    const confirmZenMode = () => {
+        updateSettings({
+            interface: {
+                ...settings.interface,
+                zenMode: true,
+            },
+        });
+        setShowZenModeConfirm(false);
+        toast.success("Zen mode enabled", {
+            id: "zen-mode-toast",
+        });
+    };
 
     const renderSectionContent = () => {
         switch (activeSection) {
@@ -378,24 +409,7 @@ export const Settings: FC = () => {
                             >
                                 <Checkbox
                                     checked={settings.interface.zenMode}
-                                    onChange={() => {
-                                        const newZenMode =
-                                            !settings.interface.zenMode;
-                                        updateSettings({
-                                            interface: {
-                                                ...settings.interface,
-                                                zenMode: newZenMode,
-                                            },
-                                        });
-                                        toast.success(
-                                            newZenMode
-                                                ? "Zen mode enabled"
-                                                : "Zen mode disabled",
-                                            {
-                                                id: "zen-mode-toast",
-                                            }
-                                        );
-                                    }}
+                                    onChange={handleZenModeToggle}
                                     label="Zen Mode"
                                     description="Hide sidebar and tab bar for distraction-free coding"
                                 />
@@ -422,6 +436,15 @@ export const Settings: FC = () => {
                                 />
                             </SettingGroup>
                         </div>
+
+                        <Modal
+                            isOpen={showZenModeConfirm}
+                            onClose={() => setShowZenModeConfirm(false)}
+                            title="Enable Zen Mode"
+                            description="Zen Mode will hide the sidebar and tab bar for a distraction-free coding experience. You can toggle it back using the command palette (⌘+P) or keyboard shortcut (⌘+⇧+K)."
+                            onConfirm={confirmZenMode}
+                            confirmText="Enable"
+                        />
                     </>
                 );
             case "keybinds":
