@@ -142,14 +142,39 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     const { settings } = useSettings();
     const { logs, isWatching, startWatching, stopWatching, clearLogs } =
         consoleState;
-    const [position, setPosition] = useState<ConsolePosition>({
-        x: window.innerWidth / 2 - 400,
-        y: window.innerHeight / 2 - 200,
+
+    const [position, setPosition] = useState<ConsolePosition>(() => {
+        const savedState = localStorage.getItem("comet-console-state");
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                if (state.position) {
+                    return state.position;
+                }
+            } catch {}
+        }
+        return {
+            x: window.innerWidth / 2 - 400,
+            y: window.innerHeight / 2 - 200,
+        };
     });
-    const [size, setSize] = useState<ConsoleSize>({
-        width: 800,
-        height: 300,
+
+    const [size, setSize] = useState<ConsoleSize>(() => {
+        const savedState = localStorage.getItem("comet-console-state");
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                if (state.size) {
+                    return state.size;
+                }
+            } catch {}
+        }
+        return {
+            width: 800,
+            height: 300,
+        };
     });
+
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
     const [resizeType, setResizeType] = useState<
@@ -165,6 +190,22 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     const consoleRef = useRef<HTMLDivElement>(null);
     const logsEndRef = useRef<HTMLDivElement>(null);
     const { setIsFloating } = useConsole();
+
+    // Save state to localStorage when position or size changes
+    useEffect(() => {
+        if (isFloating) {
+            const savedState = localStorage.getItem("comet-console-state");
+            let state = { isFloating, position, size };
+
+            if (savedState) {
+                try {
+                    state = { ...JSON.parse(savedState), position, size };
+                } catch {}
+            }
+
+            localStorage.setItem("comet-console-state", JSON.stringify(state));
+        }
+    }, [isFloating, position, size]);
 
     useEffect(() => {
         if (logsEndRef.current) {

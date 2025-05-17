@@ -5,6 +5,7 @@ import { Tabbar } from "./tabBar";
 import { useSettings } from "../../contexts/settingsContext";
 import { RobloxConsole } from "../robloxConsole";
 import { useRobloxConsole } from "../../hooks/useRobloxConsole";
+import { useConsole } from "../../contexts/consoleContext";
 
 export const Workspace: FC = () => {
     const {
@@ -18,7 +19,7 @@ export const Workspace: FC = () => {
     } = useEditor();
     const { settings } = useSettings();
     const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-    const [isConsoleFloating, setIsConsoleFloating] = useState(false);
+    const { isFloating, setIsFloating } = useConsole();
     const consoleState = useRobloxConsole();
 
     const handleTabChange = (content: string | undefined) => {
@@ -37,8 +38,8 @@ export const Workspace: FC = () => {
         <RobloxConsole
             isOpen={isConsoleOpen}
             onToggle={() => setIsConsoleOpen(!isConsoleOpen)}
-            isFloating={isConsoleFloating}
-            onFloatToggle={() => setIsConsoleFloating(!isConsoleFloating)}
+            isFloating={isFloating}
+            onFloatToggle={() => setIsFloating(!isFloating)}
             consoleState={consoleState}
         />
     );
@@ -87,13 +88,13 @@ export const Workspace: FC = () => {
                         </div>
                     )}
                 </div>
-                {!isConsoleFloating && (
+                {!isFloating && (
                     <div className="absolute bottom-0 inset-x-0 z-[100]">
                         {renderConsole()}
                     </div>
                 )}
             </div>
-            {isConsoleFloating && renderConsole()}
+            {isFloating && renderConsole()}
         </div>
     );
 };
