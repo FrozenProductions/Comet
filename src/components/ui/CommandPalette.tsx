@@ -404,7 +404,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         className="fixed inset-x-0 top-[20%] flex justify-center items-start z-50"
                     >
                         <div className="w-full max-w-xl mx-auto px-4">
-                            <div className="bg-ctp-mantle border border-white/5 rounded-xl shadow-2xl overflow-hidden">
+                            <div className="bg-ctp-mantle border border-white/5 rounded-xl shadow-2xl overflow-hidden select-none">
                                 <div className="p-4 flex items-center gap-3 border-b border-white/5">
                                     <Command
                                         size={20}
@@ -427,7 +427,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                         autoComplete="off"
                                         spellCheck="false"
                                     />
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1 select-none">
                                         <kbd className="px-2 py-1 text-xs font-medium bg-white/5 rounded text-ctp-subtext0">
                                             esc
                                         </kbd>
@@ -440,7 +440,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                 <div className="max-h-[60vh] overflow-y-auto">
                                     {filteredItems.length === 0 ? (
                                         <div className="p-2">
-                                            <div className="text-xs text-ctp-subtext0 px-2 py-1.5">
+                                            <div className="text-xs text-ctp-subtext0 px-2 py-1.5 select-none">
                                                 {searchQuery.startsWith(">") ||
                                                 searchQuery.startsWith("/")
                                                     ? "No commands found"
@@ -471,7 +471,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                                     0.03,
                                                             }}
                                                             className={`
-                              w-full flex items-center gap-3 px-2 py-2 rounded-lg text-left
+                              w-full flex items-center gap-3 px-2 py-2 rounded-lg text-left select-none
                               ${
                                   selectedIndex === index
                                       ? "bg-white/10 text-white"
@@ -498,7 +498,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                             </div>
                                                             {selectedIndex ===
                                                                 index && (
-                                                                <div className="flex items-center gap-1 text-xs">
+                                                                <div className="flex items-center gap-1 text-xs select-none">
                                                                     <kbd className="px-2 py-1 bg-white/5 rounded">
                                                                         {!searchQuery.startsWith(
                                                                             ">"
