@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useEditor } from "../../contexts/editorContext";
 import { CodeEditor } from "./editor";
 import { Tabbar } from "./tabBar";
@@ -6,6 +6,7 @@ import { useSettings } from "../../contexts/settingsContext";
 import { RobloxConsole } from "../robloxConsole";
 import { useRobloxConsole } from "../../hooks/useRobloxConsole";
 import { useConsole } from "../../contexts/consoleContext";
+import { useKeybinds } from "../../contexts/keybindsContext";
 
 export const Workspace: FC = () => {
     const {
@@ -18,8 +19,8 @@ export const Workspace: FC = () => {
         setTabs,
     } = useEditor();
     const { settings } = useSettings();
-    const [isConsoleOpen, setIsConsoleOpen] = useState(false);
     const { isFloating, setIsFloating } = useConsole();
+    const { isConsoleOpen, setIsConsoleOpen } = useKeybinds();
     const consoleState = useRobloxConsole();
 
     const handleTabChange = (content: string | undefined) => {
@@ -37,7 +38,7 @@ export const Workspace: FC = () => {
     const renderConsole = () => (
         <RobloxConsole
             isOpen={isConsoleOpen}
-            onToggle={() => setIsConsoleOpen(!isConsoleOpen)}
+            onToggle={() => setIsConsoleOpen((prev) => !prev)}
             isFloating={isFloating}
             onFloatToggle={() => setIsFloating(!isFloating)}
             consoleState={consoleState}

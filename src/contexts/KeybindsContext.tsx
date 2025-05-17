@@ -19,6 +19,8 @@ const KeybindsContext = createContext<KeybindsContextType>({
     toggleCommandPalette: () => {},
     activeScreen: "Editor",
     handleScreenChange: () => {},
+    isConsoleOpen: false,
+    setIsConsoleOpen: () => {},
 });
 
 export const useKeybinds = () => useContext(KeybindsContext);
@@ -36,6 +38,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
         return saved ? JSON.parse(saved) : DEFAULT_KEYBINDS;
     });
     const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+    const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
     const numberBuffer = React.useRef("");
     const bufferTimeout = React.useRef<number>();
@@ -147,6 +150,9 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
                     case "openSettings":
                         handleScreenChange("Settings");
                         break;
+                    case "toggleConsole":
+                        setIsConsoleOpen((prev) => !prev);
+                        break;
                 }
             }
         };
@@ -169,6 +175,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
         updateSettings,
         executeScript,
         openRoblox,
+        isConsoleOpen,
     ]);
 
     const updateKeybind = (
@@ -202,6 +209,8 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
                 toggleCommandPalette,
                 activeScreen,
                 handleScreenChange,
+                isConsoleOpen,
+                setIsConsoleOpen,
             }}
         >
             {children}

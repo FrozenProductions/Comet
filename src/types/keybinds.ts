@@ -15,21 +15,22 @@ export type KeybindAction =
     | "toggleCommandPalette"
     | "executeScript"
     | "openRoblox"
-    | "openSettings";
-
-export interface KeybindModifiers {
-    cmd?: boolean;
-    shift?: boolean;
-    alt?: boolean;
-    ctrl?: boolean;
-}
+    | "openSettings"
+    | "toggleConsole";
 
 export interface Keybind {
     key: string;
-    modifiers: KeybindModifiers;
+    modifiers: {
+        cmd?: boolean;
+        shift?: boolean;
+        alt?: boolean;
+        ctrl?: boolean;
+    };
     action: KeybindAction;
     description: string;
-    data?: any;
+    data?: {
+        index?: number;
+    };
 }
 
 export interface KeybindsContextType {
@@ -42,4 +43,6 @@ export interface KeybindsContextType {
     toggleCommandPalette: () => void;
     activeScreen: Screen;
     handleScreenChange: (screen: Screen) => void;
+    isConsoleOpen: boolean;
+    setIsConsoleOpen: (isOpen: boolean | ((prev: boolean) => boolean)) => void;
 }

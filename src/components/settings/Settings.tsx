@@ -50,6 +50,8 @@ const getKeybindTitle = (action: KeybindAction): string => {
             return "Previous Tab";
         case "switchTab":
             return "Switch to Tab";
+        case "toggleConsole":
+            return "Toggle Console";
         default:
             return action;
     }

@@ -20,6 +20,7 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
     toggleCommandPalette: "APPLICATION",
     openRoblox: "APPLICATION",
     openSettings: "APPLICATION",
+    toggleConsole: "APPLICATION",
 };
 
 export const DEFAULT_KEYBINDS: Keybind[] = [
@@ -64,6 +65,12 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
         modifiers: { cmd: true },
         action: "openSettings",
         description: "Open settings",
+    },
+    {
+        key: "j",
+        modifiers: { cmd: true },
+        action: "toggleConsole",
+        description: "Toggle Roblox console",
     },
     ...Array.from({ length: 20 }, (_, i) => ({
         key: (i + 1).toString(),
