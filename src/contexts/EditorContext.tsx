@@ -9,41 +9,11 @@ import {
 } from "react";
 import { nanoid } from "nanoid";
 import { invoke } from "@tauri-apps/api/tauri";
-import { EditorPosition } from "../types/editor";
-import type {
-    ScriptExecutionOptions,
-    ScriptExecutionResult,
-} from "../types/script";
+import { EditorPosition, EditorState, Tab } from "../types/editor";
+import type { ScriptExecutionOptions } from "../types/script";
 import { scriptService } from "../services/scriptService";
 import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../constants/script";
 import { toast } from "react-hot-toast";
-
-interface Tab {
-    id: string;
-    title: string;
-    content: string;
-    language: string;
-}
-
-interface EditorState {
-    currentPosition: EditorPosition;
-    currentFile: string | null;
-    tabs: Tab[];
-    activeTab: string | null;
-    setPosition: (position: EditorPosition) => void;
-    setFile: (file: string | null) => void;
-    createTab: () => string;
-    closeTab: (id: string) => void;
-    updateTab: (id: string, updates: Partial<Tab>) => void;
-    setActiveTab: (id: string) => void;
-    loadTabs: (newTabs: Tab[], activeTabId: string | null) => void;
-    setTabs: (tabs: Tab[]) => void;
-    duplicateTab: (id: string) => void;
-    executeTab: (id: string) => Promise<void>;
-    executeScript: (
-        options?: ScriptExecutionOptions
-    ) => Promise<ScriptExecutionResult>;
-}
 
 const EditorContext = createContext<EditorState | null>(null);
 

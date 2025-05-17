@@ -1,114 +1,19 @@
-import {
-    createContext,
-    useContext,
-    useEffect,
-    FC,
-    ReactNode,
-    useState,
-    useRef,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useEditor } from "./editorContext";
 import { useSettings } from "./settingsContext";
 import { useRoblox } from "../hooks/useRoblox";
 import { useScript } from "../hooks/useScript";
 import { toast } from "react-hot-toast";
-
-type Screen = "Editor" | "Settings" | "FastFlags" | "Library" | "AutoExecution";
-
-export type KeybindAction =
-    | "newTab"
-    | "closeTab"
-    | "nextTab"
-    | "previousTab"
-    | "switchTab"
-    | "toggleZenMode"
-    | "toggleCommandPalette"
-    | "executeScript"
-    | "openRoblox"
-    | "openSettings";
-
-export type Keybind = {
-    key: string;
-    modifiers: {
-        cmd?: boolean;
-        shift?: boolean;
-        alt?: boolean;
-        ctrl?: boolean;
-    };
-    action: KeybindAction;
-    description: string;
-    data?: any;
-};
-
-type KeybindsContextType = {
-    keybinds: Keybind[];
-    updateKeybind: (
-        action: KeybindAction,
-        newKeybind: Partial<Keybind>
-    ) => void;
-    isCommandPaletteOpen: boolean;
-    toggleCommandPalette: () => void;
-    activeScreen: Screen;
-    handleScreenChange: (screen: Screen) => void;
-};
-
-const defaultKeybinds: Keybind[] = [
-    {
-        key: "t",
-        modifiers: { cmd: true },
-        action: "newTab",
-        description: "Create a new tab",
-    },
-    {
-        key: "w",
-        modifiers: { cmd: true },
-        action: "closeTab",
-        description: "Close current tab",
-    },
-    {
-        key: "k",
-        modifiers: { cmd: true, shift: true },
-        action: "toggleZenMode",
-        description: "Toggle zen mode",
-    },
-    {
-        key: "p",
-        modifiers: { cmd: true },
-        action: "toggleCommandPalette",
-        description: "Toggle command palette",
-    },
-    {
-        key: "enter",
-        modifiers: { cmd: true },
-        action: "executeScript",
-        description: "Execute current script",
-    },
-    {
-        key: "o",
-        modifiers: { cmd: true },
-        action: "openRoblox",
-        description: "Open Roblox",
-    },
-    {
-        key: ",",
-        modifiers: { cmd: true },
-        action: "openSettings",
-        description: "Open settings",
-    },
-];
-
-for (let i = 1; i <= 20; i++) {
-    defaultKeybinds.push({
-        key: i.toString(),
-        modifiers: { cmd: true },
-        action: "switchTab",
-        description: `Switch to tab ${i}`,
-        data: { index: i - 1 },
-    });
-}
+import {
+    KeybindsContextType,
+    Screen,
+    Keybind,
+    KeybindAction,
+} from "../types/keybinds";
+import { DEFAULT_KEYBINDS } from "../constants/keybinds";
 
 const KeybindsContext = createContext<KeybindsContextType>({
-    keybinds: defaultKeybinds,
+    keybinds: DEFAULT_KEYBINDS,
     updateKeybind: () => {},
     isCommandPaletteOpen: false,
     toggleCommandPalette: () => {},
@@ -118,7 +23,9 @@ const KeybindsContext = createContext<KeybindsContextType>({
 
 export const useKeybinds = () => useContext(KeybindsContext);
 
-export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const { createTab, closeTab, activeTab, tabs, setActiveTab } = useEditor();
     const { settings, updateSettings } = useSettings();
     const { openRoblox } = useRoblox();
@@ -126,12 +33,12 @@ export const KeybindsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [activeScreen, setActiveScreen] = useState<Screen>("Editor");
     const [keybinds, setKeybinds] = useState<Keybind[]>(() => {
         const saved = localStorage.getItem("keybinds");
-        return saved ? JSON.parse(saved) : defaultKeybinds;
+        return saved ? JSON.parse(saved) : DEFAULT_KEYBINDS;
     });
     const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
-    const numberBuffer = useRef("");
-    const bufferTimeout = useRef<number>();
+    const numberBuffer = React.useRef("");
+    const bufferTimeout = React.useRef<number>();
 
     const toggleCommandPalette = () => {
         setIsCommandPaletteOpen((prev) => !prev);

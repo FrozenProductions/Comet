@@ -18,11 +18,8 @@ import {
 import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
 import { useConsole } from "../contexts/consoleContext";
 import { useSettings } from "../contexts/settingsContext";
-
-interface ConsoleSize {
-    width: number;
-    height: number;
-}
+import { CONSOLE_STORAGE_KEY } from "../constants/console";
+import { ConsoleSize } from "../types/console";
 
 const ConsoleHeader = memo(
     ({
@@ -144,7 +141,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
         consoleState;
 
     const [position, setPosition] = useState<ConsolePosition>(() => {
-        const savedState = localStorage.getItem("comet-console-state");
+        const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
         if (savedState) {
             try {
                 const state = JSON.parse(savedState);
@@ -160,7 +157,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     });
 
     const [size, setSize] = useState<ConsoleSize>(() => {
-        const savedState = localStorage.getItem("comet-console-state");
+        const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
         if (savedState) {
             try {
                 const state = JSON.parse(savedState);
@@ -191,10 +188,9 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     const logsEndRef = useRef<HTMLDivElement>(null);
     const { setIsFloating } = useConsole();
 
-    // Save state to localStorage when position or size changes
     useEffect(() => {
         if (isFloating) {
-            const savedState = localStorage.getItem("comet-console-state");
+            const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
             let state = { isFloating, position, size };
 
             if (savedState) {
@@ -203,7 +199,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
                 } catch {}
             }
 
-            localStorage.setItem("comet-console-state", JSON.stringify(state));
+            localStorage.setItem(CONSOLE_STORAGE_KEY, JSON.stringify(state));
         }
     }, [isFloating, position, size]);
 

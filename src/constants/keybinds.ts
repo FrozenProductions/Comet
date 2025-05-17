@@ -1,4 +1,4 @@
-import type { KeybindAction } from "../contexts/keybindsContext";
+import type { KeybindAction, Keybind } from "../types/keybinds";
 
 export const KEYBIND_CATEGORIES = {
     EDITOR: "Editor Actions",
@@ -21,3 +21,55 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
     openRoblox: "APPLICATION",
     openSettings: "APPLICATION",
 };
+
+export const DEFAULT_KEYBINDS: Keybind[] = [
+    {
+        key: "t",
+        modifiers: { cmd: true },
+        action: "newTab",
+        description: "Create a new tab",
+    },
+    {
+        key: "w",
+        modifiers: { cmd: true },
+        action: "closeTab",
+        description: "Close current tab",
+    },
+    {
+        key: "k",
+        modifiers: { cmd: true, shift: true },
+        action: "toggleZenMode",
+        description: "Toggle zen mode",
+    },
+    {
+        key: "p",
+        modifiers: { cmd: true },
+        action: "toggleCommandPalette",
+        description: "Toggle command palette",
+    },
+    {
+        key: "enter",
+        modifiers: { cmd: true },
+        action: "executeScript",
+        description: "Execute current script",
+    },
+    {
+        key: "o",
+        modifiers: { cmd: true },
+        action: "openRoblox",
+        description: "Open Roblox",
+    },
+    {
+        key: ",",
+        modifiers: { cmd: true },
+        action: "openSettings",
+        description: "Open settings",
+    },
+    ...Array.from({ length: 20 }, (_, i) => ({
+        key: (i + 1).toString(),
+        modifiers: { cmd: true },
+        action: "switchTab" as const,
+        description: `Switch to tab ${i + 1}`,
+        data: { index: i },
+    })),
+];

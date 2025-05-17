@@ -2,21 +2,11 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { toast } from "react-hot-toast";
+import { ConnectionContextType, ConnectionStatus } from "../types/connection";
 
-type ConnectionStatus = {
-    is_connected: boolean;
-    port: number | null;
-    current_port: number;
-    is_connecting: boolean;
-};
-
-type ConnectionContextType = {
-    status: ConnectionStatus;
-    refreshConnection: () => Promise<void>;
-    incrementPort: () => Promise<void>;
-};
-
-const ConnectionContext = createContext<ConnectionContextType | null>(null);
+const ConnectionContext = createContext<ConnectionContextType | undefined>(
+    undefined
+);
 
 export const useConnection = () => {
     const context = useContext(ConnectionContext);

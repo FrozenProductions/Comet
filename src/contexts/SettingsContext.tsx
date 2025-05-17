@@ -1,12 +1,13 @@
 import { createContext, useContext, useState } from "react";
+import {
+    DEFAULT_EDITOR_SETTINGS,
+    SETTINGS_STORAGE_KEY,
+} from "../constants/settings";
 import type { EditorSettings, SettingsContextType } from "../types/settings";
-import { DEFAULT_EDITOR_SETTINGS } from "../constants/settings";
 
 const SettingsContext = createContext<SettingsContextType | undefined>(
     undefined
 );
-
-const SETTINGS_STORAGE_KEY = "comet-settings";
 
 export const SettingsProvider = ({
     children,

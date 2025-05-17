@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
-import type { Keybind, KeybindAction } from "../../contexts/keybindsContext";
+import type { Keybind, KeybindAction } from "../../types/keybinds";
 import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
 

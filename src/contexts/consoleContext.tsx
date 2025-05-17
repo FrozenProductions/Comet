@@ -1,23 +1,6 @@
 import { createContext, useContext, FC, ReactNode, useState } from "react";
-
-interface ConsoleContextType {
-    isFloating: boolean;
-    setIsFloating: (isFloating: boolean) => void;
-}
-
-interface ConsoleState {
-    isFloating: boolean;
-    size?: {
-        width: number;
-        height: number;
-    };
-    position?: {
-        x: number;
-        y: number;
-    };
-}
-
-const CONSOLE_STORAGE_KEY = "comet-console-state";
+import { ConsoleContextType, ConsoleState } from "../types/console";
+import { CONSOLE_STORAGE_KEY } from "../constants/console";
 
 const ConsoleContext = createContext<ConsoleContextType | undefined>(undefined);
 
@@ -44,7 +27,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
             try {
                 state = { ...JSON.parse(savedState), isFloating: value };
             } catch {
-                // If parse fails, use default state
+                console.error("Failed to parse console state:", savedState);
             }
         }
 

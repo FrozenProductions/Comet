@@ -1,6 +1,8 @@
 import { Code2, SettingsIcon, Keyboard, Info } from "lucide-react";
 import type { SettingsSection } from "../types/settings";
 
+export const SETTINGS_STORAGE_KEY = "comet-settings";
+
 export const SETTINGS_SECTIONS: SettingsSection[] = [
     {
         id: "editor",

@@ -1,13 +1,9 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { invoke } from "@tauri-apps/api/tauri";
+import { ExecuteContextType } from "../types/script";
 
-type ExecuteContextType = {
-    isExecuting: boolean;
-    execute: (script: string) => Promise<void>;
-};
-
-const ExecuteContext = createContext<ExecuteContextType | null>(null);
+const ExecuteContext = createContext<ExecuteContextType | undefined>(undefined);
 
 export const useExecute = () => {
     const context = useContext(ExecuteContext);

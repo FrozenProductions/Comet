@@ -2,13 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { FastFlagsProfile, FastFlagsState } from "../types/fastFlags";
 import { FastFlagsProfileService } from "../services/fastFlagsProfileService";
 import { invoke } from "@tauri-apps/api/tauri";
-
-const initialState: FastFlagsState = {
-    profiles: [],
-    activeProfileId: null,
-    isLoading: true,
-    error: null,
-};
+import { INITIAL_FAST_FLAGS_STATE } from "../constants/fastFlags";
 
 const FastFlagsContext = createContext<{
     state: FastFlagsState;
@@ -27,7 +21,9 @@ const FastFlagsContext = createContext<{
 export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const [state, setState] = useState<FastFlagsState>(initialState);
+    const [state, setState] = useState<FastFlagsState>(
+        INITIAL_FAST_FLAGS_STATE
+    );
 
     useEffect(() => {
         loadProfiles();

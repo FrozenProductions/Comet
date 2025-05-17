@@ -18,7 +18,7 @@ import { useSettings } from "../../contexts/settingsContext";
 import { useKeybinds } from "../../contexts/keybindsContext";
 import { KeybindEditor } from "./keybindEditor";
 import type { SettingsKey } from "../../types/settings";
-import type { Keybind, KeybindAction } from "../../contexts/keybindsContext";
+import type { Keybind, KeybindAction } from "../../types/keybinds";
 import { toast } from "react-hot-toast";
 import { SETTINGS_SECTIONS } from "../../constants/settings";
 import { Header } from "../ui/header";
