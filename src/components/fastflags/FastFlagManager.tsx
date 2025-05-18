@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { FastFlagsProfile } from "../../types/fastFlags";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -38,6 +38,22 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     const [editValue, setEditValue] = useState("");
     const [flagToDelete, setFlagToDelete] = useState<string | null>(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const flagOrderRef = useRef<string[]>(Object.keys(profile.flags));
+
+    // Update flagOrderRef when profile changes
+    if (
+        JSON.stringify(Object.keys(profile.flags).sort()) !==
+        JSON.stringify(flagOrderRef.current.sort())
+    ) {
+        const existingFlags = new Set(flagOrderRef.current);
+        const newFlags = Object.keys(profile.flags).filter(
+            (key) => !existingFlags.has(key)
+        );
+        flagOrderRef.current = [
+            ...flagOrderRef.current.filter((key) => key in profile.flags),
+            ...newFlags,
+        ];
+    }
 
     const handleAddFlag = async () => {
         if (newFlagKey.trim() === "") {
@@ -47,6 +63,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 
         try {
             await onUpdateFlag(newFlagKey, newFlagValue);
+            flagOrderRef.current = [...flagOrderRef.current, newFlagKey];
             setNewFlagKey("");
             setNewFlagValue("");
             toast.success("Flag added successfully");
@@ -156,139 +173,175 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                     </div>
                 )}
                 <div className="space-y-2">
-                    {Object.entries(profile.flags).map(([key, value]) => (
-                        <motion.div
-                            key={key}
-                            layout
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`flex items-center gap-2 p-3 rounded-lg bg-ctp-surface0/50 group hover:bg-ctp-surface0 transition-colors duration-200 ${
-                                invalidFlags.includes(key)
-                                    ? "border border-ctp-yellow/20"
-                                    : ""
-                            }`}
-                        >
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2">
-                                    <div className="text-sm font-medium text-ctp-text truncate">
-                                        {key}
+                    {flagOrderRef.current
+                        .filter((key) => key in profile.flags)
+                        .map((key) => {
+                            const value = profile.flags[key];
+                            return (
+                                <motion.div
+                                    key={key}
+                                    layout
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className={`flex items-center gap-2 p-3 rounded-lg bg-ctp-surface0/50 group hover:bg-ctp-surface0 transition-colors duration-200 ${
+                                        invalidFlags.includes(key)
+                                            ? "border border-ctp-yellow/20"
+                                            : ""
+                                    }`}
+                                >
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <div className="text-sm font-medium text-ctp-text truncate">
+                                                {key}
+                                            </div>
+                                            {invalidFlags.includes(key) && (
+                                                <div className="flex items-center gap-1.5 text-xs text-ctp-yellow">
+                                                    <AlertTriangle
+                                                        size={12}
+                                                        className="shrink-0"
+                                                    />
+                                                    <span>
+                                                        Unrecognized flag
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <AnimatePresence mode="wait">
+                                            {editingFlagId === key ? (
+                                                <motion.div
+                                                    initial={{
+                                                        opacity: 0,
+                                                        y: -10,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        y: 0,
+                                                    }}
+                                                    exit={{
+                                                        opacity: 0,
+                                                        y: -10,
+                                                    }}
+                                                    className="flex items-center gap-1 mt-2"
+                                                >
+                                                    <Input
+                                                        value={editValue}
+                                                        onChange={(e) =>
+                                                            setEditValue(
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        onKeyDown={(e) => {
+                                                            if (
+                                                                e.key ===
+                                                                "Enter"
+                                                            ) {
+                                                                handleUpdateFlagValue(
+                                                                    key,
+                                                                    editValue
+                                                                );
+                                                            } else if (
+                                                                e.key ===
+                                                                "Escape"
+                                                            ) {
+                                                                setEditingFlagId(
+                                                                    null
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="h-7 text-xs bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
+                                                        autoFocus
+                                                    />
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            setEditingFlagId(
+                                                                null
+                                                            )
+                                                        }
+                                                        data-tooltip-id="fastflags-tooltip"
+                                                        data-tooltip-content="Cancel"
+                                                        className="inline-flex items-center justify-center h-7 w-7 p-0 bg-white/5 hover:bg-white/10"
+                                                    >
+                                                        <X
+                                                            size={14}
+                                                            className="stroke-[2.5]"
+                                                        />
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            handleUpdateFlagValue(
+                                                                key,
+                                                                editValue
+                                                            )
+                                                        }
+                                                        data-tooltip-id="fastflags-tooltip"
+                                                        data-tooltip-content="Save"
+                                                        className="inline-flex items-center justify-center h-7 w-7 p-0 bg-accent hover:bg-accent/90"
+                                                    >
+                                                        <Save
+                                                            size={14}
+                                                            className="stroke-[2.5]"
+                                                        />
+                                                    </Button>
+                                                </motion.div>
+                                            ) : (
+                                                <motion.div
+                                                    initial={{
+                                                        opacity: 0,
+                                                        y: 10,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        y: 0,
+                                                    }}
+                                                    exit={{ opacity: 0, y: 10 }}
+                                                    className="text-xs text-ctp-subtext0 truncate mt-0.5"
+                                                >
+                                                    {typeof value === "string"
+                                                        ? `"${value}"`
+                                                        : String(value)}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
-                                    {invalidFlags.includes(key) && (
-                                        <div className="flex items-center gap-1.5 text-xs text-ctp-yellow">
-                                            <AlertTriangle
-                                                size={12}
-                                                className="shrink-0"
-                                            />
-                                            <span>Unrecognized flag</span>
+                                    {editingFlagId !== key && (
+                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button
+                                                variant="secondary"
+                                                size="sm"
+                                                onClick={() =>
+                                                    startEditing(key, value)
+                                                }
+                                                data-tooltip-id="fastflags-tooltip"
+                                                data-tooltip-content="Edit Flag"
+                                                className="inline-flex items-center justify-center h-6 w-6 p-0 bg-white/5 hover:bg-white/10"
+                                            >
+                                                <Edit2
+                                                    size={12}
+                                                    className="stroke-[2.5]"
+                                                />
+                                            </Button>
+                                            <Button
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={() =>
+                                                    setFlagToDelete(key)
+                                                }
+                                                data-tooltip-id="fastflags-tooltip"
+                                                data-tooltip-content="Delete Flag"
+                                                className="inline-flex items-center justify-center h-6 w-6 p-0 bg-ctp-red/10 hover:bg-ctp-red/20 text-ctp-red"
+                                            >
+                                                <Trash2
+                                                    size={12}
+                                                    className="stroke-[2.5]"
+                                                />
+                                            </Button>
                                         </div>
                                     )}
-                                </div>
-                                <AnimatePresence mode="wait">
-                                    {editingFlagId === key ? (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            className="flex items-center gap-1 mt-2"
-                                        >
-                                            <Input
-                                                value={editValue}
-                                                onChange={(e) =>
-                                                    setEditValue(e.target.value)
-                                                }
-                                                onKeyDown={(e) => {
-                                                    if (e.key === "Enter") {
-                                                        handleUpdateFlagValue(
-                                                            key,
-                                                            editValue
-                                                        );
-                                                    } else if (
-                                                        e.key === "Escape"
-                                                    ) {
-                                                        setEditingFlagId(null);
-                                                    }
-                                                }}
-                                                className="h-7 text-xs bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
-                                                autoFocus
-                                            />
-                                            <Button
-                                                size="sm"
-                                                onClick={() =>
-                                                    setEditingFlagId(null)
-                                                }
-                                                data-tooltip-id="fastflags-tooltip"
-                                                data-tooltip-content="Cancel"
-                                                className="inline-flex items-center justify-center h-7 w-7 p-0 bg-white/5 hover:bg-white/10"
-                                            >
-                                                <X
-                                                    size={14}
-                                                    className="stroke-[2.5]"
-                                                />
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                onClick={() =>
-                                                    handleUpdateFlagValue(
-                                                        key,
-                                                        editValue
-                                                    )
-                                                }
-                                                data-tooltip-id="fastflags-tooltip"
-                                                data-tooltip-content="Save"
-                                                className="inline-flex items-center justify-center h-7 w-7 p-0 bg-accent hover:bg-accent/90"
-                                            >
-                                                <Save
-                                                    size={14}
-                                                    className="stroke-[2.5]"
-                                                />
-                                            </Button>
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 10 }}
-                                            className="text-xs text-ctp-subtext0 truncate mt-0.5"
-                                        >
-                                            {typeof value === "string"
-                                                ? `"${value}"`
-                                                : String(value)}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                            {editingFlagId !== key && (
-                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        onClick={() => startEditing(key, value)}
-                                        data-tooltip-id="fastflags-tooltip"
-                                        data-tooltip-content="Edit Flag"
-                                        className="inline-flex items-center justify-center h-6 w-6 p-0 bg-white/5 hover:bg-white/10"
-                                    >
-                                        <Edit2
-                                            size={12}
-                                            className="stroke-[2.5]"
-                                        />
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        size="sm"
-                                        onClick={() => setFlagToDelete(key)}
-                                        data-tooltip-id="fastflags-tooltip"
-                                        data-tooltip-content="Delete Flag"
-                                        className="inline-flex items-center justify-center h-6 w-6 p-0 bg-ctp-red/10 hover:bg-ctp-red/20 text-ctp-red"
-                                    >
-                                        <Trash2
-                                            size={12}
-                                            className="stroke-[2.5]"
-                                        />
-                                    </Button>
-                                </div>
-                            )}
-                        </motion.div>
-                    ))}
+                                </motion.div>
+                            );
+                        })}
                 </div>
             </div>
 
