@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use semver::Version;
 use dirs;
 use tauri::Manager;
+use std::io::Write;
 
 const CURRENT_VERSION: &str = "1.0.0";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
@@ -26,15 +27,6 @@ pub struct UpdateProgress {
 
 fn get_downloads_dir() -> PathBuf {
     dirs::download_dir().expect("Failed to get downloads directory")
-}
-
-fn debug_cmd_output(cmd: std::process::Output) -> String {
-    format!(
-        "status: {}, stdout: {}, stderr: {}",
-        cmd.status,
-        String::from_utf8_lossy(&cmd.stdout),
-        String::from_utf8_lossy(&cmd.stderr)
-    )
 }
 
 #[tauri::command]
@@ -67,6 +59,12 @@ pub async fn check_for_updates() -> Result<Option<String>, String> {
 pub async fn download_and_install_update(window: tauri::Window) -> Result<(), String> {
     let client = reqwest::Client::new();
     
+    window.emit("update-progress", UpdateProgress {
+        state: "preparing".to_string(),
+        progress: None,
+        debug_message: None,
+    }).unwrap();
+
     let status: StatusResponse = client
         .get(STATUS_URL)
         .header("User-Agent", "Comet-App")
@@ -77,16 +75,12 @@ pub async fn download_and_install_update(window: tauri::Window) -> Result<(), St
         .await
         .map_err(|e| e.to_string())?;
 
-    let download_url = format!("{}/v{}/Comet_{}_universal.dmg", 
-        DOWNLOAD_URL, 
-        status.version,
-        status.version
-    );
+    let download_url = format!("{}/v{}/Comet_1.0.0_universal.dmg", DOWNLOAD_URL, status.version);
 
     window.emit("update-progress", UpdateProgress {
         state: "downloading".to_string(),
         progress: Some(0.0),
-        debug_message: Some(format!("Starting download from: {}", download_url)),
+        debug_message: None,
     }).unwrap();
 
     let response = client
@@ -111,92 +105,91 @@ pub async fn download_and_install_update(window: tauri::Window) -> Result<(), St
             window.emit("update-progress", UpdateProgress {
                 state: "downloading".to_string(),
                 progress: Some(progress),
-                debug_message: Some(format!("Downloaded: {}/{} bytes", downloaded, total_size)),
+                debug_message: None,
             }).unwrap();
         }
     }
 
-    let dmg_path = get_downloads_dir().join(format!("Comet_{}_universal.dmg", status.version));
+    let dmg_path = get_downloads_dir().join("Comet_1.0.0_universal.dmg");
     fs::write(&dmg_path, bytes).map_err(|e| e.to_string())?;
 
     window.emit("update-progress", UpdateProgress {
-        state: "installing".to_string(),
+        state: "preparing".to_string(),
         progress: None,
-        debug_message: Some("Starting installation process".to_string()),
+        debug_message: None,
     }).unwrap();
 
-    if PathBuf::from(APP_PATH).exists() {
-        let quit_output = Command::new("pkill")
-            .arg("-f")
-            .arg("Comet.app")
-            .output()
-            .map_err(|e| e.to_string())?;
-        
-        window.emit("update-progress", UpdateProgress {
-            state: "installing".to_string(),
-            progress: None,
-            debug_message: Some(format!("Quit app result: {}", debug_cmd_output(quit_output))),
-        }).unwrap();
+    let script_path = get_downloads_dir().join("comet_installer.sh");
+    
+    let script_content = String::from("#!/bin/bash
+set -e
+
+parent_pid=") + &std::process::id().to_string() + &String::from("
+while ps -p $parent_pid > /dev/null; do
+    sleep 1
+done
+
+if [ -d \"/Volumes/Comet\" ]; then
+    hdiutil detach \"/Volumes/Comet\" -force || true
+fi
+
+hdiutil attach \"") + &dmg_path.display().to_string() + &String::from("\" -nobrowse
+if [ ! -d \"/Volumes/Comet\" ]; then
+    exit 1
+fi
+
+if [ -d \"") + APP_PATH + &String::from("\" ]; then
+    rm -rf \"") + APP_PATH + &String::from("\"
+fi
+
+cp -R \"/Volumes/Comet/Comet.app\" \"") + APP_PATH + &String::from("\"
+if [ ! -d \"") + APP_PATH + &String::from("\" ]; then
+    exit 1
+fi
+
+chmod -R 755 \"") + APP_PATH + &String::from("\"
+
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f \"") + APP_PATH + &String::from("\"
+
+hdiutil detach \"/Volumes/Comet\" -force
+
+rm -f \"") + &dmg_path.display().to_string() + &String::from("\"
+
+open -n \"") + APP_PATH + &String::from("\"
+
+exit 0");
+
+    let mut file = std::fs::File::create(&script_path).map_err(|e| e.to_string())?;
+    file.write_all(script_content.as_bytes()).map_err(|e| e.to_string())?;
+
+    let chmod_output = Command::new("chmod")
+        .arg("+x")
+        .arg(&script_path)
+        .output()
+        .map_err(|e| e.to_string())?;
+
+    if !chmod_output.status.success() {
+        return Err(format!("Failed to make installer script executable: {}", String::from_utf8_lossy(&chmod_output.stderr)));
     }
 
-    let mount_output = Command::new("hdiutil")
-        .arg("attach")
-        .arg(&dmg_path)
-        .output()
-        .map_err(|e| e.to_string())?;
-
     window.emit("update-progress", UpdateProgress {
         state: "installing".to_string(),
         progress: None,
-        debug_message: Some(format!("Mount DMG result: {}", debug_cmd_output(mount_output))),
+        debug_message: None,
     }).unwrap();
 
-    let install_output = Command::new("osascript")
-        .arg("-e")
-        .arg(format!(
-            "do shell script \"\\
-            /usr/bin/ditto -rsrc /Volumes/Comet/Comet.app {} && \\
-            chown -R root:wheel {} && \\
-            chmod -R 755 {} && \\
-            /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f {}\\
-            \" with administrator privileges",
-            APP_PATH, APP_PATH, APP_PATH, APP_PATH
-        ))
-        .output()
+    let _installer_process = Command::new("bash")
+        .arg(&script_path)
+        .spawn()
         .map_err(|e| e.to_string())?;
-
-    window.emit("update-progress", UpdateProgress {
-        state: "installing".to_string(),
-        progress: None,
-        debug_message: Some(format!("Install app result: {}", debug_cmd_output(install_output))),
-    }).unwrap();
-
-    let unmount_output = Command::new("hdiutil")
-        .arg("detach")
-        .arg("/Volumes/Comet")
-        .arg("-force")
-        .output()
-        .map_err(|e| e.to_string())?;
-
-    window.emit("update-progress", UpdateProgress {
-        state: "installing".to_string(),
-        progress: None,
-        debug_message: Some(format!("Unmount DMG result: {}", debug_cmd_output(unmount_output))),
-    }).unwrap();
-
-    fs::remove_file(&dmg_path).map_err(|e| e.to_string())?;
 
     window.emit("update-progress", UpdateProgress {
         state: "completed".to_string(),
         progress: None,
-        debug_message: Some("Installation completed successfully".to_string()),
+        debug_message: None,
     }).unwrap();
 
-    Command::new("open")
-        .arg("-n")
-        .arg(APP_PATH)
-        .spawn()
-        .map_err(|e| e.to_string())?;
+    std::thread::sleep(std::time::Duration::from_secs(2));
 
     window.app_handle().exit(0);
     Ok(())
