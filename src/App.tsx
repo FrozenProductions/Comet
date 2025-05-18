@@ -19,6 +19,7 @@ import { AutoExecute } from "./components/autoExecute/autoExecute";
 import { ConsoleProvider, useConsole } from "./contexts/consoleContext";
 import { invoke } from "@tauri-apps/api/tauri";
 import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
+import { WorkspaceProvider } from "./contexts/workspaceContext";
 
 const AppContent: FC = () => {
     const { settings } = useSettings();
@@ -102,18 +103,20 @@ const App: FC = () => {
     return (
         <ConnectionProvider>
             <ExecuteProvider>
-                <EditorProvider>
-                    <SettingsProvider>
-                        <KeybindsProvider>
+                <SettingsProvider>
+                    <WorkspaceProvider>
+                        <EditorProvider>
                             <ConsoleProvider>
                                 <FastFlagsProvider>
-                                    <AppContent />
-                                    <Toaster />
+                                    <KeybindsProvider>
+                                        <AppContent />
+                                        <Toaster />
+                                    </KeybindsProvider>
                                 </FastFlagsProvider>
                             </ConsoleProvider>
-                        </KeybindsProvider>
-                    </SettingsProvider>
-                </EditorProvider>
+                        </EditorProvider>
+                    </WorkspaceProvider>
+                </SettingsProvider>
             </ExecuteProvider>
         </ConnectionProvider>
     );

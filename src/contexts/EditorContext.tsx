@@ -14,10 +14,12 @@ import type { ScriptExecutionOptions } from "../types/script";
 import { scriptService } from "../services/scriptService";
 import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../constants/script";
 import { toast } from "react-hot-toast";
+import { useWorkspace } from "./workspaceContext";
 
 const EditorContext = createContext<EditorState | null>(null);
 
 export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
+    const { activeWorkspace } = useWorkspace();
     const [currentPosition, setCurrentPosition] = useState<EditorPosition>({
         lineNumber: 1,
         column: 1,
@@ -81,6 +83,10 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const createTab = useCallback(() => {
         const id = nanoid();
+        if (!activeWorkspace) {
+            return id;
+        }
+
         const existingUntitled = tabs
             .map((tab) => {
                 const match = tab.title.match(/^untitled_(\d+)\.lua$/);
@@ -101,16 +107,60 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setTabs((prev) => [...prev, newTab]);
         setActiveTab(id);
         return id;
-    }, [tabs]);
+    }, [tabs, activeWorkspace]);
+
+    useEffect(() => {
+        if (!isInitialized || !activeWorkspace) return;
+
+        const saveTabs = async () => {
+            try {
+                for (const tab of tabs) {
+                    await invoke("save_tab", {
+                        workspaceId: activeWorkspace,
+                        tab,
+                    });
+                }
+
+                await invoke("save_tab_state", {
+                    workspaceId: activeWorkspace,
+                    activeTab,
+                    tabOrder: tabs.map((tab) => tab.id),
+                    tabs,
+                });
+            } catch (error) {
+                console.error("Failed to save tabs:", error);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            if (tabs.length > 0) {
+                saveTabs();
+            }
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+    }, [tabs, activeTab, isInitialized, activeWorkspace]);
 
     useEffect(() => {
         const loadSavedTabs = async () => {
+            if (!activeWorkspace) {
+                setTabs([]);
+                setActiveTab(null);
+                setIsInitialized(true);
+                return;
+            }
+
+            setIsInitialized(false);
             try {
-                const loadedTabs = await invoke<Tab[]>("load_tabs");
+                const loadedTabs = await invoke<Tab[]>("load_tabs", {
+                    workspaceId: activeWorkspace,
+                });
                 const tabState = await invoke<{
                     active_tab: string | null;
                     tab_order: string[];
-                }>("get_tab_state");
+                }>("get_tab_state", {
+                    workspaceId: activeWorkspace,
+                });
 
                 if (loadedTabs.length === 0) {
                     const id = nanoid();
@@ -123,10 +173,17 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     setTabs([newTab]);
                     setActiveTab(id);
                 } else {
-                    setTabs(loadedTabs);
-                    setActiveTab(tabState.active_tab || loadedTabs[0].id);
+                    const sortedTabs = [...loadedTabs].sort((a, b) => {
+                        const aIndex = tabState.tab_order.indexOf(a.id);
+                        const bIndex = tabState.tab_order.indexOf(b.id);
+                        if (aIndex === -1) return 1;
+                        if (bIndex === -1) return -1;
+                        return aIndex - bIndex;
+                    });
+
+                    setTabs(sortedTabs);
+                    setActiveTab(tabState.active_tab || sortedTabs[0].id);
                 }
-                setIsInitialized(true);
             } catch (error) {
                 console.error("Failed to load tabs:", error);
                 const id = nanoid();
@@ -138,41 +195,24 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 };
                 setTabs([newTab]);
                 setActiveTab(id);
-                setIsInitialized(true);
             }
+            setIsInitialized(true);
         };
+
         loadSavedTabs();
-    }, []);
-
-    useEffect(() => {
-        if (!isInitialized) return;
-
-        const saveTabs = async () => {
-            try {
-                for (const tab of tabs) {
-                    await invoke("save_tab", { tab });
-                }
-
-                await invoke("save_tab_state", {
-                    activeTab,
-                    tabOrder: tabs.map((tab) => tab.id),
-                });
-            } catch (error) {
-                console.error("Failed to save tabs:", error);
-            }
-        };
-
-        if (tabs.length > 0) {
-            saveTabs();
-        }
-    }, [tabs, activeTab, isInitialized]);
+    }, [activeWorkspace]);
 
     const closeTab = useCallback(
         async (id: string) => {
+            if (!activeWorkspace) return;
+
             try {
                 const tab = tabs.find((t) => t.id === id);
                 if (tab) {
-                    await invoke("delete_tab", { title: tab.title });
+                    await invoke("delete_tab", {
+                        workspaceId: activeWorkspace,
+                        title: tab.title,
+                    });
                     setTabs((prev) => prev.filter((tab) => tab.id !== id));
                     if (activeTab === id) {
                         const remainingTabs = tabs.filter(
@@ -189,17 +229,20 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 console.error("Failed to delete tab:", error);
             }
         },
-        [activeTab, tabs]
+        [activeTab, tabs, activeWorkspace]
     );
 
     const updateTab = useCallback(
         async (id: string, updates: Partial<Tab>) => {
+            if (!activeWorkspace) return;
+
             try {
                 const currentTab = tabs.find((tab) => tab.id === id);
                 if (!currentTab) return;
 
                 if (updates.title && updates.title !== currentTab.title) {
                     await invoke("rename_tab", {
+                        workspaceId: activeWorkspace,
                         oldTitle: currentTab.title,
                         newTitle: updates.title,
                     });
@@ -216,6 +259,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
                 if (updates.content !== undefined) {
                     await invoke("save_tab", {
+                        workspaceId: activeWorkspace,
                         tab: {
                             ...currentTab,
                             ...updates,
@@ -226,7 +270,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 console.error("Failed to update tab:", error);
             }
         },
-        [tabs]
+        [tabs, activeWorkspace]
     );
 
     const loadTabs = useCallback(
@@ -239,6 +283,8 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const duplicateTab = useCallback(
         async (id: string) => {
+            if (!activeWorkspace) return;
+
             const sourceTab = tabs.find((tab) => tab.id === id);
             if (!sourceTab) return;
 
@@ -269,14 +315,17 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             };
 
             try {
-                await invoke("save_tab", { tab: newTab });
+                await invoke("save_tab", {
+                    workspaceId: activeWorkspace,
+                    tab: newTab,
+                });
                 setTabs((prev) => [...prev, newTab]);
                 setActiveTab(newId);
             } catch (error) {
                 console.error("Failed to duplicate tab:", error);
             }
         },
-        [tabs]
+        [tabs, activeWorkspace]
     );
 
     const value = {

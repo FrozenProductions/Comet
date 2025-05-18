@@ -2,6 +2,8 @@ use std::fs::{self, File};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
+use crate::workspace::get_workspace_tabs_dir;
+use sha2::{Sha256, Digest};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Tab {
@@ -12,24 +14,20 @@ pub struct Tab {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TabMetadata {
+    pub id: String,
+    pub title: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TabState {
     pub active_tab: Option<String>,
     pub tab_order: Vec<String>,
+    pub tab_metadata: Vec<TabMetadata>,
 }
 
-fn get_tabs_dir() -> PathBuf {
-    let mut path = dirs::document_dir().expect("Failed to get Documents directory");
-    path.push("Comet");
-    path.push("tabs");
-    fs::create_dir_all(&path).expect("Failed to create directory");
-    path
-}
-
-fn get_state_file() -> PathBuf {
-    let mut path = dirs::document_dir().expect("Failed to get Documents directory");
-    path.push("Comet");
-    path.push("tabs");
-    fs::create_dir_all(&path).expect("Failed to create directory");
+fn get_state_file(workspace_id: &str) -> PathBuf {
+    let mut path = get_workspace_tabs_dir(workspace_id);
     path.push("state.json");
     path
 }
@@ -79,9 +77,15 @@ fn sanitize_filename(name: &str) -> String {
     sanitized
 }
 
+fn get_tab_id_from_title(title: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(title.as_bytes());
+    format!("{:x}", hasher.finalize())
+}
+
 #[tauri::command]
-pub async fn save_tab(tab: Tab) -> Result<(), String> {
-    let tabs_dir = get_tabs_dir();
+pub async fn save_tab(workspace_id: String, tab: Tab) -> Result<(), String> {
+    let tabs_dir = get_workspace_tabs_dir(&workspace_id);
     let filename = sanitize_filename(&tab.title);
     let file_path = tabs_dir.join(&filename);
     fs::write(&file_path, &tab.content).map_err(|e| e.to_string())?;
@@ -89,8 +93,8 @@ pub async fn save_tab(tab: Tab) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn delete_tab(title: String) -> Result<(), String> {
-    let tabs_dir = get_tabs_dir();
+pub async fn delete_tab(workspace_id: String, title: String) -> Result<(), String> {
+    let tabs_dir = get_workspace_tabs_dir(&workspace_id);
     let filename = sanitize_filename(&title);
     let file_path = tabs_dir.join(&filename);
     
@@ -101,20 +105,24 @@ pub async fn delete_tab(title: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn save_tab_state(active_tab: Option<String>, tab_order: Vec<String>) -> Result<(), String> {
+pub async fn save_tab_state(workspace_id: String, active_tab: Option<String>, tab_order: Vec<String>, tabs: Vec<Tab>) -> Result<(), String> {
     let state = TabState {
         active_tab,
         tab_order,
+        tab_metadata: tabs.into_iter().map(|tab| TabMetadata {
+            id: tab.id,
+            title: tab.title,
+        }).collect(),
     };
-    let state_file = get_state_file();
+    let state_file = get_state_file(&workspace_id);
     fs::write(state_file, serde_json::to_string_pretty(&state).unwrap())
         .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-pub async fn load_tabs() -> Result<Vec<Tab>, String> {
-    let tabs_dir = get_tabs_dir();
-    let state_file = get_state_file();
+pub async fn load_tabs(workspace_id: String) -> Result<Vec<Tab>, String> {
+    let tabs_dir = get_workspace_tabs_dir(&workspace_id);
+    let state_file = get_state_file(&workspace_id);
     
     let mut tabs = Vec::new();
     let tab_state: Option<TabState> = if state_file.exists() {
@@ -133,8 +141,18 @@ pub async fn load_tabs() -> Result<Vec<Tab>, String> {
                         .unwrap_or_default()
                         .to_string_lossy()
                         .into_owned();
+                    
+                    let id = if let Some(state) = &tab_state {
+                        state.tab_metadata.iter()
+                            .find(|meta| meta.title == title)
+                            .map(|meta| meta.id.clone())
+                            .unwrap_or_else(|| get_tab_id_from_title(&format!("{}_{}", workspace_id, title)))
+                    } else {
+                        get_tab_id_from_title(&format!("{}_{}", workspace_id, title))
+                    };
+
                     tabs.push(Tab {
-                        id: title.clone(),
+                        id,
                         title,
                         content,
                         language: "lua".to_string(),
@@ -154,8 +172,9 @@ pub async fn load_tabs() -> Result<Vec<Tab>, String> {
 
     if tabs.is_empty() {
         let default_title = "untitled.lua";
+        let id = get_tab_id_from_title(&format!("{}_{}", workspace_id, default_title));
         tabs.push(Tab {
-            id: default_title.to_string(),
+            id,
             title: default_title.to_string(),
             content: "-- New File\n".to_string(),
             language: "lua".to_string(),
@@ -166,8 +185,8 @@ pub async fn load_tabs() -> Result<Vec<Tab>, String> {
 }
 
 #[tauri::command]
-pub async fn get_tab_state() -> Result<TabState, String> {
-    let state_file = get_state_file();
+pub async fn get_tab_state(workspace_id: String) -> Result<TabState, String> {
+    let state_file = get_state_file(&workspace_id);
     
     if state_file.exists() {
         let content = fs::read_to_string(state_file).map_err(|e| e.to_string())?;
@@ -177,13 +196,14 @@ pub async fn get_tab_state() -> Result<TabState, String> {
         Ok(TabState {
             active_tab: Some(default_title.to_string()),
             tab_order: vec![default_title.to_string()],
+            tab_metadata: vec![],
         })
     }
 }
 
 #[tauri::command]
-pub async fn rename_tab(old_title: String, new_title: String) -> Result<(), String> {
-    let tabs_dir = get_tabs_dir();
+pub async fn rename_tab(workspace_id: String, old_title: String, new_title: String) -> Result<(), String> {
+    let tabs_dir = get_workspace_tabs_dir(&workspace_id);
     let old_filename = sanitize_filename(&old_title);
     let new_filename = sanitize_filename(&new_title);
     let old_path = tabs_dir.join(&old_filename);

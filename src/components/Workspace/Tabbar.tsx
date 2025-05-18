@@ -12,7 +12,9 @@ import {
 import { ContextMenu } from "../ui/contextMenu";
 import { useSettings } from "../../contexts/settingsContext";
 import { useEditor } from "../../contexts/editorContext";
+import { useWorkspace } from "../../contexts/workspaceContext";
 import type { Tab, TabbarProps } from "../../types/workspace";
+import { WorkspaceSelector } from "./workspaceSelector";
 
 export const Tabbar: FC<TabbarProps> = ({
     tabs,
@@ -25,6 +27,13 @@ export const Tabbar: FC<TabbarProps> = ({
 }) => {
     const { settings } = useSettings();
     const { duplicateTab } = useEditor();
+    const {
+        workspaces,
+        activeWorkspace,
+        createWorkspace,
+        deleteWorkspace,
+        setActiveWorkspace,
+    } = useWorkspace();
     const [contextMenu, setContextMenu] = useState<{
         x: number;
         y: number;
@@ -145,6 +154,13 @@ export const Tabbar: FC<TabbarProps> = ({
     if (settings.interface.showTabBar) {
         return (
             <div className="h-full flex items-stretch">
+                <WorkspaceSelector
+                    workspaces={workspaces}
+                    activeWorkspace={activeWorkspace}
+                    onWorkspaceChange={setActiveWorkspace}
+                    onWorkspaceDelete={deleteWorkspace}
+                    onCreateWorkspace={createWorkspace}
+                />
                 <div
                     className="flex-1 min-w-0 relative flex items-center px-3 hover:bg-ctp-surface0/50 cursor-pointer group"
                     ref={dropdownRef}
@@ -330,6 +346,13 @@ export const Tabbar: FC<TabbarProps> = ({
 
     return (
         <div className="h-full flex items-stretch">
+            <WorkspaceSelector
+                workspaces={workspaces}
+                activeWorkspace={activeWorkspace}
+                onWorkspaceChange={setActiveWorkspace}
+                onWorkspaceDelete={deleteWorkspace}
+                onCreateWorkspace={createWorkspace}
+            />
             <div className="flex-1 min-w-0 relative">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-[calc(100%-5px)] px-2">
@@ -365,14 +388,16 @@ export const Tabbar: FC<TabbarProps> = ({
                                             opacity: 1,
                                             width: "auto",
                                             transition: {
-                                                duration: 0.2,
+                                                duration: 0.15,
+                                                ease: "easeOut",
                                             },
                                         }}
                                         exit={{
                                             opacity: 0,
                                             width: 0,
                                             transition: {
-                                                duration: 0.2,
+                                                duration: 0.15,
+                                                ease: "easeIn",
                                             },
                                         }}
                                         onContextMenu={(e: React.MouseEvent) =>

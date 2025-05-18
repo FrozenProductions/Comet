@@ -424,6 +424,7 @@ mod active_profile;
 mod flag_validator;
 mod roblox_logs;
 mod hydrogen;
+mod workspace;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use active_profile::ActiveProfileManager;
@@ -579,6 +580,10 @@ fn main() {
             roblox_logs::start_log_watcher,
             roblox_logs::stop_log_watcher,
             hydrogen::check_hydrogen_installation,
+            workspace::load_workspaces,
+            workspace::create_workspace,
+            workspace::delete_workspace,
+            workspace::set_active_workspace,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
