@@ -70,7 +70,7 @@ const KeybindSection: FC<{
                 <div className="text-sm font-medium text-ctp-text truncate">
                     {category}
                 </div>
-                <div className="text-xs text-ctp-subtext0">
+                <div className="text-xs text-ctp-subtext0 select-none">
                     {category} keyboard shortcuts
                 </div>
             </div>
@@ -85,7 +85,7 @@ const KeybindSection: FC<{
                         <div className="text-sm font-medium text-ctp-text">
                             {getKeybindTitle(keybind.action)}
                         </div>
-                        <div className="text-xs text-ctp-subtext0">
+                        <div className="text-xs text-ctp-subtext0 select-none">
                             {keybind.description}
                         </div>
                     </div>
@@ -143,7 +143,7 @@ export const Settings: FC = () => {
                         {title}
                     </div>
                     {description && (
-                        <div className="text-xs text-ctp-subtext0">
+                        <div className="text-xs text-ctp-subtext0 select-none">
                             {description}
                         </div>
                     )}
@@ -192,7 +192,7 @@ export const Settings: FC = () => {
                                 <Code2 size={20} className="text-accent" />
                                 Editor Settings
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1">
+                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
                                 Customize your code editor preferences and
                                 behavior
                             </p>
@@ -400,7 +400,7 @@ export const Settings: FC = () => {
                                 />
                                 Interface Settings
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1">
+                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
                                 Customize the application interface and
                                 appearance
                             </p>
@@ -487,7 +487,7 @@ export const Settings: FC = () => {
                                 <Keyboard size={20} className="text-accent" />
                                 Keyboard Shortcuts
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1">
+                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
                                 Customize keyboard shortcuts for various actions
                             </p>
                         </div>
@@ -531,7 +531,7 @@ export const Settings: FC = () => {
                                 <Info size={20} className="text-accent" />
                                 About Comet
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1">
+                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
                                 Official Hydrogen interface designed to power
                                 its DyLib with a seamless interface for enhanced
                                 communication and control.
@@ -550,7 +550,7 @@ export const Settings: FC = () => {
                                                 <div className="text-sm font-medium text-ctp-text">
                                                     Version
                                                 </div>
-                                                <div className="text-xs text-ctp-subtext0">
+                                                <div className="text-xs text-ctp-subtext0 select-none">
                                                     1.0.0-dev.4 (Development
                                                     Preview)
                                                 </div>
@@ -617,7 +617,7 @@ export const Settings: FC = () => {
                                             />
                                             Tauri
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed">
+                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
                                             Build fast and secure desktop apps
                                             with native performance
                                         </div>
@@ -637,7 +637,7 @@ export const Settings: FC = () => {
                                             />
                                             React
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed">
+                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
                                             Create dynamic user interfaces with
                                             component-based architecture
                                         </div>
@@ -657,7 +657,7 @@ export const Settings: FC = () => {
                                             />
                                             Vite
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed">
+                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
                                             Modern build tool with
                                             lightning-fast hot module
                                             replacement
@@ -678,7 +678,7 @@ export const Settings: FC = () => {
                                             />
                                             TailwindCSS
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed">
+                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
                                             Utility-first CSS framework for
                                             rapid and flexible styling
                                         </div>
@@ -698,7 +698,7 @@ export const Settings: FC = () => {
                                             />
                                             Framer Motion
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed">
+                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
                                             Production-ready library for smooth
                                             animations and gestures
                                         </div>
@@ -718,7 +718,7 @@ export const Settings: FC = () => {
                                             />
                                             Lucide Icons
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed">
+                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
                                             Beautiful and consistent icon system
                                             with over 1000 icons
                                         </div>
@@ -736,7 +736,7 @@ export const Settings: FC = () => {
                                             <div className="text-sm font-medium text-ctp-text">
                                                 Frozen Productions
                                             </div>
-                                            <div className="text-xs text-ctp-subtext0">
+                                            <div className="text-xs text-ctp-subtext0 select-none">
                                                 Comet Developer
                                             </div>
                                         </div>
@@ -744,7 +744,7 @@ export const Settings: FC = () => {
                                             <div className="text-sm font-medium text-ctp-text">
                                                 xGladius
                                             </div>
-                                            <div className="text-xs text-ctp-subtext0">
+                                            <div className="text-xs text-ctp-subtext0 select-none">
                                                 Hydrogen Developer
                                             </div>
                                         </div>
@@ -752,7 +752,7 @@ export const Settings: FC = () => {
                                             <div className="text-sm font-medium text-ctp-text">
                                                 MaximumADHD
                                             </div>
-                                            <div className="text-xs text-ctp-subtext0">
+                                            <div className="text-xs text-ctp-subtext0 select-none">
                                                 Roblox FFlag Tracking System
                                                 Creator
                                             </div>
@@ -835,7 +835,7 @@ export const Settings: FC = () => {
                                         <div className="text-sm font-medium text-ctp-text">
                                             {section.title}
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0">
+                                        <div className="text-xs text-ctp-subtext0 select-none">
                                             {section.description}
                                         </div>
                                     </div>
