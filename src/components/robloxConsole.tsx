@@ -134,11 +134,10 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     onToggle,
     isFloating,
     onFloatToggle,
-    consoleState,
 }) => {
     const { settings } = useSettings();
     const { logs, isWatching, startWatching, stopWatching, clearLogs } =
-        consoleState;
+        useConsole();
 
     if (!settings.interface.showConsole) {
         return null;

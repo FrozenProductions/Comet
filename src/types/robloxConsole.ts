@@ -12,15 +12,6 @@ export interface RobloxConsoleProps {
     onToggle: () => void;
     isFloating: boolean;
     onFloatToggle: () => void;
-    consoleState: ConsoleState;
-}
-
-export interface ConsoleState {
-    logs: LogLine[];
-    isWatching: boolean;
-    startWatching: () => Promise<void>;
-    stopWatching: () => Promise<void>;
-    clearLogs: () => void;
 }
 
 export interface ConsolePosition {
