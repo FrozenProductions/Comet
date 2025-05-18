@@ -1,5 +1,8 @@
 import { Toaster as HotToaster } from "react-hot-toast";
 
+const baseToastStyle =
+    "!bg-ctp-mantle !text-ctp-text !border !border-white/5 !shadow-xl !rounded-xl !py-3 !px-4 !whitespace-normal !w-auto !min-w-[240px] !max-w-[420px] !break-words";
+
 export const Toaster = () => {
     return (
         <HotToaster
@@ -7,11 +10,20 @@ export const Toaster = () => {
             gutter={8}
             containerStyle={{
                 bottom: 24,
+                left: "50%",
+                transform: "translateX(-50%)",
+                maxWidth: "calc(100% - 32px)",
             }}
             toastOptions={{
-                className:
-                    "!bg-ctp-mantle !text-ctp-text !border !border-white/5 !shadow-xl !rounded-xl !py-3 !pl-4 !pr-16",
+                className: baseToastStyle,
                 duration: 4000,
+                style: {
+                    width: "fit-content",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    paddingRight: "12px",
+                },
                 loading: {
                     iconTheme: {
                         primary: "rgb(193, 199, 230)",
@@ -23,16 +35,14 @@ export const Toaster = () => {
                         primary: "rgb(166, 227, 161)",
                         secondary: "rgb(30, 30, 46)",
                     },
-                    className:
-                        "!bg-ctp-mantle !text-ctp-text !border !border-white/5 !shadow-xl !rounded-xl !py-3 !pl-4 !pr-16",
+                    className: baseToastStyle,
                 },
                 error: {
                     iconTheme: {
                         primary: "rgb(243, 139, 168)",
                         secondary: "rgb(30, 30, 46)",
                     },
-                    className:
-                        "!bg-ctp-mantle !text-ctp-text !border !border-white/5 !shadow-xl !rounded-xl !py-3 !pl-4 !pr-16",
+                    className: baseToastStyle,
                 },
             }}
         />
