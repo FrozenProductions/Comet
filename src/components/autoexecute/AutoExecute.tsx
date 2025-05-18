@@ -30,6 +30,10 @@ import { Tooltip } from "react-tooltip";
 import debounce from "lodash/debounce";
 import { Modal } from "../ui/modal";
 
+const removeExtension = (filename: string) => {
+    return filename.replace(/\.lua$/, "");
+};
+
 export const AutoExecute: React.FC = () => {
     const [files, setFiles] = useState<AutoExecuteFile[]>([]);
     const [selectedFile, setSelectedFile] = useState<AutoExecuteFile | null>(
@@ -89,7 +93,7 @@ export const AutoExecute: React.FC = () => {
         setSelectedFile(file);
         setEditedContent(file.content);
         setLastSavedContent(file.content);
-        setNewFileName(file.name);
+        setNewFileName(removeExtension(file.name));
     };
 
     const handleContentChange = (value: string | undefined) => {
@@ -124,19 +128,18 @@ export const AutoExecute: React.FC = () => {
     };
 
     const handleRename = async () => {
-        if (!selectedFile || selectedFile.name === newFileName) {
+        if (!selectedFile || selectedFile.name === `${newFileName}.lua`) {
             setIsRenaming(false);
-            return;
-        }
-        if (!newFileName.endsWith(".lua")) {
-            toast.error("Script name must end with .lua");
             return;
         }
         try {
             await renameAutoExecuteFile(selectedFile.name, newFileName);
             setIsRenaming(false);
             await loadFiles();
-            setSelectedFile({ ...selectedFile, name: newFileName });
+            const updatedName = newFileName.endsWith(".lua")
+                ? newFileName
+                : `${newFileName}.lua`;
+            setSelectedFile({ ...selectedFile, name: updatedName });
             toast.success("Script renamed");
         } catch (error) {
             console.error("Failed to rename file:", error);
@@ -146,11 +149,15 @@ export const AutoExecute: React.FC = () => {
 
     const handleCreateNew = async () => {
         const timestamp = new Date().getTime();
-        const newFileName = `script_${timestamp}.lua`;
+        const newFileName = `script_${timestamp}`;
         try {
             await saveAutoExecuteFile(newFileName, "");
             await loadFiles();
-            const newFile = { name: newFileName, content: "", path: "" };
+            const newFile = {
+                name: `${newFileName}.lua`,
+                content: "",
+                path: "",
+            };
             setSelectedFile(newFile);
             setEditedContent("");
             setLastSavedContent("");
@@ -255,7 +262,7 @@ export const AutoExecute: React.FC = () => {
                                         className="stroke-[2.5] shrink-0 text-white/50"
                                     />
                                     <span className="truncate text-xs text-left flex-1">
-                                        {file.name}
+                                        {removeExtension(file.name)}
                                     </span>
                                     <Button
                                         onClick={(e: React.MouseEvent) => {
@@ -298,7 +305,7 @@ export const AutoExecute: React.FC = () => {
                                                 e: React.ChangeEvent<HTMLInputElement>
                                             ) => setNewFileName(e.target.value)}
                                             className="w-64 bg-ctp-mantle border-white/5 focus:border-white/20 h-8 text-sm"
-                                            placeholder="script_name.lua"
+                                            placeholder="script_name"
                                             spellCheck={false}
                                             autoComplete="off"
                                             autoCapitalize="off"
@@ -336,7 +343,7 @@ export const AutoExecute: React.FC = () => {
                                             className="text-white/50"
                                         />
                                         <h3 className="text-sm font-medium text-ctp-text">
-                                            {selectedFile.name}
+                                            {removeExtension(selectedFile.name)}
                                         </h3>
                                         <Button
                                             onClick={() => setIsRenaming(true)}
@@ -406,7 +413,9 @@ export const AutoExecute: React.FC = () => {
                 isOpen={!!fileToDelete}
                 onClose={cancelDelete}
                 title="Delete Script"
-                description={`Are you sure you want to delete "${fileToDelete?.name}"? This action cannot be undone.`}
+                description={`Are you sure you want to delete "${
+                    fileToDelete ? removeExtension(fileToDelete.name) : ""
+                }"? This action cannot be undone.`}
                 onConfirm={confirmDelete}
                 confirmText="Delete"
                 confirmVariant="destructive"

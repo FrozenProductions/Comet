@@ -4,6 +4,8 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use dirs;
 
+const VALID_EXTENSIONS: [&str; 3] = [".lua", ".luau", ".txt"];
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AutoExecuteFile {
     pub name: String,
@@ -26,9 +28,20 @@ fn read_file_content(path: &Path) -> Result<String, String> {
 
 fn is_valid_script_file(path: &Path) -> bool {
     if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
-        return name.ends_with(".lua") && name != ".DS_Store"
+        if name.starts_with(".") || name == ".DS_Store" {
+            return false;
+        }
+        return VALID_EXTENSIONS.iter().any(|ext| name.ends_with(ext));
     }
     false
+}
+
+fn ensure_valid_extension(name: &str) -> String {
+    if VALID_EXTENSIONS.iter().any(|ext| name.ends_with(ext)) {
+        name.to_string()
+    } else {
+        format!("{}.lua", name)
+    }
 }
 
 #[tauri::command]
@@ -66,8 +79,9 @@ pub fn get_auto_execute_files() -> Result<Vec<AutoExecuteFile>, String> {
 
 #[tauri::command]
 pub fn save_auto_execute_file(name: String, content: String) -> Result<(), String> {
+    let file_name = ensure_valid_extension(&name);
     let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let file_path = home.join("Hydrogen/autoexecute").join(&name);
+    let file_path = home.join("Hydrogen/autoexecute").join(&file_name);
     fs::write(file_path, content).map_err(|e| e.to_string())?;
     Ok(())
 }
@@ -87,9 +101,10 @@ pub fn delete_auto_execute_file(name: String) -> Result<(), String> {
 
 #[tauri::command]
 pub fn rename_auto_execute_file(old_name: String, new_name: String) -> Result<(), String> {
+    let new_file_name = ensure_valid_extension(&new_name);
     let home = dirs::home_dir().ok_or("Could not find home directory")?;
     let old_path = home.join("Hydrogen/autoexecute").join(&old_name);
-    let new_path = home.join("Hydrogen/autoexecute").join(&new_name);
+    let new_path = home.join("Hydrogen/autoexecute").join(&new_file_name);
 
     if !old_path.exists() {
         return Err("Source file does not exist".to_string());
