@@ -420,14 +420,12 @@ mod auto_execute;
 mod tabs;
 mod fast_flags;
 mod fast_flags_profiles;
-mod active_profile;
 mod flag_validator;
 mod roblox_logs;
 mod hydrogen;
 mod workspace;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
-use active_profile::ActiveProfileManager;
 use flag_validator::FlagValidator;
 
 #[tauri::command]
@@ -444,9 +442,8 @@ async fn open_roblox() -> Result<(), String> {
 #[tauri::command]
 async fn load_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(Vec<FastFlagsProfile>, Option<String>), String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    let active_manager = ActiveProfileManager::new(&app_handle);
     let profiles = profile_manager.load_profiles()?;
-    let active_id = active_manager.get_active_profile_id();
+    let active_id = profile_manager.get_active_profile_id()?;
     Ok((profiles, active_id))
 }
 
@@ -459,26 +456,13 @@ async fn save_fast_flags_profile(app_handle: tauri::AppHandle, profile: FastFlag
 #[tauri::command]
 async fn delete_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: String) -> Result<(), String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    let active_manager = ActiveProfileManager::new(&app_handle);
-    
-    if let Some(active_id) = active_manager.get_active_profile_id() {
-        if active_id == profile_id {
-            active_manager.clear_active_profile()?;
-        }
-    }
-    
     profile_manager.delete_profile(&profile_id)
 }
 
 #[tauri::command]
 async fn activate_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: String) -> Result<FastFlagsProfile, String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    let active_manager = ActiveProfileManager::new(&app_handle);
-    
-    let profile = profile_manager.activate_profile(&profile_id).await?;
-    active_manager.set_active_profile_id(&profile_id)?;
-    
-    Ok(profile)
+    profile_manager.activate_profile(&profile_id).await
 }
 
 #[tauri::command]
