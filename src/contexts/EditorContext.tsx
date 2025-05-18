@@ -79,6 +79,30 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         [tabs, executeScript]
     );
 
+    const createTab = useCallback(() => {
+        const id = nanoid();
+        const existingUntitled = tabs
+            .map((tab) => {
+                const match = tab.title.match(/^untitled_(\d+)\.lua$/);
+                return match ? parseInt(match[1]) : 0;
+            })
+            .filter((num) => num > 0);
+
+        const nextNumber =
+            existingUntitled.length > 0 ? Math.max(...existingUntitled) + 1 : 1;
+
+        const title = `untitled_${nextNumber}.lua`;
+        const newTab: Tab = {
+            id,
+            title,
+            content: "-- New File\n",
+            language: "lua",
+        };
+        setTabs((prev) => [...prev, newTab]);
+        setActiveTab(id);
+        return id;
+    }, [tabs]);
+
     useEffect(() => {
         const loadSavedTabs = async () => {
             try {
@@ -88,11 +112,32 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     tab_order: string[];
                 }>("get_tab_state");
 
-                setTabs(loadedTabs);
-                setActiveTab(tabState.active_tab);
+                if (loadedTabs.length === 0) {
+                    const id = nanoid();
+                    const newTab = {
+                        id,
+                        title: "untitled.lua",
+                        content: "-- New File\n",
+                        language: "lua",
+                    };
+                    setTabs([newTab]);
+                    setActiveTab(id);
+                } else {
+                    setTabs(loadedTabs);
+                    setActiveTab(tabState.active_tab || loadedTabs[0].id);
+                }
                 setIsInitialized(true);
             } catch (error) {
                 console.error("Failed to load tabs:", error);
+                const id = nanoid();
+                const newTab = {
+                    id,
+                    title: "untitled.lua",
+                    content: "-- New File\n",
+                    language: "lua",
+                };
+                setTabs([newTab]);
+                setActiveTab(id);
                 setIsInitialized(true);
             }
         };
@@ -121,30 +166,6 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             saveTabs();
         }
     }, [tabs, activeTab, isInitialized]);
-
-    const createTab = useCallback(() => {
-        const id = nanoid();
-        const existingUntitled = tabs
-            .map((tab) => {
-                const match = tab.title.match(/^untitled_(\d+)\.lua$/);
-                return match ? parseInt(match[1]) : 0;
-            })
-            .filter((num) => num > 0);
-
-        const nextNumber =
-            existingUntitled.length > 0 ? Math.max(...existingUntitled) + 1 : 1;
-
-        const title = `untitled_${nextNumber}.lua`;
-        const newTab: Tab = {
-            id,
-            title,
-            content: "-- New File\n",
-            language: "lua",
-        };
-        setTabs((prev) => [...prev, newTab]);
-        setActiveTab(id);
-        return id;
-    }, [tabs]);
 
     const closeTab = useCallback(
         async (id: string) => {
