@@ -20,6 +20,7 @@ import { ConsoleProvider, useConsole } from "./contexts/consoleContext";
 import { invoke } from "@tauri-apps/api/tauri";
 import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
 import { WorkspaceProvider } from "./contexts/workspaceContext";
+import { UpdateChecker } from "./components/updater";
 
 const AppContent: FC = () => {
     const { settings } = useSettings();
@@ -118,6 +119,7 @@ const App: FC = () => {
                     </WorkspaceProvider>
                 </SettingsProvider>
             </ExecuteProvider>
+            <UpdateChecker />
         </ConnectionProvider>
     );
 };

@@ -424,6 +424,7 @@ mod flag_validator;
 mod roblox_logs;
 mod hydrogen;
 mod workspace;
+mod updater;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use flag_validator::FlagValidator;
@@ -568,6 +569,8 @@ fn main() {
             workspace::create_workspace,
             workspace::delete_workspace,
             workspace::set_active_workspace,
+            updater::check_for_updates,
+            updater::download_and_install_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
