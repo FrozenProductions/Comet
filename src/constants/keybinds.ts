@@ -79,7 +79,7 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
         description: `Switch to tab ${i + 1}`,
         data: { index: i },
     })),
-];
+] as const;
 
 export const INVALID_KEYS = [
     "meta",

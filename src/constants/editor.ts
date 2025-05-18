@@ -25,7 +25,7 @@ export const luaLanguageConfig: languages.LanguageConfiguration = {
         { open: '"', close: '"' },
         { open: "'", close: "'" },
     ],
-};
+} as const;
 
 export const luaLanguage: languages.IMonarchLanguage = {
     defaultToken: "",
@@ -508,7 +508,7 @@ export const luaLanguage: languages.IMonarchLanguage = {
             ],
         ],
     },
-};
+} as const;
 
 export const monacoTheme: editor.IStandaloneThemeData = {
     base: "vs-dark",
@@ -563,4 +563,4 @@ export const monacoTheme: editor.IStandaloneThemeData = {
         "editorLineNumber.foreground": "#7d8590",
         "editorLineNumber.activeForeground": "#97a4af",
     },
-};
+} as const;

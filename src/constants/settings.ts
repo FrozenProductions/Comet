@@ -28,7 +28,7 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
         description: "View app information",
         icon: Info,
     },
-];
+] as const;
 
 export const DEFAULT_EDITOR_SETTINGS = {
     display: {
@@ -54,4 +54,4 @@ export const DEFAULT_EDITOR_SETTINGS = {
         showTabBar: false,
         showConsole: true,
     },
-};
+} as const;

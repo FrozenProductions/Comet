@@ -5,7 +5,7 @@ export const CONSOLE_COLORS: Record<LogLevel, string> = {
     WARN: "text-yellow-200",
     DEBUG: "text-blue-200",
     INFO: "text-green-200",
-};
+} as const;
 
 export const CONSOLE_CONFIG = {
     DEFAULT_HEIGHT: "300px",

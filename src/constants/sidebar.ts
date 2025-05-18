@@ -7,6 +7,6 @@ export const MAIN_SCREENS: SidebarItem[] = [
     { id: "Library", icon: Library, label: "Script Library" },
     { id: "AutoExecution", icon: Syringe, label: "Auto Execution" },
     { id: "FastFlags", icon: Flag, label: "Fast Flags" },
-];
+] as const;
 
-export const BUTTON_SPACING = 50;
+export const BUTTON_SPACING = 50 as const;

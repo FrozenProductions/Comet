@@ -78,4 +78,4 @@ export const EDITOR_DEFAULT_OPTIONS: monaco.editor.IStandaloneEditorConstruction
         stickyScroll: { enabled: false },
         hover: { enabled: false },
         multiCursorModifier: "alt",
-    };
+    } as const;

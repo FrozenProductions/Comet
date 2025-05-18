@@ -5,4 +5,4 @@ export const INITIAL_FAST_FLAGS_STATE: FastFlagsState = {
     activeProfileId: null,
     isLoading: true,
     error: null,
-};
+} as const;
