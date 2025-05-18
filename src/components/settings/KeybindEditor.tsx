@@ -1,21 +1,14 @@
 import { FC, useEffect, useRef, useState } from "react";
-import type { Keybind, KeybindAction } from "../../types/keybinds";
+import type {
+    Keybind,
+    KeybindEditorProps,
+    ValidationError,
+} from "../../types/keybinds";
+import { INVALID_KEYS } from "../../constants/keybinds";
 import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
 import { AlertTriangle } from "lucide-react";
 import { useKeybinds } from "../../contexts/keybindsContext";
-
-type KeybindEditorProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    keybind: Keybind;
-    onSave: (action: KeybindAction, updates: Partial<Keybind>) => void;
-};
-
-type ValidationError = {
-    type: "conflict" | "reserved" | "invalid";
-    message: string;
-};
 
 export const KeybindEditor: FC<KeybindEditorProps> = ({
     isOpen,
@@ -85,15 +78,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
             };
         }
 
-        const invalidKeys = [
-            "meta",
-            "shift",
-            "alt",
-            "control",
-            "escape",
-            "tab",
-        ];
-        if (invalidKeys.includes(key.toLowerCase())) {
+        if (INVALID_KEYS.includes(key.toLowerCase() as any)) {
             return {
                 type: "invalid",
                 message: "Modifier keys cannot be used as the main key",

@@ -80,3 +80,12 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
         data: { index: i },
     })),
 ];
+
+export const INVALID_KEYS = [
+    "meta",
+    "shift",
+    "alt",
+    "control",
+    "escape",
+    "tab",
+] as const;

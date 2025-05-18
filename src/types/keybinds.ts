@@ -48,3 +48,15 @@ export interface KeybindsContextType {
     isKeybindEditorOpen: boolean;
     setIsKeybindEditorOpen: (isOpen: boolean) => void;
 }
+
+export interface KeybindEditorProps {
+    isOpen: boolean;
+    onClose: () => void;
+    keybind: Keybind;
+    onSave: (action: KeybindAction, updates: Partial<Keybind>) => void;
+}
+
+export interface ValidationError {
+    type: "conflict" | "reserved" | "invalid";
+    message: string;
+}
