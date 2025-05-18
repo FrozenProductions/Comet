@@ -95,7 +95,9 @@ pub async fn delete_workspace(workspace_id: String) -> Result<(), String> {
         }
     }
 
-    let workspace_path = get_workspace_tabs_dir(&workspace_id);
+    let mut workspace_path = get_workspaces_dir();
+    workspace_path.push(&workspace_id);
+
     if workspace_path.exists() {
         fs::remove_dir_all(workspace_path).map_err(|e| e.to_string())?;
     }
