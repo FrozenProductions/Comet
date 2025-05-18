@@ -46,6 +46,23 @@ export const FastFlags: React.FC = () => {
     } | null>(null);
     const [isAdvancedMode, setIsAdvancedMode] = useState(false);
 
+    useEffect(() => {
+        if (activeProfileId && !selectedProfileId) {
+            setSelectedProfileId(activeProfileId);
+        }
+    }, [activeProfileId, selectedProfileId]);
+
+    useEffect(() => {
+        if (
+            !isLoading &&
+            profiles.length > 0 &&
+            !selectedProfileId &&
+            !activeProfileId
+        ) {
+            setSelectedProfileId(profiles[0].id);
+        }
+    }, [isLoading, profiles, selectedProfileId, activeProfileId]);
+
     const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
 
     useEffect(() => {
