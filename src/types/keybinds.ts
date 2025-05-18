@@ -16,6 +16,7 @@ export type KeybindAction =
     | "executeScript"
     | "openRoblox"
     | "openSettings"
+    | "collapseConsole"
     | "toggleConsole";
 
 export interface Keybind {

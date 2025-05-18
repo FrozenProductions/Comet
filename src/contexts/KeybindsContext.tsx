@@ -3,6 +3,7 @@ import { useEditor } from "./editorContext";
 import { useSettings } from "./settingsContext";
 import { useRoblox } from "../hooks/useRoblox";
 import { useScript } from "../hooks/useScript";
+import { useConsoleVisibility } from "../hooks/useConsoleVisibility";
 import { toast } from "react-hot-toast";
 import {
     KeybindsContextType,
@@ -34,6 +35,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
     const { settings, updateSettings } = useSettings();
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
+    const { toggleConsoleVisibility } = useConsoleVisibility();
     const [activeScreen, setActiveScreen] = useState<Screen>("Editor");
     const [keybinds, setKeybinds] = useState<Keybind[]>(() => {
         const saved = localStorage.getItem("keybinds");
@@ -200,8 +202,11 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
             case "openSettings":
                 handleScreenChange("Settings");
                 break;
-            case "toggleConsole":
+            case "collapseConsole":
                 setIsConsoleOpen((prev) => !prev);
+                break;
+            case "toggleConsole":
+                toggleConsoleVisibility();
                 break;
         }
     };

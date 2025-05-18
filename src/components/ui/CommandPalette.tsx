@@ -18,6 +18,7 @@ import { useScript } from "../../hooks/useScript";
 import { useFastFlags } from "../../contexts/fastFlagsContext";
 import { CommandItem, CommandPaletteProps } from "../../types/commandPalette";
 import { toast } from "react-hot-toast";
+import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
 
 export const CommandPalette: FC<CommandPaletteProps> = ({
     isOpen,
@@ -38,6 +39,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
         activateProfile,
         deactivateProfile,
     } = useFastFlags();
+    const { toggleConsoleVisibility } = useConsoleVisibility();
 
     const executeCommand = (action: () => any) => async () => {
         await Promise.resolve(action());
@@ -93,22 +95,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                 ? "Hide Console"
                 : "Show Console",
             icon: <Terminal size={16} className="stroke-[2.5]" />,
-            action: executeCommand(() => {
-                updateSettings({
-                    interface: {
-                        ...settings.interface,
-                        showConsole: !settings.interface.showConsole,
-                    },
-                });
-                toast.success(
-                    !settings.interface.showConsole
-                        ? "Console shown"
-                        : "Console hidden",
-                    {
-                        id: "console-visibility-toast",
-                    }
-                );
-            }),
+            action: executeCommand(toggleConsoleVisibility),
         },
         {
             id: "toggle-console-mode",
