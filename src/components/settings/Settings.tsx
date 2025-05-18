@@ -559,8 +559,7 @@ export const Settings: FC = () => {
                                                     Version
                                                 </div>
                                                 <div className="text-xs text-ctp-subtext0 select-none">
-                                                    1.0.0-dev.4 (Development
-                                                    Preview)
+                                                    1.0.0-Public
                                                 </div>
                                             </div>
                                         </div>
@@ -578,30 +577,26 @@ export const Settings: FC = () => {
                                             />
                                             GitHub
                                         </a>
-                                        <a
-                                            href=""
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-3 py-1.5 text-xs font-medium bg-accent text-ctp-base rounded-md hover:bg-accent/90 transition-colors flex items-center gap-1.5"
+                                        <button
+                                            disabled
+                                            className="px-3 py-1.5 text-xs font-medium bg-accent/50 text-ctp-base/70 rounded-md cursor-not-allowed flex items-center gap-1.5"
                                         >
                                             <Globe
                                                 size={12}
                                                 className="stroke-[2.5]"
                                             />
                                             Website
-                                        </a>
-                                        <a
-                                            href=""
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-3 py-1.5 text-xs font-medium bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5"
+                                        </button>
+                                        <button
+                                            disabled
+                                            className="px-3 py-1.5 text-xs font-medium bg-white/5 text-ctp-subtext0/70 rounded-md cursor-not-allowed flex items-center gap-1.5"
                                         >
                                             <Book
                                                 size={12}
                                                 className="stroke-[2.5]"
                                             />
                                             Docs
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </SettingGroup>
