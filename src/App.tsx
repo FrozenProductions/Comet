@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 import { Workspace } from "./components/workspace/workspace";
 import { Settings } from "./components/settings/settings";
 import { EditorProvider } from "./contexts/editorContext";
@@ -17,6 +17,8 @@ import { CommandPalette } from "./components/ui/commandPalette";
 import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
 import { ConsoleProvider, useConsole } from "./contexts/consoleContext";
+import { invoke } from "@tauri-apps/api/tauri";
+import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
 
 const AppContent: FC = () => {
     const { settings } = useSettings();
@@ -75,6 +77,28 @@ const AppContent: FC = () => {
 };
 
 const App: FC = () => {
+    const [isHydrogenInstalled, setIsHydrogenInstalled] = useState<
+        boolean | null
+    >(null);
+
+    useEffect(() => {
+        const checkHydrogen = async () => {
+            try {
+                const isInstalled = await invoke("check_hydrogen_installation");
+                setIsHydrogenInstalled(isInstalled as boolean);
+            } catch (error) {
+                console.error("Failed to check Hydrogen installation:", error);
+                setIsHydrogenInstalled(false);
+            }
+        };
+
+        checkHydrogen();
+    }, []);
+
+    if (isHydrogenInstalled === false) {
+        return <HydrogenNotFound />;
+    }
+
     return (
         <ConnectionProvider>
             <ExecuteProvider>

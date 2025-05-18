@@ -423,6 +423,7 @@ mod fast_flags_profiles;
 mod active_profile;
 mod flag_validator;
 mod roblox_logs;
+mod hydrogen;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use active_profile::ActiveProfileManager;
@@ -577,6 +578,7 @@ fn main() {
             fast_flags::open_fast_flags_directory,
             roblox_logs::start_log_watcher,
             roblox_logs::stop_log_watcher,
+            hydrogen::check_hydrogen_installation,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
