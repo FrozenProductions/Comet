@@ -136,6 +136,7 @@ export const AutoExecute: React.FC = () => {
             await renameAutoExecuteFile(selectedFile.name, newFileName);
             setIsRenaming(false);
             await loadFiles();
+            setSelectedFile({ ...selectedFile, name: newFileName });
             toast.success("Script renamed");
         } catch (error) {
             console.error("Failed to rename file:", error);
