@@ -202,6 +202,18 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
             case "openSettings":
                 handleScreenChange("Settings");
                 break;
+            case "openEditor":
+                handleScreenChange("Editor");
+                break;
+            case "openFastFlags":
+                handleScreenChange("FastFlags");
+                break;
+            case "openLibrary":
+                handleScreenChange("Library");
+                break;
+            case "openAutoExecution":
+                handleScreenChange("AutoExecution");
+                break;
             case "collapseConsole":
                 setIsConsoleOpen((prev) => !prev);
                 break;

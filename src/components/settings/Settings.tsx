@@ -54,6 +54,14 @@ const getKeybindTitle = (action: KeybindAction): string => {
             return "Expand/Collapse Console";
         case "toggleConsole":
             return "Show/Hide Console";
+        case "openEditor":
+            return "Switch to Editor";
+        case "openFastFlags":
+            return "Switch to Fast Flags";
+        case "openLibrary":
+            return "Switch to Library";
+        case "openAutoExecution":
+            return "Switch to Auto Execution";
         default:
             return action;
     }

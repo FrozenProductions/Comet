@@ -4,6 +4,7 @@ export const KEYBIND_CATEGORIES = {
     EDITOR: "Editor Actions",
     NAVIGATION: "Navigation",
     APPLICATION: "Application",
+    SCREENS: "Screen Navigation",
 } as const;
 
 export const KEYBIND_CATEGORY_MAPPING: Record<
@@ -19,9 +20,13 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
     toggleZenMode: "APPLICATION",
     toggleCommandPalette: "APPLICATION",
     openRoblox: "APPLICATION",
-    openSettings: "APPLICATION",
+    openSettings: "SCREENS",
     collapseConsole: "APPLICATION",
     toggleConsole: "APPLICATION",
+    openEditor: "SCREENS",
+    openFastFlags: "SCREENS",
+    openLibrary: "SCREENS",
+    openAutoExecution: "SCREENS",
 };
 
 export const DEFAULT_KEYBINDS: Keybind[] = [
@@ -78,6 +83,30 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
         modifiers: { cmd: true },
         action: "toggleConsole",
         description: "Show/hide Roblox console",
+    },
+    {
+        key: "e",
+        modifiers: { cmd: true, shift: true },
+        action: "openEditor",
+        description: "Switch to editor",
+    },
+    {
+        key: "f",
+        modifiers: { cmd: true, shift: true },
+        action: "openFastFlags",
+        description: "Switch to fast flags",
+    },
+    {
+        key: "l",
+        modifiers: { cmd: true, shift: true },
+        action: "openLibrary",
+        description: "Switch to library",
+    },
+    {
+        key: "a",
+        modifiers: { cmd: true, shift: true },
+        action: "openAutoExecution",
+        description: "Switch to auto execution",
     },
     ...Array.from({ length: 20 }, (_, i) => ({
         key: (i + 1).toString(),

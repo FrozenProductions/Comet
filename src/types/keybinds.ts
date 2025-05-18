@@ -16,6 +16,10 @@ export type KeybindAction =
     | "executeScript"
     | "openRoblox"
     | "openSettings"
+    | "openEditor"
+    | "openFastFlags"
+    | "openLibrary"
+    | "openAutoExecution"
     | "collapseConsole"
     | "toggleConsole";
 
