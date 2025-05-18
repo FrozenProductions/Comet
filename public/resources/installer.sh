@@ -46,7 +46,6 @@ fi
 
 echo -e "${BLUE}Installing Comet...${NC}"
 
-# Mount the DMG
 hdiutil attach -nobrowse -noautoopen "$TEMP_DMG" > /dev/null
 MOUNT_POINT="/Volumes/Comet"
 
