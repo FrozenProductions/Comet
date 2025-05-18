@@ -1,6 +1,6 @@
 import { FC, useState, useRef, useEffect, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Folder, FolderPlus, Trash2, ChevronDown } from "lucide-react";
+import { AlignLeft, FolderPlus, Trash2, ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
 import { Modal } from "../ui/modal";
 
@@ -164,8 +164,9 @@ const WorkspaceList = memo(
                             onClick={() => onWorkspaceChange(workspace.id)}
                         >
                             <div className="flex-1 flex items-center gap-2 min-w-0">
-                                <Folder
+                                <AlignLeft
                                     size={14}
+                                    strokeWidth={2}
                                     className={`
                                     flex-shrink-0 transition-colors
                                     ${
@@ -371,24 +372,44 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
             className="flex-shrink-0 relative flex items-center px-4 hover:bg-ctp-surface0/30 cursor-pointer group border-r border-ctp-surface0"
             onClick={handleSelectorClick}
         >
-            <div className="flex items-center gap-2.5 py-2">
-                <div className="flex items-center gap-2">
-                    <Folder
+            <motion.div
+                className="h-full flex items-center justify-center gap-2"
+                layout
+                transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                }}
+            >
+                <div className="flex items-center justify-center gap-2">
+                    <AlignLeft
                         size={14}
+                        strokeWidth={2}
                         className="flex-shrink-0 text-ctp-text opacity-75 group-hover:opacity-100 transition-opacity"
                     />
-                    <span className="text-xs font-medium truncate select-none min-w-[100px] text-ctp-subtext0 group-hover:text-ctp-text transition-colors">
-                        {currentWorkspaceName}
-                    </span>
+                    <motion.div
+                        className="flex items-center justify-center"
+                        layout
+                        transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 30,
+                        }}
+                    >
+                        <span className="text-xs font-medium select-none text-ctp-subtext0 group-hover:text-ctp-text transition-colors whitespace-nowrap">
+                            {currentWorkspaceName}
+                        </span>
+                    </motion.div>
                 </div>
                 <ChevronDown
-                    size={13}
+                    size={14}
+                    strokeWidth={2}
                     className={`
-                    flex-shrink-0 text-ctp-subtext0 group-hover:text-ctp-text transition-all duration-200
-                    ${showDropdown ? "transform rotate-180" : ""}
-                `}
+                        flex-shrink-0 text-ctp-subtext0 group-hover:text-ctp-text transition-all duration-200
+                        ${showDropdown ? "transform rotate-180" : ""}
+                    `}
                 />
-            </div>
+            </motion.div>
             {createPortal(
                 <AnimatePresence>
                     {showDropdown && (
