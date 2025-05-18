@@ -40,7 +40,6 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     const [isRefreshing, setIsRefreshing] = useState(false);
     const flagOrderRef = useRef<string[]>(Object.keys(profile.flags));
 
-    // Update flagOrderRef when profile changes
     if (
         JSON.stringify(Object.keys(profile.flags).sort()) !==
         JSON.stringify(flagOrderRef.current.sort())

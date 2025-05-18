@@ -11,6 +11,7 @@ import {
     User,
     Users,
     FolderOpen,
+    Settings,
 } from "lucide-react";
 import { Header } from "../ui/header";
 import { Button } from "../ui/button";
@@ -18,6 +19,7 @@ import { Input } from "../ui/input";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import { FastFlagManager } from "./fastFlagManager";
+import { EasyMode } from "./easyMode";
 import { Tooltip } from "react-tooltip";
 import { Modal } from "../ui/modal";
 import { invoke } from "@tauri-apps/api/tauri";
@@ -42,6 +44,7 @@ export const FastFlags: React.FC = () => {
         id: string;
         name: string;
     } | null>(null);
+    const [isAdvancedMode, setIsAdvancedMode] = useState(false);
 
     const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
 
@@ -194,18 +197,34 @@ export const FastFlags: React.FC = () => {
                 icon={<Flag size={16} className="text-accent" />}
                 description="Manage roblox fast flags"
                 actions={
-                    <Button
-                        onClick={handleOpenDirectory}
-                        size="sm"
-                        data-tooltip-id="fastflags-tooltip"
-                        data-tooltip-content="Open Directory"
-                        className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
-                    >
-                        <FolderOpen
-                            size={14}
-                            className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
-                        />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            onClick={() => setIsAdvancedMode(!isAdvancedMode)}
+                            size="sm"
+                            data-tooltip-id="fastflags-tooltip"
+                            data-tooltip-content={
+                                isAdvancedMode ? "Easy Mode" : "Advanced Mode"
+                            }
+                            className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
+                        >
+                            <Settings
+                                size={14}
+                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
+                            />
+                        </Button>
+                        <Button
+                            onClick={handleOpenDirectory}
+                            size="sm"
+                            data-tooltip-id="fastflags-tooltip"
+                            data-tooltip-content="Open Directory"
+                            className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
+                        >
+                            <FolderOpen
+                                size={14}
+                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
+                            />
+                        </Button>
+                    </div>
                 }
             />
 
@@ -355,17 +374,28 @@ export const FastFlags: React.FC = () => {
                 </div>
 
                 {selectedProfile ? (
-                    <FastFlagManager
-                        profile={selectedProfile}
-                        onUpdateFlag={(key, value) =>
-                            handleUpdateFlag(selectedProfile.id, key, value)
-                        }
-                        invalidFlags={invalidFlags}
-                        validationError={validationError}
-                        validateSelectedProfileFlags={
-                            validateSelectedProfileFlags
-                        }
-                    />
+                    isAdvancedMode ? (
+                        <FastFlagManager
+                            profile={selectedProfile}
+                            onUpdateFlag={(key, value) =>
+                                handleUpdateFlag(selectedProfile.id, key, value)
+                            }
+                            invalidFlags={invalidFlags}
+                            validationError={validationError}
+                            validateSelectedProfileFlags={
+                                validateSelectedProfileFlags
+                            }
+                        />
+                    ) : (
+                        <EasyMode
+                            profile={selectedProfile}
+                            onUpdateFlag={(key, value) =>
+                                handleUpdateFlag(selectedProfile.id, key, value)
+                            }
+                            invalidFlags={invalidFlags}
+                            validationError={validationError}
+                        />
+                    )
                 ) : (
                     <div className="flex-1 flex items-center justify-center text-ctp-subtext0">
                         <div className="text-center">
