@@ -1,0 +1,46 @@
+{
+    "version": 2,
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "builds": [
+        {
+            "src": "src/index.ts",
+            "use": "@vercel/node",
+            "config": {
+                "maxLambdaSize": "10mb"
+            }
+        }
+    ],
+    "rewrites": [
+        { "source": "/api/v1/status", "destination": "/src/index.ts" },
+        { "source": "/api/v1/installer", "destination": "/src/index.ts" },
+        {
+            "source": "/api/v1/installer/latest",
+            "destination": "/src/index.ts"
+        },
+        { "source": "/(.*)", "destination": "/src/index.ts" }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                },
+                {
+                    "key": "Access-Control-Allow-Methods",
+                    "value": "GET, POST, OPTIONS"
+                },
+                {
+                    "key": "Access-Control-Allow-Headers",
+                    "value": "Origin, X-Requested-With, Content-Type, Accept"
+                },
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                }
+            ]
+        }
+    ]
+}
