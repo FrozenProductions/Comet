@@ -21,6 +21,8 @@ const KeybindsContext = createContext<KeybindsContextType>({
     handleScreenChange: () => {},
     isConsoleOpen: false,
     setIsConsoleOpen: () => {},
+    isKeybindEditorOpen: false,
+    setIsKeybindEditorOpen: () => {},
 });
 
 export const useKeybinds = () => useContext(KeybindsContext);
@@ -39,6 +41,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
     });
     const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
     const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+    const [isKeybindEditorOpen, setIsKeybindEditorOpen] = useState(false);
 
     const numberBuffer = React.useRef("");
     const bufferTimeout = React.useRef<number>();
@@ -53,6 +56,8 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (isKeybindEditorOpen) return;
+
             if (e.metaKey && !e.shiftKey && !e.altKey && !e.ctrlKey) {
                 const num = parseInt(e.key);
                 if (!isNaN(num)) {
@@ -103,57 +108,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 
             if (matchingKeybind) {
                 e.preventDefault();
-
-                switch (matchingKeybind.action) {
-                    case "newTab":
-                        createTab();
-                        break;
-                    case "closeTab":
-                        if (activeTab) {
-                            closeTab(activeTab);
-                        }
-                        break;
-                    case "switchTab":
-                        const targetIndex = matchingKeybind.data?.index;
-                        if (
-                            typeof targetIndex === "number" &&
-                            tabs[targetIndex]
-                        ) {
-                            setActiveTab(tabs[targetIndex].id);
-                        }
-                        break;
-                    case "toggleZenMode":
-                        updateSettings({
-                            interface: {
-                                ...settings.interface,
-                                zenMode: !settings.interface.zenMode,
-                            },
-                        });
-                        toast.success(
-                            !settings.interface.zenMode
-                                ? "Zen mode enabled"
-                                : "Zen mode disabled",
-                            {
-                                id: "zen-mode-toast",
-                            }
-                        );
-                        break;
-                    case "toggleCommandPalette":
-                        toggleCommandPalette();
-                        break;
-                    case "executeScript":
-                        executeScript();
-                        break;
-                    case "openRoblox":
-                        openRoblox();
-                        break;
-                    case "openSettings":
-                        handleScreenChange("Settings");
-                        break;
-                    case "toggleConsole":
-                        setIsConsoleOpen((prev) => !prev);
-                        break;
-                }
+                handleKeybindAction(matchingKeybind);
             }
         };
 
@@ -176,6 +131,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
         executeScript,
         openRoblox,
         isConsoleOpen,
+        isKeybindEditorOpen,
     ]);
 
     const updateKeybind = (
@@ -200,6 +156,56 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
         });
     };
 
+    const handleKeybindAction = (keybind: Keybind) => {
+        switch (keybind.action) {
+            case "newTab":
+                createTab();
+                break;
+            case "closeTab":
+                if (activeTab) {
+                    closeTab(activeTab);
+                }
+                break;
+            case "switchTab":
+                const targetIndex = keybind.data?.index;
+                if (typeof targetIndex === "number" && tabs[targetIndex]) {
+                    setActiveTab(tabs[targetIndex].id);
+                }
+                break;
+            case "toggleZenMode":
+                updateSettings({
+                    interface: {
+                        ...settings.interface,
+                        zenMode: !settings.interface.zenMode,
+                    },
+                });
+                toast.success(
+                    !settings.interface.zenMode
+                        ? "Zen mode enabled"
+                        : "Zen mode disabled",
+                    {
+                        id: "zen-mode-toast",
+                    }
+                );
+                break;
+            case "toggleCommandPalette":
+                toggleCommandPalette();
+                break;
+            case "executeScript":
+                executeScript();
+                break;
+            case "openRoblox":
+                openRoblox();
+                break;
+            case "openSettings":
+                handleScreenChange("Settings");
+                break;
+            case "toggleConsole":
+                setIsConsoleOpen((prev) => !prev);
+                break;
+        }
+    };
+
     return (
         <KeybindsContext.Provider
             value={{
@@ -211,6 +217,8 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
                 handleScreenChange,
                 isConsoleOpen,
                 setIsConsoleOpen,
+                isKeybindEditorOpen,
+                setIsKeybindEditorOpen,
             }}
         >
             {children}

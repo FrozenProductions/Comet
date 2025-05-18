@@ -45,4 +45,6 @@ export interface KeybindsContextType {
     handleScreenChange: (screen: Screen) => void;
     isConsoleOpen: boolean;
     setIsConsoleOpen: (isOpen: boolean | ((prev: boolean) => boolean)) => void;
+    isKeybindEditorOpen: boolean;
+    setIsKeybindEditorOpen: (isOpen: boolean) => void;
 }

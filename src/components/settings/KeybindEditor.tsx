@@ -23,7 +23,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
     keybind,
     onSave,
 }) => {
-    const { keybinds } = useKeybinds();
+    const { keybinds, setIsKeybindEditorOpen } = useKeybinds();
     const [recording, setRecording] = useState(false);
     const [newKeybind, setNewKeybind] = useState<Partial<Keybind>>(() => ({
         key: keybind.key,
@@ -32,6 +32,11 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
     const [validationError, setValidationError] =
         useState<ValidationError | null>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        setIsKeybindEditorOpen(isOpen);
+        return () => setIsKeybindEditorOpen(false);
+    }, [isOpen, setIsKeybindEditorOpen]);
 
     useEffect(() => {
         setNewKeybind({
@@ -147,18 +152,15 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
             document.removeEventListener("mousedown", handleClickOutside);
     }, [isOpen, onClose]);
 
-    const handleSave = () => {
-        if (!newKeybind.key || !newKeybind.modifiers) return;
-        const validationResult = validateKeybind(
-            newKeybind.key,
-            newKeybind.modifiers
-        );
-        if (validationResult) {
-            setValidationError(validationResult);
-            return;
-        }
-        onSave(keybind.action, newKeybind);
+    const handleClose = () => {
+        setIsKeybindEditorOpen(false);
         onClose();
+    };
+
+    const handleSave = () => {
+        if (!newKeybind.key || !newKeybind.modifiers || validationError) return;
+        onSave(keybind.action, newKeybind);
+        handleClose();
     };
 
     const formatKeybind = (key: string, modifiers: Keybind["modifiers"]) => {
@@ -174,7 +176,11 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Edit Keyboard Shortcut">
+        <Modal
+            isOpen={isOpen}
+            onClose={handleClose}
+            title="Edit Keyboard Shortcut"
+        >
             <div className="space-y-4">
                 <div>
                     <div className="text-xs text-ctp-subtext0 mb-2">
@@ -212,7 +218,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
             </div>
             <div className="flex justify-end gap-3 mt-4">
                 <Button
-                    onClick={onClose}
+                    onClick={handleClose}
                     variant="secondary"
                     size="sm"
                     className="bg-white/5 hover:bg-white/10"
