@@ -36,7 +36,15 @@ fi
 
 echo -e "${BLUE}Downloading Comet...${NC}"
 TEMP_DMG=$(mktemp)
-DOWNLOAD_URL="https://github.com/FrozenProductions/Comet/releases/download/v1.0.0/Comet_1.0.0_universal.dmg"
+
+LATEST_VERSION=$(curl -s https://www.comet-ui.fun/api/v1/status | grep -o '"version":"[^\"]*' | grep -o '[0-9.]*')
+
+if [ -z "$LATEST_VERSION" ]; then
+    echo -e "${RED}Error: Could not fetch latest version info${NC}"
+    exit 1
+fi
+
+DOWNLOAD_URL="https://github.com/FrozenProductions/Comet/releases/download/v${LATEST_VERSION}/Comet_1.0.0_universal.dmg"
 
 if ! curl -L -o "$TEMP_DMG" "$DOWNLOAD_URL" 2>/dev/null; then
     echo -e "${RED}Error: Failed to download Comet${NC}"
@@ -45,6 +53,10 @@ if ! curl -L -o "$TEMP_DMG" "$DOWNLOAD_URL" 2>/dev/null; then
 fi
 
 echo -e "${BLUE}Installing Comet...${NC}"
+
+if [ -d "/Applications/Comet.app" ]; then
+    sudo rm -rf "/Applications/Comet.app"
+fi
 
 hdiutil attach -nobrowse -noautoopen "$TEMP_DMG" > /dev/null
 MOUNT_POINT="/Volumes/Comet"
