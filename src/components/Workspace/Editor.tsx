@@ -77,6 +77,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                 command: null,
             });
             monaco.editor.addKeybindingRule({
+                keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL,
+                command: null,
+            });
+            monaco.editor.addKeybindingRule({
                 keybinding:
                     monaco.KeyMod.CtrlCmd |
                     monaco.KeyMod.Shift |
