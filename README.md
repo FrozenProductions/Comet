@@ -31,23 +31,11 @@
   </div>
 </div>
 
-## <div align="center">🛠️ Tech Stack</div>
-
--   **Framework**: [Tauri](https://tauri.app) - Lightweight, secure native apps
--   **Frontend**: [React](https://react.dev) + [TypeScript](https://www.typescriptlang.org/)
--   **Styling**: [TailwindCSS](https://tailwindcss.com)
--   **Backend**: [Rust](https://www.rust-lang.org)
--   **Icons**: [Lucide](https://lucide.dev)
-
-## <div align="center">🔌 Hydrogen Integration</div>
+## <div align="center">📚 Documentation</div>
 
 <div align="center">
-    Comet integrates with Hydrogen's official API through a Rust-based wrapper. The implementation can be found in:
+  <p>For detailed information about features, setup, and development, check out our <a href="docs/documentation.md">documentation</a>.</p>
 </div>
-<br>
-
--   [`src-tauri/src/main.rs`](https://github.com/FrozenProductions/Comet/blob/main/src-tauri/src/main.rs) - API wrapper implementation
--   [`public/resources/api.js`](https://github.com/FrozenProductions/Comet/blob/main/public/resources/api.js) - Official Hydrogen API
 
 ## <div align="center">🚀 Getting Started</div>
 
@@ -76,18 +64,6 @@ npm run tauri:dev
 # Build for production
 npm run tauri:build:universal
 ```
-
-## <div align="center">👥 Credits</div>
-
-<div align="center">
-
-|                                                                    Avatar                                                                    | Name                   | Role                                 |
-| :------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------- | :----------------------------------- |
-| <a href="https://github.com/FrozenProductions"><img src="https://github.com/FrozenProductions.png" width="50" alt="Frozen Productions"/></a> | **Frozen Productions** | Comet Developer                      |
-|               <a href="https://github.com/xGladius"><img src="https://github.com/xGladius.png" width="50" alt="xGladius"/></a>               | **xGladius**           | Hydrogen Developer                   |
-|          <a href="https://github.com/MaximumADHD"><img src="https://github.com/MaximumADHD.png" width="50" alt="MaximumADHD"/></a>           | **MaximumADHD**        | Roblox FFlag Tracking System Creator |
-
-</div>
 
 ## <div align="center">📄 License</div>
 
