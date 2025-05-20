@@ -49,5 +49,13 @@
         Manage scripts that run automatically on game join
       </td>
     </tr>
+    <tr>
+      <td align="center" colspan="2" width="600px">
+        <a href="info.md">
+          <b>Technical Information</b>
+        </a><br/>
+        Learn about the tech stack and project details
+      </td>
+    </tr>
   </table>
 </div>
