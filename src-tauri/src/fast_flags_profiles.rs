@@ -3,6 +3,7 @@ use std::fs;
 use std::path::PathBuf;
 use serde_json::Map;
 use crate::fast_flags::{save_fast_flags, FastFlagsResponse};
+use tauri::api::path::config_dir;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FastFlagsProfile {
@@ -16,10 +17,11 @@ pub struct FastFlagsProfileManager {
 }
 
 fn get_comet_dir() -> PathBuf {
-    let mut path = dirs::document_dir().expect("Failed to get Documents directory");
-    path.push("Comet");
-    fs::create_dir_all(&path).expect("Failed to create directory");
-    path
+    let base_dir = config_dir().expect("Failed to get Application Support directory");
+    let mut app_dir = base_dir;
+    app_dir.push("com.comet.dev");
+    fs::create_dir_all(&app_dir).expect("Failed to create directory");
+    app_dir
 }
 
 fn get_profiles_dir() -> PathBuf {

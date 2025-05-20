@@ -1,6 +1,7 @@
 use std::fs;
 use std::path::{PathBuf};
 use serde::{Deserialize, Serialize};
+use tauri::api::path::config_dir;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Workspace {
@@ -16,8 +17,9 @@ pub struct WorkspaceState {
 }
 
 fn get_workspaces_dir() -> PathBuf {
-    let mut path = dirs::document_dir().expect("Failed to get Documents directory");
-    path.push("Comet");
+    let base_dir = config_dir().expect("Failed to get Application Support directory");
+    let mut path = base_dir;
+    path.push("com.comet.dev");
     path.push("workspaces");
     fs::create_dir_all(&path).expect("Failed to create directory");
     path
