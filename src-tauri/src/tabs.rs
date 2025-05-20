@@ -193,10 +193,14 @@ pub async fn get_tab_state(workspace_id: String) -> Result<TabState, String> {
         serde_json::from_str(&content).map_err(|e| e.to_string())
     } else {
         let default_title = "untitled.lua";
+        let default_id = get_tab_id_from_title(&format!("{}_{}", workspace_id, default_title));
         Ok(TabState {
-            active_tab: Some(default_title.to_string()),
-            tab_order: vec![default_title.to_string()],
-            tab_metadata: vec![],
+            active_tab: Some(default_id.clone()),
+            tab_order: vec![default_id],
+            tab_metadata: vec![TabMetadata {
+                id: get_tab_id_from_title(&format!("{}_{}", workspace_id, default_title)),
+                title: default_title.to_string(),
+            }],
         })
     }
 }
