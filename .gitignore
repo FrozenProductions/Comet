@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 target
-actions.md
 config.txt
 
 # Editor directories and files
