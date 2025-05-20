@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <img src="../.github/assets/docs/workspace.png" alt="Workspace Overview" width="390" />
+  <img src="../.github/assets/docs/workspaces/workspace.png" alt="Workspace Overview" width="390" />
 </div>
 
 ## <div align="center">✨ Overview</div>
@@ -22,7 +22,7 @@ Workspaces allow you to:
 Follow these steps to create and use a new workspace:
 
 <div align="center">
-  <img src="../.github/assets/docs/workspace_selector.png" alt="Workspace Selector" width="390" />
+  <img src="../.github/assets/docs/workspaces/workspaceSelector.png" alt="Workspace Selector" width="390" />
 </div>
 
 1. **Access Workspace Selector**

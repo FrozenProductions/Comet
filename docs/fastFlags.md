@@ -19,7 +19,7 @@ Fast Flags Manager allows you to:
 ## <div align="center">📋 Profiles</div>
 
 <div align="center">
-  <img src="../.github/assets/docs/fast_flags_profile_modal.png" alt="Profile Creation" width="390" />
+  <img src="../.github/assets/docs/fastFlags/fastFlagsProfileModal.png" alt="Profile Creation" width="390" />
 </div>
 
 ### Creating a Profile
@@ -66,7 +66,7 @@ Fast Flags Manager allows you to:
 ## <div align="center">🛠️ Top Bar Controls</div>
 
 <div align="center">
-  <img src="../.github/assets/docs/fast_flags_buttons.png" alt="Fast Flags Manager" width="390" />
+  <img src="../.github/assets/docs/fastFlags/fastFlagsButtons.png" alt="Fast Flags Manager" width="390" />
 </div>
 
 Located in the top-right corner:

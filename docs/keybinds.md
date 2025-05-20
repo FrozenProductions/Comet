@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <img src="../.github/assets/docs/keybinds.png" alt="Keybinds Section" width="390" />
+  <img src="../.github/assets/docs/keybinds/keybinds.png" alt="Keybinds Section" width="390" />
 </div>
 
 ## <div align="center">✨ Overview</div>
@@ -44,7 +44,7 @@ Keybinds allow you to:
 ## <div align="center">🛠️ Customizing Keybinds</div>
 
 <div align="center">
-  <img src="../.github/assets/docs/keybind_editor.png" alt="Keybind Editor" width="390" />
+  <img src="../.github/assets/docs/keybinds/keybindEditor.png" alt="Keybind Editor" width="390" />
 </div>
 
 To customize a keybind:
@@ -62,7 +62,7 @@ To customize a keybind:
     - Wait for "Press your keyboard shortcut..." prompt
 
     <div align="center">
-      <img src="../.github/assets/docs/keybind_editor_recording.png" alt="Keybind Editor Recording" width="390" />
+      <img src="../.github/assets/docs/keybinds/keybindEditorRecording.png" alt="Keybind Editor Recording" width="390" />
     </div>
 
     - Press your desired key combination

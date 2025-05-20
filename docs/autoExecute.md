@@ -31,7 +31,7 @@ Auto Execute Manager allows you to:
 ### Renaming Scripts
 
 <div align="center">
-  <img src="../.github/assets/docs/auto_execute_script.png" alt="Script Renaming" width="390" />
+  <img src="../.github/assets/docs/autoExecute/autoExecuteScript.png" alt="Script Renaming" width="390" />
 </div>
 
 1. **Access Rename Mode**
