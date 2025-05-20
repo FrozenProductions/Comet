@@ -76,6 +76,8 @@ pub async fn download_and_install_update(window: tauri::Window) -> Result<(), St
         .map_err(|e| e.to_string())?;
 
     let download_url = format!("{}/v{}/Comet_1.0.0_universal.dmg", DOWNLOAD_URL, status.version);
+    let dmg_path = get_downloads_dir().join("Comet_1.0.0_universal.dmg");
+    let script_path = get_downloads_dir().join("comet_installer.sh");
 
     window.emit("update-progress", UpdateProgress {
         state: "downloading".to_string(),
@@ -110,7 +112,6 @@ pub async fn download_and_install_update(window: tauri::Window) -> Result<(), St
         }
     }
 
-    let dmg_path = get_downloads_dir().join("Comet_1.0.0_universal.dmg");
     fs::write(&dmg_path, bytes).map_err(|e| e.to_string())?;
 
     window.emit("update-progress", UpdateProgress {
@@ -119,8 +120,6 @@ pub async fn download_and_install_update(window: tauri::Window) -> Result<(), St
         debug_message: None,
     }).unwrap();
 
-    let script_path = get_downloads_dir().join("comet_installer.sh");
-    
     let script_content = String::from("#!/bin/bash
 set -e
 
@@ -155,6 +154,8 @@ hdiutil detach \"/Volumes/Comet\" -force
 
 rm -f \"") + &dmg_path.display().to_string() + &String::from("\"
 
+rm -f \"$0\"
+
 open -n \"") + APP_PATH + &String::from("\"
 
 exit 0");
@@ -169,6 +170,8 @@ exit 0");
         .map_err(|e| e.to_string())?;
 
     if !chmod_output.status.success() {
+        let _ = fs::remove_file(&script_path);
+        let _ = fs::remove_file(&dmg_path);
         return Err(format!("Failed to make installer script executable: {}", String::from_utf8_lossy(&chmod_output.stderr)));
     }
 
@@ -181,7 +184,11 @@ exit 0");
     let _installer_process = Command::new("bash")
         .arg(&script_path)
         .spawn()
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| {
+            let _ = fs::remove_file(&script_path);
+            let _ = fs::remove_file(&dmg_path);
+            e.to_string()
+        })?;
 
     window.emit("update-progress", UpdateProgress {
         state: "completed".to_string(),

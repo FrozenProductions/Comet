@@ -1,5 +1,6 @@
 use std::process::Command;
 use serde::Serialize;
+use std::fs;
 use std::io::Write;
 use dirs;
 
@@ -35,6 +36,8 @@ chmod +x /tmp/hydrogen_install.sh
 /tmp/hydrogen_install.sh > /dev/null 2>&1
 
 rm -f /tmp/hydrogen_install.sh
+
+rm -f "$0"
 exit 0"#);
 
     let mut file = std::fs::File::create(&script_path).map_err(|e| e.to_string())?;
@@ -47,6 +50,7 @@ exit 0"#);
         .map_err(|e| e.to_string())?;
 
     if !chmod_output.status.success() {
+        let _ = fs::remove_file(&script_path);
         return Err(format!("Failed to make installer script executable: {}", String::from_utf8_lossy(&chmod_output.stderr)));
     }
 
@@ -70,8 +74,12 @@ exit 0"#);
         window.emit("hydrogen-progress", InstallProgress {
             state: "error".to_string(),
         }).unwrap();
+        
+        let _ = fs::remove_file(&script_path);
         return Err(format!("Installation failed: {}", error));
     }
+
+    let _ = fs::remove_file(&script_path);
 
     window.emit("hydrogen-progress", InstallProgress {
         state: "completed".to_string(),
