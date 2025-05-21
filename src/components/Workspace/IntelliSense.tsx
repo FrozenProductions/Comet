@@ -67,7 +67,6 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                         (i) => (i - 1 + suggestions.length) % suggestions.length
                     );
                     break;
-                case "Enter":
                 case "Tab":
                     e.preventDefault();
                     e.stopPropagation();
