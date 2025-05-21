@@ -30,6 +30,10 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 }) => {
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
+    const currentShadowIntensity =
+        !profile.flags.hasOwnProperty("FIntRenderShadowIntensity") ||
+        Number(profile.flags["FIntRenderShadowIntensity"]) > 0;
+
     const handleSliderChange = async (key: string, value: number) => {
         try {
             setIsUpdating(key);
@@ -328,10 +332,6 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
             }
         }
     }
-
-    const currentShadowIntensity =
-        !profile.flags.hasOwnProperty("FIntRenderShadowIntensity") ||
-        Number(profile.flags["FIntRenderShadowIntensity"]) > 0;
 
     return (
         <div className="flex-1 flex flex-col bg-ctp-base">

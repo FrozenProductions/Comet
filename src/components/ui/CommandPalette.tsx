@@ -11,11 +11,11 @@ import {
     Terminal,
     Maximize2,
 } from "lucide-react";
-import { useEditor } from "../../contexts/editorContext";
-import { useSettings } from "../../contexts/settingsContext";
+import { useEditor } from "../../hooks/useEditor";
+import { useSettings } from "../../hooks/useSettings";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
-import { useFastFlags } from "../../contexts/fastFlagsContext";
+import { useFastFlags } from "../../hooks/useFastFlags";
 import { CommandItem, CommandPaletteProps } from "../../types/commandPalette";
 import { toast } from "react-hot-toast";
 import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
@@ -52,6 +52,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             await deactivateProfile();
             toast.success("Fast flags cleared");
         } catch (error) {
+            console.error("Failed to clear fast flags:", error);
             toast.error("Failed to clear fast flags");
         }
     };
@@ -209,6 +210,10 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                     `Activated profile: ${profile.name}`
                                 );
                             } catch (error) {
+                                console.error(
+                                    "Failed to activate profile:",
+                                    error
+                                );
                                 toast.error("Failed to activate profile");
                             }
                         }),
@@ -268,6 +273,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         await activateProfile(profile.id);
                         toast.success(`Activated profile: ${profile.name}`);
                     } catch (error) {
+                        console.error("Failed to activate profile:", error);
                         toast.error("Failed to activate profile");
                     }
                 },

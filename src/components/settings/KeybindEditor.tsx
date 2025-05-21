@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState, useCallback } from "react";
 import type {
     Keybind,
     KeybindEditorProps,
@@ -8,7 +8,7 @@ import { INVALID_KEYS } from "../../constants/keybinds";
 import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
 import { AlertTriangle } from "lucide-react";
-import { useKeybinds } from "../../contexts/keybindsContext";
+import { useKeybinds } from "../../hooks/useKeybinds";
 
 export const KeybindEditor: FC<KeybindEditorProps> = ({
     isOpen,
@@ -39,54 +39,57 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
         setValidationError(null);
     }, [keybind]);
 
-    const validateKeybind = (
-        key: string,
-        modifiers: Keybind["modifiers"]
-    ): ValidationError | null => {
-        if (
-            modifiers.cmd &&
-            !modifiers.shift &&
-            !modifiers.alt &&
-            !modifiers.ctrl
-        ) {
-            const num = parseInt(key);
-            if (!isNaN(num) && num >= 1 && num <= 9) {
+    const validateKeybind = useCallback(
+        (
+            key: string,
+            modifiers: Keybind["modifiers"]
+        ): ValidationError | null => {
+            if (
+                modifiers.cmd &&
+                !modifiers.shift &&
+                !modifiers.alt &&
+                !modifiers.ctrl
+            ) {
+                const num = parseInt(key);
+                if (!isNaN(num) && num >= 1 && num <= 9) {
+                    return {
+                        type: "reserved",
+                        message:
+                            "Tab switching keybinds (⌘1-9) cannot be reassigned",
+                    };
+                }
+            }
+
+            const conflictingKeybind = keybinds.find((k) => {
+                if (k.action === keybind.action || k.action === "switchTab")
+                    return false;
+                return (
+                    k.key.toLowerCase() === key.toLowerCase() &&
+                    k.modifiers.cmd === modifiers.cmd &&
+                    k.modifiers.shift === modifiers.shift &&
+                    k.modifiers.alt === modifiers.alt &&
+                    k.modifiers.ctrl === modifiers.ctrl
+                );
+            });
+
+            if (conflictingKeybind) {
                 return {
-                    type: "reserved",
-                    message:
-                        "Tab switching keybinds (⌘1-9) cannot be reassigned",
+                    type: "conflict",
+                    message: `This keybind is already assigned to "${conflictingKeybind.description}"`,
                 };
             }
-        }
 
-        const conflictingKeybind = keybinds.find((k) => {
-            if (k.action === keybind.action || k.action === "switchTab")
-                return false;
-            return (
-                k.key.toLowerCase() === key.toLowerCase() &&
-                k.modifiers.cmd === modifiers.cmd &&
-                k.modifiers.shift === modifiers.shift &&
-                k.modifiers.alt === modifiers.alt &&
-                k.modifiers.ctrl === modifiers.ctrl
-            );
-        });
+            if (INVALID_KEYS.includes(key.toLowerCase() as any)) {
+                return {
+                    type: "invalid",
+                    message: "Modifier keys cannot be used as the main key",
+                };
+            }
 
-        if (conflictingKeybind) {
-            return {
-                type: "conflict",
-                message: `This keybind is already assigned to "${conflictingKeybind.description}"`,
-            };
-        }
-
-        if (INVALID_KEYS.includes(key.toLowerCase() as any)) {
-            return {
-                type: "invalid",
-                message: "Modifier keys cannot be used as the main key",
-            };
-        }
-
-        return null;
-    };
+            return null;
+        },
+        [keybinds, keybind.action]
+    );
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -117,7 +120,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
         }
 
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [recording, keybind.action, keybinds]);
+    }, [recording, validateKeybind]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {

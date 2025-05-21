@@ -82,7 +82,6 @@ fn watch_log_file(window: Window, mut current_log_path: PathBuf) -> io::Result<(
         if len > last_position {
             while reader.read_line(&mut line)? > 0 {
                 if !line.trim().is_empty() {
-                    println!("Sending log: {}", line.trim());
                     window
                         .emit("log_update", line.trim())
                         .expect("Failed to emit log update");

@@ -1,27 +1,28 @@
 import { FC, useState, useEffect } from "react";
 import { Workspace } from "./components/workspace/workspace";
 import { Settings } from "./components/settings/settings";
-import { EditorProvider } from "./contexts/editorContext";
+import { EditorProvider } from "./contexts/editor/editorContext";
 import { Topbar } from "./components/topbar";
 import { Sidebar } from "./components/sidebar";
-import { SettingsProvider } from "./contexts/settingsContext";
-import { ExecuteProvider } from "./contexts/executeContext";
-import { ConnectionProvider } from "./contexts/connectionContext";
-import { KeybindsProvider, useKeybinds } from "./contexts/keybindsContext";
+import { SettingsProvider } from "./contexts/settings/settingsContext";
+import { ExecuteProvider } from "./contexts/execute/executeContext";
+import { ConnectionProvider } from "./contexts/connection/connectionContext";
+import { KeybindsProvider } from "./contexts/keybinds/keybindsContext";
 import { Toaster } from "./components/ui/toast";
 import { Library } from "./components/library";
 import { FastFlags } from "./components/fastFlags/fastFlags";
-import { FastFlagsProvider } from "./contexts/fastFlagsContext";
-import { useSettings } from "./contexts/settingsContext";
+import { FastFlagsProvider } from "./contexts/fastFlags/fastFlagsContext";
+import { useSettings } from "./hooks/useSettings";
 import { CommandPalette } from "./components/ui/commandPalette";
 import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
-import { ConsoleProvider, useConsole } from "./contexts/consoleContext";
+import { ConsoleProvider } from "./contexts/console/consoleContext";
 import { invoke } from "@tauri-apps/api/tauri";
 import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
-import { WorkspaceProvider } from "./contexts/workspaceContext";
+import { WorkspaceProvider } from "./contexts/workspace/workspaceContext";
 import { UpdateChecker } from "./components/updater";
-
+import { useKeybinds } from "./hooks/useKeybinds";
+import { useConsole } from "./hooks/useConsole";
 const AppContent: FC = () => {
     const { settings } = useSettings();
     const {

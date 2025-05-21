@@ -1,22 +1,9 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { toast } from "react-hot-toast";
-import { ConnectionContextType, ConnectionStatus } from "../types/connection";
-
-const ConnectionContext = createContext<ConnectionContextType | undefined>(
-    undefined
-);
-
-export const useConnection = () => {
-    const context = useContext(ConnectionContext);
-    if (!context) {
-        throw new Error(
-            "useConnection must be used within a ConnectionProvider"
-        );
-    }
-    return context;
-};
+import { ConnectionStatus } from "../../types/connection";
+import { ConnectionContext } from "./connectionContextType";
 
 export const ConnectionProvider = ({
     children,
@@ -92,7 +79,9 @@ export const ConnectionProvider = ({
             } else {
                 toast.error(
                     `Failed to connect to port ${newStatus.current_port}`,
-                    { id: toastId }
+                    {
+                        id: toastId,
+                    }
                 );
             }
         } catch (error) {

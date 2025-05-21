@@ -14,8 +14,8 @@ import {
 import { Checkbox } from "../ui/checkbox";
 import { Slider } from "../ui/slider";
 import { RadioGroup } from "../ui/radioGroup";
-import { useSettings } from "../../contexts/settingsContext";
-import { useKeybinds } from "../../contexts/keybindsContext";
+import { useSettings } from "../../hooks/useSettings";
+import { useKeybinds } from "../../hooks/useKeybinds";
 import { KeybindEditor } from "./keybindEditor";
 import type { SettingsKey } from "../../types/settings";
 import type { Keybind, KeybindAction } from "../../types/keybinds";

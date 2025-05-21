@@ -1,13 +1,10 @@
-import { createContext, useContext, useState } from "react";
+import { useState } from "react";
 import {
     DEFAULT_EDITOR_SETTINGS,
     SETTINGS_STORAGE_KEY,
-} from "../constants/settings";
-import type { EditorSettings, SettingsContextType } from "../types/settings";
-
-const SettingsContext = createContext<SettingsContextType | undefined>(
-    undefined
-);
+} from "../../constants/settings";
+import type { EditorSettings } from "../../types/settings";
+import { SettingsContext } from "./settingsContextType";
 
 export const SettingsProvider = ({
     children,
@@ -65,12 +62,4 @@ export const SettingsProvider = ({
             {children}
         </SettingsContext.Provider>
     );
-};
-
-export const useSettings = () => {
-    const context = useContext(SettingsContext);
-    if (context === undefined) {
-        throw new Error("useSettings must be used within a SettingsProvider");
-    }
-    return context;
 };

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useFastFlags } from "../../contexts/fastFlagsContext";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFastFlags } from "../../hooks/useFastFlags";
 import { FlagValidationService } from "../../services/flagValidationService";
 import {
     Flag,
@@ -65,11 +65,7 @@ export const FastFlags: React.FC = () => {
 
     const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
 
-    useEffect(() => {
-        validateSelectedProfileFlags();
-    }, [selectedProfileId, profiles]);
-
-    const validateSelectedProfileFlags = async () => {
+    const validateSelectedProfileFlags = useCallback(async () => {
         if (!selectedProfile) {
             setInvalidFlags([]);
             setValidationError(null);
@@ -88,7 +84,11 @@ export const FastFlags: React.FC = () => {
             setValidationError("Could not fetch valid fast flags list");
             setInvalidFlags([]);
         }
-    };
+    }, [selectedProfile]);
+
+    useEffect(() => {
+        validateSelectedProfileFlags();
+    }, [validateSelectedProfileFlags]);
 
     const handleCreateProfile = async () => {
         if (newProfileName.trim() === "") {
@@ -102,6 +102,7 @@ export const FastFlags: React.FC = () => {
             setIsCreatingProfile(false);
             toast.success("Profile created successfully");
         } catch (error) {
+            console.error("Failed to create profile:", error);
             toast.error("Failed to create profile");
         }
     };
@@ -132,6 +133,7 @@ export const FastFlags: React.FC = () => {
             toast.success("Profile deleted successfully");
         } catch (error) {
             toast.error("Failed to delete profile");
+            console.error("Failed to delete profile:", error);
         }
     };
 
@@ -141,6 +143,7 @@ export const FastFlags: React.FC = () => {
             toast.success("Profile activated successfully");
         } catch (error) {
             toast.error("Failed to activate profile");
+            console.error("Failed to activate profile:", error);
         }
     };
 

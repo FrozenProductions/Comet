@@ -1,17 +1,7 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { invoke } from "@tauri-apps/api/tauri";
-import { ExecuteContextType } from "../types/script";
-
-const ExecuteContext = createContext<ExecuteContextType | undefined>(undefined);
-
-export const useExecute = () => {
-    const context = useContext(ExecuteContext);
-    if (!context) {
-        throw new Error("useExecute must be used within an ExecuteProvider");
-    }
-    return context;
-};
+import { ExecuteContext } from "./executeContextType";
 
 export const ExecuteProvider = ({
     children,

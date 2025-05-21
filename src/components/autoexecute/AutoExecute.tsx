@@ -49,30 +49,7 @@ export const AutoExecute: React.FC = () => {
         null
     );
 
-    const debouncedSave = useCallback(
-        debounce(async (content: string, fileName: string) => {
-            setIsSaving(true);
-            try {
-                await saveAutoExecuteFile(fileName, content);
-                setLastSavedContent(content);
-                await loadFiles();
-            } catch (error) {
-                console.error("Failed to save file:", error);
-                toast.error("Failed to save script");
-            } finally {
-                setIsSaving(false);
-            }
-        }, 1000),
-        []
-    );
-
-    useEffect(() => {
-        if (selectedFile && editedContent !== lastSavedContent) {
-            debouncedSave(editedContent, selectedFile.name);
-        }
-    }, [editedContent, selectedFile, lastSavedContent, debouncedSave]);
-
-    const loadFiles = async () => {
+    const loadFiles = useCallback(async () => {
         try {
             const loadedFiles = await getAutoExecuteFiles();
             setFiles(loadedFiles);
@@ -82,11 +59,37 @@ export const AutoExecute: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
+
+    const debouncedSave = useCallback(
+        (content: string, fileName: string) => {
+            const save = debounce(async () => {
+                setIsSaving(true);
+                try {
+                    await saveAutoExecuteFile(fileName, content);
+                    setLastSavedContent(content);
+                    await loadFiles();
+                } catch (error) {
+                    console.error("Failed to save file:", error);
+                    toast.error("Failed to save script");
+                } finally {
+                    setIsSaving(false);
+                }
+            }, 1000);
+            save();
+        },
+        [loadFiles]
+    );
+
+    useEffect(() => {
+        if (selectedFile && editedContent !== lastSavedContent) {
+            debouncedSave(editedContent, selectedFile.name);
+        }
+    }, [editedContent, selectedFile, lastSavedContent, debouncedSave]);
 
     useEffect(() => {
         loadFiles();
-    }, []);
+    }, [loadFiles]);
 
     const handleFileSelect = (file: AutoExecuteFile) => {
         if (isRenaming) return;

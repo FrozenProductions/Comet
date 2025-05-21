@@ -1,32 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useEditor } from "./editorContext";
-import { useSettings } from "./settingsContext";
-import { useRoblox } from "../hooks/useRoblox";
-import { useScript } from "../hooks/useScript";
-import { useConsoleVisibility } from "../hooks/useConsoleVisibility";
+import React, { useState, useEffect, useCallback } from "react";
+import { useEditor } from "../../hooks/useEditor";
+import { useSettings } from "../../hooks/useSettings";
+import { useRoblox } from "../../hooks/useRoblox";
+import { useScript } from "../../hooks/useScript";
+import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
 import { toast } from "react-hot-toast";
-import {
-    KeybindsContextType,
-    Screen,
-    Keybind,
-    KeybindAction,
-} from "../types/keybinds";
-import { DEFAULT_KEYBINDS } from "../constants/keybinds";
-
-const KeybindsContext = createContext<KeybindsContextType>({
-    keybinds: DEFAULT_KEYBINDS,
-    updateKeybind: () => {},
-    isCommandPaletteOpen: false,
-    toggleCommandPalette: () => {},
-    activeScreen: "Editor",
-    handleScreenChange: () => {},
-    isConsoleOpen: false,
-    setIsConsoleOpen: () => {},
-    isKeybindEditorOpen: false,
-    setIsKeybindEditorOpen: () => {},
-});
-
-export const useKeybinds = () => useContext(KeybindsContext);
+import { Screen, Keybind, KeybindAction } from "../../types/keybinds";
+import { DEFAULT_KEYBINDS } from "../../constants/keybinds";
+import { KeybindsContext } from "./keybindsContextType";
 
 export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -48,13 +29,95 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
     const numberBuffer = React.useRef("");
     const bufferTimeout = React.useRef<number>();
 
-    const toggleCommandPalette = () => {
+    const toggleCommandPalette = useCallback(() => {
         setIsCommandPaletteOpen((prev) => !prev);
-    };
+    }, []);
 
-    const handleScreenChange = (screen: Screen) => {
+    const handleScreenChange = useCallback((screen: Screen) => {
         setActiveScreen(screen);
-    };
+    }, []);
+
+    const handleKeybindAction = useCallback(
+        (keybind: Keybind) => {
+            switch (keybind.action) {
+                case "newTab":
+                    createTab();
+                    break;
+                case "closeTab":
+                    if (activeTab) {
+                        closeTab(activeTab);
+                    }
+                    break;
+                case "switchTab":
+                    const targetIndex = keybind.data?.index;
+                    if (typeof targetIndex === "number" && tabs[targetIndex]) {
+                        setActiveTab(tabs[targetIndex].id);
+                    }
+                    break;
+                case "toggleZenMode":
+                    updateSettings({
+                        interface: {
+                            ...settings.interface,
+                            zenMode: !settings.interface.zenMode,
+                        },
+                    });
+                    toast.success(
+                        !settings.interface.zenMode
+                            ? "Zen mode enabled"
+                            : "Zen mode disabled",
+                        {
+                            id: "zen-mode-toast",
+                        }
+                    );
+                    break;
+                case "toggleCommandPalette":
+                    toggleCommandPalette();
+                    break;
+                case "executeScript":
+                    executeScript();
+                    break;
+                case "openRoblox":
+                    openRoblox();
+                    break;
+                case "openSettings":
+                    handleScreenChange("Settings");
+                    break;
+                case "openEditor":
+                    handleScreenChange("Editor");
+                    break;
+                case "openFastFlags":
+                    handleScreenChange("FastFlags");
+                    break;
+                case "openLibrary":
+                    handleScreenChange("Library");
+                    break;
+                case "openAutoExecution":
+                    handleScreenChange("AutoExecution");
+                    break;
+                case "collapseConsole":
+                    setIsConsoleOpen((prev) => !prev);
+                    break;
+                case "toggleConsole":
+                    toggleConsoleVisibility();
+                    break;
+            }
+        },
+        [
+            createTab,
+            closeTab,
+            activeTab,
+            tabs,
+            setActiveTab,
+            settings,
+            updateSettings,
+            executeScript,
+            openRoblox,
+            toggleCommandPalette,
+            handleScreenChange,
+            setIsConsoleOpen,
+            toggleConsoleVisibility,
+        ]
+    );
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -134,6 +197,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
         openRoblox,
         isConsoleOpen,
         isKeybindEditorOpen,
+        handleKeybindAction,
     ]);
 
     const updateKeybind = (
@@ -156,71 +220,6 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
             localStorage.setItem("keybinds", JSON.stringify(updated));
             return updated;
         });
-    };
-
-    const handleKeybindAction = (keybind: Keybind) => {
-        switch (keybind.action) {
-            case "newTab":
-                createTab();
-                break;
-            case "closeTab":
-                if (activeTab) {
-                    closeTab(activeTab);
-                }
-                break;
-            case "switchTab":
-                const targetIndex = keybind.data?.index;
-                if (typeof targetIndex === "number" && tabs[targetIndex]) {
-                    setActiveTab(tabs[targetIndex].id);
-                }
-                break;
-            case "toggleZenMode":
-                updateSettings({
-                    interface: {
-                        ...settings.interface,
-                        zenMode: !settings.interface.zenMode,
-                    },
-                });
-                toast.success(
-                    !settings.interface.zenMode
-                        ? "Zen mode enabled"
-                        : "Zen mode disabled",
-                    {
-                        id: "zen-mode-toast",
-                    }
-                );
-                break;
-            case "toggleCommandPalette":
-                toggleCommandPalette();
-                break;
-            case "executeScript":
-                executeScript();
-                break;
-            case "openRoblox":
-                openRoblox();
-                break;
-            case "openSettings":
-                handleScreenChange("Settings");
-                break;
-            case "openEditor":
-                handleScreenChange("Editor");
-                break;
-            case "openFastFlags":
-                handleScreenChange("FastFlags");
-                break;
-            case "openLibrary":
-                handleScreenChange("Library");
-                break;
-            case "openAutoExecution":
-                handleScreenChange("AutoExecution");
-                break;
-            case "collapseConsole":
-                setIsConsoleOpen((prev) => !prev);
-                break;
-            case "toggleConsole":
-                toggleConsoleVisibility();
-                break;
-        }
     };
 
     return (

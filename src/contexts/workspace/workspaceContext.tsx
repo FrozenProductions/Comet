@@ -1,30 +1,7 @@
-import {
-    createContext,
-    useContext,
-    FC,
-    ReactNode,
-    useState,
-    useEffect,
-} from "react";
+import { FC, ReactNode, useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { toast } from "react-hot-toast";
-
-export interface Workspace {
-    id: string;
-    name: string;
-    path: string;
-}
-
-interface WorkspaceState {
-    workspaces: Workspace[];
-    activeWorkspace: string | null;
-    isLoading: boolean;
-    createWorkspace: (name: string) => Promise<void>;
-    deleteWorkspace: (id: string) => Promise<void>;
-    setActiveWorkspace: (id: string) => Promise<void>;
-}
-
-const WorkspaceContext = createContext<WorkspaceState | null>(null);
+import { WorkspaceContext, Workspace } from "./workspaceContextType";
 
 export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
     children,
@@ -32,10 +9,6 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
     const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
     const [activeWorkspace, setActiveWorkspace] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        loadWorkspaces();
-    }, []);
 
     const loadWorkspaces = async () => {
         try {
@@ -52,6 +25,10 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        loadWorkspaces();
+    }, []);
 
     const createWorkspace = async (name: string) => {
         try {
@@ -104,12 +81,4 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
             {children}
         </WorkspaceContext.Provider>
     );
-};
-
-export const useWorkspace = () => {
-    const context = useContext(WorkspaceContext);
-    if (!context) {
-        throw new Error("useWorkspace must be used within a WorkspaceProvider");
-    }
-    return context;
 };

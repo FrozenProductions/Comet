@@ -1,22 +1,13 @@
-import {
-    createContext,
-    useContext,
-    FC,
-    ReactNode,
-    useState,
-    useCallback,
-    useEffect,
-} from "react";
+import { FC, ReactNode, useState, useCallback, useEffect } from "react";
 import { nanoid } from "nanoid";
 import { invoke } from "@tauri-apps/api/tauri";
-import { EditorPosition, EditorState, Tab } from "../types/editor";
-import type { ScriptExecutionOptions } from "../types/script";
-import { scriptService } from "../services/scriptService";
-import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../constants/script";
+import { EditorPosition, Tab } from "../../types/editor";
+import type { ScriptExecutionOptions } from "../../types/script";
+import { scriptService } from "../../services/scriptService";
+import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../../constants/script";
 import { toast } from "react-hot-toast";
-import { useWorkspace } from "./workspaceContext";
-
-const EditorContext = createContext<EditorState | null>(null);
+import { useWorkspace } from "../../hooks/useWorkspace";
+import { EditorContext } from "./editorContextType";
 
 export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const { activeWorkspace } = useWorkspace();
@@ -351,12 +342,4 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             {children}
         </EditorContext.Provider>
     );
-};
-
-export const useEditor = () => {
-    const context = useContext(EditorContext);
-    if (!context) {
-        throw new Error("useEditor must be used within an EditorProvider");
-    }
-    return context;
 };

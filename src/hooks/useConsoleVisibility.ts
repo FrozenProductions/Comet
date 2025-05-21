@@ -1,4 +1,4 @@
-import { useSettings } from "../contexts/settingsContext";
+import { useSettings } from "../hooks/useSettings";
 import { toast } from "react-hot-toast";
 
 export const useConsoleVisibility = () => {

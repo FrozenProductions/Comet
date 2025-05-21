@@ -1,11 +1,11 @@
 import { FC } from "react";
-import { useEditor } from "../../contexts/editorContext";
 import { CodeEditor } from "./editor";
 import { Tabbar } from "./tabBar";
-import { useSettings } from "../../contexts/settingsContext";
+import { useSettings } from "../../hooks/useSettings";
 import { RobloxConsole } from "../robloxConsole";
-import { useConsole } from "../../contexts/consoleContext";
-import { useKeybinds } from "../../contexts/keybindsContext";
+import { useConsole } from "../../hooks/useConsole";
+import { useKeybinds } from "../../hooks/useKeybinds";
+import { useEditor } from "../../hooks/useEditor";
 
 export const Workspace: FC = () => {
     const {

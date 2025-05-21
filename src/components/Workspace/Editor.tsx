@@ -6,9 +6,9 @@ import {
     luaLanguageConfig,
 } from "../../constants/editor";
 import { EDITOR_DEFAULT_OPTIONS } from "../../constants/workspace";
-import { useEditor } from "../../contexts/editorContext";
-import { useSettings } from "../../contexts/settingsContext";
-import { useKeybinds } from "../../contexts/keybindsContext";
+import { useEditor } from "../../hooks/useEditor";
+import { useSettings } from "../../hooks/useSettings";
+import { useKeybinds } from "../../hooks/useKeybinds";
 import { IntelliSense } from "./intelliSense";
 import { EditorSearch } from "./editorSearch";
 import { getSuggestions } from "../../utils/suggestions";

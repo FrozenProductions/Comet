@@ -1,18 +1,9 @@
-import {
-    createContext,
-    useContext,
-    FC,
-    ReactNode,
-    useState,
-    useCallback,
-    useEffect,
-} from "react";
-import { ConsoleContextType, ConsoleState } from "../types/console";
-import { CONSOLE_STORAGE_KEY } from "../constants/console";
-import { LogLine } from "../types/robloxConsole";
-import { robloxLogService } from "../services/robloxLogService";
-
-const ConsoleContext = createContext<ConsoleContextType | undefined>(undefined);
+import { FC, ReactNode, useState, useCallback, useEffect } from "react";
+import { ConsoleState } from "../../types/console";
+import { CONSOLE_STORAGE_KEY } from "../../constants/console";
+import { LogLine } from "../../types/robloxConsole";
+import { robloxLogService } from "../../services/robloxLogService";
+import { ConsoleContext } from "./consoleContextType";
 
 export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [isFloating, setIsFloating] = useState(() => {
@@ -88,7 +79,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
             unsubscribe();
             void stopWatching();
         };
-    }, [stopWatching]);
+    }, [stopWatching, addLog]);
 
     return (
         <ConsoleContext.Provider
@@ -106,12 +97,4 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
             {children}
         </ConsoleContext.Provider>
     );
-};
-
-export const useConsole = () => {
-    const context = useContext(ConsoleContext);
-    if (!context) {
-        throw new Error("useConsole must be used within a ConsoleProvider");
-    }
-    return context;
 };

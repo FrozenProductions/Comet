@@ -10,9 +10,9 @@ import {
     Copy,
 } from "lucide-react";
 import { ContextMenu } from "../ui/contextMenu";
-import { useSettings } from "../../contexts/settingsContext";
-import { useEditor } from "../../contexts/editorContext";
-import { useWorkspace } from "../../contexts/workspaceContext";
+import { useSettings } from "../../hooks/useSettings";
+import { useEditor } from "../../hooks/useEditor";
+import { useWorkspace } from "../../hooks/useWorkspace";
 import type { Tab, TabbarProps } from "../../types/workspace";
 import { WorkspaceSelector } from "./workspaceSelector";
 

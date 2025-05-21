@@ -97,6 +97,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                 editor.revealRangeInCenter(matches[0]);
             }
         } catch (error) {
+            console.error("Search error:", error);
             setMatchCount(0);
             setCurrentMatch(0);
         }

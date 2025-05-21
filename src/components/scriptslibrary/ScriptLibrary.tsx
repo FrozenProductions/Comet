@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Script } from "../../types/scriptBlox";
 import { useScriptSearch } from "../../hooks/useScriptSearch";
 import { ScriptCard } from "./scriptCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEditor } from "../../contexts/editorContext";
+import { useEditor } from "../../hooks/useEditor";
 import { ScriptBloxService } from "../../services/scriptBlox";
 import {
     Search,
@@ -113,27 +113,30 @@ export const ScriptLibrary = () => {
     const { scripts, isLoading, error, isApiDown, totalPages, searchScripts } =
         useScriptSearch(300);
 
-    const handleSearch = (page = 1) => {
-        if (searchQuery.trim()) {
-            searchScripts({
-                q: searchQuery,
-                sortBy: selectedSortBy,
-                order: selectedOrder,
-                page,
-                max: 20,
-                strict: true,
-                verified: filters.verified ? 1 : undefined,
-                universal: filters.universal ? 1 : undefined,
-                patched: filters.patched ? 0 : undefined,
-                key: filters.key ? 0 : undefined,
-            });
-        }
-    };
+    const handleSearch = useCallback(
+        (page = 1) => {
+            if (searchQuery.trim()) {
+                searchScripts({
+                    q: searchQuery,
+                    sortBy: selectedSortBy,
+                    order: selectedOrder,
+                    page,
+                    max: 20,
+                    strict: true,
+                    verified: filters.verified ? 1 : undefined,
+                    universal: filters.universal ? 1 : undefined,
+                    patched: filters.patched ? 0 : undefined,
+                    key: filters.key ? 0 : undefined,
+                });
+            }
+        },
+        [searchQuery, selectedSortBy, selectedOrder, filters, searchScripts]
+    );
 
     useEffect(() => {
         handleSearch(1);
         setCurrentPage(1);
-    }, [searchQuery, selectedSortBy, selectedOrder, filters]);
+    }, [searchQuery, selectedSortBy, selectedOrder, filters, handleSearch]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);

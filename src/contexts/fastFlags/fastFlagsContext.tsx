@@ -1,22 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { FastFlagsProfile, FastFlagsState } from "../types/fastFlags";
-import { FastFlagsProfileService } from "../services/fastFlagsProfileService";
+import React, { useEffect, useState } from "react";
+import { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
+import { FastFlagsProfileService } from "../../services/fastFlagsProfileService";
 import { invoke } from "@tauri-apps/api/tauri";
-import { INITIAL_FAST_FLAGS_STATE } from "../constants/fastFlags";
-
-const FastFlagsContext = createContext<{
-    state: FastFlagsState;
-    createProfile: (name: string) => Promise<void>;
-    saveProfile: (profile: FastFlagsProfile) => Promise<void>;
-    deleteProfile: (profileId: string) => Promise<void>;
-    activateProfile: (profileId: string) => Promise<void>;
-    deactivateProfile: () => Promise<void>;
-    updateFlagValue: (
-        profileId: string,
-        key: string,
-        value: any | null
-    ) => Promise<void>;
-} | null>(null);
+import { INITIAL_FAST_FLAGS_STATE } from "../../constants/fastFlags";
+import { FastFlagsContext } from "./fastFlagsContextType";
 
 export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -24,10 +11,6 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
     const [state, setState] = useState<FastFlagsState>(
         INITIAL_FAST_FLAGS_STATE
     );
-
-    useEffect(() => {
-        loadProfiles();
-    }, []);
 
     const loadProfiles = async () => {
         try {
@@ -47,6 +30,10 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
             }));
         }
     };
+
+    useEffect(() => {
+        loadProfiles();
+    }, []);
 
     const createProfile = async (name: string) => {
         const newProfile = FastFlagsProfileService.createNewProfile(name);
@@ -96,10 +83,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
                               ([k]) => k !== key
                           )
                       )
-                    : {
-                          ...profile.flags,
-                          [key]: value,
-                      },
+                    : { ...profile.flags, [key]: value },
         };
 
         await saveProfile(updatedProfile);
@@ -120,12 +104,4 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
             {children}
         </FastFlagsContext.Provider>
     );
-};
-
-export const useFastFlags = () => {
-    const context = useContext(FastFlagsContext);
-    if (!context) {
-        throw new Error("useFastFlags must be used within a FastFlagsProvider");
-    }
-    return context;
 };

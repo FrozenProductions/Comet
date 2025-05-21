@@ -68,6 +68,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
             toast.success("Flag added successfully");
         } catch (error) {
             toast.error("Failed to add flag");
+            console.error("Failed to add flag:", error);
         }
     };
 
@@ -78,6 +79,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
             toast.success("Flag updated successfully");
         } catch (error) {
             toast.error("Failed to update flag");
+            console.error("Failed to update flag:", error);
         }
     };
 
@@ -88,6 +90,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
             toast.success("Flag deleted successfully");
         } catch (error) {
             toast.error("Failed to delete flag");
+            console.error("Failed to delete flag:", error);
         }
     };
 

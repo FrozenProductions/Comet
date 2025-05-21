@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect, memo } from "react";
+import { FC, useState, useRef, useEffect, memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
     Play,
@@ -16,8 +16,8 @@ import {
     ConsolePosition,
 } from "../types/robloxConsole";
 import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
-import { useConsole } from "../contexts/consoleContext";
-import { useSettings } from "../contexts/settingsContext";
+import { useConsole } from "../hooks/useConsole";
+import { useSettings } from "../hooks/useSettings";
 import { CONSOLE_STORAGE_KEY } from "../constants/console";
 import { ConsoleSize } from "../types/console";
 
@@ -138,15 +138,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     const { settings } = useSettings();
     const { logs, isWatching, startWatching, stopWatching, clearLogs } =
         useConsole();
-
-    if (!settings.interface.showConsole) {
-        return null;
-    }
-
-    if (settings.interface.zenMode && !isFloating) {
-        return null;
-    }
-
+    const { setIsFloating } = useConsole();
     const [position, setPosition] = useState<ConsolePosition>(() => {
         const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
         if (savedState) {
@@ -193,19 +185,16 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     } | null>(null);
     const consoleRef = useRef<HTMLDivElement>(null);
     const logsEndRef = useRef<HTMLDivElement>(null);
-    const { setIsFloating } = useConsole();
 
     useEffect(() => {
         if (isFloating) {
             const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
             let state = { isFloating, position, size };
-
             if (savedState) {
                 try {
                     state = { ...JSON.parse(savedState), position, size };
                 } catch {}
             }
-
             localStorage.setItem(CONSOLE_STORAGE_KEY, JSON.stringify(state));
         }
     }, [isFloating, position, size]);
@@ -219,6 +208,70 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
     useEffect(() => {
         setIsFloating(isFloating);
     }, [isFloating, setIsFloating]);
+
+    const handleDrag = useCallback(
+        (e: MouseEvent) => {
+            if (!isDragging || !dragStartPos.current) return;
+
+            const newX = Math.max(
+                0,
+                Math.min(
+                    window.innerWidth - size.width,
+                    e.clientX - dragStartPos.current.x
+                )
+            );
+            const newY = Math.max(
+                0,
+                Math.min(
+                    window.innerHeight - size.height,
+                    e.clientY - dragStartPos.current.y
+                )
+            );
+
+            setPosition({ x: newX, y: newY });
+        },
+        [isDragging, size.width, size.height]
+    );
+
+    const handleDragEnd = useCallback(() => {
+        setIsDragging(false);
+        dragStartPos.current = null;
+    }, []);
+
+    const handleResize = useCallback(
+        (e: MouseEvent) => {
+            if (!isResizing || !resizeStartPos.current || !resizeType) return;
+
+            const deltaX = e.clientX - resizeStartPos.current.x;
+            const deltaY = e.clientY - resizeStartPos.current.y;
+            const maxWidth = window.innerWidth - position.x;
+            const maxHeight = window.innerHeight - position.y;
+
+            const newSize = { ...size };
+
+            if (resizeType === "right" || resizeType === "corner") {
+                newSize.width = Math.max(
+                    400,
+                    Math.min(maxWidth, resizeStartPos.current.width + deltaX)
+                );
+            }
+            if (resizeType === "bottom" || resizeType === "corner") {
+                newSize.height = Math.max(
+                    200,
+                    Math.min(maxHeight, resizeStartPos.current.height + deltaY)
+                );
+            }
+
+            setSize(newSize);
+        },
+        [isResizing, resizeType, position.x, position.y, size]
+    );
+
+    const handleResizeEnd = useCallback(() => {
+        setIsResizing(false);
+        setResizeType(null);
+        resizeStartPos.current = null;
+    }, []);
 
     useEffect(() => {
         if (isDragging) {
@@ -235,7 +288,22 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
             window.removeEventListener("mousemove", handleResize);
             window.removeEventListener("mouseup", handleResizeEnd);
         };
-    }, [isDragging, isResizing]);
+    }, [
+        isDragging,
+        isResizing,
+        handleDrag,
+        handleDragEnd,
+        handleResize,
+        handleResizeEnd,
+    ]);
+
+    if (!settings.interface.showConsole) {
+        return null;
+    }
+
+    if (settings.interface.zenMode && !isFloating) {
+        return null;
+    }
 
     const handleToggleWatch = async () => {
         try {
@@ -258,32 +326,6 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
         };
     };
 
-    const handleDrag = (e: MouseEvent) => {
-        if (!isDragging || !dragStartPos.current) return;
-
-        const newX = Math.max(
-            0,
-            Math.min(
-                window.innerWidth - size.width,
-                e.clientX - dragStartPos.current.x
-            )
-        );
-        const newY = Math.max(
-            0,
-            Math.min(
-                window.innerHeight - size.height,
-                e.clientY - dragStartPos.current.y
-            )
-        );
-
-        setPosition({ x: newX, y: newY });
-    };
-
-    const handleDragEnd = () => {
-        setIsDragging(false);
-        dragStartPos.current = null;
-    };
-
     const handleResizeStart = (
         e: React.MouseEvent,
         type: "right" | "bottom" | "corner"
@@ -298,38 +340,6 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
             width: size.width,
             height: size.height,
         };
-    };
-
-    const handleResize = (e: MouseEvent) => {
-        if (!isResizing || !resizeStartPos.current || !resizeType) return;
-
-        const deltaX = e.clientX - resizeStartPos.current.x;
-        const deltaY = e.clientY - resizeStartPos.current.y;
-        const maxWidth = window.innerWidth - position.x;
-        const maxHeight = window.innerHeight - position.y;
-
-        const newSize = { ...size };
-
-        if (resizeType === "right" || resizeType === "corner") {
-            newSize.width = Math.max(
-                400,
-                Math.min(maxWidth, resizeStartPos.current.width + deltaX)
-            );
-        }
-        if (resizeType === "bottom" || resizeType === "corner") {
-            newSize.height = Math.max(
-                200,
-                Math.min(maxHeight, resizeStartPos.current.height + deltaY)
-            );
-        }
-
-        setSize(newSize);
-    };
-
-    const handleResizeEnd = () => {
-        setIsResizing(false);
-        setResizeType(null);
-        resizeStartPos.current = null;
     };
 
     const consoleStyle = isFloating

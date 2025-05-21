@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { Play, ExternalLink, Loader2 } from "lucide-react";
-import { useExecute } from "../../contexts/executeContext";
+import { useExecute } from "../../hooks/useExecute";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
 import { Tooltip } from "react-tooltip";
 import type { ActionMenuProps } from "../../types/workspace";
-import { useConsole } from "../../contexts/consoleContext";
-import { useSettings } from "../../contexts/settingsContext";
+import { useConsole } from "../../hooks/useConsole";
+import { useSettings } from "../../hooks/useSettings";
 import { FC } from "react";
 
 export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
