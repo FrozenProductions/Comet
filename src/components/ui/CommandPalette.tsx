@@ -30,7 +30,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
     const [isCmdPressed, setIsCmdPressed] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const resultsContainerRef = useRef<HTMLDivElement>(null);
-    const { createTab, setActiveTab, tabs } = useEditor();
+    const { createTab, setActiveTab, tabs, activeTab } = useEditor();
     const { settings, updateSettings } = useSettings();
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
@@ -85,7 +85,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         : "Zen mode disabled",
                     {
                         id: "zen-mode-toast",
-                    }
+                    },
                 );
             }),
         },
@@ -116,7 +116,18 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             title: "Execute Script",
             description: "Execute the current tab's script",
             icon: <Play size={16} className="stroke-[2.5]" />,
-            action: executeCommand(() => executeScript()),
+            action: executeCommand(async () => {
+                const activeTabData = tabs.find((tab) => tab.id === activeTab);
+                if (!activeTabData) {
+                    toast.error("No active tab to execute");
+                    return;
+                }
+                if (!activeTabData.content.trim()) {
+                    toast.error("Cannot execute empty script");
+                    return;
+                }
+                await executeScript();
+            }),
         },
         {
             id: "open-roblox",
@@ -207,12 +218,12 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                             try {
                                 await activateProfile(profile.id);
                                 toast.success(
-                                    `Activated profile: ${profile.name}`
+                                    `Activated profile: ${profile.name}`,
                                 );
                             } catch (error) {
                                 console.error(
                                     "Failed to activate profile:",
-                                    error
+                                    error,
                                 );
                                 toast.error("Failed to activate profile");
                             }
@@ -237,7 +248,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             }
 
             const matchingProfiles = profiles.filter((profile) =>
-                profile.name.toLowerCase().includes(param)
+                profile.name.toLowerCase().includes(param),
             );
 
             if (matchingProfiles.length === 0) {
@@ -382,7 +393,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+                        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
                         onClick={onClose}
                     />
                     <motion.div
@@ -394,11 +405,11 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                             stiffness: 300,
                             damping: 30,
                         }}
-                        className="fixed inset-x-0 top-[20%] flex justify-center items-start z-50"
+                        className="fixed inset-x-0 top-[20%] z-50 flex items-start justify-center"
                     >
-                        <div className="w-full max-w-xl mx-auto px-4">
-                            <div className="bg-ctp-mantle border border-white/5 rounded-xl shadow-2xl overflow-hidden select-none">
-                                <div className="p-4 flex items-center gap-3 border-b border-white/5">
+                        <div className="mx-auto w-full max-w-xl px-4">
+                            <div className="select-none overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle shadow-2xl">
+                                <div className="flex items-center gap-3 border-b border-white/5 p-4">
                                     <Command
                                         size={20}
                                         className="text-white/50"
@@ -416,12 +427,12 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                 ? "Type a command..."
                                                 : "Search tabs or type > for commands..."
                                         }
-                                        className="flex-1 bg-transparent border-none outline-none text-sm text-ctp-text placeholder:text-ctp-subtext0"
+                                        className="flex-1 border-none bg-transparent text-sm text-ctp-text outline-none placeholder:text-ctp-subtext0"
                                         autoComplete="off"
                                         spellCheck="false"
                                     />
-                                    <div className="flex items-center gap-1 select-none">
-                                        <kbd className="px-2 py-1 text-xs font-medium bg-white/5 rounded text-ctp-subtext0">
+                                    <div className="flex select-none items-center gap-1">
+                                        <kbd className="rounded bg-white/5 px-2 py-1 text-xs font-medium text-ctp-subtext0">
                                             esc
                                         </kbd>
                                         <span className="text-xs text-ctp-subtext0">
@@ -433,7 +444,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                 <div className="max-h-[60vh] overflow-y-auto">
                                     {filteredItems.length === 0 ? (
                                         <div className="p-2">
-                                            <div className="text-xs text-ctp-subtext0 px-2 py-1.5 select-none">
+                                            <div className="select-none px-2 py-1.5 text-xs text-ctp-subtext0">
                                                 {searchQuery.startsWith(">") ||
                                                 searchQuery.startsWith("/")
                                                     ? "No commands found"
@@ -463,27 +474,25 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                                     index *
                                                                     0.03,
                                                             }}
-                                                            className={`
-                              w-full flex items-center gap-3 px-2 py-2 rounded-lg text-left select-none
-                              ${
-                                  selectedIndex === index
-                                      ? "bg-white/10 text-white"
-                                      : "text-ctp-subtext0 hover:bg-white/5 hover:text-white"
-                              }
-                            `}
+                                                            className={`flex w-full select-none items-center gap-3 rounded-lg px-2 py-2 text-left ${
+                                                                selectedIndex ===
+                                                                index
+                                                                    ? "bg-white/10 text-white"
+                                                                    : "text-ctp-subtext0 hover:bg-white/5 hover:text-white"
+                                                            } `}
                                                             onClick={() => {
                                                                 item.action();
                                                                 onClose();
                                                             }}
                                                         >
-                                                            <div className="w-5 h-5 flex items-center justify-center text-white/50">
+                                                            <div className="flex h-5 w-5 items-center justify-center text-white/50">
                                                                 {item.icon}
                                                             </div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="text-sm font-medium truncate">
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="truncate text-sm font-medium">
                                                                     {item.title}
                                                                 </div>
-                                                                <div className="text-xs opacity-50 truncate">
+                                                                <div className="truncate text-xs opacity-50">
                                                                     {
                                                                         item.description
                                                                     }
@@ -491,13 +500,13 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                             </div>
                                                             {selectedIndex ===
                                                                 index && (
-                                                                <div className="flex items-center gap-1 text-xs select-none">
-                                                                    <kbd className="px-2 py-1 bg-white/5 rounded">
+                                                                <div className="flex select-none items-center gap-1 text-xs">
+                                                                    <kbd className="rounded bg-white/5 px-2 py-1">
                                                                         {!searchQuery.startsWith(
-                                                                            ">"
+                                                                            ">",
                                                                         ) &&
                                                                         !searchQuery.startsWith(
-                                                                            "/"
+                                                                            "/",
                                                                         ) &&
                                                                         isCmdPressed
                                                                             ? "⌘ + enter"
@@ -505,10 +514,10 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                                     </kbd>
                                                                     <span>
                                                                         {!searchQuery.startsWith(
-                                                                            ">"
+                                                                            ">",
                                                                         ) &&
                                                                         !searchQuery.startsWith(
-                                                                            "/"
+                                                                            "/",
                                                                         )
                                                                             ? isCmdPressed
                                                                                 ? "to execute"
@@ -518,7 +527,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                                                 </div>
                                                             )}
                                                         </motion.button>
-                                                    )
+                                                    ),
                                                 )}
                                             </div>
                                         </div>
