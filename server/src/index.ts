@@ -8,7 +8,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader(
         "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
+        "Origin, X-Requested-With, Content-Type, Accept",
     );
     res.setHeader("X-Content-Type-Options", "nosniff");
     next();
@@ -18,13 +18,14 @@ app.get("/api/v1/status", (req, res) => {
     res.json({
         status: "ok",
         version: "1.0.2",
+        prerelease: "1.0.3.1",
     });
 });
 
 app.get("/api/v1/installer", async (req, res) => {
     try {
         const RESPONSE = await fetch(
-            "https://raw.githubusercontent.com/FrozenProductions/Comet/refs/heads/main/public/resources/installer.sh"
+            "https://raw.githubusercontent.com/FrozenProductions/Comet/refs/heads/main/public/resources/installer.sh",
         );
         if (!RESPONSE.ok) {
             throw new Error(`Failed to fetch installer: ${RESPONSE.status}`);
@@ -41,7 +42,7 @@ app.get("/api/v1/installer", async (req, res) => {
 app.get("/api/v1/installer/latest", (req, res) => {
     res.redirect(
         302,
-        "https://github.com/FrozenProductions/Comet/releases/download/v1.0.0/Comet_1.0.0_universal.dmg"
+        "https://github.com/FrozenProductions/Comet/releases/download/v1.0.0/Comet_1.0.0_universal.dmg",
     );
 });
 

@@ -583,7 +583,8 @@ export const Settings: FC = () => {
                                                     Version
                                                 </div>
                                                 <div className="select-none text-xs text-ctp-subtext0">
-                                                    1.0.2-Public
+                                                    1.0.3-dev.1 (Development
+                                                    Preview)
                                                 </div>
                                             </div>
                                         </div>
