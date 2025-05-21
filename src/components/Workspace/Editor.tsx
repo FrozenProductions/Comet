@@ -144,13 +144,19 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                 }
             }
 
-            if (e.code === "Escape") {
+            if (
+                e.code === "Escape" ||
+                e.code === "Delete" ||
+                e.code === "Backspace"
+            ) {
                 setIntellisenseState((prev) => ({
                     ...prev,
                     isVisible: false,
                     isTyping: false,
                 }));
-                setIsSearchVisible(false);
+                if (e.code === "Escape") {
+                    setIsSearchVisible(false);
+                }
             }
         });
 
@@ -205,12 +211,11 @@ export const CodeEditor: FC<CodeEditorProps> = ({
             const position = editor.getPosition();
             if (!model || !position) return;
 
+            if (e.changes.some((change) => change.text === "")) return;
+
             const word = model.getWordUntilPosition(position);
             const currentWord = word.word;
 
-            const isTyping = e.changes.some((change) => change.text.length > 0);
-
-            if (!isTyping && currentWord === intellisenseState.lastWord) return;
             if (!settings.intellisense.enabled) {
                 setIntellisenseState((prev) => ({ ...prev, isVisible: false }));
                 return;
@@ -220,10 +225,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                 maxSuggestions: settings.intellisense.maxSuggestions,
             });
 
-            if (
-                suggestions.length > 0 ||
-                (currentWord.length >= 2 && isTyping)
-            ) {
+            if (suggestions.length > 0 && currentWord.length >= 2) {
                 const coords = editor.getScrolledVisiblePosition(position);
                 const editorDom = editor.getDomNode();
                 if (!editorDom || !coords) return;
@@ -236,7 +238,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                         y: editorRect.top + coords.top + 20,
                     },
                     suggestions,
-                    isTyping,
+                    isTyping: true,
                     lastWord: currentWord,
                 });
             } else {
