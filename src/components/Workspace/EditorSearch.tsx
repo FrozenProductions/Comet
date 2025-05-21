@@ -239,15 +239,23 @@ export const EditorSearch: FC<EditorSearchProps> = ({
         if (!isVisible) return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
+            const isSearchInputFocused =
+                document.activeElement === searchInputRef.current;
+
+            if (e.key === "Escape") {
+                e.preventDefault();
+                handleClose();
+                return;
+            }
+
+            if (!isSearchInputFocused) return;
+
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleNext();
             } else if (e.key === "Enter" && e.shiftKey) {
                 e.preventDefault();
                 handlePrevious();
-            } else if (e.key === "Escape") {
-                e.preventDefault();
-                handleClose();
             }
         };
 
