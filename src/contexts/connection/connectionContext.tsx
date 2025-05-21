@@ -23,7 +23,7 @@ export const ConnectionProvider = ({
             .catch((error) => {
                 console.error(
                     "Failed to get initial connection status:",
-                    error
+                    error,
                 );
                 toast.error("Failed to get connection status");
             });
@@ -35,7 +35,7 @@ export const ConnectionProvider = ({
                 if (event.payload.is_connected) {
                     toast.success(`Connected to port ${event.payload.port}`);
                 }
-            }
+            },
         );
 
         return () => {
@@ -47,9 +47,8 @@ export const ConnectionProvider = ({
         try {
             setStatus((prev) => ({ ...prev, is_connecting: true }));
             const toastId = toast.loading("Refreshing connection...");
-            const newStatus = await invoke<ConnectionStatus>(
-                "refresh_connection"
-            );
+            const newStatus =
+                await invoke<ConnectionStatus>("refresh_connection");
             setStatus(newStatus);
 
             if (newStatus.is_connected) {
@@ -81,7 +80,7 @@ export const ConnectionProvider = ({
                     `Failed to connect to port ${newStatus.current_port}`,
                     {
                         id: toastId,
-                    }
+                    },
                 );
             }
         } catch (error) {

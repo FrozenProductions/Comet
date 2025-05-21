@@ -42,13 +42,13 @@ const ConsoleHeader = memo(
         onDragStart?: (e: React.MouseEvent) => void;
     }) => (
         <div
-            className="h-10 flex items-center justify-between px-4 bg-ctp-mantle border-b border-white/5 cursor-move select-none"
+            className="flex h-10 cursor-move select-none items-center justify-between border-b border-white/5 bg-ctp-mantle px-4"
             onMouseDown={onDragStart}
         >
             <div className="flex items-center gap-2">
                 <button
                     onClick={onToggle}
-                    className="p-1 hover:bg-white/5 rounded cursor-pointer"
+                    className="cursor-pointer rounded p-1 hover:bg-white/5"
                 >
                     {isOpen ? (
                         <ChevronDown size={16} />
@@ -61,14 +61,14 @@ const ConsoleHeader = memo(
             <div className="flex items-center gap-2">
                 <button
                     onClick={onClear}
-                    className="p-1 hover:bg-white/5 rounded text-ctp-subtext0 hover:text-ctp-text cursor-pointer"
+                    className="cursor-pointer rounded p-1 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
                     title="Clear console"
                 >
                     <Trash2 size={16} />
                 </button>
                 <button
                     onClick={onToggleWatch}
-                    className={`p-1 hover:bg-white/5 rounded cursor-pointer ${
+                    className={`cursor-pointer rounded p-1 hover:bg-white/5 ${
                         isWatching ? "text-red-400" : "text-green-400"
                     }`}
                     title={isWatching ? "Stop watching" : "Start watching"}
@@ -77,7 +77,7 @@ const ConsoleHeader = memo(
                 </button>
                 <button
                     onClick={onFloatToggle}
-                    className="p-1 hover:bg-white/5 rounded text-ctp-subtext0 hover:text-ctp-text cursor-pointer"
+                    className="cursor-pointer rounded p-1 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
                     title={isFloating ? "Dock console" : "Float console"}
                 >
                     {isFloating ? (
@@ -88,7 +88,7 @@ const ConsoleHeader = memo(
                 </button>
             </div>
         </div>
-    )
+    ),
 );
 
 ConsoleHeader.displayName = "ConsoleHeader";
@@ -100,30 +100,30 @@ const ConsoleLog = memo<{ log: LogLine; isResizing: boolean }>(
                 CONSOLE_COLORS[log.level]
             } border-b border-white/5 last:border-0`}
         >
-            <span className="text-ctp-subtext0 mr-2 select-none">
+            <span className="mr-2 select-none text-ctp-subtext0">
                 {new Date(log.timestamp).toLocaleTimeString()}
             </span>
-            <span className="font-medium select-none">[{log.level}]</span>{" "}
+            <span className="select-none font-medium">[{log.level}]</span>{" "}
             <span className={isResizing ? "select-none" : "select-text"}>
                 {log.message}
             </span>
         </div>
-    )
+    ),
 );
 
 ConsoleLog.displayName = "ConsoleLog";
 
 const EmptyState = () => (
-    <div className="h-full flex flex-col items-center justify-center text-center p-4">
+    <div className="flex h-full flex-col items-center justify-center p-4 text-center">
         <Terminal
             size={32}
-            className="text-ctp-subtext0 mb-3"
+            className="mb-3 text-ctp-subtext0"
             strokeWidth={1.5}
         />
-        <div className="text-ctp-subtext0 font-medium">No logs available</div>
-        <div className="text-ctp-subtext0/75 text-sm mt-1">
+        <div className="font-medium text-ctp-subtext0">No logs available</div>
+        <div className="mt-1 text-sm text-ctp-subtext0/75">
             Click the{" "}
-            <Play size={14} className="inline-block mx-1 text-green-400" />{" "}
+            <Play size={14} className="mx-1 inline-block text-green-400" />{" "}
             button to start watching
         </div>
     </div>
@@ -217,20 +217,20 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
                 0,
                 Math.min(
                     window.innerWidth - size.width,
-                    e.clientX - dragStartPos.current.x
-                )
+                    e.clientX - dragStartPos.current.x,
+                ),
             );
             const newY = Math.max(
                 0,
                 Math.min(
                     window.innerHeight - size.height,
-                    e.clientY - dragStartPos.current.y
-                )
+                    e.clientY - dragStartPos.current.y,
+                ),
             );
 
             setPosition({ x: newX, y: newY });
         },
-        [isDragging, size.width, size.height]
+        [isDragging, size.width, size.height],
     );
 
     const handleDragEnd = useCallback(() => {
@@ -252,19 +252,19 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
             if (resizeType === "right" || resizeType === "corner") {
                 newSize.width = Math.max(
                     400,
-                    Math.min(maxWidth, resizeStartPos.current.width + deltaX)
+                    Math.min(maxWidth, resizeStartPos.current.width + deltaX),
                 );
             }
             if (resizeType === "bottom" || resizeType === "corner") {
                 newSize.height = Math.max(
                     200,
-                    Math.min(maxHeight, resizeStartPos.current.height + deltaY)
+                    Math.min(maxHeight, resizeStartPos.current.height + deltaY),
                 );
             }
 
             setSize(newSize);
         },
-        [isResizing, resizeType, position.x, position.y, size]
+        [isResizing, resizeType, position.x, position.y, size],
     );
 
     const handleResizeEnd = useCallback(() => {
@@ -328,7 +328,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 
     const handleResizeStart = (
         e: React.MouseEvent,
-        type: "right" | "bottom" | "corner"
+        type: "right" | "bottom" | "corner",
     ) => {
         if (!isFloating) return;
         e.stopPropagation();
@@ -365,7 +365,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
                     : CONSOLE_CONFIG.COLLAPSED_HEIGHT,
             }}
             transition={CONSOLE_CONFIG.ANIMATION_CONFIG}
-            className={`bg-ctp-mantle overflow-hidden shadow-2xl relative ${
+            className={`relative overflow-hidden bg-ctp-mantle shadow-2xl ${
                 isFloating ? "rounded-lg" : "w-full"
             } ${isResizing ? "select-none" : ""}`}
             style={{
@@ -387,7 +387,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
             {isOpen && (
                 <div
                     ref={consoleRef}
-                    className="overflow-y-auto font-mono text-sm bg-ctp-mantle h-[calc(100%-2.5rem)]"
+                    className="h-[calc(100%-2.5rem)] overflow-y-auto bg-ctp-mantle font-mono text-sm"
                     style={{
                         userSelect: isResizing ? "none" : "text",
                         WebkitUserSelect: isResizing ? "none" : "text",
@@ -412,15 +412,15 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
             {isFloating && isOpen && (
                 <>
                     <div
-                        className="absolute right-0 top-[40px] w-1 h-[calc(100%-40px)] cursor-ew-resize hover:bg-white/5 select-none"
+                        className="absolute right-0 top-[40px] h-[calc(100%-40px)] w-1 cursor-ew-resize select-none hover:bg-white/5"
                         onMouseDown={(e) => handleResizeStart(e, "right")}
                     />
                     <div
-                        className="absolute bottom-0 left-0 h-1 w-full cursor-ns-resize hover:bg-white/5 select-none"
+                        className="absolute bottom-0 left-0 h-1 w-full cursor-ns-resize select-none hover:bg-white/5"
                         onMouseDown={(e) => handleResizeStart(e, "bottom")}
                     />
                     <div
-                        className="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize hover:bg-white/5 select-none"
+                        className="absolute bottom-0 right-0 h-4 w-4 cursor-nwse-resize select-none hover:bg-white/5"
                         onMouseDown={(e) => handleResizeStart(e, "corner")}
                     />
                 </>

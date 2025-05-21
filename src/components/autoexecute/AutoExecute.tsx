@@ -37,7 +37,7 @@ const removeExtension = (filename: string) => {
 export const AutoExecute: React.FC = () => {
     const [files, setFiles] = useState<AutoExecuteFile[]>([]);
     const [selectedFile, setSelectedFile] = useState<AutoExecuteFile | null>(
-        null
+        null,
     );
     const [editedContent, setEditedContent] = useState("");
     const [lastSavedContent, setLastSavedContent] = useState("");
@@ -46,7 +46,7 @@ export const AutoExecute: React.FC = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [fileToDelete, setFileToDelete] = useState<AutoExecuteFile | null>(
-        null
+        null,
     );
 
     const loadFiles = useCallback(async () => {
@@ -78,7 +78,7 @@ export const AutoExecute: React.FC = () => {
             }, 1000);
             save();
         },
-        [loadFiles]
+        [loadFiles],
     );
 
     useEffect(() => {
@@ -116,7 +116,7 @@ export const AutoExecute: React.FC = () => {
 
             if (selectedFile?.path === fileToDelete.path) {
                 const currentIndex = files.findIndex(
-                    (f) => f.path === fileToDelete.path
+                    (f) => f.path === fileToDelete.path,
                 );
                 const nextFile =
                     files[currentIndex + 1] || files[currentIndex - 1];
@@ -198,7 +198,7 @@ export const AutoExecute: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col bg-ctp-base">
+        <div className="flex h-full flex-col bg-ctp-base">
             <Header
                 title="Auto Execute"
                 icon={<Syringe size={16} className="text-accent" />}
@@ -209,7 +209,7 @@ export const AutoExecute: React.FC = () => {
                         size="sm"
                         data-tooltip-id="autoexecute-tooltip"
                         data-tooltip-content="Open Directory"
-                        className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
+                        className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
                     >
                         <FolderOpen
                             size={14}
@@ -219,9 +219,9 @@ export const AutoExecute: React.FC = () => {
                 }
             />
 
-            <div className="flex-1 flex overflow-hidden">
-                <div className="w-56 border-r border-white/5 bg-ctp-mantle flex flex-col">
-                    <div className="p-3 flex items-center justify-between">
+            <div className="flex flex-1 overflow-hidden">
+                <div className="flex w-56 flex-col border-r border-white/5 bg-ctp-mantle">
+                    <div className="flex items-center justify-between p-3">
                         <div className="flex items-center gap-2">
                             <Code2 size={16} className="text-white/50" />
                             <span className="text-sm font-medium">Scripts</span>
@@ -231,7 +231,7 @@ export const AutoExecute: React.FC = () => {
                             size="sm"
                             data-tooltip-id="autoexecute-tooltip"
                             data-tooltip-content="New Script"
-                            className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
+                            className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
                         >
                             <Plus
                                 size={14}
@@ -239,25 +239,25 @@ export const AutoExecute: React.FC = () => {
                             />
                         </Button>
                     </div>
-                    <div className="flex-1 overflow-y-auto px-1.5 pb-2 space-y-1">
+                    <div className="flex-1 space-y-1 overflow-y-auto px-1.5 pb-2">
                         {isLoading ? (
-                            <div className="flex flex-col items-center justify-center h-32 text-ctp-subtext0">
+                            <div className="flex h-32 flex-col items-center justify-center text-ctp-subtext0">
                                 <Loader2
                                     size={20}
-                                    className="stroke-[2] mb-2 animate-spin"
+                                    className="mb-2 animate-spin stroke-[2]"
                                 />
                                 <div className="text-sm">
                                     Loading scripts...
                                 </div>
                             </div>
                         ) : files.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center h-full min-h-32 text-ctp-subtext0">
+                            <div className="flex h-full min-h-32 flex-col items-center justify-center text-ctp-subtext0">
                                 <AlertCircle
                                     size={20}
-                                    className="stroke-[2] mb-2"
+                                    className="mb-2 stroke-[2]"
                                 />
                                 <div className="text-sm">No scripts found</div>
-                                <div className="text-xs mt-1">
+                                <div className="mt-1 text-xs">
                                     Create a new script to get started
                                 </div>
                             </div>
@@ -267,20 +267,17 @@ export const AutoExecute: React.FC = () => {
                                     key={file.path}
                                     onClick={() => handleFileSelect(file)}
                                     whileHover={{ x: 4 }}
-                                    className={`
-                                        group w-full flex items-center gap-1.5 p-1.5 rounded-lg cursor-pointer transition-colors text-left
-                                        ${
-                                            selectedFile?.path === file.path
-                                                ? "bg-ctp-surface0"
-                                                : "hover:bg-ctp-surface0/50"
-                                        }
-                                    `}
+                                    className={`group flex w-full cursor-pointer items-center gap-1.5 rounded-lg p-1.5 text-left transition-colors ${
+                                        selectedFile?.path === file.path
+                                            ? "bg-ctp-surface0"
+                                            : "hover:bg-ctp-surface0/50"
+                                    } `}
                                 >
                                     <FileCode
                                         size={14}
-                                        className="stroke-[2.5] shrink-0 text-white/50"
+                                        className="shrink-0 stroke-[2.5] text-white/50"
                                     />
-                                    <span className="truncate text-xs text-left flex-1">
+                                    <span className="flex-1 truncate text-left text-xs">
                                         {removeExtension(file.name)}
                                     </span>
                                     <Button
@@ -291,15 +288,11 @@ export const AutoExecute: React.FC = () => {
                                         variant="destructive"
                                         data-tooltip-id="autoexecute-tooltip"
                                         data-tooltip-content="Delete Script"
-                                        className={`
-                                            opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center justify-center
-                                            ${
-                                                selectedFile?.path === file.path
-                                                    ? "!opacity-100"
-                                                    : ""
-                                            }
-                                            bg-ctp-red/10 hover:bg-ctp-red/20 text-ctp-red h-5 w-5 p-0
-                                        `}
+                                        className={`inline-flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 ${
+                                            selectedFile?.path === file.path
+                                                ? "!opacity-100"
+                                                : ""
+                                        } h-5 w-5 bg-ctp-red/10 p-0 text-ctp-red hover:bg-ctp-red/20`}
                                     >
                                         <Trash2
                                             size={12}
@@ -312,18 +305,18 @@ export const AutoExecute: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col bg-ctp-base">
+                <div className="flex flex-1 flex-col bg-ctp-base">
                     {selectedFile ? (
-                        <div className="flex flex-col h-full">
-                            <div className="flex items-center justify-between h-14 px-4 border-b border-white/5">
+                        <div className="flex h-full flex-col">
+                            <div className="flex h-14 items-center justify-between border-b border-white/5 px-4">
                                 {isRenaming ? (
                                     <div className="flex items-center gap-2">
                                         <Input
                                             value={newFileName}
                                             onChange={(
-                                                e: React.ChangeEvent<HTMLInputElement>
+                                                e: React.ChangeEvent<HTMLInputElement>,
                                             ) => setNewFileName(e.target.value)}
-                                            className="w-64 bg-ctp-mantle border-white/5 focus:border-white/20 h-8 text-sm"
+                                            className="h-8 w-64 border-white/5 bg-ctp-mantle text-sm focus:border-white/20"
                                             placeholder="script_name"
                                             spellCheck={false}
                                             autoComplete="off"
@@ -334,7 +327,7 @@ export const AutoExecute: React.FC = () => {
                                             size="sm"
                                             data-tooltip-id="autoexecute-tooltip"
                                             data-tooltip-content="Save"
-                                            className="inline-flex items-center justify-center w-8 h-8 bg-white/10 hover:bg-white/20 group"
+                                            className="group inline-flex h-8 w-8 items-center justify-center bg-white/10 hover:bg-white/20"
                                         >
                                             <Check
                                                 size={14}
@@ -347,7 +340,7 @@ export const AutoExecute: React.FC = () => {
                                             size="sm"
                                             data-tooltip-id="autoexecute-tooltip"
                                             data-tooltip-content="Cancel"
-                                            className="inline-flex items-center justify-center w-8 h-8 bg-ctp-surface0 hover:bg-ctp-surface1 group"
+                                            className="group inline-flex h-8 w-8 items-center justify-center bg-ctp-surface0 hover:bg-ctp-surface1"
                                         >
                                             <X
                                                 size={14}
@@ -370,7 +363,7 @@ export const AutoExecute: React.FC = () => {
                                             variant="secondary"
                                             data-tooltip-id="autoexecute-tooltip"
                                             data-tooltip-content="Rename"
-                                            className="inline-flex items-center justify-center w-7 h-7 bg-ctp-surface0 hover:bg-ctp-surface1 group p-0"
+                                            className="group inline-flex h-7 w-7 items-center justify-center bg-ctp-surface0 p-0 hover:bg-ctp-surface1"
                                         >
                                             <Pencil
                                                 size={14}
@@ -378,7 +371,7 @@ export const AutoExecute: React.FC = () => {
                                             />
                                         </Button>
                                         {isSaving && (
-                                            <div className="flex items-center gap-1.5 px-2 py-1 text-xs text-ctp-subtext0 bg-white/5 rounded-md">
+                                            <div className="flex items-center gap-1.5 rounded-md bg-white/5 px-2 py-1 text-xs text-ctp-subtext0">
                                                 <Loader2
                                                     size={12}
                                                     className="animate-spin stroke-[2.5]"
@@ -399,11 +392,11 @@ export const AutoExecute: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-ctp-subtext0">
+                        <div className="flex h-full flex-col items-center justify-center text-ctp-subtext0">
                             <motion.div
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                className="w-16 h-16 rounded-xl bg-ctp-mantle flex items-center justify-center mb-4"
+                                className="mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-ctp-mantle"
                             >
                                 <FileCode size={32} className="text-white/50" />
                             </motion.div>
@@ -419,7 +412,7 @@ export const AutoExecute: React.FC = () => {
                                 initial={{ y: 10, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.2 }}
-                                className="text-xs mt-1 text-ctp-subtext0"
+                                className="mt-1 text-xs text-ctp-subtext0"
                             >
                                 Select a script from the sidebar to edit
                             </motion.div>
@@ -442,7 +435,7 @@ export const AutoExecute: React.FC = () => {
 
             <Tooltip
                 id="autoexecute-tooltip"
-                className="!bg-ctp-mantle !px-2.5 !py-1.5 !rounded-lg !text-xs !font-medium !border !border-white/5 !shadow-lg !z-50"
+                className="!z-50 !rounded-lg !border !border-white/5 !bg-ctp-mantle !px-2.5 !py-1.5 !text-xs !font-medium !shadow-lg"
                 classNameArrow="!hidden"
                 delayShow={50}
                 delayHide={0}

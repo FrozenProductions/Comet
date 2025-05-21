@@ -9,7 +9,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
     const [state, setState] = useState<FastFlagsState>(
-        INITIAL_FAST_FLAGS_STATE
+        INITIAL_FAST_FLAGS_STATE,
     );
 
     const loadProfiles = async () => {
@@ -69,7 +69,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
     const updateFlagValue = async (
         profileId: string,
         key: string,
-        value: any | null
+        value: any | null,
     ) => {
         const profile = state.profiles.find((p) => p.id === profileId);
         if (!profile) return;
@@ -80,8 +80,8 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
                 value === null
                     ? Object.fromEntries(
                           Object.entries(profile.flags).filter(
-                              ([k]) => k !== key
-                          )
+                              ([k]) => k !== key,
+                          ),
                       )
                     : { ...profile.flags, [key]: value },
         };

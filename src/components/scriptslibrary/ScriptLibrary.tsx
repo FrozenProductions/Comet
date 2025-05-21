@@ -73,23 +73,23 @@ const filterOptions = [
 ];
 
 const SkeletonCard = () => (
-    <div className="bg-ctp-mantle rounded-xl border border-white/5 overflow-hidden p-4">
+    <div className="overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle p-4">
         <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
-                <div className="h-4 w-3/4 bg-ctp-surface0 rounded animate-pulse" />
-                <div className="h-3 w-1/2 bg-ctp-surface0 rounded mt-2 animate-pulse" />
+            <div className="min-w-0 flex-1">
+                <div className="h-4 w-3/4 animate-pulse rounded bg-ctp-surface0" />
+                <div className="mt-2 h-3 w-1/2 animate-pulse rounded bg-ctp-surface0" />
             </div>
         </div>
 
         <div className="mt-3 flex flex-wrap gap-1.5">
-            <div className="h-5 w-16 bg-ctp-surface0 rounded animate-pulse" />
-            <div className="h-5 w-20 bg-ctp-surface0 rounded animate-pulse" />
-            <div className="h-5 w-18 bg-ctp-surface0 rounded animate-pulse" />
+            <div className="h-5 w-16 animate-pulse rounded bg-ctp-surface0" />
+            <div className="h-5 w-20 animate-pulse rounded bg-ctp-surface0" />
+            <div className="w-18 h-5 animate-pulse rounded bg-ctp-surface0" />
         </div>
 
         <div className="mt-4 flex items-center justify-between">
-            <div className="h-3 w-16 bg-ctp-surface0 rounded animate-pulse" />
-            <div className="h-3 w-24 bg-ctp-surface0 rounded animate-pulse" />
+            <div className="h-3 w-16 animate-pulse rounded bg-ctp-surface0" />
+            <div className="h-3 w-24 animate-pulse rounded bg-ctp-surface0" />
         </div>
     </div>
 );
@@ -130,7 +130,7 @@ export const ScriptLibrary = () => {
                 });
             }
         },
-        [searchQuery, selectedSortBy, selectedOrder, filters, searchScripts]
+        [searchQuery, selectedSortBy, selectedOrder, filters, searchScripts],
     );
 
     useEffect(() => {
@@ -151,7 +151,7 @@ export const ScriptLibrary = () => {
         try {
             const loadingToast = toast.loading("Loading script content...");
             const scriptDetail = await ScriptBloxService.getScriptContent(
-                script.slug
+                script.slug,
             );
 
             if (!scriptDetail.script || !scriptDetail.script.script) {
@@ -169,7 +169,7 @@ export const ScriptLibrary = () => {
             const newTabId = await createTabWithContent(
                 tabTitle,
                 scriptDetail.script.script,
-                "lua"
+                "lua",
             );
 
             if (!newTabId) {
@@ -191,7 +191,7 @@ export const ScriptLibrary = () => {
     const renderContent = () => {
         if (isLoading) {
             return (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
                     {Array.from({ length: 6 }).map((_, index) => (
                         <motion.div
                             key={index}
@@ -208,11 +208,11 @@ export const ScriptLibrary = () => {
 
         if (isApiDown) {
             return (
-                <div className="flex-1 flex flex-col items-center justify-center text-center">
+                <div className="flex flex-1 flex-col items-center justify-center text-center">
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="w-16 h-16 rounded-xl bg-ctp-surface0 flex items-center justify-center mb-4"
+                        className="mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-ctp-surface0"
                     >
                         <WifiOff size={32} className="text-ctp-red" />
                     </motion.div>
@@ -228,7 +228,7 @@ export const ScriptLibrary = () => {
                         initial={{ y: 10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="text-xs text-ctp-subtext0 mt-1 mb-4"
+                        className="mb-4 mt-1 text-xs text-ctp-subtext0"
                     >
                         We are unable to reach the ScriptBlox servers. Please
                         try again later.
@@ -237,7 +237,7 @@ export const ScriptLibrary = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleRetry}
-                        className="h-8 px-4 rounded-lg bg-white/10 text-white text-xs font-medium flex items-center gap-2 hover:bg-white/20 transition-colors"
+                        className="flex h-8 items-center gap-2 rounded-lg bg-white/10 px-4 text-xs font-medium text-white transition-colors hover:bg-white/20"
                     >
                         <RefreshCw size={14} className="stroke-[2.5]" />
                         Retry
@@ -248,11 +248,11 @@ export const ScriptLibrary = () => {
 
         if (!scripts?.length) {
             return (
-                <div className="flex-1 flex flex-col items-center justify-center text-center">
+                <div className="flex flex-1 flex-col items-center justify-center text-center">
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="w-16 h-16 rounded-xl bg-ctp-surface0 flex items-center justify-center mb-4"
+                        className="mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-ctp-surface0"
                     >
                         <Search size={32} className="text-white/50" />
                     </motion.div>
@@ -265,27 +265,27 @@ export const ScriptLibrary = () => {
                         {error
                             ? "An error occurred while fetching scripts"
                             : isLoading || !searchQuery
-                            ? "Search for scripts"
-                            : "No scripts found"}
+                              ? "Search for scripts"
+                              : "No scripts found"}
                     </motion.div>
                     <motion.div
                         initial={{ y: 10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="text-xs text-ctp-subtext0 mt-1"
+                        className="mt-1 text-xs text-ctp-subtext0"
                     >
                         {error
                             ? error
                             : isLoading || !searchQuery
-                            ? "Enter a search term to find scripts"
-                            : "Try a different search term or adjust your filters"}
+                              ? "Enter a search term to find scripts"
+                              : "Try a different search term or adjust your filters"}
                     </motion.div>
                     {error && (
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={handleRetry}
-                            className="h-8 px-4 rounded-lg bg-white/10 text-white text-xs font-medium flex items-center gap-2 hover:bg-white/20 transition-colors mt-4"
+                            className="mt-4 flex h-8 items-center gap-2 rounded-lg bg-white/10 px-4 text-xs font-medium text-white transition-colors hover:bg-white/20"
                         >
                             <RefreshCw size={14} className="stroke-[2.5]" />
                             Retry
@@ -296,7 +296,7 @@ export const ScriptLibrary = () => {
         }
 
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
                 <AnimatePresence mode="popLayout">
                     {scripts.map((script) => (
                         <motion.div
@@ -333,14 +333,14 @@ export const ScriptLibrary = () => {
                 <button
                     key={i}
                     onClick={() => handlePageChange(i)}
-                    className={`h-8 min-w-[2rem] px-2 rounded-lg text-xs font-medium ${
+                    className={`h-8 min-w-[2rem] rounded-lg px-2 text-xs font-medium ${
                         i === currentPage
                             ? "bg-white/10 text-white"
                             : "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
                     }`}
                 >
                     {i}
-                </button>
+                </button>,
             );
         }
 
@@ -351,7 +351,7 @@ export const ScriptLibrary = () => {
                         handlePageChange(Math.max(1, currentPage - 1))
                     }
                     disabled={currentPage === 1}
-                    className="h-8 w-8 rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <ChevronLeft size={16} />
                 </button>
@@ -359,7 +359,7 @@ export const ScriptLibrary = () => {
                     <>
                         <button
                             onClick={() => handlePageChange(1)}
-                            className="h-8 min-w-[2rem] px-2 rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text text-xs font-medium"
+                            className="h-8 min-w-[2rem] rounded-lg bg-ctp-surface0 px-2 text-xs font-medium text-ctp-subtext0 hover:text-ctp-text"
                         >
                             1
                         </button>
@@ -376,7 +376,7 @@ export const ScriptLibrary = () => {
                         )}
                         <button
                             onClick={() => handlePageChange(totalPages)}
-                            className="h-8 min-w-[2rem] px-2 rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text text-xs font-medium"
+                            className="h-8 min-w-[2rem] rounded-lg bg-ctp-surface0 px-2 text-xs font-medium text-ctp-subtext0 hover:text-ctp-text"
                         >
                             {totalPages}
                         </button>
@@ -387,7 +387,7 @@ export const ScriptLibrary = () => {
                         handlePageChange(Math.min(totalPages, currentPage + 1))
                     }
                     disabled={currentPage === totalPages}
-                    className="h-8 w-8 rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <ChevronRight size={16} />
                 </button>
@@ -396,8 +396,8 @@ export const ScriptLibrary = () => {
     };
 
     return (
-        <div className="h-full flex flex-col bg-ctp-base">
-            <div className="p-4 border-b border-white/5 bg-ctp-mantle">
+        <div className="flex h-full flex-col bg-ctp-base">
+            <div className="border-b border-white/5 bg-ctp-mantle p-4">
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-2">
                         <div className="relative flex-1">
@@ -406,7 +406,7 @@ export const ScriptLibrary = () => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search for scripts..."
-                                className="w-full h-9 pl-9 pr-3 rounded-lg bg-ctp-surface0 border border-white/5 text-sm text-ctp-text placeholder:text-ctp-subtext0 focus:outline-none focus:ring-1 focus:ring-white/20"
+                                className="h-9 w-full rounded-lg border border-white/5 bg-ctp-surface0 pl-9 pr-3 text-sm text-ctp-text placeholder:text-ctp-subtext0 focus:outline-none focus:ring-1 focus:ring-white/20"
                                 autoComplete="off"
                                 autoCorrect="off"
                                 autoCapitalize="off"
@@ -419,7 +419,7 @@ export const ScriptLibrary = () => {
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-ctp-subtext0 hover:text-ctp-text p-0.5 rounded-full hover:bg-white/5"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
                                 >
                                     <X size={14} />
                                 </button>
@@ -428,7 +428,7 @@ export const ScriptLibrary = () => {
 
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`h-9 px-3 rounded-lg flex items-center gap-2 text-sm ${
+                            className={`flex h-9 items-center gap-2 rounded-lg px-3 text-sm ${
                                 showFilters
                                     ? "bg-white/10 text-white"
                                     : "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
@@ -451,8 +451,8 @@ export const ScriptLibrary = () => {
                                 className="overflow-hidden"
                             >
                                 <div className="mt-4 flex flex-wrap gap-4">
-                                    <div className="flex-1 min-w-[200px]">
-                                        <div className="text-xs font-medium text-ctp-subtext0 mb-2">
+                                    <div className="min-w-[200px] flex-1">
+                                        <div className="mb-2 text-xs font-medium text-ctp-subtext0">
                                             Sort by
                                         </div>
                                         <div className="flex flex-wrap gap-2">
@@ -469,25 +469,23 @@ export const ScriptLibrary = () => {
                                                                     prev ===
                                                                     "asc"
                                                                         ? "desc"
-                                                                        : "asc"
+                                                                        : "asc",
                                                             );
                                                         } else {
                                                             setSelectedSortBy(
-                                                                option.value as typeof selectedSortBy
+                                                                option.value as typeof selectedSortBy,
                                                             );
                                                             setSelectedOrder(
-                                                                "desc"
+                                                                "desc",
                                                             );
                                                         }
                                                     }}
-                                                    className={`
-                            h-8 px-3 rounded-lg flex items-center gap-2 text-xs font-medium transition-colors
-                            ${
-                                selectedSortBy === option.value
-                                    ? "bg-white/10 text-white"
-                                    : "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
-                            }
-                          `}
+                                                    className={`flex h-8 items-center gap-2 rounded-lg px-3 text-xs font-medium transition-colors ${
+                                                        selectedSortBy ===
+                                                        option.value
+                                                            ? "bg-white/10 text-white"
+                                                            : "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
+                                                    } `}
                                                 >
                                                     {option.icon}
                                                     <span>{option.label}</span>
@@ -510,8 +508,8 @@ export const ScriptLibrary = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 min-w-[200px]">
-                                        <div className="text-xs font-medium text-ctp-subtext0 mb-2">
+                                    <div className="min-w-[200px] flex-1">
+                                        <div className="mb-2 text-xs font-medium text-ctp-subtext0">
                                             Filter by
                                         </div>
                                         <div className="flex flex-wrap gap-2">
@@ -527,14 +525,13 @@ export const ScriptLibrary = () => {
                                                                 ],
                                                         }))
                                                     }
-                                                    className={`
-                            h-8 px-3 rounded-lg flex items-center gap-2 text-xs font-medium transition-colors
-                            ${
-                                filters[option.value as keyof typeof filters]
-                                    ? "bg-white/10 text-white"
-                                    : "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
-                            }
-                          `}
+                                                    className={`flex h-8 items-center gap-2 rounded-lg px-3 text-xs font-medium transition-colors ${
+                                                        filters[
+                                                            option.value as keyof typeof filters
+                                                        ]
+                                                            ? "bg-white/10 text-white"
+                                                            : "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
+                                                    } `}
                                                 >
                                                     {option.icon}
                                                     <span>{option.label}</span>
@@ -550,11 +547,11 @@ export const ScriptLibrary = () => {
             </div>
 
             <div className="flex-1 overflow-auto">
-                <div className="h-full flex flex-col">{renderContent()}</div>
+                <div className="flex h-full flex-col">{renderContent()}</div>
             </div>
 
             {totalPages > 1 && (
-                <div className="p-4 border-t border-white/5 flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 border-t border-white/5 p-4">
                     {renderPagination()}
                 </div>
             )}

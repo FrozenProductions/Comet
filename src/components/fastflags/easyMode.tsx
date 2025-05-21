@@ -54,11 +54,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 
             if (lightingFlag.relatedFlags) {
                 const technologies = Object.keys(
-                    lightingFlag.relatedFlags
+                    lightingFlag.relatedFlags,
                 ) as NonDefaultLightingTechnology[];
                 for (const tech of technologies) {
                     for (const flag of Object.keys(
-                        lightingFlag.relatedFlags[tech]
+                        lightingFlag.relatedFlags[tech],
                     )) {
                         await onUpdateFlag(flag, null);
                     }
@@ -96,11 +96,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 
             if (renderingFlag.relatedFlags) {
                 const apis = Object.keys(
-                    renderingFlag.relatedFlags
+                    renderingFlag.relatedFlags,
                 ) as NonDefaultRenderingAPI[];
                 for (const api of apis) {
                     for (const flag of Object.keys(
-                        renderingFlag.relatedFlags[api]
+                        renderingFlag.relatedFlags[api],
                     )) {
                         await onUpdateFlag(flag, null);
                     }
@@ -134,11 +134,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 
             if (threadingFlag.relatedFlags) {
                 const modes = Object.keys(
-                    threadingFlag.relatedFlags
+                    threadingFlag.relatedFlags,
                 ) as NonDefaultHyperThreading[];
                 for (const mode of modes) {
                     for (const flag of Object.keys(
-                        threadingFlag.relatedFlags[mode]
+                        threadingFlag.relatedFlags[mode],
                     )) {
                         await onUpdateFlag(flag, null);
                     }
@@ -170,18 +170,18 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     const handleThreadCountChange = async (key: string, value: number) => {
         try {
             const flag = FAST_FLAG_CATEGORIES[1].flags.find(
-                (f) => f.key === key
+                (f) => f.key === key,
             );
             if (!flag || !flag.relatedFlags) return;
 
             setIsUpdating(key);
 
             for (const [flagKey, flagValue] of Object.entries(
-                flag.relatedFlags
+                flag.relatedFlags,
             )) {
                 await onUpdateFlag(
                     flagKey,
-                    String(flagValue).replace("$value", String(value))
+                    String(flagValue).replace("$value", String(value)),
                 );
             }
 
@@ -201,11 +201,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 
             if (graySkyFlag.relatedFlags) {
                 const modes = Object.keys(
-                    graySkyFlag.relatedFlags
+                    graySkyFlag.relatedFlags,
                 ) as NonDefaultGraySky[];
                 for (const mode of modes) {
                     for (const flag of Object.keys(
-                        graySkyFlag.relatedFlags[mode]
+                        graySkyFlag.relatedFlags[mode],
                     )) {
                         await onUpdateFlag(flag, null);
                     }
@@ -268,22 +268,22 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     const minThreadsFlag = threadingFlags[2];
 
     const currentFps = Number(
-        profile.flags[fpsFlag.key] ?? fpsFlag.defaultValue
+        profile.flags[fpsFlag.key] ?? fpsFlag.defaultValue,
     );
     const currentMaxThreads = Number(
         profile.flags[Object.keys(maxThreadsFlag.relatedFlags!)[0]] ??
-            maxThreadsFlag.defaultValue
+            maxThreadsFlag.defaultValue,
     );
     const currentMinThreads = Number(
         profile.flags[Object.keys(minThreadsFlag.relatedFlags!)[0]] ??
-            minThreadsFlag.defaultValue
+            minThreadsFlag.defaultValue,
     );
 
     let currentLighting: LightingTechnology = "default";
     if (lightingFlag.relatedFlags) {
         for (const [tech, flags] of Object.entries(lightingFlag.relatedFlags)) {
             const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value
+                ([flag, value]) => profile.flags[flag] === value,
             );
             if (hasAllFlags) {
                 currentLighting = tech as LightingTechnology;
@@ -296,7 +296,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     if (renderingFlag.relatedFlags) {
         for (const [api, flags] of Object.entries(renderingFlag.relatedFlags)) {
             const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value
+                ([flag, value]) => profile.flags[flag] === value,
             );
             if (hasAllFlags) {
                 currentRendering = api as RenderingAPI;
@@ -308,10 +308,10 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     let currentHyperThreading: HyperThreading = "default";
     if (hyperThreadingFlag.relatedFlags) {
         for (const [mode, flags] of Object.entries(
-            hyperThreadingFlag.relatedFlags
+            hyperThreadingFlag.relatedFlags,
         )) {
             const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value
+                ([flag, value]) => profile.flags[flag] === value,
             );
             if (hasAllFlags) {
                 currentHyperThreading = mode as HyperThreading;
@@ -324,7 +324,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     if (graySkyFlag.relatedFlags) {
         for (const [mode, flags] of Object.entries(graySkyFlag.relatedFlags)) {
             const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value
+                ([flag, value]) => profile.flags[flag] === value,
             );
             if (hasAllFlags) {
                 currentGraySky = mode as GraySky;
@@ -334,8 +334,8 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     }
 
     return (
-        <div className="flex-1 flex flex-col bg-ctp-base">
-            <div className="h-14 flex items-center px-4 border-b border-white/5">
+        <div className="flex flex-1 flex-col bg-ctp-base">
+            <div className="flex h-14 items-center border-b border-white/5 px-4">
                 <div className="flex items-center gap-2">
                     <User size={16} className="text-white/50" />
                     <h3 className="text-sm font-medium text-ctp-text">
@@ -345,8 +345,8 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
             </div>
 
             <div className="flex-1 overflow-y-auto">
-                <div className="max-w-3xl mx-auto p-4">
-                    <div className="space-y-1 mb-6">
+                <div className="mx-auto max-w-3xl p-4">
+                    <div className="mb-6 space-y-1">
                         <h2 className="text-lg font-medium text-ctp-text">
                             Fast Flags
                         </h2>
@@ -359,11 +359,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-ctp-mantle rounded-xl border border-white/5"
+                            className="rounded-xl border border-white/5 bg-ctp-mantle"
                         >
-                            <div className="p-4 border-b border-white/5">
+                            <div className="border-b border-white/5 p-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
                                         <Gauge
                                             size={20}
                                             className="text-accent"
@@ -389,9 +389,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -403,7 +403,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         onChange={(value) =>
                                             handleSliderChange(
                                                 fpsFlag.key,
-                                                value
+                                                value,
                                             )
                                         }
                                         label={fpsFlag.label}
@@ -418,11 +418,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="bg-ctp-mantle rounded-xl border border-white/5"
+                            className="rounded-xl border border-white/5 bg-ctp-mantle"
                         >
-                            <div className="p-4 border-b border-white/5">
+                            <div className="border-b border-white/5 p-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
                                         <Zap
                                             size={20}
                                             className="text-accent"
@@ -448,9 +448,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -458,7 +458,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         value={currentLighting}
                                         onChange={(value) =>
                                             handleLightingChange(
-                                                value as LightingTechnology
+                                                value as LightingTechnology,
                                             )
                                         }
                                         options={[
@@ -473,11 +473,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-ctp-mantle rounded-xl border border-white/5"
+                            className="rounded-xl border border-white/5 bg-ctp-mantle"
                         >
-                            <div className="p-4 border-b border-white/5">
+                            <div className="border-b border-white/5 p-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
                                         <Layers
                                             size={20}
                                             className="text-accent"
@@ -503,9 +503,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -513,7 +513,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         value={currentRendering}
                                         onChange={(value) =>
                                             handleRenderingAPIChange(
-                                                value as RenderingAPI
+                                                value as RenderingAPI,
                                             )
                                         }
                                         options={[
@@ -528,11 +528,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="bg-ctp-mantle rounded-xl border border-white/5"
+                            className="rounded-xl border border-white/5 bg-ctp-mantle"
                         >
-                            <div className="p-4 border-b border-white/5">
+                            <div className="border-b border-white/5 p-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
                                         <Cloud
                                             size={20}
                                             className="text-accent"
@@ -549,7 +549,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                 </div>
                             </div>
 
-                            <div className="p-4 space-y-6">
+                            <div className="space-y-6 p-4">
                                 <div className="relative">
                                     <AnimatePresence>
                                         {isUpdating === graySkyFlag.key && (
@@ -557,9 +557,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -567,7 +567,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         value={currentGraySky}
                                         onChange={(value) =>
                                             handleGraySkyChange(
-                                                value as GraySky
+                                                value as GraySky,
                                             )
                                         }
                                         options={[
@@ -583,9 +583,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -603,11 +603,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="bg-ctp-mantle rounded-xl border border-white/5"
+                            className="rounded-xl border border-white/5 bg-ctp-mantle"
                         >
-                            <div className="p-4 border-b border-white/5">
+                            <div className="border-b border-white/5 p-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
                                         <Cpu
                                             size={20}
                                             className="text-accent"
@@ -624,7 +624,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                 </div>
                             </div>
 
-                            <div className="p-4 space-y-6">
+                            <div className="space-y-6 p-4">
                                 <div className="relative">
                                     <AnimatePresence>
                                         {isUpdating ===
@@ -633,9 +633,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -643,7 +643,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         value={currentHyperThreading}
                                         onChange={(value) =>
                                             handleHyperThreadingChange(
-                                                value as HyperThreading
+                                                value as HyperThreading,
                                             )
                                         }
                                         options={[
@@ -660,9 +660,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -674,7 +674,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         onChange={(value) =>
                                             handleThreadCountChange(
                                                 maxThreadsFlag.key,
-                                                value
+                                                value,
                                             )
                                         }
                                         label={maxThreadsFlag.label}
@@ -689,9 +689,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 bg-ctp-mantle/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
                                             >
-                                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -703,7 +703,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         onChange={(value) =>
                                             handleThreadCountChange(
                                                 minThreadsFlag.key,
-                                                value
+                                                value,
                                             )
                                         }
                                         label={minThreadsFlag.label}

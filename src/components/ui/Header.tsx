@@ -14,14 +14,14 @@ export const Header: FC<HeaderProps> = ({
     actions,
 }) => {
     return (
-        <div className="h-14 flex items-center justify-between px-4 bg-ctp-mantle border-b border-white/5">
+        <div className="flex h-14 items-center justify-between border-b border-white/5 bg-ctp-mantle px-4">
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                     {icon}
                     <h1 className="text-sm font-medium">{title}</h1>
                 </div>
                 {description && (
-                    <div className="px-2 py-1 text-xs text-ctp-subtext0 bg-white/5 rounded-md border border-white/5">
+                    <div className="rounded-md border border-white/5 bg-white/5 px-2 py-1 text-xs text-ctp-subtext0">
                         {description}
                     </div>
                 )}

@@ -60,7 +60,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
             return result;
         },
-        [activeTab, tabs]
+        [activeTab, tabs],
     );
 
     const executeTab = useCallback(
@@ -69,7 +69,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             if (!tab) return;
             await executeScript({ content: tab.content });
         },
-        [tabs, executeScript]
+        [tabs, executeScript],
     );
 
     const createTab = useCallback(() => {
@@ -149,7 +149,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 return null;
             }
         },
-        [activeWorkspace, tabs]
+        [activeWorkspace, tabs],
     );
 
     useEffect(() => {
@@ -259,12 +259,12 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     setTabs((prev) => prev.filter((tab) => tab.id !== id));
                     if (activeTab === id) {
                         const remainingTabs = tabs.filter(
-                            (tab) => tab.id !== id
+                            (tab) => tab.id !== id,
                         );
                         setActiveTab(
                             remainingTabs.length > 0
                                 ? remainingTabs[remainingTabs.length - 1].id
-                                : null
+                                : null,
                         );
                     }
                 }
@@ -272,7 +272,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 console.error("Failed to delete tab:", error);
             }
         },
-        [activeTab, tabs, activeWorkspace]
+        [activeTab, tabs, activeWorkspace],
     );
 
     const updateTab = useCallback(
@@ -320,7 +320,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 console.error("Failed to update tab:", error);
             }
         },
-        [tabs, activeWorkspace, activeTab]
+        [tabs, activeWorkspace, activeTab],
     );
 
     const loadTabs = useCallback(
@@ -328,7 +328,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             setTabs(newTabs);
             setActiveTab(activeTabId);
         },
-        []
+        [],
     );
 
     const duplicateTab = useCallback(
@@ -342,7 +342,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             const existingCopies = tabs
                 .map((tab) => {
                     const match = tab.title.match(
-                        new RegExp(`^${baseName} copy( \\d+)?\.lua$`)
+                        new RegExp(`^${baseName} copy( \\d+)?\.lua$`),
                     );
                     if (!match) return 0;
                     return match[1] ? parseInt(match[1].trim()) : 1;
@@ -375,7 +375,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 console.error("Failed to duplicate tab:", error);
             }
         },
-        [tabs, activeWorkspace]
+        [tabs, activeWorkspace],
     );
 
     const value = {

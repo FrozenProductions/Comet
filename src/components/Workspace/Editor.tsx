@@ -263,7 +263,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
             position.lineNumber,
             word.startColumn,
             position.lineNumber,
-            word.endColumn
+            word.endColumn,
         );
 
         editorRef.current.executeEdits("intellisense", [
@@ -282,7 +282,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
     }, []);
 
     return (
-        <div className="h-full w-full relative bg-ctp-surface0/70 select-none">
+        <div className="relative h-full w-full select-none bg-ctp-surface0/70">
             <Editor
                 height="100%"
                 width="100%"
@@ -300,7 +300,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
                     wordWrap: settings.display.wordWrap ? "on" : "off",
                     tabSize: settings.text.tabSize,
                     lineDecorationsWidth: Math.floor(
-                        settings.text.fontSize * 0.75
+                        settings.text.fontSize * 0.75,
                     ),
                     cursorBlinking: settings.cursor.blinking,
                     cursorStyle: settings.cursor.style,

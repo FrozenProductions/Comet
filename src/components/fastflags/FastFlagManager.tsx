@@ -46,7 +46,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     ) {
         const existingFlags = new Set(flagOrderRef.current);
         const newFlags = Object.keys(profile.flags).filter(
-            (key) => !existingFlags.has(key)
+            (key) => !existingFlags.has(key),
         );
         flagOrderRef.current = [
             ...flagOrderRef.current.filter((key) => key in profile.flags),
@@ -112,8 +112,8 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     };
 
     return (
-        <div className="flex-1 flex flex-col bg-ctp-base">
-            <div className="h-14 flex items-center justify-between px-4 border-b border-white/5">
+        <div className="flex flex-1 flex-col bg-ctp-base">
+            <div className="flex h-14 items-center justify-between border-b border-white/5 px-4">
                 <div className="flex items-center gap-2">
                     <User size={16} className="text-white/50" />
                     <h3 className="text-sm font-medium text-ctp-text">
@@ -126,21 +126,21 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                         value={newFlagKey}
                         onChange={(e) => setNewFlagKey(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAddFlag()}
-                        className="h-8 text-sm bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
+                        className="h-8 border-white/5 bg-ctp-surface0 text-sm focus:border-accent focus:ring-accent"
                     />
                     <Input
                         placeholder="Value"
                         value={newFlagValue}
                         onChange={(e) => setNewFlagValue(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAddFlag()}
-                        className="h-8 text-sm bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
+                        className="h-8 border-white/5 bg-ctp-surface0 text-sm focus:border-accent focus:ring-accent"
                     />
                     <Button
                         onClick={handleAddFlag}
                         size="sm"
                         data-tooltip-id="fastflags-tooltip"
                         data-tooltip-content="Add Flag"
-                        className="inline-flex items-center justify-center w-8 h-8 bg-white/10 hover:bg-white/20 group"
+                        className="group inline-flex h-8 w-8 items-center justify-center bg-white/10 hover:bg-white/20"
                     >
                         <Plus
                             size={14}
@@ -152,7 +152,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 
             <div className="flex-1 overflow-y-auto p-4">
                 {validationError && (
-                    <div className="mb-4 flex items-center justify-between p-3 rounded-lg bg-ctp-surface0 border border-ctp-yellow/20">
+                    <div className="mb-4 flex items-center justify-between rounded-lg border border-ctp-yellow/20 bg-ctp-surface0 p-3">
                         <div className="flex items-center gap-2 text-ctp-yellow">
                             <AlertTriangle size={16} className="shrink-0" />
                             <span className="text-sm font-medium">
@@ -163,7 +163,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                             onClick={handleRefresh}
                             size="sm"
                             disabled={isRefreshing}
-                            className="h-7 px-2 bg-ctp-yellow/10 hover:bg-ctp-yellow/20 text-ctp-yellow disabled:opacity-50"
+                            className="h-7 bg-ctp-yellow/10 px-2 text-ctp-yellow hover:bg-ctp-yellow/20 disabled:opacity-50"
                         >
                             <RefreshCw
                                 size={14}
@@ -185,15 +185,15 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                     layout
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className={`flex items-center gap-2 p-3 rounded-lg bg-ctp-surface0/50 group hover:bg-ctp-surface0 transition-colors duration-200 ${
+                                    className={`group flex items-center gap-2 rounded-lg bg-ctp-surface0/50 p-3 transition-colors duration-200 hover:bg-ctp-surface0 ${
                                         invalidFlags.includes(key)
                                             ? "border border-ctp-yellow/20"
                                             : ""
                                     }`}
                                 >
-                                    <div className="flex-1 min-w-0">
+                                    <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-2">
-                                            <div className="text-sm font-medium text-ctp-text truncate">
+                                            <div className="truncate text-sm font-medium text-ctp-text">
                                                 {key}
                                             </div>
                                             {invalidFlags.includes(key) && (
@@ -223,13 +223,13 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                                         opacity: 0,
                                                         y: -10,
                                                     }}
-                                                    className="flex items-center gap-1 mt-2"
+                                                    className="mt-2 flex items-center gap-1"
                                                 >
                                                     <Input
                                                         value={editValue}
                                                         onChange={(e) =>
                                                             setEditValue(
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                         onKeyDown={(e) => {
@@ -239,30 +239,30 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                                             ) {
                                                                 handleUpdateFlagValue(
                                                                     key,
-                                                                    editValue
+                                                                    editValue,
                                                                 );
                                                             } else if (
                                                                 e.key ===
                                                                 "Escape"
                                                             ) {
                                                                 setEditingFlagId(
-                                                                    null
+                                                                    null,
                                                                 );
                                                             }
                                                         }}
-                                                        className="h-7 text-xs bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
+                                                        className="h-7 border-white/5 bg-ctp-surface0 text-xs focus:border-accent focus:ring-accent"
                                                         autoFocus
                                                     />
                                                     <Button
                                                         size="sm"
                                                         onClick={() =>
                                                             setEditingFlagId(
-                                                                null
+                                                                null,
                                                             )
                                                         }
                                                         data-tooltip-id="fastflags-tooltip"
                                                         data-tooltip-content="Cancel"
-                                                        className="inline-flex items-center justify-center h-7 w-7 p-0 bg-white/5 hover:bg-white/10"
+                                                        className="inline-flex h-7 w-7 items-center justify-center bg-white/5 p-0 hover:bg-white/10"
                                                     >
                                                         <X
                                                             size={14}
@@ -274,12 +274,12 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                                         onClick={() =>
                                                             handleUpdateFlagValue(
                                                                 key,
-                                                                editValue
+                                                                editValue,
                                                             )
                                                         }
                                                         data-tooltip-id="fastflags-tooltip"
                                                         data-tooltip-content="Save"
-                                                        className="inline-flex items-center justify-center h-7 w-7 p-0 bg-accent hover:bg-accent/90"
+                                                        className="inline-flex h-7 w-7 items-center justify-center bg-accent p-0 hover:bg-accent/90"
                                                     >
                                                         <Save
                                                             size={14}
@@ -298,7 +298,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                                         y: 0,
                                                     }}
                                                     exit={{ opacity: 0, y: 10 }}
-                                                    className="text-xs text-ctp-subtext0 truncate mt-0.5"
+                                                    className="mt-0.5 truncate text-xs text-ctp-subtext0"
                                                 >
                                                     {typeof value === "string"
                                                         ? `"${value}"`
@@ -308,7 +308,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                         </AnimatePresence>
                                     </div>
                                     {editingFlagId !== key && (
-                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                                             <Button
                                                 variant="secondary"
                                                 size="sm"
@@ -317,7 +317,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                                 }
                                                 data-tooltip-id="fastflags-tooltip"
                                                 data-tooltip-content="Edit Flag"
-                                                className="inline-flex items-center justify-center h-6 w-6 p-0 bg-white/5 hover:bg-white/10"
+                                                className="inline-flex h-6 w-6 items-center justify-center bg-white/5 p-0 hover:bg-white/10"
                                             >
                                                 <Edit2
                                                     size={12}
@@ -332,7 +332,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
                                                 }
                                                 data-tooltip-id="fastflags-tooltip"
                                                 data-tooltip-content="Delete Flag"
-                                                className="inline-flex items-center justify-center h-6 w-6 p-0 bg-ctp-red/10 hover:bg-ctp-red/20 text-ctp-red"
+                                                className="inline-flex h-6 w-6 items-center justify-center bg-ctp-red/10 p-0 text-ctp-red hover:bg-ctp-red/20"
                                             >
                                                 <Trash2
                                                     size={12}

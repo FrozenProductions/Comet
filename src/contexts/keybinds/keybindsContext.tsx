@@ -67,7 +67,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
                             : "Zen mode disabled",
                         {
                             id: "zen-mode-toast",
-                        }
+                        },
                     );
                     break;
                 case "toggleCommandPalette":
@@ -116,7 +116,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
             handleScreenChange,
             setIsConsoleOpen,
             toggleConsoleVisibility,
-        ]
+        ],
     );
 
     useEffect(() => {
@@ -202,7 +202,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const updateKeybind = (
         action: KeybindAction,
-        newKeybind: Partial<Keybind>
+        newKeybind: Partial<Keybind>,
     ) => {
         setKeybinds((prev) => {
             const updated = prev.map((kb) =>
@@ -215,7 +215,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
                               ...newKeybind.modifiers,
                           },
                       }
-                    : kb
+                    : kb,
             );
             localStorage.setItem("keybinds", JSON.stringify(updated));
             return updated;

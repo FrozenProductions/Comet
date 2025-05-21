@@ -66,7 +66,7 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
                 whileHover="hover"
                 whileTap="tap"
                 onClick={openRoblox}
-                className="w-11 h-11 bg-white/5 text-[#c1c7e6] rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm border border-white/5 transition-colors"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/5 bg-white/5 text-[#c1c7e6] shadow-lg backdrop-blur-sm transition-colors"
             >
                 <ExternalLink size={16} className="stroke-[2.5]" />
             </motion.button>
@@ -82,10 +82,10 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
                 whileTap="tap"
                 onClick={handleExecute}
                 disabled={isExecuting}
-                className="w-11 h-11 bg-white/5 text-[#c1c7e6] rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm border border-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/5 bg-white/5 text-[#c1c7e6] shadow-lg backdrop-blur-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {isExecuting ? (
-                    <Loader2 size={16} className="stroke-[2.5] animate-spin" />
+                    <Loader2 size={16} className="animate-spin stroke-[2.5]" />
                 ) : (
                     <Play size={16} className="ml-0.5 stroke-[2.5]" />
                 )}
@@ -94,7 +94,7 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
             <Tooltip
                 id="action-tooltip"
                 place="left"
-                className="!bg-ctp-mantle !px-2 !py-1 !rounded-lg !text-xs !border !border-white/5 !shadow-lg"
+                className="!rounded-lg !border !border-white/5 !bg-ctp-mantle !px-2 !py-1 !text-xs !shadow-lg"
                 classNameArrow="!hidden"
             />
         </div>

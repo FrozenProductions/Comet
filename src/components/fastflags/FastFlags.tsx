@@ -35,7 +35,7 @@ export const FastFlags: React.FC = () => {
 
     const [newProfileName, setNewProfileName] = useState("");
     const [selectedProfileId, setSelectedProfileId] = useState<string | null>(
-        null
+        null,
     );
     const [isCreatingProfile, setIsCreatingProfile] = useState(false);
     const [invalidFlags, setInvalidFlags] = useState<string[]>([]);
@@ -74,9 +74,8 @@ export const FastFlags: React.FC = () => {
 
         try {
             const flags = Object.keys(selectedProfile.flags);
-            const invalidFlags = await FlagValidationService.validateFlags(
-                flags
-            );
+            const invalidFlags =
+                await FlagValidationService.validateFlags(flags);
             setInvalidFlags(invalidFlags);
             setValidationError(null);
         } catch (error) {
@@ -150,7 +149,7 @@ export const FastFlags: React.FC = () => {
     const handleUpdateFlag = async (
         profileId: string,
         key: string,
-        value: string | null
+        value: string | null,
     ) => {
         try {
             await updateFlagValue(profileId, key, value);
@@ -171,16 +170,16 @@ export const FastFlags: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-full flex flex-col bg-ctp-base">
+            <div className="flex h-full flex-col bg-ctp-base">
                 <Header
                     title="Fast Flags"
                     icon={<Flag size={16} className="text-accent" />}
                     description="Manage Roblox fast flags"
                 />
-                <div className="flex-1 flex items-center justify-center">
+                <div className="flex flex-1 items-center justify-center">
                     <Loader2
                         size={24}
-                        className="animate-spin text-accent stroke-[2]"
+                        className="animate-spin stroke-[2] text-accent"
                     />
                 </div>
             </div>
@@ -189,19 +188,19 @@ export const FastFlags: React.FC = () => {
 
     if (error) {
         return (
-            <div className="h-full flex flex-col bg-ctp-base">
+            <div className="flex h-full flex-col bg-ctp-base">
                 <Header
                     title="Fast Flags"
                     icon={<Flag size={16} className="text-accent" />}
                     description="Manage fast flags and variables"
                 />
-                <div className="flex-1 flex items-center justify-center text-ctp-red">
+                <div className="flex flex-1 items-center justify-center text-ctp-red">
                     <div className="flex flex-col items-center text-center">
                         <AlertCircle size={32} className="mb-4 stroke-[2]" />
                         <div className="text-sm font-medium">
                             Error loading profiles
                         </div>
-                        <div className="text-xs mt-1 text-ctp-subtext0">
+                        <div className="mt-1 text-xs text-ctp-subtext0">
                             {error}
                         </div>
                     </div>
@@ -211,7 +210,7 @@ export const FastFlags: React.FC = () => {
     }
 
     return (
-        <div className="h-full flex flex-col bg-ctp-base">
+        <div className="flex h-full flex-col bg-ctp-base">
             <Header
                 title="Fast Flags"
                 icon={<Flag size={16} className="text-accent" />}
@@ -225,7 +224,7 @@ export const FastFlags: React.FC = () => {
                             data-tooltip-content={
                                 isAdvancedMode ? "Easy Mode" : "Advanced Mode"
                             }
-                            className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
+                            className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
                         >
                             <Settings
                                 size={14}
@@ -237,7 +236,7 @@ export const FastFlags: React.FC = () => {
                             size="sm"
                             data-tooltip-id="fastflags-tooltip"
                             data-tooltip-content="Open Directory"
-                            className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
+                            className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
                         >
                             <FolderOpen
                                 size={14}
@@ -248,9 +247,9 @@ export const FastFlags: React.FC = () => {
                 }
             />
 
-            <div className="flex-1 flex overflow-hidden">
-                <div className="w-56 border-r border-white/5 bg-ctp-mantle flex flex-col">
-                    <div className="p-3 flex items-center justify-between">
+            <div className="flex flex-1 overflow-hidden">
+                <div className="flex w-56 flex-col border-r border-white/5 bg-ctp-mantle">
+                    <div className="flex items-center justify-between p-3">
                         <div className="flex items-center gap-2">
                             <Users size={16} className="text-white/50" />
                             <span className="text-sm font-medium">
@@ -262,7 +261,7 @@ export const FastFlags: React.FC = () => {
                             size="sm"
                             data-tooltip-id="fastflags-tooltip"
                             data-tooltip-content="New Profile"
-                            className="inline-flex items-center justify-center w-7 h-7 bg-white/10 hover:bg-white/20 group"
+                            className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
                         >
                             <Plus
                                 size={14}
@@ -271,15 +270,15 @@ export const FastFlags: React.FC = () => {
                         </Button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-1.5 pb-2 space-y-1">
+                    <div className="flex-1 space-y-1 overflow-y-auto px-1.5 pb-2">
                         {profiles.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-ctp-subtext0">
+                            <div className="flex h-full flex-col items-center justify-center text-ctp-subtext0">
                                 <AlertCircle
                                     size={20}
-                                    className="stroke-[2] mb-2"
+                                    className="mb-2 stroke-[2]"
                                 />
                                 <div className="text-sm">No profiles found</div>
-                                <div className="text-xs mt-1">
+                                <div className="mt-1 text-xs">
                                     Create a new profile to get started
                                 </div>
                             </div>
@@ -290,24 +289,20 @@ export const FastFlags: React.FC = () => {
                                     onClick={() =>
                                         setSelectedProfileId(profile.id)
                                     }
-                                    className={`
-                                        group relative w-full flex items-center gap-1.5 p-1.5 rounded-lg cursor-pointer transition-all duration-200 text-left
-                                        ${
-                                            selectedProfileId === profile.id
-                                                ? "bg-ctp-surface0"
-                                                : "hover:bg-ctp-surface0/50"
-                                        }
-                                        ${
-                                            activeProfileId === profile.id
-                                                ? "border border-accent/50 shadow-[0_0_10px_-5px] shadow-accent/20"
-                                                : "border border-transparent"
-                                        }
-                                    `}
+                                    className={`group relative flex w-full cursor-pointer items-center gap-1.5 rounded-lg p-1.5 text-left transition-all duration-200 ${
+                                        selectedProfileId === profile.id
+                                            ? "bg-ctp-surface0"
+                                            : "hover:bg-ctp-surface0/50"
+                                    } ${
+                                        activeProfileId === profile.id
+                                            ? "border border-accent/50 shadow-[0_0_10px_-5px] shadow-accent/20"
+                                            : "border border-transparent"
+                                    } `}
                                 >
                                     {activeProfileId === profile.id && (
                                         <motion.div
                                             layoutId="activeProfileIndicator"
-                                            className="absolute left-0 w-0.5 h-4 bg-accent rounded-full"
+                                            className="absolute left-0 h-4 w-0.5 rounded-full bg-accent"
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             exit={{ opacity: 0 }}
@@ -316,27 +311,27 @@ export const FastFlags: React.FC = () => {
                                     )}
                                     <User
                                         size={14}
-                                        className={`stroke-[2.5] shrink-0 ml-1 ${
+                                        className={`ml-1 shrink-0 stroke-[2.5] ${
                                             activeProfileId === profile.id
                                                 ? "text-accent"
                                                 : "text-white/50"
                                         }`}
                                     />
                                     <span
-                                        className={`truncate text-xs text-left flex-1 ${
+                                        className={`flex-1 truncate text-left text-xs ${
                                             activeProfileId === profile.id
-                                                ? "text-accent font-medium"
+                                                ? "font-medium text-accent"
                                                 : ""
                                         }`}
                                     >
                                         {profile.name}
                                     </span>
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                                         <Button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleActivateProfile(
-                                                    profile.id
+                                                    profile.id,
                                                 );
                                             }}
                                             size="sm"
@@ -346,7 +341,7 @@ export const FastFlags: React.FC = () => {
                                                     ? "Active Profile"
                                                     : "Set Active"
                                             }
-                                            className={`inline-flex items-center justify-center h-5 w-5 p-0 ${
+                                            className={`inline-flex h-5 w-5 items-center justify-center p-0 ${
                                                 activeProfileId === profile.id
                                                     ? "bg-accent hover:bg-accent/90"
                                                     : "bg-white/5 hover:bg-white/10"
@@ -369,17 +364,11 @@ export const FastFlags: React.FC = () => {
                                             size="sm"
                                             data-tooltip-id="fastflags-tooltip"
                                             data-tooltip-content="Delete Profile"
-                                            className={`
-                                                inline-flex items-center justify-center
-                                                opacity-0 group-hover:opacity-100 transition-opacity
-                                                ${
-                                                    selectedProfileId ===
-                                                    profile.id
-                                                        ? "!opacity-100"
-                                                        : ""
-                                                }
-                                                bg-ctp-red/10 hover:bg-ctp-red/20 text-ctp-red h-5 w-5 p-0
-                                            `}
+                                            className={`inline-flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 ${
+                                                selectedProfileId === profile.id
+                                                    ? "!opacity-100"
+                                                    : ""
+                                            } h-5 w-5 bg-ctp-red/10 p-0 text-ctp-red hover:bg-ctp-red/20`}
                                         >
                                             <Trash2
                                                 size={10}
@@ -417,12 +406,12 @@ export const FastFlags: React.FC = () => {
                         />
                     )
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-ctp-subtext0">
+                    <div className="flex flex-1 items-center justify-center text-ctp-subtext0">
                         <div className="text-center">
                             <motion.div
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                className="w-16 h-16 rounded-xl bg-ctp-mantle flex items-center justify-center mb-4 mx-auto"
+                                className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-ctp-mantle"
                             >
                                 <Flag size={32} className="text-white/50" />
                             </motion.div>
@@ -438,7 +427,7 @@ export const FastFlags: React.FC = () => {
                                 initial={{ y: 10, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.2 }}
-                                className="text-xs mt-1"
+                                className="mt-1 text-xs"
                             >
                                 Select a profile from the sidebar to manage
                                 flags
@@ -465,11 +454,11 @@ export const FastFlags: React.FC = () => {
                         onKeyDown={(e) =>
                             e.key === "Enter" && handleCreateProfile()
                         }
-                        className="w-full bg-ctp-surface0 border-white/5 focus:border-accent focus:ring-accent"
+                        className="w-full border-white/5 bg-ctp-surface0 focus:border-accent focus:ring-accent"
                         autoFocus
                     />
                 </div>
-                <div className="flex justify-end gap-3 mt-4">
+                <div className="mt-4 flex justify-end gap-3">
                     <Button
                         onClick={() => {
                             setNewProfileName("");
@@ -503,7 +492,7 @@ export const FastFlags: React.FC = () => {
 
             <Tooltip
                 id="fastflags-tooltip"
-                className="!bg-ctp-mantle !px-2.5 !py-1.5 !rounded-lg !text-xs !font-medium !border !border-white/5 !shadow-lg !z-50"
+                className="!z-50 !rounded-lg !border !border-white/5 !bg-ctp-mantle !px-2.5 !py-1.5 !text-xs !font-medium !shadow-lg"
                 classNameArrow="!hidden"
                 delayShow={50}
                 delayHide={0}

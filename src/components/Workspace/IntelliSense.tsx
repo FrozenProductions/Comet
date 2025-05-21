@@ -64,7 +64,8 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                     e.preventDefault();
                     e.stopPropagation();
                     setSelectedIndex(
-                        (i) => (i - 1 + suggestions.length) % suggestions.length
+                        (i) =>
+                            (i - 1 + suggestions.length) % suggestions.length,
                     );
                     break;
                 case settings.intellisense.acceptSuggestionKey:
@@ -126,11 +127,11 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                 top: position.y,
                 zIndex: 1000,
             }}
-            className="w-64 max-h-[400px] overflow-hidden bg-ctp-surface0/95 backdrop-blur-sm border border-ctp-surface1/50 rounded-lg shadow-2xl"
+            className="max-h-[400px] w-64 overflow-hidden rounded-lg border border-ctp-surface1/50 bg-ctp-surface0/95 shadow-2xl backdrop-blur-sm"
         >
             <div
                 ref={listRef}
-                className="overflow-y-auto max-h-[400px] divide-y divide-ctp-surface1/20"
+                className="max-h-[400px] divide-y divide-ctp-surface1/20 overflow-y-auto"
             >
                 {suggestions
                     .slice(0, settings.intellisense.maxSuggestions)
@@ -141,14 +142,11 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                         return (
                             <div
                                 key={suggestion.label}
-                                className={`
-                flex flex-col cursor-pointer text-[11px]
-                ${
-                    isSelected
-                        ? "bg-ctp-surface1 text-ctp-text"
-                        : "text-ctp-subtext0 hover:text-ctp-text hover:bg-ctp-surface1/50"
-                }
-              `}
+                                className={`flex cursor-pointer flex-col text-[11px] ${
+                                    isSelected
+                                        ? "bg-ctp-surface1 text-ctp-text"
+                                        : "text-ctp-subtext0 hover:bg-ctp-surface1/50 hover:text-ctp-text"
+                                } `}
                                 onClick={() => onSelect(suggestion.label)}
                             >
                                 <div className="flex items-center gap-2 px-2 py-1.5">
@@ -156,11 +154,11 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                                         size={12}
                                         className="flex-shrink-0 opacity-75"
                                     />
-                                    <span className="font-medium truncate">
+                                    <span className="truncate font-medium">
                                         {suggestion.label}
                                     </span>
                                     {suggestion.type && (
-                                        <span className="flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-ctp-surface2/50 text-ctp-subtext1">
+                                        <span className="flex-shrink-0 rounded-full bg-ctp-surface2/50 px-1.5 py-0.5 text-[10px] text-ctp-subtext1">
                                             {suggestion.type}
                                         </span>
                                     )}
@@ -168,14 +166,14 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                                 {isSelected &&
                                     (suggestion.detail ||
                                         suggestion.documentation) && (
-                                        <div className="px-2 pb-1.5 space-y-1 bg-ctp-surface1/30">
+                                        <div className="space-y-1 bg-ctp-surface1/30 px-2 pb-1.5">
                                             {suggestion.detail && (
-                                                <div className="font-mono text-[10px] text-ctp-subtext1 opacity-90 pl-6">
+                                                <div className="pl-6 font-mono text-[10px] text-ctp-subtext1 opacity-90">
                                                     {suggestion.detail}
                                                 </div>
                                             )}
                                             {suggestion.documentation && (
-                                                <div className="text-[10px] text-ctp-subtext1 opacity-90 pl-6 leading-normal">
+                                                <div className="pl-6 text-[10px] leading-normal text-ctp-subtext1 opacity-90">
                                                     {suggestion.documentation}
                                                 </div>
                                             )}

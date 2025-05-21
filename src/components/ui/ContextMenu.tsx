@@ -70,20 +70,20 @@ export const ContextMenu: FC<ContextMenuProps> = ({
                 exit={{ opacity: 0, x: -10 }}
                 className="absolute left-full top-0 ml-0.5"
             >
-                <div className="w-48 rounded-lg bg-ctp-mantle border border-white/5 shadow-xl overflow-hidden py-1.5">
+                <div className="w-48 overflow-hidden rounded-lg border border-white/5 bg-ctp-mantle py-1.5 shadow-xl">
                     {submenuItems.map((item, idx) => {
                         if (item.type === "separator") {
                             return (
                                 <div
                                     key={idx}
-                                    className="h-px bg-white/5 my-1.5"
+                                    className="my-1.5 h-px bg-white/5"
                                 />
                             );
                         }
 
                         const isFirstItem = idx === 0;
                         const nonSeparatorItems = submenuItems.filter(
-                            (i) => i.type !== "separator"
+                            (i) => i.type !== "separator",
                         );
                         const isLastNonSeparator =
                             idx === nonSeparatorItems.length - 1;
@@ -96,21 +96,16 @@ export const ContextMenu: FC<ContextMenuProps> = ({
                                     onClose();
                                 }}
                                 disabled={item.disabled}
-                                className={`
-                  w-full px-3 py-1.5 text-left flex items-center gap-2 text-xs transition-colors
-                  ${isFirstItem ? "-mt-1.5" : ""}
-                  ${isLastNonSeparator ? "-mb-1.5" : ""}
-                  ${
-                      item.disabled
-                          ? "opacity-50 cursor-not-allowed"
-                          : item.danger
-                          ? "text-ctp-red hover:bg-ctp-red/10"
-                          : "text-ctp-text hover:bg-ctp-surface0"
-                  }
-                `}
+                                className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${isFirstItem ? "-mt-1.5" : ""} ${isLastNonSeparator ? "-mb-1.5" : ""} ${
+                                    item.disabled
+                                        ? "cursor-not-allowed opacity-50"
+                                        : item.danger
+                                          ? "text-ctp-red hover:bg-ctp-red/10"
+                                          : "text-ctp-text hover:bg-ctp-surface0"
+                                } `}
                             >
                                 {item.icon && (
-                                    <span className="w-4 h-4">{item.icon}</span>
+                                    <span className="h-4 w-4">{item.icon}</span>
                                 )}
                                 <span className="flex-1">{item.label}</span>
                             </button>
@@ -137,21 +132,21 @@ export const ContextMenu: FC<ContextMenuProps> = ({
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    className="w-48 rounded-lg bg-ctp-mantle border border-white/5 shadow-xl overflow-hidden py-1.5"
+                    className="w-48 overflow-hidden rounded-lg border border-white/5 bg-ctp-mantle py-1.5 shadow-xl"
                 >
                     {items.map((item, index) => {
                         if (item.type === "separator") {
                             return (
                                 <div
                                     key={index}
-                                    className="h-px bg-white/5 my-1.5"
+                                    className="my-1.5 h-px bg-white/5"
                                 />
                             );
                         }
 
                         const isFirstItem = index === 0;
                         const nonSeparatorItems = items.filter(
-                            (i) => i.type !== "separator"
+                            (i) => i.type !== "separator",
                         );
                         const isLastNonSeparator =
                             nonSeparatorItems.indexOf(item) ===
@@ -168,25 +163,20 @@ export const ContextMenu: FC<ContextMenuProps> = ({
                                 }}
                                 onMouseEnter={() =>
                                     setActiveSubmenu(
-                                        item.submenu ? index : null
+                                        item.submenu ? index : null,
                                     )
                                 }
                                 disabled={item.disabled}
-                                className={`
-                  relative w-full px-3 py-1.5 text-left flex items-center gap-2 text-xs transition-colors
-                  ${isFirstItem ? "-mt-1.5" : ""}
-                  ${isLastNonSeparator ? "-mb-1.5" : ""}
-                  ${
-                      item.disabled
-                          ? "opacity-50 cursor-not-allowed"
-                          : item.danger
-                          ? "text-ctp-red hover:bg-ctp-red/10"
-                          : "text-ctp-text hover:bg-ctp-surface0"
-                  }
-                `}
+                                className={`relative flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${isFirstItem ? "-mt-1.5" : ""} ${isLastNonSeparator ? "-mb-1.5" : ""} ${
+                                    item.disabled
+                                        ? "cursor-not-allowed opacity-50"
+                                        : item.danger
+                                          ? "text-ctp-red hover:bg-ctp-red/10"
+                                          : "text-ctp-text hover:bg-ctp-surface0"
+                                } `}
                             >
                                 {item.icon && (
-                                    <span className="w-4 h-4">{item.icon}</span>
+                                    <span className="h-4 w-4">{item.icon}</span>
                                 )}
                                 <span className="flex-1">{item.label}</span>
                                 {item.submenu && (

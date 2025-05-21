@@ -48,7 +48,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
             } else {
                 searchRegex = new RegExp(
                     searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
-                    matchCase ? "g" : "gi"
+                    matchCase ? "g" : "gi",
                 );
             }
 
@@ -59,15 +59,15 @@ export const EditorSearch: FC<EditorSearchProps> = ({
             while ((match = searchRegex.exec(text)) !== null) {
                 const startPos = model.getPositionAt(match.index);
                 const endPos = model.getPositionAt(
-                    match.index + match[0].length
+                    match.index + match[0].length,
                 );
                 matches.push(
                     new monaco.Range(
                         startPos.lineNumber,
                         startPos.column,
                         endPos.lineNumber,
-                        endPos.column
-                    )
+                        endPos.column,
+                    ),
                 );
             }
 
@@ -88,7 +88,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                                     .NeverGrowsWhenTypingAtEdges,
                         },
                     })),
-                ]
+                ],
             );
 
             setMatchCount(matches.length);
@@ -142,7 +142,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                 ? new RegExp(searchTerm, matchCase ? "g" : "gi")
                 : new RegExp(
                       searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
-                      matchCase ? "g" : "gi"
+                      matchCase ? "g" : "gi",
                   );
 
             const text = model.getValue();
@@ -154,13 +154,13 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                 if (currentIndex === nextMatch) {
                     const startPos = model.getPositionAt(match.index);
                     const endPos = model.getPositionAt(
-                        match.index + match[0].length
+                        match.index + match[0].length,
                     );
                     const range = new monaco.Range(
                         startPos.lineNumber,
                         startPos.column,
                         endPos.lineNumber,
-                        endPos.column
+                        endPos.column,
                     );
 
                     editor.setSelection(range);
@@ -195,7 +195,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                 ? new RegExp(searchTerm, matchCase ? "g" : "gi")
                 : new RegExp(
                       searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
-                      matchCase ? "g" : "gi"
+                      matchCase ? "g" : "gi",
                   );
 
             const text = model.getValue();
@@ -207,13 +207,13 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                 if (currentIndex === prevMatch) {
                     const startPos = model.getPositionAt(match.index);
                     const endPos = model.getPositionAt(
-                        match.index + match[0].length
+                        match.index + match[0].length,
                     );
                     const range = new monaco.Range(
                         startPos.lineNumber,
                         startPos.column,
                         endPos.lineNumber,
-                        endPos.column
+                        endPos.column,
                     );
 
                     editor.setSelection(range);
@@ -272,7 +272,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
     if (!isVisible) return null;
 
     return (
-        <div className="absolute top-0 right-0 mt-2 mr-2 bg-ctp-mantle/95 backdrop-blur rounded-lg shadow-lg border border-ctp-overlay0 p-3 flex flex-col gap-3 z-50 min-w-[320px]">
+        <div className="absolute right-0 top-0 z-50 mr-2 mt-2 flex min-w-[320px] flex-col gap-3 rounded-lg border border-ctp-overlay0 bg-ctp-mantle/95 p-3 shadow-lg backdrop-blur">
             <div className="flex items-center gap-2">
                 <div className="relative flex-1">
                     <input
@@ -281,9 +281,9 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search..."
-                        className="w-full bg-ctp-surface0 px-3 py-1.5 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-ctp-blue pr-24"
+                        className="w-full rounded-lg bg-ctp-surface0 px-3 py-1.5 pr-24 text-sm focus:outline-none focus:ring-1 focus:ring-ctp-blue"
                     />
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-0.5 text-xs bg-ctp-surface1 rounded text-ctp-subtext0">
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 rounded bg-ctp-surface1 px-2 py-0.5 text-xs text-ctp-subtext0">
                         {matchCount > 0
                             ? `${currentMatch}/${matchCount}`
                             : "No matches"}
@@ -291,7 +291,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                 </div>
                 <button
                     onClick={handleClose}
-                    className="p-1.5 hover:bg-ctp-surface0 rounded-lg transition-colors"
+                    className="rounded-lg p-1.5 transition-colors hover:bg-ctp-surface0"
                     title="Close search (Esc)"
                 >
                     <X size={14} className="stroke-[2.5]" />
@@ -299,7 +299,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
             </div>
             <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-1.5 cursor-pointer select-none group">
+                    <label className="group flex cursor-pointer select-none items-center gap-1.5">
                         <input
                             type="checkbox"
                             checked={matchCase}
@@ -307,7 +307,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                             className="hidden"
                         />
                         <div
-                            className={`p-1.5 rounded-lg transition-colors ${
+                            className={`rounded-lg p-1.5 transition-colors ${
                                 matchCase
                                     ? "bg-ctp-blue text-ctp-base"
                                     : "hover:bg-ctp-surface0"
@@ -315,11 +315,11 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                         >
                             <CaseSensitive size={14} className="stroke-[2.5]" />
                         </div>
-                        <span className="text-xs text-ctp-subtext0 group-hover:text-ctp-text transition-colors">
+                        <span className="text-xs text-ctp-subtext0 transition-colors group-hover:text-ctp-text">
                             Match case
                         </span>
                     </label>
-                    <label className="flex items-center gap-1.5 cursor-pointer select-none group">
+                    <label className="group flex cursor-pointer select-none items-center gap-1.5">
                         <input
                             type="checkbox"
                             checked={useRegex}
@@ -327,7 +327,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                             className="hidden"
                         />
                         <div
-                            className={`p-1.5 rounded-lg transition-colors ${
+                            className={`rounded-lg p-1.5 transition-colors ${
                                 useRegex
                                     ? "bg-ctp-blue text-ctp-base"
                                     : "hover:bg-ctp-surface0"
@@ -335,7 +335,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                         >
                             <Regex size={14} className="stroke-[2.5]" />
                         </div>
-                        <span className="text-xs text-ctp-subtext0 group-hover:text-ctp-text transition-colors">
+                        <span className="text-xs text-ctp-subtext0 transition-colors group-hover:text-ctp-text">
                             Use regex
                         </span>
                     </label>
@@ -344,7 +344,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                     <button
                         onClick={handlePrevious}
                         disabled={matchCount === 0}
-                        className="p-1.5 hover:bg-ctp-surface0 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="rounded-lg p-1.5 transition-colors hover:bg-ctp-surface0 disabled:cursor-not-allowed disabled:opacity-50"
                         title="Previous match (⇧+Enter)"
                     >
                         <ChevronUp size={14} className="stroke-[2.5]" />
@@ -352,7 +352,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
                     <button
                         onClick={handleNext}
                         disabled={matchCount === 0}
-                        className="p-1.5 hover:bg-ctp-surface0 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="rounded-lg p-1.5 transition-colors hover:bg-ctp-surface0 disabled:cursor-not-allowed disabled:opacity-50"
                         title="Next match (Enter)"
                     >
                         <ChevronDown size={14} className="stroke-[2.5]" />

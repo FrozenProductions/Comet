@@ -75,13 +75,13 @@ const KeybindSection: FC<{
     keybinds: Keybind[];
     onEditKeybind: (keybind: Keybind) => void;
 }> = ({ category, keybinds, onEditKeybind }) => (
-    <div className="bg-ctp-mantle rounded-xl p-4 space-y-4">
-        <div className="flex items-start justify-between pb-2 border-b border-ctp-surface0">
-            <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-ctp-text truncate">
+    <div className="space-y-4 rounded-xl bg-ctp-mantle p-4">
+        <div className="flex items-start justify-between border-b border-ctp-surface0 pb-2">
+            <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-medium text-ctp-text">
                     {category}
                 </div>
-                <div className="text-xs text-ctp-subtext0 select-none">
+                <div className="select-none text-xs text-ctp-subtext0">
                     {category} keyboard shortcuts
                 </div>
             </div>
@@ -92,16 +92,16 @@ const KeybindSection: FC<{
                     key={keybind.action}
                     className="flex items-center justify-between py-1.5"
                 >
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                         <div className="text-sm font-medium text-ctp-text">
                             {getKeybindTitle(keybind.action)}
                         </div>
-                        <div className="text-xs text-ctp-subtext0 select-none">
+                        <div className="select-none text-xs text-ctp-subtext0">
                             {keybind.description}
                         </div>
                     </div>
                     <button
-                        className="px-2 py-1 text-xs font-medium bg-ctp-surface0 text-ctp-subtext0 rounded hover:bg-ctp-surface1 transition-colors"
+                        className="rounded bg-ctp-surface0 px-2 py-1 text-xs font-medium text-ctp-subtext0 transition-colors hover:bg-ctp-surface1"
                         onClick={() => onEditKeybind(keybind)}
                     >
                         {[
@@ -139,7 +139,7 @@ export const Settings: FC = () => {
                 },
             });
         },
-        [settings, updateSettings]
+        [settings, updateSettings],
     );
 
     const SettingGroup: FC<{
@@ -148,14 +148,14 @@ export const Settings: FC = () => {
         info?: string;
         children: React.ReactNode;
     }> = ({ title, description, children }) => (
-        <div className="bg-ctp-mantle rounded-xl p-4 space-y-4">
-            <div className="flex items-start justify-between pb-2 border-b border-ctp-surface0">
-                <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-ctp-text truncate">
+        <div className="space-y-4 rounded-xl bg-ctp-mantle p-4">
+            <div className="flex items-start justify-between border-b border-ctp-surface0 pb-2">
+                <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-medium text-ctp-text">
                         {title}
                     </div>
                     {description && (
-                        <div className="text-xs text-ctp-subtext0 select-none">
+                        <div className="select-none text-xs text-ctp-subtext0">
                             {description}
                         </div>
                     )}
@@ -199,12 +199,12 @@ export const Settings: FC = () => {
             case "editor":
                 return (
                     <>
-                        <div className="space-y-2 mb-4">
-                            <h2 className="text-xl font-medium text-ctp-text flex items-center gap-2">
+                        <div className="mb-4 space-y-2">
+                            <h2 className="flex items-center gap-2 text-xl font-medium text-ctp-text">
                                 <Code2 size={20} className="text-accent" />
                                 Editor Settings
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
+                            <p className="-mt-1 select-none text-sm text-ctp-subtext0">
                                 Customize your code editor preferences and
                                 behavior
                             </p>
@@ -258,7 +258,7 @@ export const Settings: FC = () => {
                                         handleSliderChange(
                                             "text",
                                             "fontSize",
-                                            value
+                                            value,
                                         )
                                     }
                                     min={8}
@@ -273,7 +273,7 @@ export const Settings: FC = () => {
                                         handleSliderChange(
                                             "text",
                                             "tabSize",
-                                            value
+                                            value,
                                         )
                                     }
                                     min={2}
@@ -288,7 +288,7 @@ export const Settings: FC = () => {
                                         handleSliderChange(
                                             "text",
                                             "lineHeight",
-                                            value
+                                            value,
                                         )
                                     }
                                     min={1}
@@ -411,7 +411,7 @@ export const Settings: FC = () => {
                                         handleSliderChange(
                                             "intellisense",
                                             "maxSuggestions",
-                                            value
+                                            value,
                                         )
                                     }
                                     min={5}
@@ -426,15 +426,15 @@ export const Settings: FC = () => {
             case "interface":
                 return (
                     <>
-                        <div className="space-y-2 mb-4">
-                            <h2 className="text-xl font-medium text-ctp-text flex items-center gap-2">
+                        <div className="mb-4 space-y-2">
+                            <h2 className="flex items-center gap-2 text-xl font-medium text-ctp-text">
                                 <SettingsIcon
                                     size={20}
                                     className="text-accent"
                                 />
                                 Interface Settings
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
+                            <p className="-mt-1 select-none text-sm text-ctp-subtext0">
                                 Customize the application interface and
                                 appearance
                             </p>
@@ -516,12 +516,12 @@ export const Settings: FC = () => {
 
                 return (
                     <>
-                        <div className="space-y-2 mb-4">
-                            <h2 className="text-xl font-medium text-ctp-text flex items-center gap-2">
+                        <div className="mb-4 space-y-2">
+                            <h2 className="flex items-center gap-2 text-xl font-medium text-ctp-text">
                                 <Keyboard size={20} className="text-accent" />
                                 Keyboard Shortcuts
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
+                            <p className="-mt-1 select-none text-sm text-ctp-subtext0">
                                 Customize keyboard shortcuts for various actions
                             </p>
                         </div>
@@ -535,7 +535,7 @@ export const Settings: FC = () => {
                                         keybinds={categoryKeybinds}
                                         onEditKeybind={setEditingKeybind}
                                     />
-                                )
+                                ),
                             )}
                         </div>
 
@@ -549,7 +549,7 @@ export const Settings: FC = () => {
                                         updateKeybind(action, updates);
                                         setEditingKeybind(null);
                                         toast.success(
-                                            "Keybind updated successfully"
+                                            "Keybind updated successfully",
                                         );
                                     }}
                                 />
@@ -560,12 +560,12 @@ export const Settings: FC = () => {
             case "application":
                 return (
                     <>
-                        <div className="space-y-2 mb-6">
-                            <h2 className="text-xl font-medium text-ctp-text flex items-center gap-2">
+                        <div className="mb-6 space-y-2">
+                            <h2 className="flex items-center gap-2 text-xl font-medium text-ctp-text">
                                 <Settings2 size={20} className="text-accent" />
                                 Application Settings
                             </h2>
-                            <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
+                            <p className="-mt-1 select-none text-sm text-ctp-subtext0">
                                 Manage application settings and view information
                             </p>
                         </div>
@@ -575,14 +575,14 @@ export const Settings: FC = () => {
                                 title="Application"
                                 description="Application details"
                             >
-                                <div className="flex items-center justify-between p-4 rounded-lg bg-ctp-surface0/50">
+                                <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
                                     <div>
                                         <div className="space-y-1">
                                             <div>
                                                 <div className="text-sm font-medium text-ctp-text">
                                                     Version
                                                 </div>
-                                                <div className="text-xs text-ctp-subtext0 select-none">
+                                                <div className="select-none text-xs text-ctp-subtext0">
                                                     1.0.2-Public
                                                 </div>
                                             </div>
@@ -593,7 +593,7 @@ export const Settings: FC = () => {
                                             href="https://github.com/FrozenProductions/Comet"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="px-3 py-1.5 text-xs font-medium bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5"
+                                            className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
                                         >
                                             <Github
                                                 size={12}
@@ -603,7 +603,7 @@ export const Settings: FC = () => {
                                         </a>
                                         <button
                                             disabled
-                                            className="px-3 py-1.5 text-xs font-medium bg-accent/50 text-ctp-base/70 rounded-md cursor-not-allowed flex items-center gap-1.5"
+                                            className="flex cursor-not-allowed items-center gap-1.5 rounded-md bg-accent/50 px-3 py-1.5 text-xs font-medium text-ctp-base/70"
                                         >
                                             <Globe
                                                 size={12}
@@ -615,7 +615,7 @@ export const Settings: FC = () => {
                                             href="https://github.com/FrozenProductions/Comet/blob/main/docs/documentation.md"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="px-3 py-1.5 text-xs font-medium bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5"
+                                            className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
                                         >
                                             <Book
                                                 size={12}
@@ -632,13 +632,13 @@ export const Settings: FC = () => {
                                 description="Application management actions"
                             >
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between p-4 rounded-lg bg-ctp-surface0/50">
+                                    <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
                                         <div>
                                             <div className="space-y-1">
                                                 <div className="text-sm font-medium text-ctp-text">
                                                     Reset to Default
                                                 </div>
-                                                <div className="text-xs text-ctp-subtext0 select-none">
+                                                <div className="select-none text-xs text-ctp-subtext0">
                                                     This will reset all settings
                                                     to their default values
                                                 </div>
@@ -648,7 +648,7 @@ export const Settings: FC = () => {
                                             onClick={() =>
                                                 setShowResetConfirm(true)
                                             }
-                                            className="px-3 py-1.5 text-xs font-medium bg-ctp-red/10 text-ctp-red hover:bg-ctp-red/20 rounded-md transition-colors flex items-center gap-1.5"
+                                            className="flex items-center gap-1.5 rounded-md bg-ctp-red/10 px-3 py-1.5 text-xs font-medium text-ctp-red transition-colors hover:bg-ctp-red/20"
                                         >
                                             <RotateCcw
                                                 size={12}
@@ -658,13 +658,13 @@ export const Settings: FC = () => {
                                         </button>
                                     </div>
 
-                                    <div className="flex items-center justify-between p-4 rounded-lg bg-ctp-surface0/50">
+                                    <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
                                         <div>
                                             <div className="space-y-1">
                                                 <div className="text-sm font-medium text-ctp-text">
                                                     Open Directories
                                                 </div>
-                                                <div className="text-xs text-ctp-subtext0 select-none">
+                                                <div className="select-none text-xs text-ctp-subtext0">
                                                     Access application
                                                     directories
                                                 </div>
@@ -675,19 +675,19 @@ export const Settings: FC = () => {
                                                 onClick={async () => {
                                                     try {
                                                         await invoke(
-                                                            "open_comet_folder"
+                                                            "open_comet_folder",
                                                         );
                                                     } catch (error) {
                                                         toast.error(
-                                                            "Failed to open app directory"
+                                                            "Failed to open app directory",
                                                         );
                                                         console.error(
                                                             "Failed to open app directory",
-                                                            error
+                                                            error,
                                                         );
                                                     }
                                                 }}
-                                                className="px-3 py-1.5 text-xs font-medium bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5"
+                                                className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
                                             >
                                                 <Folder
                                                     size={12}
@@ -699,19 +699,19 @@ export const Settings: FC = () => {
                                                 onClick={async () => {
                                                     try {
                                                         await invoke(
-                                                            "open_hydrogen_folder"
+                                                            "open_hydrogen_folder",
                                                         );
                                                     } catch (error) {
                                                         toast.error(
-                                                            "Failed to open Hydrogen directory"
+                                                            "Failed to open Hydrogen directory",
                                                         );
                                                         console.error(
                                                             "Failed to open Hydrogen directory",
-                                                            error
+                                                            error,
                                                         );
                                                     }
                                                 }}
-                                                className="px-3 py-1.5 text-xs font-medium bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5"
+                                                className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
                                             >
                                                 <Folder
                                                     size={12}
@@ -728,22 +728,22 @@ export const Settings: FC = () => {
                                 title="Technology Stack"
                                 description="Core technologies powering Comet"
                             >
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <a
                                         href="https://tauri.app"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-4 rounded-lg bg-ctp-surface0/50 hover:bg-ctp-surface0/70 transition-colors group"
+                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
                                     >
-                                        <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
+                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
                                             <img
                                                 src="/assets/tauri.svg"
-                                                className="w-5 h-5 group-hover:scale-110 transition-transform"
+                                                className="h-5 w-5 transition-transform group-hover:scale-110"
                                                 alt="Tauri"
                                             />
                                             Tauri
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
+                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
                                             Build fast and secure desktop apps
                                             with native performance
                                         </div>
@@ -753,17 +753,17 @@ export const Settings: FC = () => {
                                         href="https://react.dev"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-4 rounded-lg bg-ctp-surface0/50 hover:bg-ctp-surface0/70 transition-colors group"
+                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
                                     >
-                                        <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
+                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
                                             <img
                                                 src="/assets/react.svg"
-                                                className="w-5 h-5 group-hover:scale-110 transition-transform"
+                                                className="h-5 w-5 transition-transform group-hover:scale-110"
                                                 alt="React"
                                             />
                                             React
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
+                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
                                             Create dynamic user interfaces with
                                             component-based architecture
                                         </div>
@@ -773,17 +773,17 @@ export const Settings: FC = () => {
                                         href="https://vitejs.dev"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-4 rounded-lg bg-ctp-surface0/50 hover:bg-ctp-surface0/70 transition-colors group"
+                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
                                     >
-                                        <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
+                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
                                             <img
                                                 src="/assets/vite.svg"
-                                                className="w-5 h-5 group-hover:scale-110 transition-transform"
+                                                className="h-5 w-5 transition-transform group-hover:scale-110"
                                                 alt="Vite"
                                             />
                                             Vite
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
+                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
                                             Modern build tool with
                                             lightning-fast hot module
                                             replacement
@@ -794,17 +794,17 @@ export const Settings: FC = () => {
                                         href="https://tailwindcss.com"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-4 rounded-lg bg-ctp-surface0/50 hover:bg-ctp-surface0/70 transition-colors group"
+                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
                                     >
-                                        <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
+                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
                                             <img
                                                 src="/assets/tailwind.svg"
-                                                className="w-5 h-5 group-hover:scale-110 transition-transform"
+                                                className="h-5 w-5 transition-transform group-hover:scale-110"
                                                 alt="TailwindCSS"
                                             />
                                             TailwindCSS
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
+                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
                                             Utility-first CSS framework for
                                             rapid and flexible styling
                                         </div>
@@ -814,17 +814,17 @@ export const Settings: FC = () => {
                                         href="https://www.framer.com"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-4 rounded-lg bg-ctp-surface0/50 hover:bg-ctp-surface0/70 transition-colors group"
+                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
                                     >
-                                        <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
+                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
                                             <img
                                                 src="/assets/framer.svg"
-                                                className="w-5 h-5 group-hover:scale-110 transition-transform invert"
+                                                className="h-5 w-5 invert transition-transform group-hover:scale-110"
                                                 alt="Framer Motion"
                                             />
                                             Framer Motion
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
+                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
                                             Production-ready library for smooth
                                             animations and gestures
                                         </div>
@@ -834,17 +834,17 @@ export const Settings: FC = () => {
                                         href="https://lucide.dev"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-4 rounded-lg bg-ctp-surface0/50 hover:bg-ctp-surface0/70 transition-colors group"
+                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
                                     >
-                                        <div className="text-sm font-medium text-ctp-text flex items-center gap-2 mb-2">
+                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
                                             <img
                                                 src="/assets/lucide.svg"
-                                                className="w-5 h-5 group-hover:scale-110 transition-transform"
+                                                className="h-5 w-5 transition-transform group-hover:scale-110"
                                                 alt="Lucide Icons"
                                             />
                                             Lucide Icons
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 leading-relaxed select-none">
+                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
                                             Beautiful and consistent icon system
                                             with over 1000 icons
                                         </div>
@@ -856,13 +856,13 @@ export const Settings: FC = () => {
                                 title="Credits"
                                 description="Project contributors"
                             >
-                                <div className="p-4 rounded-lg bg-ctp-surface0/50">
+                                <div className="rounded-lg bg-ctp-surface0/50 p-4">
                                     <div className="space-y-4">
                                         <div>
                                             <div className="text-sm font-medium text-ctp-text">
                                                 Frozen Productions
                                             </div>
-                                            <div className="text-xs text-ctp-subtext0 select-none">
+                                            <div className="select-none text-xs text-ctp-subtext0">
                                                 Comet Developer
                                             </div>
                                         </div>
@@ -870,7 +870,7 @@ export const Settings: FC = () => {
                                             <div className="text-sm font-medium text-ctp-text">
                                                 xGladius
                                             </div>
-                                            <div className="text-xs text-ctp-subtext0 select-none">
+                                            <div className="select-none text-xs text-ctp-subtext0">
                                                 Hydrogen Developer
                                             </div>
                                         </div>
@@ -878,7 +878,7 @@ export const Settings: FC = () => {
                                             <div className="text-sm font-medium text-ctp-text">
                                                 MaximumADHD
                                             </div>
-                                            <div className="text-xs text-ctp-subtext0 select-none">
+                                            <div className="select-none text-xs text-ctp-subtext0">
                                                 Roblox FFlag Tracking System
                                                 Creator
                                             </div>
@@ -895,15 +895,15 @@ export const Settings: FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col bg-ctp-base">
+        <div className="flex h-full flex-col bg-ctp-base">
             <Header
                 title="Settings"
                 icon={<SettingsIcon size={16} className="text-accent" />}
                 description="Changes are saved automatically"
             />
 
-            <div className="flex-1 overflow-hidden flex">
-                <div className="w-64 flex flex-col border-r border-white/5 bg-ctp-mantle">
+            <div className="flex flex-1 overflow-hidden">
+                <div className="flex w-64 flex-col border-r border-white/5 bg-ctp-mantle">
                     <div className="p-2">
                         <div className="relative">
                             <input
@@ -913,7 +913,7 @@ export const Settings: FC = () => {
                                     setSearchQuery(e.target.value.toLowerCase())
                                 }
                                 placeholder="Search settings..."
-                                className="w-full h-9 pl-9 pr-3 rounded-lg bg-white/5 text-sm text-ctp-text placeholder-ctp-subtext0 focus:outline-none focus:ring-2 focus:ring-accent/50"
+                                className="h-9 w-full rounded-lg bg-white/5 pl-9 pr-3 text-sm text-ctp-text placeholder-ctp-subtext0 focus:outline-none focus:ring-2 focus:ring-accent/50"
                             />
                             <Search
                                 size={16}
@@ -929,15 +929,12 @@ export const Settings: FC = () => {
                                     .includes(searchQuery) ||
                                 section.description
                                     .toLowerCase()
-                                    .includes(searchQuery)
+                                    .includes(searchQuery),
                         ).map((section) => (
                             <motion.button
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
-                                className={`
-                    w-full px-4 py-3 text-left hover:bg-ctp-surface0 transition-colors group relative
-                    ${activeSection === section.id ? "bg-ctp-surface0" : ""}
-                  `}
+                                className={`group relative w-full px-4 py-3 text-left transition-colors hover:bg-ctp-surface0 ${activeSection === section.id ? "bg-ctp-surface0" : ""} `}
                                 whileHover={{ x: 4 }}
                                 transition={{
                                     type: "spring",
@@ -948,39 +945,33 @@ export const Settings: FC = () => {
                                 <div className="flex items-center gap-3">
                                     <section.icon
                                         size={18}
-                                        className={`
-                        ${
-                            activeSection === section.id
-                                ? "text-accent"
-                                : "text-ctp-subtext0"
-                        }
-                        group-hover:text-accent transition-colors
-                      `}
+                                        className={` ${
+                                            activeSection === section.id
+                                                ? "text-accent"
+                                                : "text-ctp-subtext0"
+                                        } transition-colors group-hover:text-accent`}
                                     />
                                     <div>
                                         <div className="text-sm font-medium text-ctp-text">
                                             {section.title}
                                         </div>
-                                        <div className="text-xs text-ctp-subtext0 select-none">
+                                        <div className="select-none text-xs text-ctp-subtext0">
                                             {section.description}
                                         </div>
                                     </div>
                                     <ChevronRight
                                         size={16}
-                                        className={`
-                        ml-auto opacity-0 group-hover:opacity-100 transition-all
-                        ${
-                            activeSection === section.id
-                                ? "opacity-100 text-accent"
-                                : "text-ctp-subtext0"
-                        }
-                      `}
+                                        className={`ml-auto opacity-0 transition-all group-hover:opacity-100 ${
+                                            activeSection === section.id
+                                                ? "text-accent opacity-100"
+                                                : "text-ctp-subtext0"
+                                        } `}
                                     />
                                 </div>
                                 {activeSection === section.id && (
                                     <motion.div
                                         layoutId="active-indicator"
-                                        className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent-gradient"
+                                        className="absolute bottom-0 left-0 top-0 w-0.5 bg-accent-gradient"
                                     />
                                 )}
                             </motion.button>
@@ -989,7 +980,7 @@ export const Settings: FC = () => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto">
-                    <div className="max-w-3xl mx-auto p-8 space-y-8">
+                    <div className="mx-auto max-w-3xl space-y-8 p-8">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeSection}

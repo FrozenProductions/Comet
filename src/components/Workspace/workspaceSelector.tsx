@@ -65,7 +65,7 @@ const WorkspaceInput = memo(
                             }
                         }}
                         placeholder="Enter workspace name"
-                        className="w-full text-xs bg-ctp-surface0/50 border-none focus:ring-1 focus:ring-ctp-text px-2.5 py-1.5 rounded placeholder:text-ctp-subtext0"
+                        className="w-full rounded border-none bg-ctp-surface0/50 px-2.5 py-1.5 text-xs placeholder:text-ctp-subtext0 focus:ring-1 focus:ring-ctp-text"
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {
                                 e.preventDefault();
@@ -79,7 +79,7 @@ const WorkspaceInput = memo(
                 </div>
             </div>
         );
-    }
+    },
 );
 
 const DeleteWorkspaceModal = memo(
@@ -104,9 +104,9 @@ const DeleteWorkspaceModal = memo(
                 confirmText="Delete"
                 confirmVariant="destructive"
             />,
-            document.body
+            document.body,
         );
-    }
+    },
 );
 
 const WorkspaceList = memo(
@@ -153,28 +153,22 @@ const WorkspaceList = memo(
                     {workspaces.map((workspace) => (
                         <div
                             key={workspace.id}
-                            className={`
-                            group/item flex items-center gap-2.5 px-2.5 py-2 text-xs cursor-pointer rounded-md transition-all duration-150
-                            ${
+                            className={`group/item flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-xs transition-all duration-150 ${
                                 activeWorkspace === workspace.id
                                     ? "bg-ctp-surface0 text-ctp-text"
                                     : "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
-                            }
-                        `}
+                            } `}
                             onClick={() => onWorkspaceChange(workspace.id)}
                         >
-                            <div className="flex-1 flex items-center gap-2 min-w-0">
+                            <div className="flex min-w-0 flex-1 items-center gap-2">
                                 <AlignLeft
                                     size={14}
                                     strokeWidth={2}
-                                    className={`
-                                    flex-shrink-0 transition-colors
-                                    ${
+                                    className={`flex-shrink-0 transition-colors ${
                                         activeWorkspace === workspace.id
                                             ? "text-ctp-text"
                                             : "text-ctp-subtext0 group-hover/item:text-ctp-text"
-                                    }
-                                `}
+                                    } `}
                                 />
                                 <span className="truncate font-medium">
                                     {workspace.name}
@@ -187,10 +181,10 @@ const WorkspaceList = memo(
                                             e.stopPropagation();
                                             handleDelete(
                                                 workspace.id,
-                                                workspace.name
+                                                workspace.name,
                                             );
                                         }}
-                                        className="opacity-0 group-hover/item:opacity-100 p-1 hover:text-ctp-red rounded transition-all duration-200"
+                                        className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-red group-hover/item:opacity-100"
                                     >
                                         <Trash2
                                             size={12}
@@ -199,7 +193,7 @@ const WorkspaceList = memo(
                                     </button>
                                 )}
                             {activeWorkspace === workspace.id && (
-                                <div className="text-[10px] px-1.5 py-0.5 rounded-full bg-ctp-surface1 text-ctp-subtext1">
+                                <div className="rounded-full bg-ctp-surface1 px-1.5 py-0.5 text-[10px] text-ctp-subtext1">
                                     Active
                                 </div>
                             )}
@@ -221,7 +215,7 @@ const WorkspaceList = memo(
                 />
             </>
         );
-    }
+    },
 );
 
 const WorkspaceDropdownPortal = memo(
@@ -271,15 +265,15 @@ const WorkspaceDropdownPortal = memo(
                     top: dropdownPosition.top,
                     left: dropdownPosition.left,
                 }}
-                className="bg-ctp-mantle/95 border border-ctp-surface0 rounded-lg shadow-2xl z-50 min-w-[260px] backdrop-blur-md"
+                className="z-50 min-w-[260px] rounded-lg border border-ctp-surface0 bg-ctp-mantle/95 shadow-2xl backdrop-blur-md"
                 onClick={handleClick}
             >
                 <div className="py-1.5" onClick={handleClick}>
-                    <div className="px-3 py-2 border-b border-ctp-surface0">
+                    <div className="border-b border-ctp-surface0 px-3 py-2">
                         <h3 className="text-xs font-medium text-ctp-text">
                             Workspaces
                         </h3>
-                        <p className="text-[11px] text-ctp-subtext0 mt-0.5">
+                        <p className="mt-0.5 text-[11px] text-ctp-subtext0">
                             Switch between different workspace environments
                         </p>
                     </div>
@@ -291,13 +285,13 @@ const WorkspaceDropdownPortal = memo(
                             onWorkspaceDelete={onWorkspaceDelete}
                         />
                     </div>
-                    <div className="h-px bg-ctp-surface0 mx-1.5" />
+                    <div className="mx-1.5 h-px bg-ctp-surface0" />
                     {isCreatingWorkspace ? (
                         <WorkspaceInput onSubmit={onCreateWorkspace} />
                     ) : (
                         <button
                             onClick={onCreateClick}
-                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-ctp-subtext0 hover:text-ctp-text hover:bg-ctp-surface0/50 transition-colors"
+                            className="flex w-full items-center gap-2.5 px-4 py-2.5 text-xs text-ctp-subtext0 transition-colors hover:bg-ctp-surface0/50 hover:text-ctp-text"
                         >
                             <FolderPlus size={14} className="flex-shrink-0" />
                             <span className="font-medium">New Workspace</span>
@@ -305,9 +299,9 @@ const WorkspaceDropdownPortal = memo(
                     )}
                 </div>
             </motion.div>,
-            document.body
+            document.body,
         );
-    }
+    },
 );
 
 const WorkspaceSelector: FC<WorkspaceProps> = ({
@@ -347,7 +341,7 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
     const currentWorkspaceName = useMemo(
         () =>
             workspaces.find((w) => w.id === activeWorkspace)?.name || "Default",
-        [workspaces, activeWorkspace]
+        [workspaces, activeWorkspace],
     );
 
     const handleCreateWorkspace = async (name: string) => {
@@ -369,11 +363,11 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
     return (
         <div
             ref={selectorRef}
-            className="flex-shrink-0 relative flex items-center px-4 hover:bg-ctp-surface0/30 cursor-pointer group border-r border-ctp-surface0"
+            className="group relative flex flex-shrink-0 cursor-pointer items-center border-r border-ctp-surface0 px-4 hover:bg-ctp-surface0/30"
             onClick={handleSelectorClick}
         >
             <motion.div
-                className="h-full flex items-center justify-center gap-2"
+                className="flex h-full items-center justify-center gap-2"
                 layout
                 transition={{
                     type: "spring",
@@ -385,7 +379,7 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
                     <AlignLeft
                         size={14}
                         strokeWidth={2}
-                        className="flex-shrink-0 text-ctp-text opacity-75 group-hover:opacity-100 transition-opacity"
+                        className="flex-shrink-0 text-ctp-text opacity-75 transition-opacity group-hover:opacity-100"
                     />
                     <motion.div
                         className="flex items-center justify-center"
@@ -396,7 +390,7 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
                             damping: 30,
                         }}
                     >
-                        <span className="text-xs font-medium select-none text-ctp-subtext0 group-hover:text-ctp-text transition-colors whitespace-nowrap">
+                        <span className="select-none whitespace-nowrap text-xs font-medium text-ctp-subtext0 transition-colors group-hover:text-ctp-text">
                             {currentWorkspaceName}
                         </span>
                     </motion.div>
@@ -404,10 +398,7 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
                 <ChevronDown
                     size={14}
                     strokeWidth={2}
-                    className={`
-                        flex-shrink-0 text-ctp-subtext0 group-hover:text-ctp-text transition-all duration-200
-                        ${showDropdown ? "transform rotate-180" : ""}
-                    `}
+                    className={`flex-shrink-0 text-ctp-subtext0 transition-all duration-200 group-hover:text-ctp-text ${showDropdown ? "rotate-180 transform" : ""} `}
                 />
             </motion.div>
             {createPortal(
@@ -427,7 +418,7 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
                                 } catch (error) {
                                     console.error(
                                         "Failed to change workspace:",
-                                        error
+                                        error,
                                     );
                                 }
                             }}
@@ -445,7 +436,7 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
                         />
                     )}
                 </AnimatePresence>,
-                document.body
+                document.body,
             )}
         </div>
     );

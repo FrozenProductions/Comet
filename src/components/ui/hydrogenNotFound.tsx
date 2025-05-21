@@ -21,7 +21,7 @@ const LoadingDots = () => {
             {[0, 1, 2].map((i) => (
                 <motion.span
                     key={i}
-                    className="w-1 h-1 rounded-full bg-current"
+                    className="h-1 w-1 rounded-full bg-current"
                     initial={{ opacity: 0.4, scale: 0.7 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{
@@ -79,7 +79,7 @@ export const HydrogenNotFound: FC = () => {
                         id: "hydrogen-progress",
                     });
                 }
-            }
+            },
         );
 
         return () => {
@@ -107,11 +107,11 @@ export const HydrogenNotFound: FC = () => {
     };
 
     return (
-        <div className="h-screen w-screen flex items-center justify-center bg-ctp-base">
+        <div className="flex h-screen w-screen items-center justify-center bg-ctp-base">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-2xl px-6 py-8 space-y-8"
+                className="w-full max-w-2xl space-y-8 px-6 py-8"
             >
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
@@ -119,10 +119,10 @@ export const HydrogenNotFound: FC = () => {
                     transition={{ delay: 0.2 }}
                     className="flex flex-col items-center gap-4"
                 >
-                    <div className="w-16 h-16 rounded-2xl bg-ctp-mantle flex items-center justify-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ctp-mantle">
                         <AlertTriangle
                             size={32}
-                            className="text-ctp-red stroke-[2]"
+                            className="stroke-[2] text-ctp-red"
                         />
                     </div>
                     <div className="space-y-2 text-center">
@@ -143,14 +143,11 @@ export const HydrogenNotFound: FC = () => {
                             whileTap={{ scale: 0.98 }}
                             onClick={handleInstall}
                             disabled={isInstalling}
-                            className={`
-                                flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-colors
-                                ${
-                                    isInstalling
-                                        ? "bg-ctp-surface1 cursor-not-allowed"
-                                        : "bg-white/10 hover:bg-white/20 cursor-pointer"
-                                }
-                            `}
+                            className={`flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-medium transition-colors ${
+                                isInstalling
+                                    ? "cursor-not-allowed bg-ctp-surface1"
+                                    : "cursor-pointer bg-white/10 hover:bg-white/20"
+                            } `}
                         >
                             {isInstalling ? (
                                 <Loader2 size={16} className="animate-spin" />
@@ -185,7 +182,7 @@ export const HydrogenNotFound: FC = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="flex flex-col items-center gap-3"
                         >
-                            <div className="relative w-20 h-20">
+                            <div className="relative h-20 w-20">
                                 <motion.div
                                     className="absolute inset-0 rounded-lg bg-white/5"
                                     animate={{
@@ -208,7 +205,7 @@ export const HydrogenNotFound: FC = () => {
                                         ease: "linear",
                                     }}
                                 >
-                                    <div className="w-1.5 h-1.5 rounded-full bg-white/20 absolute top-1" />
+                                    <div className="absolute top-1 h-1.5 w-1.5 rounded-full bg-white/20" />
                                 </motion.div>
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <motion.div
@@ -223,7 +220,7 @@ export const HydrogenNotFound: FC = () => {
                                     >
                                         <Download
                                             size={24}
-                                            className="text-white/60 stroke-[1.5]"
+                                            className="stroke-[1.5] text-white/60"
                                         />
                                     </motion.div>
                                 </div>
@@ -253,9 +250,9 @@ export const HydrogenNotFound: FC = () => {
                         <motion.div
                             whileHover={{ scale: 1.01 }}
                             onClick={handleCopy}
-                            className="bg-ctp-mantle rounded-lg p-3 flex items-center gap-3 group cursor-pointer hover:bg-ctp-surface0 transition-colors"
+                            className="group flex cursor-pointer items-center gap-3 rounded-lg bg-ctp-mantle p-3 transition-colors hover:bg-ctp-surface0"
                         >
-                            <code className="text-sm font-mono">
+                            <code className="font-mono text-sm">
                                 <span className="text-ctp-mauve">bash</span>
                                 <span className="text-ctp-text"> -c </span>
                                 <span className="text-ctp-green">"$(</span>
@@ -269,17 +266,17 @@ export const HydrogenNotFound: FC = () => {
                             <motion.div
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                className="p-1.5 rounded-md bg-ctp-surface0 group-hover:bg-ctp-surface1 transition-colors"
+                                className="rounded-md bg-ctp-surface0 p-1.5 transition-colors group-hover:bg-ctp-surface1"
                             >
                                 {copied ? (
                                     <CheckCircle2
                                         size={16}
-                                        className="text-ctp-green stroke-[2.5]"
+                                        className="stroke-[2.5] text-ctp-green"
                                     />
                                 ) : (
                                     <Copy
                                         size={16}
-                                        className="text-ctp-subtext0 stroke-[2.5]"
+                                        className="stroke-[2.5] text-ctp-subtext0"
                                     />
                                 )}
                             </motion.div>

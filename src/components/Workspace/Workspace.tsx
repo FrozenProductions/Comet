@@ -43,10 +43,10 @@ export const Workspace: FC = () => {
     );
 
     return (
-        <div className="h-full flex flex-col overflow-hidden">
+        <div className="flex h-full flex-col overflow-hidden">
             {!settings.interface.zenMode && (
-                <div className="h-10 flex-shrink-0 flex items-stretch bg-ctp-mantle border-b border-white/5">
-                    <div className="flex-1 min-w-0">
+                <div className="flex h-10 flex-shrink-0 items-stretch border-b border-white/5 bg-ctp-mantle">
+                    <div className="min-w-0 flex-1">
                         <Tabbar
                             tabs={tabs}
                             activeTab={activeTab}
@@ -61,7 +61,7 @@ export const Workspace: FC = () => {
                     </div>
                 </div>
             )}
-            <div className="flex-1 min-h-0 relative bg-ctp-base">
+            <div className="relative min-h-0 flex-1 bg-ctp-base">
                 <div className="absolute inset-0 overflow-auto">
                     {activeTab ? (
                         <CodeEditor
@@ -76,10 +76,10 @@ export const Workspace: FC = () => {
                             onChange={handleTabChange}
                         />
                     ) : (
-                        <div className="flex-1 flex items-center justify-center">
+                        <div className="flex flex-1 items-center justify-center">
                             <button
                                 onClick={createTab}
-                                className="px-4 py-2 rounded-lg bg-ctp-surface0 text-sm text-ctp-text hover:bg-ctp-surface1 transition-colors"
+                                className="rounded-lg bg-ctp-surface0 px-4 py-2 text-sm text-ctp-text transition-colors hover:bg-ctp-surface1"
                             >
                                 Create new tab
                             </button>
@@ -87,7 +87,7 @@ export const Workspace: FC = () => {
                     )}
                 </div>
                 {!isFloating && (
-                    <div className="absolute bottom-0 inset-x-0 z-[100]">
+                    <div className="absolute inset-x-0 bottom-0 z-[100]">
                         {renderConsole()}
                     </div>
                 )}

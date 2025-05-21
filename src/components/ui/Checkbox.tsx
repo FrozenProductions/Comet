@@ -16,21 +16,18 @@ export const Checkbox: FC<CheckboxProps> = ({
     description,
 }) => (
     <motion.div
-        className="group flex gap-3 py-2 px-1 -mx-1 rounded-lg hover:bg-white/5 cursor-pointer transition-colors duration-200"
+        className="group -mx-1 flex cursor-pointer gap-3 rounded-lg px-1 py-2 transition-colors duration-200 hover:bg-white/5"
         onClick={onChange}
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
     >
         <div className="flex items-center">
             <div
-                className={`
-          w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-all duration-200 border
-          ${
-              checked
-                  ? "bg-accent-gradient border-transparent shadow-lg shadow-white/5"
-                  : "bg-transparent border-white/5 group-hover:bg-white/5"
-          }
-        `}
+                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all duration-200 ${
+                    checked
+                        ? "border-transparent bg-accent-gradient shadow-lg shadow-white/5"
+                        : "border-white/5 bg-transparent group-hover:bg-white/5"
+                } `}
             >
                 {checked && (
                     <motion.div
@@ -43,12 +40,12 @@ export const Checkbox: FC<CheckboxProps> = ({
                 )}
             </div>
         </div>
-        <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-ctp-text truncate">
+        <div className="min-w-0 flex-1">
+            <div className="truncate text-sm font-medium text-ctp-text">
                 {label}
             </div>
             {description && (
-                <div className="text-xs text-ctp-subtext0 line-clamp-2 mt-0.5">
+                <div className="mt-0.5 line-clamp-2 text-xs text-ctp-subtext0">
                     {description}
                 </div>
             )}

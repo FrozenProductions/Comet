@@ -36,7 +36,7 @@ export const Button: React.FC<ButtonProps> = ({
                 baseStyles,
                 variantStyles[variant],
                 sizeStyles[size],
-                className
+                className,
             )}
             {...props}
         >

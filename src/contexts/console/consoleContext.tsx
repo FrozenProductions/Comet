@@ -51,7 +51,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
             throw new Error(
                 `Failed to start watching logs: ${
                     error instanceof Error ? error.message : String(error)
-                }`
+                }`,
             );
         }
     }, []);
@@ -64,7 +64,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
             throw new Error(
                 `Failed to stop watching logs: ${
                     error instanceof Error ? error.message : String(error)
-                }`
+                }`,
             );
         }
     }, []);

@@ -42,7 +42,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
     const validateKeybind = useCallback(
         (
             key: string,
-            modifiers: Keybind["modifiers"]
+            modifiers: Keybind["modifiers"],
         ): ValidationError | null => {
             if (
                 modifiers.cmd &&
@@ -88,7 +88,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
 
             return null;
         },
-        [keybinds, keybind.action]
+        [keybinds, keybind.action],
     );
 
     useEffect(() => {
@@ -171,30 +171,27 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
         >
             <div className="space-y-4">
                 <div>
-                    <div className="text-xs text-ctp-subtext0 mb-2">
+                    <div className="mb-2 text-xs text-ctp-subtext0">
                         {keybind.description}
                     </div>
                     <button
                         onClick={() => setRecording(true)}
-                        className={`
-                            w-full px-3 py-2 rounded text-sm text-center transition-colors
-                            ${
-                                recording
-                                    ? "bg-ctp-red/10 text-ctp-red border-2 border-dashed border-ctp-red"
-                                    : validationError
-                                    ? "bg-ctp-yellow/10 text-ctp-yellow border border-ctp-yellow/20"
-                                    : "bg-ctp-surface0 hover:bg-ctp-surface1 text-ctp-text"
-                            }
-                        `}
+                        className={`w-full rounded px-3 py-2 text-center text-sm transition-colors ${
+                            recording
+                                ? "border-2 border-dashed border-ctp-red bg-ctp-red/10 text-ctp-red"
+                                : validationError
+                                  ? "border border-ctp-yellow/20 bg-ctp-yellow/10 text-ctp-yellow"
+                                  : "bg-ctp-surface0 text-ctp-text hover:bg-ctp-surface1"
+                        } `}
                     >
                         {recording
                             ? "Press your keyboard shortcut..."
                             : newKeybind.key && newKeybind.modifiers
-                            ? formatKeybind(
-                                  newKeybind.key,
-                                  newKeybind.modifiers
-                              )
-                            : "Click to record shortcut"}
+                              ? formatKeybind(
+                                    newKeybind.key,
+                                    newKeybind.modifiers,
+                                )
+                              : "Click to record shortcut"}
                     </button>
                     {validationError && (
                         <div className="mt-2 flex items-center gap-2 text-xs text-ctp-yellow">
@@ -204,7 +201,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
                     )}
                 </div>
             </div>
-            <div className="flex justify-end gap-3 mt-4">
+            <div className="mt-4 flex justify-end gap-3">
                 <Button
                     onClick={handleClose}
                     variant="secondary"

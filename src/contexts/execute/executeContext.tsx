@@ -13,7 +13,7 @@ export const ExecuteProvider = ({
     const execute = useCallback(async (script: string) => {
         if (!script.trim()) {
             toast.error(
-                "Cannot execute empty script. Please add some code first."
+                "Cannot execute empty script. Please add some code first.",
             );
             return;
         }
@@ -42,7 +42,7 @@ export const ExecuteProvider = ({
                         </div>
                     </div>
                 ),
-                { id: toastId }
+                { id: toastId },
             );
         } catch (error) {
             console.error("Failed to execute script:", error);
@@ -60,7 +60,7 @@ export const ExecuteProvider = ({
                         </div>
                     </div>
                 ),
-                { id: toastId }
+                { id: toastId },
             );
 
             throw error;

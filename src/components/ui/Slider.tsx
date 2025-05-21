@@ -51,7 +51,7 @@ export const Slider: FC<SliderProps> = ({
                     )}
                 </div>
                 <motion.div
-                    className="text-sm tabular-nums font-medium"
+                    className="text-sm font-medium tabular-nums"
                     animate={
                         isDragging
                             ? {
@@ -77,10 +77,10 @@ export const Slider: FC<SliderProps> = ({
                     {unit}
                 </motion.div>
             </div>
-            <div className="relative h-6 flex items-center">
-                <div className="absolute inset-x-0 h-1 bg-white/5 rounded-full" />
+            <div className="relative flex h-6 items-center">
+                <div className="absolute inset-x-0 h-1 rounded-full bg-white/5" />
                 <motion.div
-                    className="absolute left-0 h-1 bg-accent-gradient-r rounded-full"
+                    className="absolute left-0 h-1 rounded-full bg-accent-gradient-r"
                     style={{ width: `${percentage}%` }}
                     animate={isDragging ? { height: "6px" } : { height: "4px" }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -96,17 +96,7 @@ export const Slider: FC<SliderProps> = ({
                     onTouchStart={() => setIsDragging(true)}
                     onMouseUp={handleChangeEnd}
                     onTouchEnd={handleChangeEnd}
-                    className="absolute inset-0 w-full appearance-none cursor-pointer bg-transparent 
-            [&::-webkit-slider-thumb]:appearance-none 
-            [&::-webkit-slider-thumb]:w-4 
-            [&::-webkit-slider-thumb]:h-4 
-            [&::-webkit-slider-thumb]:rounded-full 
-            [&::-webkit-slider-thumb]:bg-accent-gradient
-            [&::-webkit-slider-thumb]:shadow-lg 
-            [&::-webkit-slider-thumb]:shadow-white/10 
-            [&::-webkit-slider-thumb]:transition-transform 
-            [&::-webkit-slider-thumb]:hover:scale-110
-            [&::-webkit-slider-thumb]:active:scale-95"
+                    className="absolute inset-0 w-full cursor-pointer appearance-none bg-transparent [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-gradient [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-white/10 [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:active:scale-95"
                 />
             </div>
         </div>

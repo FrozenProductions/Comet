@@ -17,7 +17,7 @@ export const UpdateChecker: FC = () => {
         const checkForUpdates = async () => {
             try {
                 const newVersion = await invoke<string | null>(
-                    "check_for_updates"
+                    "check_for_updates",
                 );
 
                 if (newVersion && !isUpdating) {
@@ -36,28 +36,25 @@ export const UpdateChecker: FC = () => {
                                         toast.dismiss(t.id);
                                         try {
                                             await invoke(
-                                                "download_and_install_update"
+                                                "download_and_install_update",
                                             );
                                         } catch (error) {
                                             console.error(
                                                 "Failed to update:",
-                                                error
+                                                error,
                                             );
                                             toast.error(
-                                                "Failed to update Comet"
+                                                "Failed to update Comet",
                                             );
                                             setIsUpdating(false);
                                         }
                                     }}
                                     disabled={isUpdating}
-                                    className={`
-                                        flex items-center gap-2 px-3 py-1 text-xs rounded-md transition-colors
-                                        ${
-                                            isUpdating
-                                                ? "bg-ctp-surface1 cursor-not-allowed"
-                                                : "bg-ctp-surface0 hover:bg-ctp-surface1 cursor-pointer"
-                                        }
-                                    `}
+                                    className={`flex items-center gap-2 rounded-md px-3 py-1 text-xs transition-colors ${
+                                        isUpdating
+                                            ? "cursor-not-allowed bg-ctp-surface1"
+                                            : "cursor-pointer bg-ctp-surface0 hover:bg-ctp-surface1"
+                                    } `}
                                 >
                                     <Download size={14} />
                                     <span>Update</span>
@@ -68,7 +65,7 @@ export const UpdateChecker: FC = () => {
                             id: "update-available",
                             duration: Infinity,
                             position: "bottom-center",
-                        }
+                        },
                     );
                 }
             } catch (error) {
@@ -108,7 +105,7 @@ export const UpdateChecker: FC = () => {
                 <div className="flex items-center gap-2">
                     <span>{getStatusMessage()}</span>
                 </div>,
-                { id: "update-progress" }
+                { id: "update-progress" },
             );
 
             if (state === "completed") {

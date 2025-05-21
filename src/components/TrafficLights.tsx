@@ -15,17 +15,17 @@ export const TrafficLights: FC = () => {
     };
 
     return (
-        <div className="flex items-center gap-2 px-3 z-50">
+        <div className="z-50 flex items-center gap-2 px-3">
             <button
                 onClick={handleClose}
-                className="relative w-3 h-3 rounded-full bg-[#FF5F57] transition-all group focus:outline-none"
+                className="group relative h-3 w-3 rounded-full bg-[#FF5F57] transition-all focus:outline-none"
             >
-                <div className="absolute inset-0 rounded-full bg-[#450C0A] opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+                <div className="pointer-events-none absolute inset-0 rounded-full bg-[#450C0A] opacity-0 transition-opacity group-hover:opacity-10" />
                 <svg
                     width="12"
                     height="12"
                     viewBox="0 0 12 12"
-                    className="absolute inset-0 scale-0 group-hover:scale-100 transition-transform pointer-events-none"
+                    className="pointer-events-none absolute inset-0 scale-0 transition-transform group-hover:scale-100"
                 >
                     <path
                         d="M 3,3 L 9,9 M 9,3 L 3,9"
@@ -37,14 +37,14 @@ export const TrafficLights: FC = () => {
             </button>
             <button
                 onClick={handleMinimize}
-                className="relative w-3 h-3 rounded-full bg-[#FFBD2E] transition-all group focus:outline-none"
+                className="group relative h-3 w-3 rounded-full bg-[#FFBD2E] transition-all focus:outline-none"
             >
-                <div className="absolute inset-0 rounded-full bg-[#9B6A0D] opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+                <div className="pointer-events-none absolute inset-0 rounded-full bg-[#9B6A0D] opacity-0 transition-opacity group-hover:opacity-10" />
                 <svg
                     width="12"
                     height="12"
                     viewBox="0 0 12 12"
-                    className="absolute inset-0 scale-0 group-hover:scale-100 transition-transform pointer-events-none"
+                    className="pointer-events-none absolute inset-0 scale-0 transition-transform group-hover:scale-100"
                 >
                     <path
                         d="M 3,6 L 9,6"
@@ -56,14 +56,14 @@ export const TrafficLights: FC = () => {
             </button>
             <button
                 onClick={handleMaximize}
-                className="relative w-3 h-3 rounded-full bg-[#28C940] transition-all group focus:outline-none"
+                className="group relative h-3 w-3 rounded-full bg-[#28C940] transition-all focus:outline-none"
             >
-                <div className="absolute inset-0 rounded-full bg-[#0B4F15] opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+                <div className="pointer-events-none absolute inset-0 rounded-full bg-[#0B4F15] opacity-0 transition-opacity group-hover:opacity-10" />
                 <svg
                     width="12"
                     height="12"
                     viewBox="0 0 12 12"
-                    className="absolute inset-0 scale-0 group-hover:scale-100 transition-transform pointer-events-none"
+                    className="pointer-events-none absolute inset-0 scale-0 transition-transform group-hover:scale-100"
                 >
                     <path
                         d="M 3.5,3.5 L 8.5,3.5 L 8.5,8.5 L 3.5,8.5 Z"

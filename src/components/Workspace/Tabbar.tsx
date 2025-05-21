@@ -64,7 +64,7 @@ export const Tabbar: FC<TabbarProps> = ({
         ) {
             const container = scrollContainerRef.current;
             const activeElement = container.querySelector(
-                `[data-tab-id="${activeTab}"]`
+                `[data-tab-id="${activeTab}"]`,
             );
 
             if (activeElement) {
@@ -153,7 +153,7 @@ export const Tabbar: FC<TabbarProps> = ({
 
     if (settings.interface.showTabBar) {
         return (
-            <div className="h-full flex items-stretch">
+            <div className="flex h-full items-stretch">
                 <WorkspaceSelector
                     workspaces={workspaces}
                     activeWorkspace={activeWorkspace}
@@ -162,7 +162,7 @@ export const Tabbar: FC<TabbarProps> = ({
                     onCreateWorkspace={createWorkspace}
                 />
                 <div
-                    className="flex-1 min-w-0 relative flex items-center px-3 hover:bg-ctp-surface0/50 cursor-pointer group"
+                    className="group relative flex min-w-0 flex-1 cursor-pointer items-center px-3 hover:bg-ctp-surface0/50"
                     ref={dropdownRef}
                     onContextMenu={(e) => {
                         if (activeTab) {
@@ -203,15 +203,15 @@ export const Tabbar: FC<TabbarProps> = ({
                                     }
                                 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex-1 min-w-0 max-w-[100px] px-0 py-0.5 text-xs font-medium bg-transparent border-none outline-none focus:ring-0"
+                                className="min-w-0 max-w-[100px] flex-1 border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
                             />
                         ) : (
-                            <span className="text-xs font-medium truncate select-none">
+                            <span className="select-none truncate text-xs font-medium">
                                 {activeTabData?.title
                                     ? activeTabData.title.length > 15
                                         ? `${activeTabData.title.slice(
                                               0,
-                                              15
+                                              15,
                                           )}...`
                                         : activeTabData.title
                                     : "untitled"}
@@ -219,27 +219,21 @@ export const Tabbar: FC<TabbarProps> = ({
                         )}
                         <ChevronDown
                             size={14}
-                            className={`
-                flex-shrink-0 opacity-50 group-hover:opacity-100 transition-all duration-200
-                ${showDropdown ? "transform rotate-180" : ""}
-              `}
+                            className={`flex-shrink-0 opacity-50 transition-all duration-200 group-hover:opacity-100 ${showDropdown ? "rotate-180 transform" : ""} `}
                         />
                     </div>
 
                     {showDropdown && (
-                        <div className="absolute top-full left-0 mt-1 py-1 bg-ctp-mantle border border-ctp-surface0 rounded-lg shadow-lg z-50 min-w-[240px] w-[300px]">
+                        <div className="absolute left-0 top-full z-50 mt-1 w-[300px] min-w-[240px] rounded-lg border border-ctp-surface0 bg-ctp-mantle py-1 shadow-lg">
                             <div className="max-h-[200px] overflow-y-auto">
                                 {tabs.map((tab) => (
                                     <div
                                         key={tab.id}
-                                        className={`
-                      flex items-center gap-2 px-4 py-2.5 text-xs cursor-pointer
-                      ${
-                          activeTab === tab.id
-                              ? "bg-ctp-surface0 text-ctp-text"
-                              : "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
-                      }
-                    `}
+                                        className={`flex cursor-pointer items-center gap-2 px-4 py-2.5 text-xs ${
+                                            activeTab === tab.id
+                                                ? "bg-ctp-surface0 text-ctp-text"
+                                                : "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
+                                        } `}
                                         onClick={() => {
                                             onTabClick(tab.id);
                                             setShowDropdown(false);
@@ -268,7 +262,7 @@ export const Tabbar: FC<TabbarProps> = ({
                                                     ) {
                                                         value = value.slice(
                                                             0,
-                                                            -4
+                                                            -4,
                                                         );
                                                     }
                                                     setEditValue(value);
@@ -288,14 +282,14 @@ export const Tabbar: FC<TabbarProps> = ({
                                                 onClick={(e) =>
                                                     e.stopPropagation()
                                                 }
-                                                className="flex-1 min-w-0 max-w-[100px] px-0 py-0.5 text-xs font-medium bg-transparent border-none outline-none focus:ring-0"
+                                                className="min-w-0 max-w-[100px] flex-1 border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
                                             />
                                         ) : (
-                                            <span className="truncate flex-1 select-none">
+                                            <span className="flex-1 select-none truncate">
                                                 {tab.title.length > 15
                                                     ? `${tab.title.slice(
                                                           0,
-                                                          15
+                                                          15,
                                                       )}...`
                                                     : tab.title}
                                             </span>
@@ -306,7 +300,7 @@ export const Tabbar: FC<TabbarProps> = ({
                                                     e.stopPropagation();
                                                     onTabClose(tab.id);
                                                 }}
-                                                className="ml-2 opacity-0 group-hover:opacity-100 hover:text-ctp-red p-1 rounded hover:bg-ctp-surface0/50"
+                                                className="ml-2 rounded p-1 opacity-0 hover:bg-ctp-surface0/50 hover:text-ctp-red group-hover:opacity-100"
                                             >
                                                 <X size={14} />
                                             </button>
@@ -314,9 +308,9 @@ export const Tabbar: FC<TabbarProps> = ({
                                     </div>
                                 ))}
                             </div>
-                            <div className="h-px bg-ctp-surface0 my-1" />
+                            <div className="my-1 h-px bg-ctp-surface0" />
                             <div
-                                className="flex items-center gap-2 px-4 py-2.5 text-xs text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text cursor-pointer"
+                                className="flex cursor-pointer items-center gap-2 px-4 py-2.5 text-xs text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
                                 onClick={() => {
                                     onNewTab();
                                     setShowDropdown(false);
@@ -345,7 +339,7 @@ export const Tabbar: FC<TabbarProps> = ({
     const hiddenTabs: Tab[] = [];
 
     return (
-        <div className="h-full flex items-stretch">
+        <div className="flex h-full items-stretch">
             <WorkspaceSelector
                 workspaces={workspaces}
                 activeWorkspace={activeWorkspace}
@@ -353,7 +347,7 @@ export const Tabbar: FC<TabbarProps> = ({
                 onWorkspaceDelete={deleteWorkspace}
                 onCreateWorkspace={createWorkspace}
             />
-            <div className="flex-1 min-w-0 relative">
+            <div className="relative min-w-0 flex-1">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-[calc(100%-5px)] px-2">
                         <Reorder.Group
@@ -362,16 +356,16 @@ export const Tabbar: FC<TabbarProps> = ({
                             values={displayTabs}
                             onReorder={(newOrder) => {
                                 const fromIndex = tabs.findIndex(
-                                    (tab) => tab.id === activeTab
+                                    (tab) => tab.id === activeTab,
                                 );
                                 const toIndex = newOrder.findIndex(
-                                    (tab) => tab.id === activeTab
+                                    (tab) => tab.id === activeTab,
                                 );
                                 if (fromIndex !== toIndex) {
                                     onTabReorder(fromIndex, toIndex);
                                 }
                             }}
-                            className="w-full flex items-center gap-0.5 overflow-x-auto overflow-y-hidden scrollbar-none"
+                            className="scrollbar-none flex w-full items-center gap-0.5 overflow-x-auto overflow-y-hidden"
                         >
                             <AnimatePresence mode="popLayout" initial={false}>
                                 {displayTabs.map((tab) => (
@@ -403,19 +397,15 @@ export const Tabbar: FC<TabbarProps> = ({
                                         onContextMenu={(e: React.MouseEvent) =>
                                             handleContextMenu(e, tab.id)
                                         }
-                                        className={`
-                                            group flex items-center gap-1.5 px-2 h-7 rounded-md cursor-pointer transition-colors whitespace-nowrap select-none flex-shrink-0
-                                            ${
-                                                isDragging
-                                                    ? "cursor-grabbing"
-                                                    : "cursor-grab"
-                                            }
-                                            ${
-                                                activeTab === tab.id
-                                                    ? "bg-ctp-surface0 text-ctp-text"
-                                                    : "text-ctp-subtext1 hover:text-ctp-text hover:bg-ctp-surface0/50"
-                                            }
-                                        `}
+                                        className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center gap-1.5 whitespace-nowrap rounded-md px-2 transition-colors ${
+                                            isDragging
+                                                ? "cursor-grabbing"
+                                                : "cursor-grab"
+                                        } ${
+                                            activeTab === tab.id
+                                                ? "bg-ctp-surface0 text-ctp-text"
+                                                : "text-ctp-subtext1 hover:bg-ctp-surface0/50 hover:text-ctp-text"
+                                        } `}
                                         onClick={() =>
                                             !isDragging && onTabClick(tab.id)
                                         }
@@ -440,7 +430,7 @@ export const Tabbar: FC<TabbarProps> = ({
                                                     ) {
                                                         value = value.slice(
                                                             0,
-                                                            -4
+                                                            -4,
                                                         );
                                                     }
                                                     setEditValue(value);
@@ -460,14 +450,14 @@ export const Tabbar: FC<TabbarProps> = ({
                                                 onClick={(e) =>
                                                     e.stopPropagation()
                                                 }
-                                                className="w-[100px] px-0 py-0.5 text-xs font-medium bg-transparent border-none outline-none focus:ring-0"
+                                                className="w-[100px] border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
                                             />
                                         ) : (
-                                            <span className="text-xs font-medium select-none">
+                                            <span className="select-none text-xs font-medium">
                                                 {tab.title.length > 15
                                                     ? `${tab.title.slice(
                                                           0,
-                                                          15
+                                                          15,
                                                       )}...`
                                                     : tab.title}
                                             </span>
@@ -479,11 +469,7 @@ export const Tabbar: FC<TabbarProps> = ({
                                                 e.stopPropagation();
                                                 onTabClose(tab.id);
                                             }}
-                                            className={`
-                                                flex-shrink-0 p-0.5 rounded opacity-0 group-hover:opacity-100 
-                                                hover:bg-ctp-surface1 hover:text-ctp-red 
-                                                transition-all duration-150
-                                            `}
+                                            className={`flex-shrink-0 rounded p-0.5 opacity-0 transition-all duration-150 hover:bg-ctp-surface1 hover:text-ctp-red group-hover:opacity-100`}
                                         >
                                             <X size={11} />
                                         </motion.button>
@@ -501,14 +487,10 @@ export const Tabbar: FC<TabbarProps> = ({
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() =>
                                             setShowMoreDropdown(
-                                                !showMoreDropdown
+                                                !showMoreDropdown,
                                             )
                                         }
-                                        className={`
-                      flex items-center gap-1 px-2 h-7 rounded-md cursor-pointer transition-colors
-                      text-ctp-subtext1 hover:text-ctp-text hover:bg-ctp-surface0/50
-                      ${showMoreDropdown ? "bg-ctp-surface0 text-ctp-text" : ""}
-                    `}
+                                        className={`flex h-7 cursor-pointer items-center gap-1 rounded-md px-2 text-ctp-subtext1 transition-colors hover:bg-ctp-surface0/50 hover:text-ctp-text ${showMoreDropdown ? "bg-ctp-surface0 text-ctp-text" : ""} `}
                                     >
                                         <MoreHorizontal size={13} />
                                         <span className="text-xs">
@@ -517,23 +499,20 @@ export const Tabbar: FC<TabbarProps> = ({
                                     </motion.button>
 
                                     {showMoreDropdown && (
-                                        <div className="absolute top-full right-0 mt-1 py-1 bg-ctp-mantle border border-ctp-surface0 rounded-lg shadow-lg z-50 min-w-[240px]">
+                                        <div className="absolute right-0 top-full z-50 mt-1 min-w-[240px] rounded-lg border border-ctp-surface0 bg-ctp-mantle py-1 shadow-lg">
                                             <div className="max-h-[200px] overflow-y-auto">
                                                 {hiddenTabs.map((tab) => (
                                                     <div
                                                         key={tab.id}
-                                                        className={`
-                              flex items-center gap-2 px-4 py-2.5 text-xs cursor-pointer
-                              ${
-                                  activeTab === tab.id
-                                      ? "bg-ctp-surface0 text-ctp-text"
-                                      : "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
-                              }
-                            `}
+                                                        className={`flex cursor-pointer items-center gap-2 px-4 py-2.5 text-xs ${
+                                                            activeTab === tab.id
+                                                                ? "bg-ctp-surface0 text-ctp-text"
+                                                                : "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
+                                                        } `}
                                                         onClick={() => {
                                                             onTabClick(tab.id);
                                                             setShowMoreDropdown(
-                                                                false
+                                                                false,
                                                             );
                                                         }}
                                                     >
@@ -541,12 +520,12 @@ export const Tabbar: FC<TabbarProps> = ({
                                                             size={14}
                                                             className="flex-shrink-0 opacity-75"
                                                         />
-                                                        <span className="truncate flex-1">
+                                                        <span className="flex-1 truncate">
                                                             {tab.title.length >
                                                             15
                                                                 ? `${tab.title.slice(
                                                                       0,
-                                                                      15
+                                                                      15,
                                                                   )}...`
                                                                 : tab.title}
                                                         </span>
@@ -554,10 +533,10 @@ export const Tabbar: FC<TabbarProps> = ({
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 onTabClose(
-                                                                    tab.id
+                                                                    tab.id,
                                                                 );
                                                             }}
-                                                            className="ml-2 opacity-0 group-hover:opacity-100 hover:text-ctp-red p-1 rounded hover:bg-ctp-surface0/50"
+                                                            className="ml-2 rounded p-1 opacity-0 hover:bg-ctp-surface0/50 hover:text-ctp-red group-hover:opacity-100"
                                                         >
                                                             <X size={14} />
                                                         </button>
@@ -573,12 +552,12 @@ export const Tabbar: FC<TabbarProps> = ({
                 </div>
             </div>
 
-            <div className="flex-shrink-0 w-10 h-full flex items-center justify-center border-l border-white/5">
+            <div className="flex h-full w-10 flex-shrink-0 items-center justify-center border-l border-white/5">
                 <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={onNewTab}
-                    className="h-7 w-7 flex items-center justify-center rounded-md text-ctp-subtext1 hover:text-ctp-text hover:bg-ctp-surface0/50 transition-colors"
+                    className="flex h-7 w-7 items-center justify-center rounded-md text-ctp-subtext1 transition-colors hover:bg-ctp-surface0/50 hover:text-ctp-text"
                 >
                     <Plus size={13} className="stroke-[2.5]" />
                 </motion.button>

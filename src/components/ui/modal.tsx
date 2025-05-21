@@ -32,7 +32,7 @@ export const Modal = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
                     onClick={(e) => {
                         if (e.target === e.currentTarget) {
                             onClose();
@@ -43,13 +43,13 @@ export const Modal = ({
                         initial={{ scale: 0.95, y: 20 }}
                         animate={{ scale: 1, y: 0 }}
                         exit={{ scale: 0.95, y: 20 }}
-                        className="bg-ctp-mantle rounded-xl p-6 max-w-md w-full mx-4 shadow-xl border border-white/5"
+                        className="mx-4 w-full max-w-md rounded-xl border border-white/5 bg-ctp-mantle p-6 shadow-xl"
                     >
-                        <h3 className="text-base font-medium text-ctp-text mb-2">
+                        <h3 className="mb-2 text-base font-medium text-ctp-text">
                             {title}
                         </h3>
                         {description && (
-                            <p className="text-sm text-ctp-subtext0 mb-4">
+                            <p className="mb-4 text-sm text-ctp-subtext0">
                                 {description}
                             </p>
                         )}
@@ -57,7 +57,7 @@ export const Modal = ({
                         {children}
 
                         {(footer || onConfirm) && (
-                            <div className="flex justify-end gap-3 mt-4">
+                            <div className="mt-4 flex justify-end gap-3">
                                 <Button
                                     onClick={onClose}
                                     variant="secondary"

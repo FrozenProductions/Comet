@@ -59,16 +59,16 @@ const AppContent: FC = () => {
     }
 
     return (
-        <div className="h-screen flex flex-col bg-ctp-base text-ctp-text">
+        <div className="flex h-screen flex-col bg-ctp-base text-ctp-text">
             <Topbar />
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex flex-1 overflow-hidden">
                 {!settings.interface.zenMode && (
                     <Sidebar
                         activeScreen={activeScreen}
                         onScreenChange={handleScreenChange}
                     />
                 )}
-                <main className="flex-1 relative">{renderScreen()}</main>
+                <main className="relative flex-1">{renderScreen()}</main>
             </div>
             <CommandPalette
                 isOpen={isCommandPaletteOpen}
