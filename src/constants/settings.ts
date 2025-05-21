@@ -48,6 +48,7 @@ export const DEFAULT_EDITOR_SETTINGS = {
     intellisense: {
         enabled: true,
         maxSuggestions: 5,
+        acceptSuggestionKey: "Tab" as const,
     },
     interface: {
         zenMode: false,

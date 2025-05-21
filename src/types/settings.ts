@@ -30,6 +30,7 @@ export interface EditorSettings {
     intellisense: {
         enabled: boolean;
         maxSuggestions: number;
+        acceptSuggestionKey: "Tab" | "Enter";
     };
     interface: {
         zenMode: boolean;

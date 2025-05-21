@@ -67,10 +67,16 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                         (i) => (i - 1 + suggestions.length) % suggestions.length
                     );
                     break;
-                case "Tab":
+                case settings.intellisense.acceptSuggestionKey:
+                case settings.intellisense.acceptSuggestionKey === "Enter"
+                    ? "Tab"
+                    : "Enter":
                     e.preventDefault();
                     e.stopPropagation();
-                    if (suggestions[selectedIndex]) {
+                    if (
+                        e.key === settings.intellisense.acceptSuggestionKey &&
+                        suggestions[selectedIndex]
+                    ) {
                         onSelect(suggestions[selectedIndex].label);
                     }
                     break;
@@ -91,6 +97,7 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
         onSelect,
         onClose,
         settings.intellisense.enabled,
+        settings.intellisense.acceptSuggestionKey,
     ]);
 
     useEffect(() => {

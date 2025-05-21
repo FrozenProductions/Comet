@@ -379,6 +379,28 @@ export const Settings: FC = () => {
                                     label="Enable IntelliSense"
                                     description="Show code suggestions while typing"
                                 />
+                                <RadioGroup
+                                    value={
+                                        settings.intellisense
+                                            .acceptSuggestionKey
+                                    }
+                                    onChange={(value) => {
+                                        updateSettings({
+                                            intellisense: {
+                                                ...settings.intellisense,
+                                                acceptSuggestionKey: value as
+                                                    | "Tab"
+                                                    | "Enter",
+                                            },
+                                        });
+                                    }}
+                                    options={[
+                                        { value: "Tab", label: "Tab" },
+                                        { value: "Enter", label: "Enter" },
+                                    ]}
+                                    label="Accept Suggestion Key"
+                                    description="Choose which key accepts the selected suggestion"
+                                />
                                 <Slider
                                     value={settings.intellisense.maxSuggestions}
                                     onChange={(value) =>
