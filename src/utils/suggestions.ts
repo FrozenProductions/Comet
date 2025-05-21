@@ -19,7 +19,7 @@ import {
     closureLibrary,
     consoleLibrary,
     cryptoLibrary,
-} from "./extendedLuauSuggestions";
+} from "./UNCSuggestions";
 
 export interface Suggestion {
     type:
