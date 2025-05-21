@@ -95,7 +95,7 @@ const SkeletonCard = () => (
 );
 
 export const ScriptLibrary = () => {
-    const { createTab, updateTab } = useEditor();
+    const { createTabWithContent } = useEditor();
     const [searchQuery, setSearchQuery] = useState("");
     const [showFilters, setShowFilters] = useState(false);
     const [selectedSortBy, setSelectedSortBy] = useState<
@@ -166,20 +166,25 @@ export const ScriptLibrary = () => {
                 ? scriptName
                 : `${scriptName}.lua`;
 
-            const newTabId = createTab();
+            const newTabId = await createTabWithContent(
+                tabTitle,
+                scriptDetail.script.script,
+                "lua"
+            );
 
-            updateTab(newTabId, {
-                title: tabTitle,
-                content: scriptDetail.script.script,
-                language: "lua",
-            });
+            if (!newTabId) {
+                toast.error("Failed to create new tab", {
+                    id: loadingToast,
+                });
+                return;
+            }
 
             toast.success(`Added "${scriptName}" to editor`, {
                 id: loadingToast,
             });
         } catch (error) {
-            console.error("Failed to add script to editor:", error);
             toast.error("Failed to add script to editor");
+            console.error("Failed to add script to editor:", error);
         }
     };
 

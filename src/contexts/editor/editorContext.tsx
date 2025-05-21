@@ -73,32 +73,84 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
     );
 
     const createTab = useCallback(() => {
-        const id = nanoid();
-        if (!activeWorkspace) {
-            return id;
-        }
+        return new Promise<string | null>((resolve) => {
+            const id = nanoid();
+            if (!activeWorkspace) {
+                resolve(null);
+                return;
+            }
 
-        const existingUntitled = tabs
-            .map((tab) => {
-                const match = tab.title.match(/^untitled_(\d+)\.lua$/);
-                return match ? parseInt(match[1]) : 0;
-            })
-            .filter((num) => num > 0);
+            const existingUntitled = tabs
+                .map((tab) => {
+                    const match = tab.title.match(/^untitled_(\d+)\.lua$/);
+                    return match ? parseInt(match[1]) : 0;
+                })
+                .filter((num) => num > 0);
 
-        const nextNumber =
-            existingUntitled.length > 0 ? Math.max(...existingUntitled) + 1 : 1;
+            const nextNumber =
+                existingUntitled.length > 0
+                    ? Math.max(...existingUntitled) + 1
+                    : 1;
 
-        const title = `untitled_${nextNumber}.lua`;
-        const newTab: Tab = {
-            id,
-            title,
-            content: "-- New File\n",
-            language: "lua",
-        };
-        setTabs((prev) => [...prev, newTab]);
-        setActiveTab(id);
-        return id;
+            const title = `untitled_${nextNumber}.lua`;
+            const newTab: Tab = {
+                id,
+                title,
+                content: "",
+                language: "lua",
+            };
+
+            setTabs((prev) => {
+                const newTabs = [...prev, newTab];
+                return newTabs;
+            });
+
+            setActiveTab(id);
+
+            setTimeout(() => {
+                resolve(id);
+            }, 0);
+        });
     }, [tabs, activeWorkspace]);
+
+    const createTabWithContent = useCallback(
+        async (title: string, content: string, language: string = "lua") => {
+            if (!activeWorkspace) {
+                return null;
+            }
+
+            const id = nanoid();
+            const newTab: Tab = {
+                id,
+                title,
+                content,
+                language,
+            };
+
+            try {
+                await invoke("save_tab", {
+                    workspaceId: activeWorkspace,
+                    tab: newTab,
+                });
+
+                setTabs((prev) => [...prev, newTab]);
+                setActiveTab(id);
+
+                await invoke("save_tab_state", {
+                    workspaceId: activeWorkspace,
+                    activeTab: id,
+                    tabOrder: [...tabs.map((tab) => tab.id), id],
+                    tabs: [...tabs, newTab],
+                });
+
+                return id;
+            } catch (error) {
+                console.error("Failed to create tab with content:", error);
+                return null;
+            }
+        },
+        [activeWorkspace, tabs]
+    );
 
     useEffect(() => {
         if (!isInitialized || !activeWorkspace) return;
@@ -231,6 +283,16 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 const currentTab = tabs.find((tab) => tab.id === id);
                 if (!currentTab) return;
 
+                const updatedTab = {
+                    ...currentTab,
+                    ...updates,
+                };
+
+                await invoke("save_tab", {
+                    workspaceId: activeWorkspace,
+                    tab: updatedTab,
+                });
+
                 if (updates.title && updates.title !== currentTab.title) {
                     await invoke("rename_tab", {
                         workspaceId: activeWorkspace,
@@ -244,24 +306,21 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     if (tabIndex === -1) return prev;
 
                     const newTabs = [...prev];
-                    newTabs[tabIndex] = { ...newTabs[tabIndex], ...updates };
+                    newTabs[tabIndex] = updatedTab;
                     return newTabs;
                 });
 
-                if (updates.content !== undefined) {
-                    await invoke("save_tab", {
-                        workspaceId: activeWorkspace,
-                        tab: {
-                            ...currentTab,
-                            ...updates,
-                        },
-                    });
-                }
+                await invoke("save_tab_state", {
+                    workspaceId: activeWorkspace,
+                    activeTab,
+                    tabOrder: tabs.map((tab) => tab.id),
+                    tabs,
+                });
             } catch (error) {
                 console.error("Failed to update tab:", error);
             }
         },
-        [tabs, activeWorkspace]
+        [tabs, activeWorkspace, activeTab]
     );
 
     const loadTabs = useCallback(
@@ -327,6 +386,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setPosition: setCurrentPosition,
         setFile: setCurrentFile,
         createTab,
+        createTabWithContent,
         closeTab,
         updateTab,
         setActiveTab,
