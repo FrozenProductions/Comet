@@ -6,10 +6,11 @@ import {
     Search,
     Keyboard,
     Settings as SettingsIcon,
-    Info,
     Github,
     Globe,
     Book,
+    Settings2,
+    RotateCcw,
 } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { Slider } from "../ui/slider";
@@ -124,6 +125,7 @@ export const Settings: FC = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [editingKeybind, setEditingKeybind] = useState<Keybind | null>(null);
     const [showZenModeConfirm, setShowZenModeConfirm] = useState(false);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
 
     const handleSliderChange = useCallback(
         (key: SettingsKey, subKey: string, value: number) => {
@@ -553,22 +555,64 @@ export const Settings: FC = () => {
                         </AnimatePresence>
                     </>
                 );
-            case "about":
+            case "application":
                 return (
                     <>
                         <div className="space-y-2 mb-6">
                             <h2 className="text-xl font-medium text-ctp-text flex items-center gap-2">
-                                <Info size={20} className="text-accent" />
-                                About Comet
+                                <Settings2 size={20} className="text-accent" />
+                                Application Settings
                             </h2>
                             <p className="text-sm text-ctp-subtext0 -mt-1 select-none">
-                                Official Hydrogen interface designed to power
-                                its DyLib with a seamless interface for enhanced
-                                communication and control.
+                                Manage application settings and view information
                             </p>
                         </div>
 
                         <div className="space-y-8">
+                            <SettingGroup
+                                title="Reset Settings"
+                                description="Reset application settings to default values"
+                            >
+                                <div className="flex items-center justify-between p-4 rounded-lg bg-ctp-surface0/50">
+                                    <div>
+                                        <div className="space-y-1">
+                                            <div className="text-sm font-medium text-ctp-text">
+                                                Reset to Default
+                                            </div>
+                                            <div className="text-xs text-ctp-subtext0 select-none">
+                                                This will reset all settings to
+                                                their default values
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() =>
+                                            setShowResetConfirm(true)
+                                        }
+                                        className="px-3 py-1.5 text-xs font-medium bg-ctp-red/10 text-ctp-red hover:bg-ctp-red/20 rounded-md transition-colors flex items-center gap-1.5"
+                                    >
+                                        <RotateCcw
+                                            size={12}
+                                            className="stroke-[2.5]"
+                                        />
+                                        Reset Application Data
+                                    </button>
+                                </div>
+                            </SettingGroup>
+
+                            <Modal
+                                isOpen={showResetConfirm}
+                                onClose={() => setShowResetConfirm(false)}
+                                title="Reset Application Data"
+                                description="Are you sure you want to reset all application data to default values? This includes all settings, keybinds, and other stored preferences. This action cannot be undone."
+                                onConfirm={() => {
+                                    localStorage.clear();
+                                    window.location.reload();
+                                }}
+                                confirmText="Reset"
+                                confirmVariant="destructive"
+                            />
+
                             <SettingGroup
                                 title="Application"
                                 description="Application details"
