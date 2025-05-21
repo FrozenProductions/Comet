@@ -9,6 +9,7 @@ use reqwest::blocking::Client as BlockingClient;
 use std::process::Command;
 use std::fs;
 use std::path::PathBuf;
+use dirs;
 
 const HOST: &str = "127.0.0.1";
 const MIN_PORT: u16 = 6969;
@@ -490,6 +491,20 @@ pub fn open_directory(path: PathBuf) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+async fn open_hydrogen_folder() -> Result<(), String> {
+    let home = dirs::home_dir().ok_or("Could not find home directory")?;
+    let hydrogen_dir = home.join("Hydrogen");
+    open_directory(hydrogen_dir)
+}
+
+#[tauri::command]
+async fn open_comet_folder() -> Result<(), String> {
+    let home = dirs::home_dir().ok_or("Could not find home directory")?;
+    let app_dir = home.join("Library/Application Support/com.comet.dev");
+    open_directory(app_dir)
+}
+
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
@@ -572,6 +587,8 @@ fn main() {
             workspace::set_active_workspace,
             updater::check_for_updates,
             updater::download_and_install_update,
+            open_hydrogen_folder,
+            open_comet_folder,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

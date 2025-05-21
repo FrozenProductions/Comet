@@ -11,6 +11,7 @@ import {
     Book,
     Settings2,
     RotateCcw,
+    Folder,
 } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { Slider } from "../ui/slider";
@@ -28,6 +29,7 @@ import {
     KEYBIND_CATEGORIES,
     KEYBIND_CATEGORY_MAPPING,
 } from "../../constants/keybinds";
+import { invoke } from "@tauri-apps/api/tauri";
 
 const getKeybindTitle = (action: KeybindAction): string => {
     switch (action) {
@@ -570,50 +572,6 @@ export const Settings: FC = () => {
 
                         <div className="space-y-8">
                             <SettingGroup
-                                title="Reset Settings"
-                                description="Reset application settings to default values"
-                            >
-                                <div className="flex items-center justify-between p-4 rounded-lg bg-ctp-surface0/50">
-                                    <div>
-                                        <div className="space-y-1">
-                                            <div className="text-sm font-medium text-ctp-text">
-                                                Reset to Default
-                                            </div>
-                                            <div className="text-xs text-ctp-subtext0 select-none">
-                                                This will reset all settings to
-                                                their default values
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() =>
-                                            setShowResetConfirm(true)
-                                        }
-                                        className="px-3 py-1.5 text-xs font-medium bg-ctp-red/10 text-ctp-red hover:bg-ctp-red/20 rounded-md transition-colors flex items-center gap-1.5"
-                                    >
-                                        <RotateCcw
-                                            size={12}
-                                            className="stroke-[2.5]"
-                                        />
-                                        Reset Application Data
-                                    </button>
-                                </div>
-                            </SettingGroup>
-
-                            <Modal
-                                isOpen={showResetConfirm}
-                                onClose={() => setShowResetConfirm(false)}
-                                title="Reset Application Data"
-                                description="Are you sure you want to reset all application data to default values? This includes all settings, keybinds, and other stored preferences. This action cannot be undone."
-                                onConfirm={() => {
-                                    localStorage.clear();
-                                    window.location.reload();
-                                }}
-                                confirmText="Reset"
-                                confirmVariant="destructive"
-                            />
-
-                            <SettingGroup
                                 title="Application"
                                 description="Application details"
                             >
@@ -665,6 +623,103 @@ export const Settings: FC = () => {
                                             />
                                             Docs
                                         </a>
+                                    </div>
+                                </div>
+                            </SettingGroup>
+
+                            <SettingGroup
+                                title="Actions"
+                                description="Application management actions"
+                            >
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-4 rounded-lg bg-ctp-surface0/50">
+                                        <div>
+                                            <div className="space-y-1">
+                                                <div className="text-sm font-medium text-ctp-text">
+                                                    Reset to Default
+                                                </div>
+                                                <div className="text-xs text-ctp-subtext0 select-none">
+                                                    This will reset all settings
+                                                    to their default values
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() =>
+                                                setShowResetConfirm(true)
+                                            }
+                                            className="px-3 py-1.5 text-xs font-medium bg-ctp-red/10 text-ctp-red hover:bg-ctp-red/20 rounded-md transition-colors flex items-center gap-1.5"
+                                        >
+                                            <RotateCcw
+                                                size={12}
+                                                className="stroke-[2.5]"
+                                            />
+                                            Reset Application Data
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-4 rounded-lg bg-ctp-surface0/50">
+                                        <div>
+                                            <div className="space-y-1">
+                                                <div className="text-sm font-medium text-ctp-text">
+                                                    Open Directories
+                                                </div>
+                                                <div className="text-xs text-ctp-subtext0 select-none">
+                                                    Access application
+                                                    directories
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        await invoke(
+                                                            "open_comet_folder"
+                                                        );
+                                                    } catch (error) {
+                                                        toast.error(
+                                                            "Failed to open app directory"
+                                                        );
+                                                        console.error(
+                                                            "Failed to open app directory",
+                                                            error
+                                                        );
+                                                    }
+                                                }}
+                                                className="px-3 py-1.5 text-xs font-medium bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5"
+                                            >
+                                                <Folder
+                                                    size={12}
+                                                    className="stroke-[2.5]"
+                                                />
+                                                App Directory
+                                            </button>
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        await invoke(
+                                                            "open_hydrogen_folder"
+                                                        );
+                                                    } catch (error) {
+                                                        toast.error(
+                                                            "Failed to open Hydrogen directory"
+                                                        );
+                                                        console.error(
+                                                            "Failed to open Hydrogen directory",
+                                                            error
+                                                        );
+                                                    }
+                                                }}
+                                                className="px-3 py-1.5 text-xs font-medium bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5"
+                                            >
+                                                <Folder
+                                                    size={12}
+                                                    className="stroke-[2.5]"
+                                                />
+                                                Hydrogen Directory
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </SettingGroup>
@@ -949,6 +1004,19 @@ export const Settings: FC = () => {
                     </div>
                 </div>
             </div>
+
+            <Modal
+                isOpen={showResetConfirm}
+                onClose={() => setShowResetConfirm(false)}
+                title="Reset Application Data"
+                description="Are you sure you want to reset all application data to default values? This includes all settings, keybinds, and other stored preferences. This action cannot be undone."
+                onConfirm={() => {
+                    localStorage.clear();
+                    window.location.reload();
+                }}
+                confirmText="Reset"
+                confirmVariant="destructive"
+            />
         </div>
     );
 };
