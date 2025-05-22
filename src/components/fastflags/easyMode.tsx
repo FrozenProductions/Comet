@@ -3,7 +3,16 @@ import { FastFlagsProfile } from "../../types/fastFlags";
 import { FAST_FLAG_CATEGORIES } from "../../constants/fastFlags";
 import { Slider } from "../ui/slider";
 import { RadioGroup } from "../ui/radioGroup";
-import { User, Zap, Gauge, Layers, Cpu, Cloud } from "lucide-react";
+import {
+    User,
+    Zap,
+    Gauge,
+    Layers,
+    Cpu,
+    Cloud,
+    Radio,
+    Volume2,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { Checkbox } from "../ui/checkbox";
@@ -12,10 +21,12 @@ type LightingTechnology = "default" | "voxel" | "shadowmap" | "future";
 type RenderingAPI = "default" | "metal" | "vulkan" | "opengl";
 type HyperThreading = "default" | "enabled";
 type GraySky = "default" | "enabled";
+type TelemetryMode = "default" | "disabled";
 type NonDefaultLightingTechnology = Exclude<LightingTechnology, "default">;
 type NonDefaultRenderingAPI = Exclude<RenderingAPI, "default">;
 type NonDefaultHyperThreading = Exclude<HyperThreading, "default">;
 type NonDefaultGraySky = Exclude<GraySky, "default">;
+type NonDefaultTelemetryMode = Exclude<TelemetryMode, "default">;
 
 interface FastFlagManagerProps {
     profile: FastFlagsProfile;
@@ -257,6 +268,8 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 
     const graphicsFlags = FAST_FLAG_CATEGORIES[0].flags;
     const threadingFlags = FAST_FLAG_CATEGORIES[1].flags;
+    const telemetryFlags = FAST_FLAG_CATEGORIES[2].flags;
+    const voiceChatFlags = FAST_FLAG_CATEGORIES[3].flags;
 
     const fpsFlag = graphicsFlags[0];
     const lightingFlag = graphicsFlags[1];
@@ -266,6 +279,48 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     const hyperThreadingFlag = threadingFlags[0];
     const maxThreadsFlag = threadingFlags[1];
     const minThreadsFlag = threadingFlags[2];
+    const telemetryFlag = telemetryFlags[0];
+    const voiceChatMinDistanceFlag = voiceChatFlags[0];
+    const voiceChatMaxDistanceFlag = voiceChatFlags[1];
+
+    const handleTelemetryChange = async (value: TelemetryMode) => {
+        try {
+            setIsUpdating(telemetryFlag.key);
+
+            if (telemetryFlag.relatedFlags) {
+                const modes = Object.keys(
+                    telemetryFlag.relatedFlags,
+                ) as NonDefaultTelemetryMode[];
+                for (const mode of modes) {
+                    for (const flag of Object.keys(
+                        telemetryFlag.relatedFlags[mode],
+                    )) {
+                        await onUpdateFlag(flag, null);
+                    }
+                }
+            }
+
+            if (
+                value !== "default" &&
+                telemetryFlag.relatedFlags?.[value as NonDefaultTelemetryMode]
+            ) {
+                const flags =
+                    telemetryFlag.relatedFlags[
+                        value as NonDefaultTelemetryMode
+                    ];
+                for (const [flag, flagValue] of Object.entries(flags)) {
+                    await onUpdateFlag(flag, String(flagValue));
+                }
+            }
+
+            toast.success("Telemetry settings updated");
+        } catch (error) {
+            console.error("Failed to update telemetry flags:", error);
+            toast.error("Failed to update telemetry settings");
+        } finally {
+            setIsUpdating(null);
+        }
+    };
 
     const currentFps = Number(
         profile.flags[fpsFlag.key] ?? fpsFlag.defaultValue,
@@ -332,6 +387,31 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
             }
         }
     }
+
+    let currentTelemetry: TelemetryMode = "default";
+    if (telemetryFlag.relatedFlags) {
+        for (const [mode, flags] of Object.entries(
+            telemetryFlag.relatedFlags,
+        )) {
+            const hasAllFlags = Object.entries(flags).every(
+                ([flag, value]) => profile.flags[flag] === value,
+            );
+            if (hasAllFlags) {
+                currentTelemetry = mode as TelemetryMode;
+                break;
+            }
+        }
+    }
+
+    const currentVoiceChatMinDistance = Number(
+        profile.flags[voiceChatMinDistanceFlag.key] ??
+            voiceChatMinDistanceFlag.defaultValue,
+    );
+
+    const currentVoiceChatMaxDistance = Number(
+        profile.flags[voiceChatMaxDistanceFlag.key] ??
+            voiceChatMaxDistanceFlag.defaultValue,
+    );
 
     return (
         <div className="flex flex-1 flex-col bg-ctp-base">
@@ -708,6 +788,160 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         }
                                         label={minThreadsFlag.label}
                                         description={minThreadsFlag.description}
+                                    />
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="rounded-xl border border-white/5 bg-ctp-mantle"
+                        >
+                            <div className="border-b border-white/5 p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+                                        <Radio
+                                            size={20}
+                                            className="text-accent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-medium text-ctp-text">
+                                            {telemetryFlag.label}
+                                        </h3>
+                                        <p className="text-xs text-ctp-subtext0">
+                                            {telemetryFlag.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4">
+                                <div className="relative">
+                                    <AnimatePresence>
+                                        {isUpdating === telemetryFlag.key && (
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                            >
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                    <RadioGroup
+                                        value={currentTelemetry}
+                                        onChange={(value) =>
+                                            handleTelemetryChange(
+                                                value as TelemetryMode,
+                                            )
+                                        }
+                                        options={[
+                                            ...(telemetryFlag.options ?? []),
+                                        ]}
+                                    />
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="rounded-xl border border-white/5 bg-ctp-mantle"
+                        >
+                            <div className="border-b border-white/5 p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+                                        <Volume2
+                                            size={20}
+                                            className="text-accent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-medium text-ctp-text">
+                                            Voice Chat
+                                        </h3>
+                                        <p className="text-xs text-ctp-subtext0">
+                                            Adjust voice chat distance settings
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6 p-4">
+                                <div className="relative">
+                                    <AnimatePresence>
+                                        {isUpdating ===
+                                            voiceChatMinDistanceFlag.key && (
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                            >
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                    <Slider
+                                        value={currentVoiceChatMinDistance}
+                                        min={voiceChatMinDistanceFlag.min ?? 1}
+                                        max={voiceChatMinDistanceFlag.max ?? 20}
+                                        step={
+                                            voiceChatMinDistanceFlag.step ?? 1
+                                        }
+                                        onChange={(value) =>
+                                            handleSliderChange(
+                                                voiceChatMinDistanceFlag.key,
+                                                value,
+                                            )
+                                        }
+                                        label={voiceChatMinDistanceFlag.label}
+                                        description={
+                                            voiceChatMinDistanceFlag.description
+                                        }
+                                        unit=" studs"
+                                    />
+                                </div>
+
+                                <div className="relative">
+                                    <AnimatePresence>
+                                        {isUpdating ===
+                                            voiceChatMaxDistanceFlag.key && (
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                            >
+                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                    <Slider
+                                        value={currentVoiceChatMaxDistance}
+                                        min={voiceChatMaxDistanceFlag.min ?? 20}
+                                        max={
+                                            voiceChatMaxDistanceFlag.max ?? 150
+                                        }
+                                        step={
+                                            voiceChatMaxDistanceFlag.step ?? 5
+                                        }
+                                        onChange={(value) =>
+                                            handleSliderChange(
+                                                voiceChatMaxDistanceFlag.key,
+                                                value,
+                                            )
+                                        }
+                                        label={voiceChatMaxDistanceFlag.label}
+                                        description={
+                                            voiceChatMaxDistanceFlag.description
+                                        }
+                                        unit=" studs"
                                     />
                                 </div>
                             </div>

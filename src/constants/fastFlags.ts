@@ -215,4 +215,70 @@ export const FAST_FLAG_CATEGORIES: readonly FastFlagCategory[] = [
             },
         ],
     },
+    {
+        id: "telemetry",
+        label: "Telemetry",
+        description: "Data collection and analytics settings",
+        flags: [
+            {
+                key: "TelemetryCollection",
+                label: "Telemetry Collection",
+                description: "Control data collection and analytics features",
+                type: "radio",
+                defaultValue: "default",
+                options: [
+                    {
+                        label: "Default",
+                        value: "default",
+                        description: "Use default telemetry settings",
+                    },
+                    {
+                        label: "Disabled",
+                        value: "disabled",
+                        description: "Disable all telemetry collection",
+                    },
+                ],
+                relatedFlags: {
+                    disabled: {
+                        FFlagDebugDisableTelemetryEphemeralCounter: "True",
+                        FFlagDebugDisableTelemetryEphemeralStat: "True",
+                        FFlagDebugDisableTelemetryEventIngest: "True",
+                        FFlagDebugDisableTelemetryPoint: "True",
+                        FFlagDebugDisableTelemetryV2Counter: "True",
+                        FFlagDebugDisableTelemetryV2Event: "True",
+                        FFlagDebugDisableTelemetryV2Stat: "True",
+                    },
+                },
+            },
+        ],
+    },
+    {
+        id: "voiceChat",
+        label: "Voice Chat",
+        description: "Voice chat and audio settings",
+        flags: [
+            {
+                key: "DFIntVoiceChatRollOffMinDistance",
+                label: "Minimum Distance",
+                description:
+                    "Minimum distance for voice chat audio roll-off (closer than this will be at full volume)",
+                type: "slider",
+                defaultValue: 7,
+                min: 1,
+                max: 20,
+                step: 1,
+            },
+            {
+                key: "DFIntVoiceChatRollOffMaxDistance",
+                label: "Maximum Distance",
+                description:
+                    "Maximum distance for voice chat audio roll-off (farther than this will be silent)",
+                type: "slider",
+                defaultValue: 80,
+                min: 20,
+                max: 150,
+                step: 5,
+            },
+        ],
+    },
 ] as const;
