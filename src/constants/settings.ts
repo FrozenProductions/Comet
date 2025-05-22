@@ -25,7 +25,7 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     {
         id: "application",
         title: "Application",
-        description: "View app settings and information",
+        description: "Comet settings and info",
         icon: Settings2,
     },
 ] as const;
