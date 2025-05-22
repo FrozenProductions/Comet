@@ -18,7 +18,7 @@ app.get("/api/v1/status", (req, res) => {
     res.json({
         status: "ok",
         version: "1.0.2",
-        prerelease: "1.0.3.1",
+        prerelease: "1.0.3-dp.1",
     });
 });
 
