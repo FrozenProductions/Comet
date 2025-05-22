@@ -36,6 +36,7 @@ export interface EditorSettings {
         zenMode: boolean;
         showTabBar: boolean;
         showConsole: boolean;
+        nightlyReleases: boolean;
     };
 }
 

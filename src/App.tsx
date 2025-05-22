@@ -112,6 +112,7 @@ const App: FC = () => {
                                 <FastFlagsProvider>
                                     <KeybindsProvider>
                                         <AppContent />
+                                        <UpdateChecker />
                                         <Toaster />
                                     </KeybindsProvider>
                                 </FastFlagsProvider>
@@ -120,7 +121,6 @@ const App: FC = () => {
                     </WorkspaceProvider>
                 </SettingsProvider>
             </ExecuteProvider>
-            <UpdateChecker />
         </ConnectionProvider>
     );
 };

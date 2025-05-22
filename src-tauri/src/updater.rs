@@ -16,6 +16,7 @@ const APP_PATH: &str = "/Applications/Comet.app";
 struct StatusResponse {
     status: String,
     version: String,
+    prerelease: Option<String>,
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -30,7 +31,7 @@ fn get_downloads_dir() -> PathBuf {
 }
 
 #[tauri::command]
-pub async fn check_for_updates() -> Result<Option<String>, String> {
+pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, String> {
     let client = reqwest::Client::new();
     
     let response = client
@@ -38,21 +39,30 @@ pub async fn check_for_updates() -> Result<Option<String>, String> {
         .header("User-Agent", "Comet-App")
         .send()
         .await
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("Failed to fetch status: {}", e))?;
 
     let status: StatusResponse = response
         .json()
         .await
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("Failed to parse JSON response: {}", e))?;
 
     let current = Version::parse(CURRENT_VERSION).unwrap();
-    let latest = Version::parse(&status.version).map_err(|e| e.to_string())?;
-
-    if latest > current {
-        Ok(Some(status.version))
-    } else {
-        Ok(None)
+    let stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
+    
+    if stable > current {
+        return Ok(Some(status.version));
     }
+    
+    if check_nightly {
+        if let Some(prerelease) = status.prerelease {
+            let latest = Version::parse(&prerelease).map_err(|e| e.to_string())?;
+            if latest > current {
+                return Ok(Some(prerelease));
+            }
+        }
+    }
+
+    Ok(None)
 }
 
 #[tauri::command]
@@ -75,7 +85,13 @@ pub async fn download_and_install_update(window: tauri::Window) -> Result<(), St
         .await
         .map_err(|e| e.to_string())?;
 
-    let download_url = format!("{}/v{}/Comet_1.0.0_universal.dmg", DOWNLOAD_URL, status.version);
+    let version_to_use = if status.prerelease.is_some() {
+        status.prerelease.unwrap()
+    } else {
+        status.version
+    };
+
+    let download_url = format!("{}/v{}/Comet_1.0.0_universal.dmg", DOWNLOAD_URL, version_to_use);
     let dmg_path = get_downloads_dir().join("Comet_1.0.0_universal.dmg");
     let script_path = get_downloads_dir().join("comet_installer.sh");
 

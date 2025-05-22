@@ -627,6 +627,21 @@ export const Settings: FC = () => {
                                         </a>
                                     </div>
                                 </div>
+                                <Checkbox
+                                    checked={settings.interface.nightlyReleases}
+                                    onChange={() => {
+                                        updateSettings({
+                                            interface: {
+                                                ...settings.interface,
+                                                nightlyReleases:
+                                                    !settings.interface
+                                                        .nightlyReleases,
+                                            },
+                                        });
+                                    }}
+                                    label="Check for nightly releases"
+                                    description="Receive updates for development preview builds"
+                                />
                             </SettingGroup>
 
                             <SettingGroup
