@@ -15,6 +15,7 @@ Fast Flags Manager allows you to:
 - Switch between different configurations easily
 - Fine-tune Roblox settings for optimal performance
 - Choose between easy and advanced management modes
+- Import and export profiles for backup or sharing
 
 ## <div align="center">📋 Profiles</div>
 
@@ -42,10 +43,26 @@ Fast Flags Manager allows you to:
     - Click the checkmark button to "Set Active"
     - Active profile will be highlighted in white-light gray
 
-- **Profile Examples**
-    - FPS Boost: Optimize flags for better performance
-    - Desync Fix: Adjust flags to improve synchronization
-    - Custom configurations for specific games
+- **Rename Profile**
+
+    - Hover over a profile in the sidebar
+    - Click the pencil (edit) icon that appears
+    - Enter the new name in the modal
+    - Click "Rename" to save changes
+
+- **Delete Profile**
+
+    - Hover over a profile in the sidebar
+    - Click the trash icon that appears
+    - Confirm deletion in the modal
+    - Note: Active profiles require deactivation first
+
+### Import/Export
+
+Located in the top-right corner:
+
+- **Export Profiles**: Save all profiles to a file for backup
+- **Import Profiles**: Load profiles from a previously exported file
 
 ## <div align="center">⚙️ Management Modes</div>
 
@@ -73,6 +90,8 @@ Located in the top-right corner:
 
 - **Gear Button**: Switch between Easy/Advanced modes
 - **Folder Button**: Open Fast Flags config file directory
+- **Download Button**: Export profiles to file
+- **Upload Button**: Import profiles from file
 
 ## <div align="center">💡 Tips</div>
 
