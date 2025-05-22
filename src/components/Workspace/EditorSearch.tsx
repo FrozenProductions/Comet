@@ -272,7 +272,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
     if (!isVisible) return null;
 
     return (
-        <div className="absolute right-0 top-0 z-50 mr-2 mt-2 flex min-w-[320px] flex-col gap-3 rounded-lg border border-ctp-overlay0 bg-ctp-mantle/95 p-3 shadow-lg backdrop-blur">
+        <div className="absolute right-0 top-0 z-50 mr-2 mt-2 flex min-w-[320px] flex-col gap-3 rounded-lg border border-ctp-overlay0 bg-ctp-mantle/95 p-3 shadow-lg">
             <div className="flex items-center gap-2">
                 <div className="relative flex-1">
                     <input

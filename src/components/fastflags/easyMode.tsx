@@ -469,7 +469,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -528,7 +528,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -583,7 +583,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -637,7 +637,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -663,7 +663,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -713,7 +713,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -740,7 +740,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -769,7 +769,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -826,7 +826,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -881,7 +881,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>
@@ -916,7 +916,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50 backdrop-blur-sm"
+                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
                                             >
                                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                                             </motion.div>

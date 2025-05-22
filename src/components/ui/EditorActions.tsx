@@ -66,7 +66,7 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
                 whileHover="hover"
                 whileTap="tap"
                 onClick={openRoblox}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/5 bg-white/5 text-[#c1c7e6] shadow-lg backdrop-blur-sm transition-colors"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/5 bg-white/5 text-[#c1c7e6] shadow-lg transition-colors"
             >
                 <ExternalLink size={16} className="stroke-[2.5]" />
             </motion.button>
@@ -82,7 +82,7 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
                 whileTap="tap"
                 onClick={handleExecute}
                 disabled={isExecuting}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/5 bg-white/5 text-[#c1c7e6] shadow-lg backdrop-blur-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/5 bg-white/5 text-[#c1c7e6] shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {isExecuting ? (
                     <Loader2 size={16} className="animate-spin stroke-[2.5]" />

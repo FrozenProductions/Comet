@@ -127,7 +127,7 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                 top: position.y,
                 zIndex: 1000,
             }}
-            className="max-h-[400px] w-64 overflow-hidden rounded-lg border border-ctp-surface1/50 bg-ctp-surface0/95 shadow-2xl backdrop-blur-sm"
+            className="max-h-[400px] w-64 overflow-hidden rounded-lg border border-ctp-surface1/50 bg-ctp-surface0/95 shadow-2xl"
         >
             <div
                 ref={listRef}
