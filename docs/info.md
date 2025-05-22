@@ -45,7 +45,7 @@
 <div align="center">
   <table>
     <tr>
-      <td align="center" width="25%">
+      <td align="center" width="20%">
         <h3>📝 Editor</h3>
         <ul align="left">
           <li>Multi-tab management</li>
@@ -54,7 +54,7 @@
           <li>Error detection</li>
         </ul>
       </td>
-      <td align="center" width="25%">
+      <td align="center" width="20%">
         <h3>🗂️ Workspaces</h3>
         <ul align="left">
           <li>Multiple environments</li>
@@ -62,7 +62,7 @@
           <li>Custom settings</li>
         </ul>
       </td>
-      <td align="center" width="25%">
+      <td align="center" width="20%">
         <h3>⚡ Fast Flags</h3>
         <ul align="left">
           <li>Profile system</li>
@@ -70,12 +70,20 @@
           <li>Real-time updates</li>
         </ul>
       </td>
-      <td align="center" width="25%">
+      <td align="center" width="20%">
         <h3>🔄 Auto Execute</h3>
         <ul align="left">
           <li>Auto-execution</li>
           <li>File management</li>
           <li>Easy organization</li>
+        </ul>
+      </td>
+      <td align="center" width="20%">
+        <h3>⌨️ Command Palette</h3>
+        <ul align="left">
+          <li>Quick navigation</li>
+          <li>Command execution</li>
+          <li>Fast flags control</li>
         </ul>
       </td>
     </tr>
@@ -99,17 +107,17 @@
 
 ### Fast Flags Implementation
 
--   Inspired by [AppleBlox](https://github.com/AppleBlox/appleblox)'s Fast Flags system
+- Inspired by [AppleBlox](https://github.com/AppleBlox/appleblox)'s Fast Flags system
 
 ### Core Development
 
--   **Developer**: [Frozen Productions](https://github.com/FrozenProductions)
--   **Hydrogen developer**: [xGladius](https://github.com/xGladius)
+- **Developer**: [Frozen Productions](https://github.com/FrozenProductions)
+- **Hydrogen developer**: [xGladius](https://github.com/xGladius)
 
 ### Special Thanks
 
--   [MaximumADHD](https://github.com/MaximumADHD) for Roblox FFlag tracking system
--   The Hydrogen community for support and feedback
+- [MaximumADHD](https://github.com/MaximumADHD) for Roblox FFlag tracking system
+- The Hydrogen community for support and feedback
 
 ## <div align="center">📝 License</div>
 

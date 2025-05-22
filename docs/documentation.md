@@ -50,7 +50,13 @@
       </td>
     </tr>
     <tr>
-      <td align="center" colspan="2" width="600px">
+      <td align="center" width="300px">
+        <a href="commandPalette.md">
+          <b>Command Palette</b>
+        </a><br/>
+        Quick access to tabs and commands through keyboard shortcuts
+      </td>
+      <td align="center" width="300px">
         <a href="info.md">
           <b>Technical Information</b>
         </a><br/>
