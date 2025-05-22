@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { FastFlagsState, FastFlagsProfile } from "../../types/fastFlags";
 
-export const FastFlagsContext = createContext<{
+export interface FastFlagsContextType {
     state: FastFlagsState;
     createProfile: (name: string) => Promise<void>;
     saveProfile: (profile: FastFlagsProfile) => Promise<void>;
@@ -11,6 +11,23 @@ export const FastFlagsContext = createContext<{
     updateFlagValue: (
         profileId: string,
         key: string,
-        value: any | null
+        value: any | null,
     ) => Promise<void>;
-} | null>(null);
+    renameProfile: (profileId: string, newName: string) => Promise<void>;
+}
+
+export const FastFlagsContext = createContext<FastFlagsContextType>({
+    state: {
+        profiles: [],
+        activeProfileId: null,
+        isLoading: true,
+        error: null,
+    },
+    createProfile: async () => {},
+    saveProfile: async () => {},
+    deleteProfile: async () => {},
+    activateProfile: async () => {},
+    deactivateProfile: async () => {},
+    updateFlagValue: async () => {},
+    renameProfile: async () => {},
+});

@@ -89,6 +89,14 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
         await saveProfile(updatedProfile);
     };
 
+    const renameProfile = async (profileId: string, newName: string) => {
+        const profile = state.profiles.find((p) => p.id === profileId);
+        if (!profile) return;
+
+        await FastFlagsProfileService.renameProfile(profileId, newName);
+        await loadProfiles();
+    };
+
     return (
         <FastFlagsContext.Provider
             value={{
@@ -99,6 +107,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
                 activateProfile,
                 deactivateProfile,
                 updateFlagValue,
+                renameProfile,
             }}
         >
             {children}

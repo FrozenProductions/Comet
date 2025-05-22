@@ -12,6 +12,7 @@ import {
     Users,
     FolderOpen,
     Settings,
+    Edit2,
 } from "lucide-react";
 import { Header } from "../ui/header";
 import { Button } from "../ui/button";
@@ -31,6 +32,7 @@ export const FastFlags: React.FC = () => {
         deleteProfile,
         activateProfile,
         updateFlagValue,
+        renameProfile,
     } = useFastFlags();
 
     const [newProfileName, setNewProfileName] = useState("");
@@ -44,6 +46,11 @@ export const FastFlags: React.FC = () => {
         id: string;
         name: string;
     } | null>(null);
+    const [profileToRename, setProfileToRename] = useState<{
+        id: string;
+        name: string;
+    } | null>(null);
+    const [newName, setNewName] = useState("");
     const [isAdvancedMode, setIsAdvancedMode] = useState(false);
 
     useEffect(() => {
@@ -165,6 +172,23 @@ export const FastFlags: React.FC = () => {
         } catch (error) {
             console.error("Failed to open directory:", error);
             toast.error("Failed to open directory");
+        }
+    };
+
+    const handleRenameProfile = async () => {
+        if (!profileToRename || newName.trim() === "") {
+            toast.error("Profile name cannot be empty");
+            return;
+        }
+
+        try {
+            await renameProfile(profileToRename.id, newName);
+            setProfileToRename(null);
+            setNewName("");
+            toast.success("Profile renamed successfully");
+        } catch (error) {
+            console.error("Failed to rename profile:", error);
+            toast.error("Failed to rename profile");
         }
     };
 
@@ -330,6 +354,25 @@ export const FastFlags: React.FC = () => {
                                         <Button
                                             onClick={(e) => {
                                                 e.stopPropagation();
+                                                setProfileToRename({
+                                                    id: profile.id,
+                                                    name: profile.name,
+                                                });
+                                                setNewName(profile.name);
+                                            }}
+                                            size="sm"
+                                            data-tooltip-id="fastflags-tooltip"
+                                            data-tooltip-content="Rename Profile"
+                                            className="inline-flex h-5 w-5 items-center justify-center bg-white/5 p-0 hover:bg-white/10"
+                                        >
+                                            <Edit2
+                                                size={10}
+                                                className="stroke-[2.5]"
+                                            />
+                                        </Button>
+                                        <Button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
                                                 handleActivateProfile(
                                                     profile.id,
                                                 );
@@ -489,6 +532,49 @@ export const FastFlags: React.FC = () => {
                 confirmText="Delete"
                 confirmVariant="destructive"
             />
+
+            <Modal
+                isOpen={!!profileToRename}
+                onClose={() => {
+                    setProfileToRename(null);
+                    setNewName("");
+                }}
+                title="Rename Profile"
+                description="Enter a new name for the profile."
+            >
+                <div className="space-y-4">
+                    <Input
+                        placeholder="Profile name"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        onKeyDown={(e) =>
+                            e.key === "Enter" && handleRenameProfile()
+                        }
+                        className="w-full border-white/5 bg-ctp-surface0 focus:border-accent focus:ring-accent"
+                        autoFocus
+                    />
+                </div>
+                <div className="mt-4 flex justify-end gap-3">
+                    <Button
+                        onClick={() => {
+                            setProfileToRename(null);
+                            setNewName("");
+                        }}
+                        variant="secondary"
+                        size="sm"
+                        className="bg-white/5 hover:bg-white/10"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleRenameProfile}
+                        size="sm"
+                        className="bg-accent hover:bg-accent/90"
+                    >
+                        Rename
+                    </Button>
+                </div>
+            </Modal>
 
             <Tooltip
                 id="fastflags-tooltip"

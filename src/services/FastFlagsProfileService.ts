@@ -30,6 +30,17 @@ export const FastFlagsProfileService = {
         await invoke("activate_fast_flags_profile", { profileId });
     },
 
+    async renameProfile(profileId: string, newName: string): Promise<void> {
+        const [profiles] = await invoke<[FastFlagsProfile[], string | null]>(
+            "load_fast_flags_profiles",
+        );
+        const profile = profiles.find((p) => p.id === profileId);
+        if (!profile) throw new Error("Profile not found");
+
+        const updatedProfile = { ...profile, name: newName };
+        await invoke("save_fast_flags_profile", { profile: updatedProfile });
+    },
+
     createNewProfile(name: string): FastFlagsProfile {
         return {
             id: uuidv4(),
