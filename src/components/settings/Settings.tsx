@@ -936,7 +936,6 @@ export const Settings: FC = () => {
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
                                 className={`group relative w-full px-4 py-3 text-left transition-colors hover:bg-ctp-surface0 ${activeSection === section.id ? "bg-ctp-surface0" : ""} `}
-                                whileHover={{ x: 4 }}
                                 transition={{
                                     type: "spring",
                                     stiffness: 500,
