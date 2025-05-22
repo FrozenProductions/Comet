@@ -33,6 +33,7 @@ export const Tabbar: FC<TabbarProps> = ({
         createWorkspace,
         deleteWorkspace,
         setActiveWorkspace,
+        renameWorkspace,
     } = useWorkspace();
     const [contextMenu, setContextMenu] = useState<{
         x: number;
@@ -160,6 +161,7 @@ export const Tabbar: FC<TabbarProps> = ({
                     onWorkspaceChange={setActiveWorkspace}
                     onWorkspaceDelete={deleteWorkspace}
                     onCreateWorkspace={createWorkspace}
+                    onRenameWorkspace={renameWorkspace}
                 />
                 <div
                     className="group relative flex min-w-0 flex-1 cursor-pointer items-center px-3 hover:bg-ctp-surface0/50"
@@ -346,6 +348,7 @@ export const Tabbar: FC<TabbarProps> = ({
                 onWorkspaceChange={setActiveWorkspace}
                 onWorkspaceDelete={deleteWorkspace}
                 onCreateWorkspace={createWorkspace}
+                onRenameWorkspace={renameWorkspace}
             />
             <div className="relative min-w-0 flex-1">
                 <div className="absolute inset-0 flex items-center">

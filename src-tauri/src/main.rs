@@ -585,6 +585,7 @@ fn main() {
             workspace::create_workspace,
             workspace::delete_workspace,
             workspace::set_active_workspace,
+            workspace::rename_workspace,
             updater::check_for_updates,
             updater::download_and_install_update,
             open_hydrogen_folder,

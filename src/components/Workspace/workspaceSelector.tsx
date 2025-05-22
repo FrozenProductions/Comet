@@ -1,6 +1,12 @@
 import { FC, useState, useRef, useEffect, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlignLeft, FolderPlus, Trash2, ChevronDown } from "lucide-react";
+import {
+    AlignLeft,
+    FolderPlus,
+    Trash2,
+    ChevronDown,
+    Edit2,
+} from "lucide-react";
 import { createPortal } from "react-dom";
 import { Modal } from "../ui/modal";
 
@@ -10,6 +16,7 @@ interface WorkspaceProps {
     onWorkspaceChange: (id: string) => Promise<void>;
     onWorkspaceDelete: (id: string) => Promise<void>;
     onCreateWorkspace: (name: string) => Promise<void>;
+    onRenameWorkspace: (id: string, newName: string) => Promise<void>;
 }
 
 interface WorkspaceDropdownPortalProps {
@@ -21,9 +28,9 @@ interface WorkspaceDropdownPortalProps {
     isCreatingWorkspace: boolean;
     onWorkspaceChange: (id: string) => void;
     onWorkspaceDelete: (id: string) => void;
+    onRenameWorkspace: (id: string, newName: string) => Promise<void>;
     onCreateWorkspace: (name: string) => void;
     onCreateClick: (e?: React.MouseEvent) => void;
-    onClose: () => void;
 }
 
 interface DeleteWorkspaceState {
@@ -115,11 +122,13 @@ const WorkspaceList = memo(
         activeWorkspace,
         onWorkspaceChange,
         onWorkspaceDelete,
+        onRenameWorkspace,
     }: {
         workspaces: Array<{ id: string; name: string }>;
         activeWorkspace: string | null;
         onWorkspaceChange: (id: string) => void;
         onWorkspaceDelete: (id: string) => void;
+        onRenameWorkspace: (id: string, newName: string) => void;
     }) => {
         const [deleteConfirm, setDeleteConfirm] =
             useState<DeleteWorkspaceState>({
@@ -127,6 +136,18 @@ const WorkspaceList = memo(
                 workspaceId: null,
                 workspaceName: null,
             });
+        const [editingWorkspace, setEditingWorkspace] = useState<string | null>(
+            null,
+        );
+        const [editValue, setEditValue] = useState("");
+        const inputRef = useRef<HTMLInputElement>(null);
+
+        useEffect(() => {
+            if (editingWorkspace && inputRef.current) {
+                inputRef.current.focus();
+                inputRef.current.select();
+            }
+        }, [editingWorkspace]);
 
         const handleDelete = (id: string, name: string) => {
             setDeleteConfirm({
@@ -144,6 +165,29 @@ const WorkspaceList = memo(
                     workspaceId: null,
                     workspaceName: null,
                 });
+            }
+        };
+
+        const startRenaming = (id: string, currentName: string) => {
+            setEditingWorkspace(id);
+            setEditValue(currentName);
+        };
+
+        const handleRename = async (id: string) => {
+            const newName = editValue.trim();
+            if (
+                !newName ||
+                newName === workspaces.find((w) => w.id === id)?.name
+            ) {
+                setEditingWorkspace(null);
+                return;
+            }
+
+            try {
+                await onRenameWorkspace(id, newName);
+                setEditingWorkspace(null);
+            } catch (error) {
+                console.error("Failed to rename workspace:", error);
             }
         };
 
@@ -170,27 +214,68 @@ const WorkspaceList = memo(
                                             : "text-ctp-subtext0 group-hover/item:text-ctp-text"
                                     } `}
                                 />
-                                <span className="truncate font-medium">
-                                    {workspace.name}
-                                </span>
+                                {editingWorkspace === workspace.id ? (
+                                    <input
+                                        ref={inputRef}
+                                        type="text"
+                                        value={editValue}
+                                        maxLength={24}
+                                        onChange={(e) =>
+                                            setEditValue(e.target.value)
+                                        }
+                                        onBlur={() =>
+                                            handleRename(workspace.id)
+                                        }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                handleRename(workspace.id);
+                                            } else if (e.key === "Escape") {
+                                                setEditingWorkspace(null);
+                                            }
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="min-w-0 max-w-[150px] flex-1 border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
+                                    />
+                                ) : (
+                                    <span className="truncate font-medium">
+                                        {workspace.name}
+                                    </span>
+                                )}
                             </div>
                             {workspaces.length > 1 &&
                                 activeWorkspace !== workspace.id && (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDelete(
-                                                workspace.id,
-                                                workspace.name,
-                                            );
-                                        }}
-                                        className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-red group-hover/item:opacity-100"
-                                    >
-                                        <Trash2
-                                            size={12}
-                                            className="stroke-[2.5]"
-                                        />
-                                    </button>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                startRenaming(
+                                                    workspace.id,
+                                                    workspace.name,
+                                                );
+                                            }}
+                                            className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-text group-hover/item:opacity-100"
+                                        >
+                                            <Edit2
+                                                size={12}
+                                                className="stroke-[2.5]"
+                                            />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDelete(
+                                                    workspace.id,
+                                                    workspace.name,
+                                                );
+                                            }}
+                                            className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-red group-hover/item:opacity-100"
+                                        >
+                                            <Trash2
+                                                size={12}
+                                                className="stroke-[2.5]"
+                                            />
+                                        </button>
+                                    </div>
                                 )}
                             {activeWorkspace === workspace.id && (
                                 <div className="rounded-full bg-ctp-surface1 px-1.5 py-0.5 text-[10px] text-ctp-subtext1">
@@ -228,6 +313,7 @@ const WorkspaceDropdownPortal = memo(
         isCreatingWorkspace,
         onWorkspaceChange,
         onWorkspaceDelete,
+        onRenameWorkspace,
         onCreateWorkspace,
         onCreateClick,
     }: WorkspaceDropdownPortalProps) => {
@@ -268,7 +354,7 @@ const WorkspaceDropdownPortal = memo(
                 className="z-50 min-w-[260px] rounded-lg border border-ctp-surface0 bg-ctp-mantle/95 shadow-2xl backdrop-blur-md"
                 onClick={handleClick}
             >
-                <div className="py-1.5" onClick={handleClick}>
+                <div className="py-1.5">
                     <div className="border-b border-ctp-surface0 px-3 py-2">
                         <h3 className="text-xs font-medium text-ctp-text">
                             Workspaces
@@ -283,9 +369,9 @@ const WorkspaceDropdownPortal = memo(
                             activeWorkspace={activeWorkspace}
                             onWorkspaceChange={onWorkspaceChange}
                             onWorkspaceDelete={onWorkspaceDelete}
+                            onRenameWorkspace={onRenameWorkspace}
                         />
                     </div>
-                    <div className="mx-1.5 h-px bg-ctp-surface0" />
                     {isCreatingWorkspace ? (
                         <WorkspaceInput onSubmit={onCreateWorkspace} />
                     ) : (
@@ -310,6 +396,7 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
     onWorkspaceChange,
     onWorkspaceDelete,
     onCreateWorkspace,
+    onRenameWorkspace,
 }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
@@ -423,15 +510,12 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
                                 }
                             }}
                             onWorkspaceDelete={onWorkspaceDelete}
+                            onRenameWorkspace={onRenameWorkspace}
                             onCreateWorkspace={handleCreateWorkspace}
                             onCreateClick={(e) => {
                                 e?.preventDefault();
                                 e?.stopPropagation();
                                 setIsCreatingWorkspace(true);
-                            }}
-                            onClose={() => {
-                                setShowDropdown(false);
-                                setIsCreatingWorkspace(false);
                             }}
                         />
                     )}

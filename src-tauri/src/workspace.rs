@@ -124,6 +124,23 @@ pub async fn set_active_workspace(workspace_id: String) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+pub async fn rename_workspace(workspace_id: String, new_name: String) -> Result<(), String> {
+    let mut state = load_workspaces().await?;
+    
+    if state.workspaces.iter().any(|w| w.name.to_lowercase() == new_name.to_lowercase() && w.id != workspace_id) {
+        return Err("Workspace with this name already exists".to_string());
+    }
+
+    if let Some(workspace) = state.workspaces.iter_mut().find(|w| w.id == workspace_id) {
+        workspace.name = new_name;
+        save_workspace_state(&state)?;
+        Ok(())
+    } else {
+        Err("Workspace not found".to_string())
+    }
+}
+
 fn save_workspace_state(state: &WorkspaceState) -> Result<(), String> {
     let state_file = get_workspace_state_file();
     let content = serde_json::to_string_pretty(state).map_err(|e| e.to_string())?;

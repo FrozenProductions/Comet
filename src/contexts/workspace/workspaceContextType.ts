@@ -13,6 +13,7 @@ export interface WorkspaceState {
     createWorkspace: (name: string) => Promise<void>;
     deleteWorkspace: (id: string) => Promise<void>;
     setActiveWorkspace: (id: string) => Promise<void>;
+    renameWorkspace: (id: string, newName: string) => Promise<void>;
 }
 
 export const WorkspaceContext = createContext<WorkspaceState | null>(null);

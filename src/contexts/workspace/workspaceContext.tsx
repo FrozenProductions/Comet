@@ -67,6 +67,18 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
         }
     };
 
+    const renameWorkspace = async (id: string, newName: string) => {
+        try {
+            await invoke("rename_workspace", { workspaceId: id, newName });
+            await loadWorkspaces();
+            toast.success("Workspace renamed successfully");
+        } catch (error) {
+            console.error("Failed to rename workspace:", error);
+            toast.error("Failed to rename workspace");
+            throw error;
+        }
+    };
+
     return (
         <WorkspaceContext.Provider
             value={{
@@ -76,6 +88,7 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
                 createWorkspace,
                 deleteWorkspace,
                 setActiveWorkspace: setActive,
+                renameWorkspace,
             }}
         >
             {children}
