@@ -13,6 +13,8 @@ import {
     FolderOpen,
     Settings,
     Edit2,
+    Download,
+    Upload,
 } from "lucide-react";
 import { Header } from "../ui/header";
 import { Button } from "../ui/button";
@@ -24,6 +26,7 @@ import { EasyMode } from "./easyMode";
 import { Tooltip } from "react-tooltip";
 import { Modal } from "../ui/modal";
 import { invoke } from "@tauri-apps/api/tauri";
+import { FastFlagsProfileService } from "../../services/fastFlagsProfileService";
 
 export const FastFlags: React.FC = () => {
     const {
@@ -33,6 +36,7 @@ export const FastFlags: React.FC = () => {
         activateProfile,
         updateFlagValue,
         renameProfile,
+        loadProfiles,
     } = useFastFlags();
 
     const [newProfileName, setNewProfileName] = useState("");
@@ -192,6 +196,17 @@ export const FastFlags: React.FC = () => {
         }
     };
 
+    const handleImport = async () => {
+        try {
+            await FastFlagsProfileService.importFromFile();
+            await loadProfiles();
+            toast.success("Profiles imported successfully");
+        } catch (error) {
+            console.error("Failed to import profiles:", error);
+            toast.error("Failed to import profiles");
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex h-full flex-col bg-ctp-base">
@@ -238,34 +253,63 @@ export const FastFlags: React.FC = () => {
             <Header
                 title="Fast Flags"
                 icon={<Flag size={16} className="text-accent" />}
-                description="Manage roblox fast flags"
+                description="Manage Roblox fast flags"
                 actions={
                     <div className="flex items-center gap-2">
-                        <Button
-                            onClick={() => setIsAdvancedMode(!isAdvancedMode)}
-                            size="sm"
-                            data-tooltip-id="fastflags-tooltip"
-                            data-tooltip-content={
-                                isAdvancedMode ? "Easy Mode" : "Advanced Mode"
-                            }
-                            className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
-                        >
-                            <Settings
-                                size={14}
-                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
-                            />
-                        </Button>
                         <Button
                             onClick={handleOpenDirectory}
                             size="sm"
                             data-tooltip-id="fastflags-tooltip"
                             data-tooltip-content="Open Directory"
-                            className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
+                            className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
                         >
-                            <FolderOpen
+                            <FolderOpen size={14} className="stroke-[2.5]" />
+                        </Button>
+                        <Button
+                            onClick={() => setIsAdvancedMode(!isAdvancedMode)}
+                            size="sm"
+                            data-tooltip-id="fastflags-tooltip"
+                            data-tooltip-content={`${isAdvancedMode ? "Easy" : "Advanced"} Mode`}
+                            className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
+                        >
+                            <Settings
                                 size={14}
-                                className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
+                                className={`stroke-[2.5] transition-transform duration-200 ${
+                                    isAdvancedMode ? "rotate-90" : ""
+                                }`}
                             />
+                        </Button>
+                        <div className="h-4 w-px bg-white/5" />
+                        <Button
+                            onClick={async () => {
+                                try {
+                                    await FastFlagsProfileService.exportToFile();
+                                    toast.success(
+                                        "Profiles exported successfully",
+                                    );
+                                } catch (error) {
+                                    console.error(
+                                        "Failed to export profiles:",
+                                        error,
+                                    );
+                                    toast.error("Failed to export profiles");
+                                }
+                            }}
+                            size="sm"
+                            data-tooltip-id="fastflags-tooltip"
+                            data-tooltip-content="Export Profiles"
+                            className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
+                        >
+                            <Download size={14} className="stroke-[2.5]" />
+                        </Button>
+                        <Button
+                            onClick={handleImport}
+                            size="sm"
+                            data-tooltip-id="fastflags-tooltip"
+                            data-tooltip-content="Import Profiles"
+                            className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
+                        >
+                            <Upload size={14} className="stroke-[2.5]" />
                         </Button>
                     </div>
                 }

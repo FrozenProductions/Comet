@@ -108,6 +108,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
                 deactivateProfile,
                 updateFlagValue,
                 renameProfile,
+                loadProfiles,
             }}
         >
             {children}

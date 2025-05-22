@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use serde_json::Map;
 use crate::fast_flags::{save_fast_flags, FastFlagsResponse};
 use tauri::api::path::config_dir;
+use tauri::api::dialog;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FastFlagsProfile {
@@ -164,4 +165,55 @@ impl FastFlagsProfileManager {
         }
         Ok(())
     }
+
+    pub fn export_profiles(&self) -> Result<Vec<FastFlagsProfile>, String> {
+        self.load_profiles()
+    }
+
+    pub fn import_profiles(&self, profiles: Vec<FastFlagsProfile>) -> Result<(), String> {
+        for profile in profiles {
+            let profile_path = self.profiles_dir.join(format!("{}.json", profile.id));
+            let content = serde_json::to_string_pretty(&profile)
+                .map_err(|e| format!("Failed to serialize profile: {}", e))?;
+            
+            fs::write(profile_path, content)
+                .map_err(|e| format!("Failed to write profile: {}", e))?;
+        }
+        Ok(())
+    }
+}
+
+#[tauri::command]
+pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let profile_manager = FastFlagsProfileManager::new(&app_handle);
+    let profiles = profile_manager.export_profiles()?;
+    
+    if let Some(path) = dialog::blocking::FileDialogBuilder::new()
+        .add_filter("Fast Flags Profiles", &["json"])
+        .set_file_name("fast-flags-profiles.json")
+        .save_file() {
+            let content = serde_json::to_string_pretty(&profiles)
+                .map_err(|e| format!("Failed to serialize profiles: {}", e))?;
+            fs::write(path, content)
+                .map_err(|e| format!("Failed to write file: {}", e))?;
+    }
+    
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn import_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(), String> {
+    if let Some(path) = dialog::blocking::FileDialogBuilder::new()
+        .add_filter("Fast Flags Profiles", &["json"])
+        .pick_file() {
+            let content = fs::read_to_string(&path)
+                .map_err(|e| format!("Failed to read file: {}", e))?;
+            let profiles = serde_json::from_str(&content)
+                .map_err(|e| format!("Failed to parse profiles: {}", e))?;
+            
+            let profile_manager = FastFlagsProfileManager::new(&app_handle);
+            profile_manager.import_profiles(profiles)?;
+    }
+    
+    Ok(())
 } 

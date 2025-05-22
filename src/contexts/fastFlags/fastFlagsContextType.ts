@@ -14,6 +14,7 @@ export interface FastFlagsContextType {
         value: any | null,
     ) => Promise<void>;
     renameProfile: (profileId: string, newName: string) => Promise<void>;
+    loadProfiles: () => Promise<void>;
 }
 
 export const FastFlagsContext = createContext<FastFlagsContextType>({
@@ -30,4 +31,5 @@ export const FastFlagsContext = createContext<FastFlagsContextType>({
     deactivateProfile: async () => {},
     updateFlagValue: async () => {},
     renameProfile: async () => {},
+    loadProfiles: async () => {},
 });

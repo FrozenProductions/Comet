@@ -590,6 +590,8 @@ fn main() {
             updater::download_and_install_update,
             open_hydrogen_folder,
             open_comet_folder,
+            fast_flags_profiles::export_fast_flags_profiles,
+            fast_flags_profiles::import_fast_flags_profiles,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

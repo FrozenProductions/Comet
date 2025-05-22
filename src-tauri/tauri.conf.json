@@ -36,6 +36,9 @@
                 "scope": [
                     "/Applications/Roblox.app/Contents/MacOS/ClientSettings/*"
                 ]
+            },
+            "dialog": {
+                "all": true
             }
         },
         "bundle": {

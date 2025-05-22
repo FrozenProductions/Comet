@@ -48,4 +48,20 @@ export const FastFlagsProfileService = {
             flags: {},
         };
     },
+
+    async exportProfiles(): Promise<FastFlagsProfile[]> {
+        return await invoke<FastFlagsProfile[]>("export_fast_flags_profiles");
+    },
+
+    async importProfiles(profiles: FastFlagsProfile[]): Promise<void> {
+        await invoke("import_fast_flags_profiles", { profiles });
+    },
+
+    async exportToFile(): Promise<void> {
+        await invoke("export_fast_flags_profiles");
+    },
+
+    async importFromFile(): Promise<void> {
+        await invoke("import_fast_flags_profiles");
+    },
 };
