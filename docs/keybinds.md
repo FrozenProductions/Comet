@@ -12,34 +12,34 @@
 
 Keybinds allow you to:
 
--   Execute actions quickly without using the mouse
--   Customize shortcuts to match your preferences
--   Access all major features of the application efficiently
--   Improve your workflow speed
+- Execute actions quickly without using the mouse
+- Customize shortcuts to match your preferences
+- Access all major features of the application efficiently
+- Improve your workflow speed
 
 ## <div align="center">⌨️ Default Keybinds</div>
 
 ### Editor Actions
 
--   New Tab: `⌘ T`
--   Close Tab: `⌘ W`
--   Execute Script: `Enter`
+- New Tab: `⌘ T`
+- Close Tab: `⌘ W`
+- Execute Script: `Enter`
 
 ### Application
 
--   Toggle Zen Mode: `⌘ ⇧ K`
--   Command Palette: `⌘ P`
--   Open Roblox: `⌘ O`
--   Expand/Collapse Console: `⌘ J`
--   Show/Hide Console: `⌘ L`
+- Toggle Zen Mode: `⌘ ⇧ K`
+- Command Palette: `⌘ P`
+- Open Roblox: `⌘ O`
+- Expand/Collapse Console: `⌘ J`
+- Show/Hide Console: `⌘ L`
 
 ### Screen Navigation
 
--   Open Settings: `⌘ ,`
--   Switch to Editor: `⌘ ⇧ E`
--   Switch to Fast Flags: `⌘ ⇧ F`
--   Switch to Library: `⌘ ⇧ L`
--   Switch to Auto Execution: `⌘ ⇧ A`
+- Open Settings: `⌘ ,`
+- Switch to Editor: `⌘ ⇧ E`
+- Switch to Fast Flags: `⌘ ⇧ F`
+- Switch to Library: `⌘ ⇧ L`
+- Switch to Auto Execution: `⌘ ⇧ A`
 
 ## <div align="center">🛠️ Customizing Keybinds</div>
 
@@ -73,6 +73,6 @@ To customize a keybind:
 
 ## <div align="center">💡 Tips</div>
 
--   Choose intuitive combinations that are easy to remember
--   Avoid conflicts with system shortcuts
--   Consider your workflow when customizing keybinds
+- Choose intuitive combinations that are easy to remember
+- Avoid conflicts with system shortcuts
+- Consider your workflow when customizing keybinds

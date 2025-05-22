@@ -12,10 +12,10 @@
 
 Workspaces allow you to:
 
--   Create separate environments for different types of scripts
--   Maintain multiple sets of tabs independently
--   Better organize your development workflow
--   Switch between different script collections easily
+- Create separate environments for different types of scripts
+- Maintain multiple sets of tabs independently
+- Better organize your development workflow
+- Switch between different script collections easily
 
 ## <div align="center">🚀 Creating a New Workspace</div>
 
@@ -33,7 +33,7 @@ Follow these steps to create and use a new workspace:
 2. **Create Workspace**
 
     - Click the "New workspace" button
-    - Enter your desired workspace name
+    - Enter your desired workspace name (max 24 characters)
     - Press Enter to confirm
 
 3. **Switch to New Workspace**
@@ -41,16 +41,34 @@ Follow these steps to create and use a new workspace:
     - Click on your newly created workspace
     - You're now in a fresh tab environment!
 
+## <div align="center">⚙️ Managing Workspaces</div>
+
+### Renaming Workspaces
+
+1. **Access Rename Mode**
+    - Hover over a workspace in the selector dropdown
+    - Click the pencil (edit) icon that appears
+    - Enter the new name (max 24 characters)
+    - Press Enter to save or Escape to cancel
+
+### Deleting Workspaces
+
+1. **Remove Workspace**
+    - Hover over a workspace in the selector dropdown
+    - Click the trash icon that appears
+    - Confirm the deletion in the modal
+    - Note: You cannot delete the active workspace
+
 ## <div align="center">💡 Tips</div>
 
--   Each workspace maintains its own separate set of tabs
--   Use descriptive names for your workspaces (e.g., "Combat Scripts", "Farming Scripts")
--   You can easily switch between workspaces using the selector
--   Perfect for organizing scripts by category or project
+- Each workspace maintains its own separate set of tabs
+- Use descriptive names for your workspaces (e.g., "Combat Scripts", "Farming Scripts")
+- You can easily switch between workspaces using the selector
+- Perfect for organizing scripts by category or project
 
 ## <div align="center">📝 Notes</div>
 
--   Workspaces are saved automatically
--   Each workspace has its own independent tab state
--   You can create as many workspaces as needed
--   Switching workspaces preserves the state of your tabs
+- Workspaces are saved automatically
+- Each workspace has its own independent tab state
+- You can create as many workspaces as needed
+- Switching workspaces preserves the state of your tabs

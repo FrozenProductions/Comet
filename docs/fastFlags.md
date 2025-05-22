@@ -11,10 +11,10 @@
 
 Fast Flags Manager allows you to:
 
--   Create and manage multiple Fast Flags profiles
--   Switch between different configurations easily
--   Fine-tune Roblox settings for optimal performance
--   Choose between easy and advanced management modes
+- Create and manage multiple Fast Flags profiles
+- Switch between different configurations easily
+- Fine-tune Roblox settings for optimal performance
+- Choose between easy and advanced management modes
 
 ## <div align="center">📋 Profiles</div>
 
@@ -36,32 +36,32 @@ Fast Flags Manager allows you to:
 
 ### Managing Profiles
 
--   **Activate Profile**
+- **Activate Profile**
 
-    -   Hover over the desired profile
-    -   Click the checkmark button to "Set Active"
-    -   Active profile will be highlighted in white-light gray
+    - Hover over the desired profile
+    - Click the checkmark button to "Set Active"
+    - Active profile will be highlighted in white-light gray
 
--   **Profile Examples**
-    -   FPS Boost: Optimize flags for better performance
-    -   Desync Fix: Adjust flags to improve synchronization
-    -   Custom configurations for specific games
+- **Profile Examples**
+    - FPS Boost: Optimize flags for better performance
+    - Desync Fix: Adjust flags to improve synchronization
+    - Custom configurations for specific games
 
 ## <div align="center">⚙️ Management Modes</div>
 
 ### Easy Mode
 
--   Simplified interface for common settings
--   Pre-configured inputs for default Fast Flags
--   Recommended for beginners
--   Quick access to essential optimizations
+- Simplified interface for common settings
+- Pre-configured inputs for default Fast Flags
+- Recommended for beginners
+- Quick access to essential optimizations
 
 ### Advanced Mode
 
--   Full control over Fast Flags configuration
--   Ability to add, edit, and delete flags
--   Complete customization options
--   Recommended for experienced users
+- Full control over Fast Flags configuration
+- Ability to add, edit, and delete flags
+- Complete customization options
+- Recommended for experienced users
 
 ## <div align="center">🛠️ Top Bar Controls</div>
 
@@ -71,16 +71,16 @@ Fast Flags Manager allows you to:
 
 Located in the top-right corner:
 
--   **Gear Button**: Switch between Easy/Advanced modes
--   **Folder Button**: Open Fast Flags config file directory
+- **Gear Button**: Switch between Easy/Advanced modes
+- **Folder Button**: Open Fast Flags config file directory
 
 ## <div align="center">💡 Tips</div>
 
--   Create separate profiles for different games
--   Test configurations in less risky environments first
--   Keep track of which flags work best for specific scenarios
+- Create separate profiles for different games
+- Test configurations in less risky environments first
+- Keep track of which flags work best for specific scenarios
 
 ## <div align="center">⚠️ Important Notes</div>
 
--   Certain configurations could trigger games anti-cheat systems
--   Always research the impact of flags before using them
+- Certain configurations could trigger games anti-cheat systems
+- Always research the impact of flags before using them
