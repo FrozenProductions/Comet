@@ -30,6 +30,7 @@ import {
     KEYBIND_CATEGORY_MAPPING,
 } from "../../constants/keybinds";
 import { invoke } from "@tauri-apps/api/tauri";
+import { TechStackItem } from "./techStackItem";
 
 const getKeybindTitle = (action: KeybindAction): string => {
     switch (action) {
@@ -730,126 +731,43 @@ export const Settings: FC = () => {
                                 description="Core technologies powering Comet"
                             >
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                    <a
+                                    <TechStackItem
+                                        name="Tauri"
+                                        description="Build fast and secure desktop apps with native performance"
                                         href="https://tauri.app"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
-                                    >
-                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
-                                            <img
-                                                src="/assets/tauri.svg"
-                                                className="h-5 w-5 transition-transform group-hover:scale-110"
-                                                alt="Tauri"
-                                            />
-                                            Tauri
-                                        </div>
-                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
-                                            Build fast and secure desktop apps
-                                            with native performance
-                                        </div>
-                                    </a>
-
-                                    <a
+                                        icon="/assets/tauri.svg"
+                                    />
+                                    <TechStackItem
+                                        name="React"
+                                        description="Create dynamic user interfaces with component-based architecture"
                                         href="https://react.dev"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
-                                    >
-                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
-                                            <img
-                                                src="/assets/react.svg"
-                                                className="h-5 w-5 transition-transform group-hover:scale-110"
-                                                alt="React"
-                                            />
-                                            React
-                                        </div>
-                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
-                                            Create dynamic user interfaces with
-                                            component-based architecture
-                                        </div>
-                                    </a>
-
-                                    <a
+                                        icon="/assets/react.svg"
+                                    />
+                                    <TechStackItem
+                                        name="Vite"
+                                        description="Modern build tool with lightning-fast hot module replacement"
                                         href="https://vitejs.dev"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
-                                    >
-                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
-                                            <img
-                                                src="/assets/vite.svg"
-                                                className="h-5 w-5 transition-transform group-hover:scale-110"
-                                                alt="Vite"
-                                            />
-                                            Vite
-                                        </div>
-                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
-                                            Modern build tool with
-                                            lightning-fast hot module
-                                            replacement
-                                        </div>
-                                    </a>
-
-                                    <a
+                                        icon="/assets/vite.svg"
+                                    />
+                                    <TechStackItem
+                                        name="TailwindCSS"
+                                        description="Utility-first CSS framework for rapid and flexible styling"
                                         href="https://tailwindcss.com"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
-                                    >
-                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
-                                            <img
-                                                src="/assets/tailwind.svg"
-                                                className="h-5 w-5 transition-transform group-hover:scale-110"
-                                                alt="TailwindCSS"
-                                            />
-                                            TailwindCSS
-                                        </div>
-                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
-                                            Utility-first CSS framework for
-                                            rapid and flexible styling
-                                        </div>
-                                    </a>
-
-                                    <a
+                                        icon="/assets/tailwind.svg"
+                                    />
+                                    <TechStackItem
+                                        name="Framer Motion"
+                                        description="Production-ready library for smooth animations and gestures"
                                         href="https://www.framer.com"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
-                                    >
-                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
-                                            <img
-                                                src="/assets/framer.svg"
-                                                className="h-5 w-5 invert transition-transform group-hover:scale-110"
-                                                alt="Framer Motion"
-                                            />
-                                            Framer Motion
-                                        </div>
-                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
-                                            Production-ready library for smooth
-                                            animations and gestures
-                                        </div>
-                                    </a>
-
-                                    <a
+                                        icon="/assets/framer.svg"
+                                        invertIcon
+                                    />
+                                    <TechStackItem
+                                        name="Lucide Icons"
+                                        description="Beautiful and consistent icon system with over 1000 icons"
                                         href="https://lucide.dev"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group rounded-lg bg-ctp-surface0/50 p-4 transition-colors hover:bg-ctp-surface0/70"
-                                    >
-                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ctp-text">
-                                            <img
-                                                src="/assets/lucide.svg"
-                                                className="h-5 w-5 transition-transform group-hover:scale-110"
-                                                alt="Lucide Icons"
-                                            />
-                                            Lucide Icons
-                                        </div>
-                                        <div className="select-none text-xs leading-relaxed text-ctp-subtext0">
-                                            Beautiful and consistent icon system
-                                            with over 1000 icons
-                                        </div>
-                                    </a>
+                                        icon="/assets/lucide.svg"
+                                    />
                                 </div>
                             </SettingGroup>
 

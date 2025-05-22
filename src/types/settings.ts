@@ -40,3 +40,11 @@ export interface EditorSettings {
 }
 
 export type SettingsKey = keyof EditorSettings;
+
+export interface TechStackItemProps {
+    name: string;
+    description: string;
+    href: string;
+    icon: string;
+    invertIcon?: boolean;
+}
