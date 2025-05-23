@@ -20,7 +20,10 @@ export const UpdateChecker: FC = () => {
             try {
                 const newVersion = await invoke<string | null>(
                     "check_for_updates",
-                    { checkNightly: settings.interface.nightlyReleases },
+                    {
+                        checkNightly:
+                            settings.interface.nightlyReleases ?? false,
+                    },
                 );
 
                 if (newVersion && !isUpdating) {

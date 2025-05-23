@@ -54,5 +54,6 @@ export const DEFAULT_EDITOR_SETTINGS = {
         zenMode: false,
         showTabBar: false,
         showConsole: true,
+        nightlyReleases: false,
     },
 } as const;
