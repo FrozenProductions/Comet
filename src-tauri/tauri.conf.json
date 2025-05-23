@@ -28,13 +28,10 @@
                 "open": true
             },
             "fs": {
-                "all": false,
-                "readFile": true,
-                "writeFile": true,
-                "readDir": true,
-                "createDir": true,
+                "all": true,
                 "scope": [
-                    "/Applications/Roblox.app/Contents/MacOS/ClientSettings/*"
+                    "/Applications/Roblox.app/Contents/MacOS/ClientSettings/*",
+                    "$HOME/**"
                 ]
             },
             "dialog": {
@@ -83,7 +80,8 @@
                 "width": 1200,
                 "minHeight": 600,
                 "minWidth": 800,
-                "title": "Comet"
+                "title": "Comet",
+                "fileDropEnabled": false
             }
         ]
     }
