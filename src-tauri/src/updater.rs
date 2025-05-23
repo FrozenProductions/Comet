@@ -7,7 +7,7 @@ use dirs;
 use tauri::Manager;
 use std::io::Write;
 
-const CURRENT_VERSION: &str = "1.0.3";
+const CURRENT_VERSION: &str = "1.0.4-dp.1";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
 const DOWNLOAD_URL: &str = "https://github.com/FrozenProductions/Comet/releases/download";
 const APP_PATH: &str = "/Applications/Comet.app";
