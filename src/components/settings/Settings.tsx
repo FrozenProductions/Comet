@@ -15,6 +15,16 @@ import {
     AlertTriangle,
     Download,
     RefreshCw,
+    Monitor,
+    Type,
+    MousePointer2,
+    Sparkles,
+    LayoutGrid,
+    Palette,
+    Box,
+    Wrench,
+    Layers,
+    Users,
 } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { Slider } from "../ui/slider";
@@ -82,10 +92,15 @@ const KeybindSection: FC<{
     <div className="space-y-4 rounded-xl bg-ctp-mantle p-4">
         <div className="flex items-start justify-between border-b border-ctp-surface0 pb-2">
             <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium text-ctp-text">
-                    {category}
+                <div className="flex items-center gap-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-accent/10">
+                        <Keyboard size={14} className="text-accent" />
+                    </div>
+                    <div className="text-sm font-medium text-ctp-text">
+                        {category}
+                    </div>
                 </div>
-                <div className="select-none text-xs text-ctp-subtext0">
+                <div className="mt-1.5 select-none text-xs text-ctp-subtext0">
                     {category} keyboard shortcuts
                 </div>
             </div>
@@ -161,16 +176,24 @@ export const Settings: FC = () => {
         title: string;
         description?: string;
         info?: string;
+        icon?: React.ReactNode;
         children: React.ReactNode;
-    }> = ({ title, description, children }) => (
+    }> = ({ title, description, icon, children }) => (
         <div className="space-y-4 rounded-xl bg-ctp-mantle p-4">
             <div className="flex items-start justify-between border-b border-ctp-surface0 pb-2">
                 <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-medium text-ctp-text">
-                        {title}
+                    <div className="flex items-center gap-2">
+                        {icon && (
+                            <div className="flex h-6 w-6 items-center justify-center rounded bg-accent/10">
+                                {icon}
+                            </div>
+                        )}
+                        <div className="text-sm font-medium text-ctp-text">
+                            {title}
+                        </div>
                     </div>
                     {description && (
-                        <div className="select-none text-xs text-ctp-subtext0">
+                        <div className="mt-1.5 select-none text-xs text-ctp-subtext0">
                             {description}
                         </div>
                     )}
@@ -229,7 +252,12 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Display"
                                 description="Visual editor preferences"
-                                info="These settings affect how code is displayed in the editor"
+                                icon={
+                                    <Monitor
+                                        size={14}
+                                        className="text-accent"
+                                    />
+                                }
                             >
                                 <Checkbox
                                     checked={settings.display.showLineNumbers}
@@ -265,7 +293,9 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Text"
                                 description="Font and spacing preferences"
-                                info="Customize how text appears in the editor"
+                                icon={
+                                    <Type size={14} className="text-accent" />
+                                }
                             >
                                 <Slider
                                     value={settings.text.fontSize}
@@ -318,7 +348,12 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Cursor"
                                 description="Cursor appearance and behavior"
-                                info="Customize how the cursor looks and behaves"
+                                icon={
+                                    <MousePointer2
+                                        size={14}
+                                        className="text-accent"
+                                    />
+                                }
                             >
                                 <RadioGroup
                                     value={settings.cursor.style}
@@ -381,7 +416,12 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="IntelliSense"
                                 description="Code completion and suggestions"
-                                info="Configure how code suggestions appear in the editor"
+                                icon={
+                                    <Sparkles
+                                        size={14}
+                                        className="text-accent"
+                                    />
+                                }
                             >
                                 <Checkbox
                                     checked={settings.intellisense.enabled}
@@ -459,6 +499,12 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Layout"
                                 description="Interface layout preferences"
+                                icon={
+                                    <LayoutGrid
+                                        size={14}
+                                        className="text-accent"
+                                    />
+                                }
                             >
                                 <Checkbox
                                     checked={settings.interface.zenMode}
@@ -486,6 +532,12 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Appearance"
                                 description="Visual interface preferences"
+                                icon={
+                                    <Palette
+                                        size={14}
+                                        className="text-accent"
+                                    />
+                                }
                             >
                                 <Checkbox
                                     checked={settings.interface.showTabBar}
@@ -589,6 +641,7 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Application"
                                 description="Application details"
+                                icon={<Box size={14} className="text-accent" />}
                             >
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
@@ -911,6 +964,9 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Actions"
                                 description="Application management actions"
+                                icon={
+                                    <Wrench size={14} className="text-accent" />
+                                }
                             >
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
@@ -1008,6 +1064,9 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Technology Stack"
                                 description="Core technologies powering Comet"
+                                icon={
+                                    <Layers size={14} className="text-accent" />
+                                }
                             >
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <TechStackItem
@@ -1053,6 +1112,9 @@ export const Settings: FC = () => {
                             <SettingGroup
                                 title="Credits"
                                 description="Project contributors"
+                                icon={
+                                    <Users size={14} className="text-accent" />
+                                }
                             >
                                 <div className="rounded-lg bg-ctp-surface0/50 p-4">
                                     <div className="space-y-4">

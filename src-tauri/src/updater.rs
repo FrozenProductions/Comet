@@ -48,7 +48,7 @@ pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, St
 
     let current = Version::parse(CURRENT_VERSION).unwrap();
     let stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
-
+    
     if stable > current {
         return Ok(Some(status.version));
     }
@@ -56,7 +56,7 @@ pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, St
     if check_nightly {
         if let Some(prerelease) = status.prerelease {
             let latest = Version::parse(&prerelease).map_err(|e| e.to_string())?;
-    if latest > current {
+            if latest > current {
                 return Ok(Some(prerelease));
             }
         }
