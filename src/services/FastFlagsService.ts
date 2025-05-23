@@ -19,7 +19,7 @@ export class FastFlagsService {
     }
 
     private static serializeFlags(
-        flags: Record<string, any>
+        flags: Record<string, any>,
     ): Record<string, any> {
         const serialized: Record<string, any> = {};
         for (const [key, value] of Object.entries(flags)) {
@@ -46,13 +46,13 @@ export class FastFlagsService {
     }
 
     static async saveFlags(
-        flags: Record<string, any>
+        flags: Record<string, any>,
     ): Promise<FastFlagsResponse> {
         try {
             const serializedFlags = this.serializeFlags(flags);
             const response = await invoke<FastFlagsResponse>(
                 "save_fast_flags",
-                { flags: serializedFlags }
+                { flags: serializedFlags },
             );
             return response;
         } catch (error) {

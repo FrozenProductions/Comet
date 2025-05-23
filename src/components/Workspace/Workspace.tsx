@@ -6,6 +6,7 @@ import { RobloxConsole } from "../robloxConsole";
 import { useConsole } from "../../hooks/useConsole";
 import { useKeybinds } from "../../hooks/useKeybinds";
 import { useEditor } from "../../hooks/useEditor";
+import { DropZone } from "./dropZone";
 
 export const Workspace: FC = () => {
     const {
@@ -86,6 +87,7 @@ export const Workspace: FC = () => {
                         </div>
                     )}
                 </div>
+                <DropZone className="z-50" />
                 {!isFloating && (
                     <div className="absolute inset-x-0 bottom-0 z-[100]">
                         {renderConsole()}
