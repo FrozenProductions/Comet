@@ -12,6 +12,9 @@ import {
     Settings2,
     RotateCcw,
     Folder,
+    AlertTriangle,
+    Download,
+    RefreshCw,
 } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { Slider } from "../ui/slider";
@@ -129,6 +132,17 @@ export const Settings: FC = () => {
     const [editingKeybind, setEditingKeybind] = useState<Keybind | null>(null);
     const [showZenModeConfirm, setShowZenModeConfirm] = useState(false);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [updateCheck, setUpdateCheck] = useState<{
+        loading: boolean;
+        version: string | null;
+        isNightly: boolean;
+        hasChecked: boolean;
+    }>({
+        loading: false,
+        version: null,
+        isNightly: false,
+        hasChecked: false,
+    });
 
     const handleSliderChange = useCallback(
         (key: SettingsKey, subKey: string, value: number) => {
@@ -576,10 +590,10 @@ export const Settings: FC = () => {
                                 title="Application"
                                 description="Application details"
                             >
-                                <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
-                                    <div>
-                                        <div className="space-y-1">
-                                            <div>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
+                                        <div>
+                                            <div className="space-y-1">
                                                 <div className="text-sm font-medium text-ctp-text">
                                                     Version
                                                 </div>
@@ -588,42 +602,293 @@ export const Settings: FC = () => {
                                                 </div>
                                             </div>
                                         </div>
+                                        <div className="flex items-center gap-2">
+                                            <a
+                                                href="https://github.com/FrozenProductions/Comet"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+                                            >
+                                                <Github
+                                                    size={12}
+                                                    className="stroke-[2.5]"
+                                                />
+                                                GitHub
+                                            </a>
+                                            <button
+                                                disabled
+                                                className="flex cursor-not-allowed items-center gap-1.5 rounded-md bg-accent/50 px-3 py-1.5 text-xs font-medium text-ctp-base/70"
+                                            >
+                                                <Globe
+                                                    size={12}
+                                                    className="stroke-[2.5]"
+                                                />
+                                                Website
+                                            </button>
+                                            <a
+                                                href="https://github.com/FrozenProductions/Comet/blob/main/docs/documentation.md"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+                                            >
+                                                <Book
+                                                    size={12}
+                                                    className="stroke-[2.5]"
+                                                />
+                                                Docs
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <a
-                                            href="https://github.com/FrozenProductions/Comet"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
-                                        >
-                                            <Github
-                                                size={12}
-                                                className="stroke-[2.5]"
-                                            />
-                                            GitHub
-                                        </a>
-                                        <button
-                                            disabled
-                                            className="flex cursor-not-allowed items-center gap-1.5 rounded-md bg-accent/50 px-3 py-1.5 text-xs font-medium text-ctp-base/70"
-                                        >
-                                            <Globe
-                                                size={12}
-                                                className="stroke-[2.5]"
-                                            />
-                                            Website
-                                        </button>
-                                        <a
-                                            href="https://github.com/FrozenProductions/Comet/blob/main/docs/documentation.md"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
-                                        >
-                                            <Book
-                                                size={12}
-                                                className="stroke-[2.5]"
-                                            />
-                                            Docs
-                                        </a>
+
+                                    <div className="flex flex-col gap-4 rounded-lg bg-ctp-surface0/50 p-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="space-y-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="flex h-6 w-6 items-center justify-center rounded bg-accent/10">
+                                                        <RefreshCw
+                                                            size={14}
+                                                            className="text-accent"
+                                                        />
+                                                    </div>
+                                                    <div className="text-sm font-medium text-ctp-text">
+                                                        Software Update
+                                                    </div>
+                                                </div>
+                                                <div className="select-none text-xs text-ctp-subtext0">
+                                                    Check if a new version of
+                                                    Comet is available
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        setUpdateCheck(
+                                                            (prev) => ({
+                                                                ...prev,
+                                                                loading: true,
+                                                                hasChecked:
+                                                                    true,
+                                                            }),
+                                                        );
+                                                        const newVersion =
+                                                            await invoke<
+                                                                string | null
+                                                            >(
+                                                                "check_for_updates",
+                                                                {
+                                                                    checkNightly:
+                                                                        settings
+                                                                            .interface
+                                                                            .nightlyReleases ??
+                                                                        false,
+                                                                },
+                                                            );
+
+                                                        if (newVersion) {
+                                                            const isNightly =
+                                                                newVersion.includes(
+                                                                    "-",
+                                                                );
+                                                            setUpdateCheck({
+                                                                loading: false,
+                                                                version:
+                                                                    newVersion,
+                                                                isNightly,
+                                                                hasChecked:
+                                                                    true,
+                                                            });
+                                                        } else {
+                                                            setUpdateCheck({
+                                                                loading: false,
+                                                                version: null,
+                                                                isNightly:
+                                                                    false,
+                                                                hasChecked:
+                                                                    true,
+                                                            });
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(
+                                                            "Failed to check for updates:",
+                                                            error,
+                                                        );
+                                                        setUpdateCheck({
+                                                            loading: false,
+                                                            version: null,
+                                                            isNightly: false,
+                                                            hasChecked: true,
+                                                        });
+                                                        toast.error(
+                                                            "Failed to check for updates",
+                                                        );
+                                                    }
+                                                }}
+                                                disabled={updateCheck.loading}
+                                                className="flex items-center gap-1.5 rounded-md border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-ctp-text transition-all hover:border-accent/20 hover:bg-accent/5 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                <RefreshCw
+                                                    size={12}
+                                                    className={`stroke-[2.5] transition-transform ${updateCheck.loading ? "animate-spin" : ""}`}
+                                                />
+                                                {updateCheck.loading
+                                                    ? "Checking..."
+                                                    : "Check for Updates"}
+                                            </button>
+                                        </div>
+
+                                        <AnimatePresence mode="wait">
+                                            {updateCheck.hasChecked &&
+                                                !updateCheck.loading && (
+                                                    <motion.div
+                                                        initial={{
+                                                            opacity: 0,
+                                                            y: -10,
+                                                        }}
+                                                        animate={{
+                                                            opacity: 1,
+                                                            y: 0,
+                                                        }}
+                                                        exit={{
+                                                            opacity: 0,
+                                                            y: 10,
+                                                        }}
+                                                        transition={{
+                                                            duration: 0.2,
+                                                        }}
+                                                        className={`relative overflow-hidden rounded-md border px-4 py-3 ${
+                                                            updateCheck.version
+                                                                ? updateCheck.isNightly
+                                                                    ? "border-ctp-red/20 bg-gradient-to-r from-ctp-red/5 to-transparent"
+                                                                    : "border-accent/20 bg-gradient-to-r from-accent/5 to-transparent"
+                                                                : "border-ctp-green/20 bg-gradient-to-r from-ctp-green/5 to-transparent"
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-start gap-3">
+                                                            <div
+                                                                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+                                                                    updateCheck.version
+                                                                        ? updateCheck.isNightly
+                                                                            ? "bg-ctp-red/10"
+                                                                            : "bg-accent/10"
+                                                                        : "bg-ctp-green/10"
+                                                                }`}
+                                                            >
+                                                                {updateCheck.version ? (
+                                                                    updateCheck.isNightly ? (
+                                                                        <AlertTriangle
+                                                                            size={
+                                                                                12
+                                                                            }
+                                                                            className="text-ctp-red"
+                                                                        />
+                                                                    ) : (
+                                                                        <Download
+                                                                            size={
+                                                                                12
+                                                                            }
+                                                                            className="text-accent"
+                                                                        />
+                                                                    )
+                                                                ) : (
+                                                                    <div className="h-2 w-2 rounded-full bg-ctp-green" />
+                                                                )}
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <div className="flex items-center gap-2">
+                                                                    <div
+                                                                        className={`font-medium ${updateCheck.version ? (updateCheck.isNightly ? "text-ctp-red" : "text-accent") : ""}`}
+                                                                    >
+                                                                        {updateCheck.version ? (
+                                                                            <>
+                                                                                {updateCheck.isNightly
+                                                                                    ? "Preview"
+                                                                                    : "Update"}{" "}
+                                                                                {
+                                                                                    updateCheck.version
+                                                                                }{" "}
+                                                                                available
+                                                                            </>
+                                                                        ) : (
+                                                                            "You're up to date!"
+                                                                        )}
+                                                                    </div>
+                                                                    {updateCheck.version && (
+                                                                        <div
+                                                                            className={`inline-flex h-4 items-center rounded-full px-1.5 text-[10px] font-medium uppercase leading-none tracking-wide ${updateCheck.isNightly ? "bg-ctp-red/10 text-ctp-red" : "bg-accent/10 text-accent"}`}
+                                                                        >
+                                                                            {updateCheck.isNightly
+                                                                                ? "Preview"
+                                                                                : "Stable"}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="text-xs text-ctp-subtext0">
+                                                                    {updateCheck.version
+                                                                        ? updateCheck.isNightly
+                                                                            ? "Development preview build • May contain bugs"
+                                                                            : "Stable public release • Recommended update"
+                                                                        : "Comet is running the latest version"}
+                                                                </div>
+                                                                {updateCheck.version && (
+                                                                    <motion.div
+                                                                        initial={{
+                                                                            opacity: 0,
+                                                                            y: -10,
+                                                                        }}
+                                                                        animate={{
+                                                                            opacity: 1,
+                                                                            y: 0,
+                                                                        }}
+                                                                        transition={{
+                                                                            delay: 0.1,
+                                                                        }}
+                                                                    >
+                                                                        <button
+                                                                            onClick={async () => {
+                                                                                try {
+                                                                                    await invoke(
+                                                                                        "download_and_install_update",
+                                                                                    );
+                                                                                } catch (error) {
+                                                                                    toast.error(
+                                                                                        "Failed to update Comet",
+                                                                                    );
+                                                                                    console.error(
+                                                                                        "Failed to update:",
+                                                                                        error,
+                                                                                    );
+                                                                                }
+                                                                            }}
+                                                                            className={`mt-2 flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all ${
+                                                                                updateCheck.isNightly
+                                                                                    ? "bg-ctp-red/10 text-ctp-red hover:bg-ctp-red/20"
+                                                                                    : "bg-accent/10 text-accent hover:bg-accent/20"
+                                                                            }`}
+                                                                        >
+                                                                            <div
+                                                                                className={`flex h-[18px] w-[18px] items-center justify-center rounded ${
+                                                                                    updateCheck.isNightly
+                                                                                        ? "bg-ctp-red/10"
+                                                                                        : "bg-accent/10"
+                                                                                }`}
+                                                                            >
+                                                                                <Download
+                                                                                    size={
+                                                                                        12
+                                                                                    }
+                                                                                    className="stroke-[2.5]"
+                                                                                />
+                                                                            </div>
+                                                                            Install
+                                                                            Update
+                                                                        </button>
+                                                                    </motion.div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                        </AnimatePresence>
                                     </div>
                                 </div>
                                 <Checkbox
