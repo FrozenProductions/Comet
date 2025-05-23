@@ -85,8 +85,8 @@ if [ -d "/Applications/Comet.app" ]; then
 fi
 
 if sudo /usr/bin/ditto -rsrc "$MOUNT_POINT/Comet.app" "/Applications/Comet.app"; then
-    sudo chown -R root:wheel "/Applications/Comet.app"
-    sudo chmod -R 755 "/Applications/Comet.app"
+    sudo chown -R $(whoami):staff "/Applications/Comet.app"
+    sudo chmod -R 777 "/Applications/Comet.app"
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/Comet.app
     echo -e "${GREEN}✓ Comet has been installed successfully!${NC}"
 else
