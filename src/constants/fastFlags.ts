@@ -138,18 +138,6 @@ export const FAST_FLAG_CATEGORIES: readonly FastFlagCategory[] = [
                     },
                 },
             },
-            {
-                key: "PlayerShadows",
-                label: "Player Shadows",
-                description:
-                    "Toggle player shadows. Disabling shadows can improve performance.",
-                type: "checkbox",
-                defaultValue: true,
-                relatedFlags: {
-                    FIntRenderShadowIntensity: (value: boolean) =>
-                        value ? "100" : "0",
-                },
-            },
         ],
     },
     {

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { FastFlagsProfile } from "../../types/fastFlags";
+import { FastFlagManagerProps } from "../../types/fastFlags";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
@@ -16,14 +16,6 @@ import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Modal } from "../ui/modal";
 import { invoke } from "@tauri-apps/api/tauri";
-
-interface FastFlagManagerProps {
-    profile: FastFlagsProfile;
-    onUpdateFlag: (key: string, value: string | null) => Promise<void>;
-    invalidFlags: string[];
-    validationError?: string | null;
-    validateSelectedProfileFlags: () => Promise<void>;
-}
 
 export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     profile,
@@ -99,11 +91,17 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
         setEditValue(String(value));
     };
 
+    const handleValidateFlags = async () => {
+        if (validateSelectedProfileFlags) {
+            await validateSelectedProfileFlags();
+        }
+    };
+
     const handleRefresh = async () => {
         setIsRefreshing(true);
         try {
             await invoke("refresh_flag_validation_cache");
-            await validateSelectedProfileFlags();
+            await handleValidateFlags();
         } catch (error) {
             console.error("Failed to refresh flags:", error);
         } finally {

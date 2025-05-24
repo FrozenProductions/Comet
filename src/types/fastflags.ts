@@ -6,7 +6,9 @@ export interface FastFlag {
 export interface FastFlagsProfile {
     id: string;
     name: string;
-    flags: Record<string, any>;
+    flags: Record<string, string>;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface FastFlagsState {
@@ -42,4 +44,30 @@ export interface FastFlagCategory {
     label: string;
     description?: string;
     flags: FastFlagDefinition[];
+}
+
+export type LightingTechnology = "default" | "voxel" | "shadowmap" | "future";
+export type RenderingAPI = "default" | "metal" | "vulkan" | "opengl";
+export type HyperThreading = "default" | "enabled";
+export type GraySky = "default" | "enabled";
+export type TelemetryMode = "default" | "disabled";
+
+export type NonDefaultLightingTechnology = Exclude<
+    LightingTechnology,
+    "default"
+>;
+export type NonDefaultRenderingAPI = Exclude<RenderingAPI, "default">;
+export type NonDefaultHyperThreading = Exclude<HyperThreading, "default">;
+export type NonDefaultGraySky = Exclude<GraySky, "default">;
+export type NonDefaultTelemetryMode = Exclude<TelemetryMode, "default">;
+
+export interface FastFlagManagerProps {
+    profile: FastFlagsProfile;
+    onUpdateFlag: (
+        keyOrUpdates: string | Record<string, string | null>,
+        value?: string | null,
+    ) => Promise<void>;
+    invalidFlags: string[];
+    validationError?: string | null;
+    validateSelectedProfileFlags?: () => Promise<void>;
 }

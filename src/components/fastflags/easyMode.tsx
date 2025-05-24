@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FastFlagsProfile } from "../../types/fastFlags";
 import { FAST_FLAG_CATEGORIES } from "../../constants/fastFlags";
 import { Slider } from "../ui/slider";
 import { RadioGroup } from "../ui/radioGroup";
@@ -15,25 +14,15 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
-import { Checkbox } from "../ui/checkbox";
-
-type LightingTechnology = "default" | "voxel" | "shadowmap" | "future";
-type RenderingAPI = "default" | "metal" | "vulkan" | "opengl";
-type HyperThreading = "default" | "enabled";
-type GraySky = "default" | "enabled";
-type TelemetryMode = "default" | "disabled";
-type NonDefaultLightingTechnology = Exclude<LightingTechnology, "default">;
-type NonDefaultRenderingAPI = Exclude<RenderingAPI, "default">;
-type NonDefaultHyperThreading = Exclude<HyperThreading, "default">;
-type NonDefaultGraySky = Exclude<GraySky, "default">;
-type NonDefaultTelemetryMode = Exclude<TelemetryMode, "default">;
-
-interface FastFlagManagerProps {
-    profile: FastFlagsProfile;
-    onUpdateFlag: (key: string, value: string | null) => Promise<void>;
-    invalidFlags: string[];
-    validationError?: string | null;
-}
+import {
+    LightingTechnology,
+    RenderingAPI,
+    HyperThreading,
+    GraySky,
+    TelemetryMode,
+    FastFlagManagerProps,
+    FastFlagDefinition,
+} from "../../types/fastFlags";
 
 export const EasyMode: React.FC<FastFlagManagerProps> = ({
     profile,
@@ -41,226 +30,41 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 }) => {
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
-    const currentShadowIntensity =
-        !profile.flags.hasOwnProperty("FIntRenderShadowIntensity") ||
-        Number(profile.flags["FIntRenderShadowIntensity"]) > 0;
-
-    const handleSliderChange = async (key: string, value: number) => {
+    const handleFlagChange = async (flag: FastFlagDefinition, value: any) => {
         try {
-            setIsUpdating(key);
-            await onUpdateFlag(key, value.toString());
-            toast.success(`${key} updated`);
-        } catch (error) {
-            console.error(`Failed to update ${key}:`, error);
-            toast.error(`Failed to update ${key}`);
-        } finally {
-            setIsUpdating(null);
-        }
-    };
+            setIsUpdating(flag.key);
 
-    const handleLightingChange = async (value: LightingTechnology) => {
-        try {
-            const lightingFlag = FAST_FLAG_CATEGORIES[0].flags[1];
-            setIsUpdating(lightingFlag.key);
+            if (flag.relatedFlags) {
+                if (typeof flag.relatedFlags === "function") {
+                    await onUpdateFlag(flag.key, flag.relatedFlags(value));
+                } else {
+                    const updates: Record<string, string | null> = {};
 
-            if (lightingFlag.relatedFlags) {
-                const technologies = Object.keys(
-                    lightingFlag.relatedFlags,
-                ) as NonDefaultLightingTechnology[];
-                for (const tech of technologies) {
-                    for (const flag of Object.keys(
-                        lightingFlag.relatedFlags[tech],
-                    )) {
-                        await onUpdateFlag(flag, null);
+                    Object.values(flag.relatedFlags).forEach((flags) => {
+                        if (typeof flags === "object") {
+                            Object.keys(flags).forEach((key) => {
+                                updates[key] = null;
+                            });
+                        }
+                    });
+
+                    if (value !== "default" && flag.relatedFlags[value]) {
+                        const flags = flag.relatedFlags[value];
+                        Object.entries(flags).forEach(([key, val]) => {
+                            updates[key] = String(val);
+                        });
                     }
+
+                    await onUpdateFlag(updates);
                 }
-            }
-
-            if (
-                value !== "default" &&
-                lightingFlag.relatedFlags?.[
-                    value as NonDefaultLightingTechnology
-                ]
-            ) {
-                const flags =
-                    lightingFlag.relatedFlags[
-                        value as NonDefaultLightingTechnology
-                    ];
-                for (const [flag, flagValue] of Object.entries(flags)) {
-                    await onUpdateFlag(flag, String(flagValue));
-                }
-            }
-
-            toast.success("Lighting technology updated");
-        } catch (error) {
-            console.error("Failed to update lighting flags:", error);
-            toast.error("Failed to update lighting technology");
-        } finally {
-            setIsUpdating(null);
-        }
-    };
-
-    const handleRenderingAPIChange = async (value: RenderingAPI) => {
-        try {
-            const renderingFlag = FAST_FLAG_CATEGORIES[0].flags[2];
-            setIsUpdating(renderingFlag.key);
-
-            if (renderingFlag.relatedFlags) {
-                const apis = Object.keys(
-                    renderingFlag.relatedFlags,
-                ) as NonDefaultRenderingAPI[];
-                for (const api of apis) {
-                    for (const flag of Object.keys(
-                        renderingFlag.relatedFlags[api],
-                    )) {
-                        await onUpdateFlag(flag, null);
-                    }
-                }
-            }
-
-            if (
-                value !== "default" &&
-                renderingFlag.relatedFlags?.[value as NonDefaultRenderingAPI]
-            ) {
-                const flags =
-                    renderingFlag.relatedFlags[value as NonDefaultRenderingAPI];
-                for (const [flag, flagValue] of Object.entries(flags)) {
-                    await onUpdateFlag(flag, String(flagValue));
-                }
-            }
-
-            toast.success("Rendering API updated");
-        } catch (error) {
-            console.error("Failed to update rendering API flags:", error);
-            toast.error("Failed to update rendering API");
-        } finally {
-            setIsUpdating(null);
-        }
-    };
-
-    const handleHyperThreadingChange = async (value: HyperThreading) => {
-        try {
-            const threadingFlag = FAST_FLAG_CATEGORIES[1].flags[0];
-            setIsUpdating(threadingFlag.key);
-
-            if (threadingFlag.relatedFlags) {
-                const modes = Object.keys(
-                    threadingFlag.relatedFlags,
-                ) as NonDefaultHyperThreading[];
-                for (const mode of modes) {
-                    for (const flag of Object.keys(
-                        threadingFlag.relatedFlags[mode],
-                    )) {
-                        await onUpdateFlag(flag, null);
-                    }
-                }
-            }
-
-            if (
-                value !== "default" &&
-                threadingFlag.relatedFlags?.[value as NonDefaultHyperThreading]
-            ) {
-                const flags =
-                    threadingFlag.relatedFlags[
-                        value as NonDefaultHyperThreading
-                    ];
-                for (const [flag, flagValue] of Object.entries(flags)) {
-                    await onUpdateFlag(flag, String(flagValue));
-                }
-            }
-
-            toast.success("HyperThreading updated");
-        } catch (error) {
-            console.error("Failed to update threading flags:", error);
-            toast.error("Failed to update HyperThreading");
-        } finally {
-            setIsUpdating(null);
-        }
-    };
-
-    const handleThreadCountChange = async (key: string, value: number) => {
-        try {
-            const flag = FAST_FLAG_CATEGORIES[1].flags.find(
-                (f) => f.key === key,
-            );
-            if (!flag || !flag.relatedFlags) return;
-
-            setIsUpdating(key);
-
-            for (const [flagKey, flagValue] of Object.entries(
-                flag.relatedFlags,
-            )) {
-                await onUpdateFlag(
-                    flagKey,
-                    String(flagValue).replace("$value", String(value)),
-                );
+            } else {
+                await onUpdateFlag(flag.key, String(value));
             }
 
             toast.success(`${flag.label} updated`);
         } catch (error) {
-            console.error(`Failed to update ${key}:`, error);
-            toast.error(`Failed to update thread count`);
-        } finally {
-            setIsUpdating(null);
-        }
-    };
-
-    const handleGraySkyChange = async (value: GraySky) => {
-        try {
-            const graySkyFlag = FAST_FLAG_CATEGORIES[0].flags[3];
-            setIsUpdating(graySkyFlag.key);
-
-            if (graySkyFlag.relatedFlags) {
-                const modes = Object.keys(
-                    graySkyFlag.relatedFlags,
-                ) as NonDefaultGraySky[];
-                for (const mode of modes) {
-                    for (const flag of Object.keys(
-                        graySkyFlag.relatedFlags[mode],
-                    )) {
-                        await onUpdateFlag(flag, null);
-                    }
-                }
-            }
-
-            if (
-                value !== "default" &&
-                graySkyFlag.relatedFlags?.[value as NonDefaultGraySky]
-            ) {
-                const flags =
-                    graySkyFlag.relatedFlags[value as NonDefaultGraySky];
-                for (const [flag, flagValue] of Object.entries(flags)) {
-                    await onUpdateFlag(flag, String(flagValue));
-                }
-            }
-
-            toast.success("Gray sky setting updated");
-        } catch (error) {
-            console.error("Failed to update gray sky setting:", error);
-            toast.error("Failed to update gray sky");
-        } finally {
-            setIsUpdating(null);
-        }
-    };
-
-    const handleShadowToggle = async () => {
-        try {
-            const shadowFlag = FAST_FLAG_CATEGORIES[0].flags[4];
-            if (!shadowFlag.relatedFlags) return;
-
-            setIsUpdating(shadowFlag.key);
-
-            const newValue = !currentShadowIntensity;
-            if (newValue) {
-                await onUpdateFlag("FIntRenderShadowIntensity", null);
-            } else {
-                await onUpdateFlag("FIntRenderShadowIntensity", "0");
-            }
-
-            toast.success("Player shadows updated");
-        } catch (error) {
-            console.error("Failed to update player shadows:", error);
-            toast.error("Failed to update player shadows");
+            console.error(`Failed to update ${flag.key}:`, error);
+            toast.error(`Failed to update ${flag.label}`);
         } finally {
             setIsUpdating(null);
         }
@@ -275,52 +79,12 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     const lightingFlag = graphicsFlags[1];
     const renderingFlag = graphicsFlags[2];
     const graySkyFlag = graphicsFlags[3];
-    const shadowFlag = graphicsFlags[4];
     const hyperThreadingFlag = threadingFlags[0];
     const maxThreadsFlag = threadingFlags[1];
     const minThreadsFlag = threadingFlags[2];
     const telemetryFlag = telemetryFlags[0];
     const voiceChatMinDistanceFlag = voiceChatFlags[0];
     const voiceChatMaxDistanceFlag = voiceChatFlags[1];
-
-    const handleTelemetryChange = async (value: TelemetryMode) => {
-        try {
-            setIsUpdating(telemetryFlag.key);
-
-            if (telemetryFlag.relatedFlags) {
-                const modes = Object.keys(
-                    telemetryFlag.relatedFlags,
-                ) as NonDefaultTelemetryMode[];
-                for (const mode of modes) {
-                    for (const flag of Object.keys(
-                        telemetryFlag.relatedFlags[mode],
-                    )) {
-                        await onUpdateFlag(flag, null);
-                    }
-                }
-            }
-
-            if (
-                value !== "default" &&
-                telemetryFlag.relatedFlags?.[value as NonDefaultTelemetryMode]
-            ) {
-                const flags =
-                    telemetryFlag.relatedFlags[
-                        value as NonDefaultTelemetryMode
-                    ];
-                for (const [flag, flagValue] of Object.entries(flags)) {
-                    await onUpdateFlag(flag, String(flagValue));
-                }
-            }
-
-            toast.success("Telemetry settings updated");
-        } catch (error) {
-            console.error("Failed to update telemetry flags:", error);
-            toast.error("Failed to update telemetry settings");
-        } finally {
-            setIsUpdating(null);
-        }
-    };
 
     const currentFps = Number(
         profile.flags[fpsFlag.key] ?? fpsFlag.defaultValue,
@@ -333,85 +97,36 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
         profile.flags[Object.keys(minThreadsFlag.relatedFlags!)[0]] ??
             minThreadsFlag.defaultValue,
     );
-
-    let currentLighting: LightingTechnology = "default";
-    if (lightingFlag.relatedFlags) {
-        for (const [tech, flags] of Object.entries(lightingFlag.relatedFlags)) {
-            const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value,
-            );
-            if (hasAllFlags) {
-                currentLighting = tech as LightingTechnology;
-                break;
-            }
-        }
-    }
-
-    let currentRendering: RenderingAPI = "default";
-    if (renderingFlag.relatedFlags) {
-        for (const [api, flags] of Object.entries(renderingFlag.relatedFlags)) {
-            const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value,
-            );
-            if (hasAllFlags) {
-                currentRendering = api as RenderingAPI;
-                break;
-            }
-        }
-    }
-
-    let currentHyperThreading: HyperThreading = "default";
-    if (hyperThreadingFlag.relatedFlags) {
-        for (const [mode, flags] of Object.entries(
-            hyperThreadingFlag.relatedFlags,
-        )) {
-            const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value,
-            );
-            if (hasAllFlags) {
-                currentHyperThreading = mode as HyperThreading;
-                break;
-            }
-        }
-    }
-
-    let currentGraySky: GraySky = "default";
-    if (graySkyFlag.relatedFlags) {
-        for (const [mode, flags] of Object.entries(graySkyFlag.relatedFlags)) {
-            const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value,
-            );
-            if (hasAllFlags) {
-                currentGraySky = mode as GraySky;
-                break;
-            }
-        }
-    }
-
-    let currentTelemetry: TelemetryMode = "default";
-    if (telemetryFlag.relatedFlags) {
-        for (const [mode, flags] of Object.entries(
-            telemetryFlag.relatedFlags,
-        )) {
-            const hasAllFlags = Object.entries(flags).every(
-                ([flag, value]) => profile.flags[flag] === value,
-            );
-            if (hasAllFlags) {
-                currentTelemetry = mode as TelemetryMode;
-                break;
-            }
-        }
-    }
-
     const currentVoiceChatMinDistance = Number(
         profile.flags[voiceChatMinDistanceFlag.key] ??
             voiceChatMinDistanceFlag.defaultValue,
     );
-
     const currentVoiceChatMaxDistance = Number(
         profile.flags[voiceChatMaxDistanceFlag.key] ??
             voiceChatMaxDistanceFlag.defaultValue,
     );
+
+    const getCurrentValue = (flag: FastFlagDefinition) => {
+        if (!flag.relatedFlags || typeof flag.relatedFlags === "function") {
+            return profile.flags[flag.key] ?? flag.defaultValue;
+        }
+
+        for (const [value, flags] of Object.entries(flag.relatedFlags)) {
+            const hasAllFlags = Object.entries(flags).every(
+                ([flag, flagValue]) => profile.flags[flag] === flagValue,
+            );
+            if (hasAllFlags) return value;
+        }
+        return "default";
+    };
+
+    const currentLighting = getCurrentValue(lightingFlag) as LightingTechnology;
+    const currentRendering = getCurrentValue(renderingFlag) as RenderingAPI;
+    const currentHyperThreading = getCurrentValue(
+        hyperThreadingFlag,
+    ) as HyperThreading;
+    const currentGraySky = getCurrentValue(graySkyFlag) as GraySky;
+    const currentTelemetry = getCurrentValue(telemetryFlag) as TelemetryMode;
 
     return (
         <div className="flex flex-1 flex-col bg-ctp-base">
@@ -481,10 +196,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         max={fpsFlag.max ?? 360}
                                         step={fpsFlag.step ?? 1}
                                         onChange={(value) =>
-                                            handleSliderChange(
-                                                fpsFlag.key,
-                                                value,
-                                            )
+                                            handleFlagChange(fpsFlag, value)
                                         }
                                         label={fpsFlag.label}
                                         description={fpsFlag.description}
@@ -537,8 +249,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                     <RadioGroup
                                         value={currentLighting}
                                         onChange={(value) =>
-                                            handleLightingChange(
-                                                value as LightingTechnology,
+                                            handleFlagChange(
+                                                lightingFlag,
+                                                value,
                                             )
                                         }
                                         options={[
@@ -592,8 +305,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                     <RadioGroup
                                         value={currentRendering}
                                         onChange={(value) =>
-                                            handleRenderingAPIChange(
-                                                value as RenderingAPI,
+                                            handleFlagChange(
+                                                renderingFlag,
+                                                value,
                                             )
                                         }
                                         options={[
@@ -646,34 +360,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                     <RadioGroup
                                         value={currentGraySky}
                                         onChange={(value) =>
-                                            handleGraySkyChange(
-                                                value as GraySky,
-                                            )
+                                            handleFlagChange(graySkyFlag, value)
                                         }
                                         options={[
                                             ...(graySkyFlag.options ?? []),
                                         ]}
-                                    />
-                                </div>
-
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === shadowFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <Checkbox
-                                        checked={currentShadowIntensity}
-                                        onChange={handleShadowToggle}
-                                        label={shadowFlag.label}
-                                        description={shadowFlag.description}
                                     />
                                 </div>
                             </div>
@@ -722,8 +413,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                     <RadioGroup
                                         value={currentHyperThreading}
                                         onChange={(value) =>
-                                            handleHyperThreadingChange(
-                                                value as HyperThreading,
+                                            handleFlagChange(
+                                                hyperThreadingFlag,
+                                                value,
                                             )
                                         }
                                         options={[
@@ -749,11 +441,11 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                     <Slider
                                         value={currentMaxThreads}
                                         min={maxThreadsFlag.min ?? 100}
-                                        max={maxThreadsFlag.max ?? 4800}
+                                        max={maxThreadsFlag.max ?? 2400}
                                         step={maxThreadsFlag.step ?? 100}
                                         onChange={(value) =>
-                                            handleThreadCountChange(
-                                                maxThreadsFlag.key,
+                                            handleFlagChange(
+                                                maxThreadsFlag,
                                                 value,
                                             )
                                         }
@@ -781,8 +473,8 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                         max={minThreadsFlag.max ?? 12}
                                         step={minThreadsFlag.step ?? 1}
                                         onChange={(value) =>
-                                            handleThreadCountChange(
-                                                minThreadsFlag.key,
+                                            handleFlagChange(
+                                                minThreadsFlag,
                                                 value,
                                             )
                                         }
@@ -835,8 +527,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                     <RadioGroup
                                         value={currentTelemetry}
                                         onChange={(value) =>
-                                            handleTelemetryChange(
-                                                value as TelemetryMode,
+                                            handleFlagChange(
+                                                telemetryFlag,
+                                                value,
                                             )
                                         }
                                         options={[
@@ -895,8 +588,8 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                             voiceChatMinDistanceFlag.step ?? 1
                                         }
                                         onChange={(value) =>
-                                            handleSliderChange(
-                                                voiceChatMinDistanceFlag.key,
+                                            handleFlagChange(
+                                                voiceChatMinDistanceFlag,
                                                 value,
                                             )
                                         }
@@ -932,8 +625,8 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                                             voiceChatMaxDistanceFlag.step ?? 5
                                         }
                                         onChange={(value) =>
-                                            handleSliderChange(
-                                                voiceChatMaxDistanceFlag.key,
+                                            handleFlagChange(
+                                                voiceChatMaxDistanceFlag,
                                                 value,
                                             )
                                         }

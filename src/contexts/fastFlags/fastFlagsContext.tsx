@@ -68,22 +68,33 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const updateFlagValue = async (
         profileId: string,
-        key: string,
-        value: any | null,
+        key: string | Record<string, string | null>,
+        value: string | null = null,
     ) => {
         const profile = state.profiles.find((p) => p.id === profileId);
         if (!profile) return;
 
+        let updatedFlags = { ...profile.flags };
+
+        if (typeof key === "object") {
+            Object.entries(key).forEach(([flagKey, flagValue]) => {
+                if (flagValue === null) {
+                    delete updatedFlags[flagKey];
+                } else {
+                    updatedFlags[flagKey] = flagValue;
+                }
+            });
+        } else {
+            if (value === null) {
+                delete updatedFlags[key];
+            } else {
+                updatedFlags[key] = value;
+            }
+        }
+
         const updatedProfile = {
             ...profile,
-            flags:
-                value === null
-                    ? Object.fromEntries(
-                          Object.entries(profile.flags).filter(
-                              ([k]) => k !== key,
-                          ),
-                      )
-                    : { ...profile.flags, [key]: value },
+            flags: updatedFlags,
         };
 
         await saveProfile(updatedProfile);

@@ -159,14 +159,14 @@ export const FastFlags: React.FC = () => {
 
     const handleUpdateFlag = async (
         profileId: string,
-        key: string,
-        value: string | null,
-    ) => {
+        keyOrUpdates: string | Record<string, string | null>,
+        value?: string | null,
+    ): Promise<void> => {
         try {
-            await updateFlagValue(profileId, key, value);
-            return Promise.resolve();
+            await updateFlagValue(profileId, keyOrUpdates, value);
         } catch (error) {
-            return Promise.reject(error);
+            console.error("Failed to update flag(s):", error);
+            throw error;
         }
     };
 
