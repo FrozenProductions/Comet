@@ -1,4 +1,5 @@
 import { Code2 } from "lucide-react";
+import { ReactNode } from "react";
 
 export type SettingsSection = {
     id: string;
@@ -41,6 +42,14 @@ export interface EditorSettings {
 }
 
 export type SettingsKey = keyof EditorSettings;
+
+export interface SettingGroupProps {
+    title: string;
+    description?: string;
+    info?: string;
+    icon?: ReactNode;
+    children: ReactNode;
+}
 
 export interface TechStackItemProps {
     name: string;
