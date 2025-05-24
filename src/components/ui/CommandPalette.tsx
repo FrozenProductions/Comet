@@ -177,7 +177,9 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                     title: tab.title,
                     description: `Switch to ${tab.title}`,
                     icon: <FileCode size={16} className="stroke-[2.5]" />,
-                    action: executeCommand(() => setActiveTab(tab.id)),
+                    action: executeCommand(() =>
+                        isCmdPressed ? undefined : setActiveTab(tab.id),
+                    ),
                 }));
         }
 
