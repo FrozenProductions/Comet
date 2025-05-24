@@ -2,7 +2,7 @@
 
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use tauri::{State, Manager, Window};
+use tauri::{State, Manager, Window, CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, WindowEvent};
 use std::thread;
 use serde::{Serialize, Deserialize};
 use reqwest::blocking::Client as BlockingClient;
@@ -505,12 +505,126 @@ async fn open_comet_folder() -> Result<(), String> {
     open_directory(app_dir)
 }
 
+fn create_tray_menu() -> SystemTray {
+    let open = CustomMenuItem::new("open".to_string(), "Show");
+    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+    let infinite_yield = CustomMenuItem::new("infinite_yield".to_string(), "Execute Infinite Yield");
+    let hydroxide = CustomMenuItem::new("hydroxide".to_string(), "Execute Hydroxide");
+    let dex = CustomMenuItem::new("dex".to_string(), "Execute DEX Explorer");
+    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+
+    let tray_menu = SystemTrayMenu::new()
+        .add_item(open)
+        .add_item(hide)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(infinite_yield)
+        .add_item(hydroxide)
+        .add_item(dex)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(quit);
+
+    SystemTray::new().with_menu(tray_menu)
+}
+
+async fn execute_infinite_yield() -> Result<String, String> {
+    let script_url = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source";
+    let script = reqwest::get(script_url)
+        .await
+        .map_err(|e| e.to_string())?
+        .text()
+        .await
+        .map_err(|e| e.to_string())?;
+    
+    execute_script(script).await
+}
+
+async fn execute_hydroxide() -> Result<String, String> {
+    let script = r#"local owner = "Upbolt"
+local branch = "revision"
+
+local function webImport(file)
+    return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)), file .. '.lua')()
+end
+
+webImport("init")
+webImport("ui/main")"#;
+    
+    execute_script(script.to_string()).await
+}
+
+async fn execute_dex() -> Result<String, String> {
+    let script_url = "https://raw.githubusercontent.com/Hosvile/DEX-Explorer/refs/heads/main/Loader.lua";
+    let script = reqwest::get(script_url)
+        .await
+        .map_err(|e| e.to_string())?
+        .text()
+        .await
+        .map_err(|e| e.to_string())?;
+    
+    execute_script(script).await
+}
+
+fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
+    match event {
+        SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+            "open" => {
+                if let Some(window) = app.get_window("main") {
+                    window.show().unwrap();
+                    window.set_focus().unwrap();
+                }
+            }
+            "hide" => {
+                if let Some(window) = app.get_window("main") {
+                    window.hide().unwrap();
+                }
+            }
+            "infinite_yield" => {
+                tauri::async_runtime::spawn(async {
+                    match execute_infinite_yield().await {
+                        Ok(_) => println!("Successfully executed Infinite Yield"),
+                        Err(e) => eprintln!("Failed to execute Infinite Yield: {}", e),
+                    }
+                });
+            }
+            "hydroxide" => {
+                tauri::async_runtime::spawn(async {
+                    match execute_hydroxide().await {
+                        Ok(_) => println!("Successfully executed Hydroxide"),
+                        Err(e) => eprintln!("Failed to execute Hydroxide: {}", e),
+                    }
+                });
+            }
+            "dex" => {
+                tauri::async_runtime::spawn(async {
+                    match execute_dex().await {
+                        Ok(_) => println!("Successfully executed DEX Explorer"),
+                        Err(e) => eprintln!("Failed to execute DEX Explorer: {}", e),
+                    }
+                });
+            }
+            "quit" => {
+                app.exit(0);
+            }
+            _ => {}
+        },
+        _ => {}
+    }
+}
+
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
 
     tauri::Builder::default()
         .manage(app_state)
+        .system_tray(create_tray_menu())
+        .on_system_tray_event(handle_tray_event)
+        .on_window_event(|event| {
+            if let WindowEvent::CloseRequested { api, .. } = event.event() {
+                event.window().hide().unwrap();
+                api.prevent_close();
+            }
+        })
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             let state = app.state::<AppState>();

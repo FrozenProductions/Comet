@@ -68,6 +68,11 @@
         "security": {
             "csp": null
         },
+        "systemTray": {
+            "iconPath": "../public/Icon-tray.png",
+            "iconAsTemplate": true,
+            "menuOnLeftClick": true
+        },
         "updater": {
             "active": false
         },
