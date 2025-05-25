@@ -131,7 +131,7 @@ export const ApplicationSection: FC = () => {
                                                 string | null
                                             >("check_for_updates", {
                                                 checkNightly:
-                                                    settings.interface
+                                                    settings.app
                                                         .nightlyReleases ??
                                                     false,
                                             });
@@ -347,13 +347,13 @@ export const ApplicationSection: FC = () => {
                         </div>
                     </div>
                     <Checkbox
-                        checked={settings.interface.nightlyReleases}
+                        checked={settings.app.nightlyReleases}
                         onChange={() => {
                             updateSettings({
-                                interface: {
-                                    ...settings.interface,
+                                app: {
+                                    ...settings.app,
                                     nightlyReleases:
-                                        !settings.interface.nightlyReleases,
+                                        !settings.app.nightlyReleases,
                                 },
                             });
                         }}

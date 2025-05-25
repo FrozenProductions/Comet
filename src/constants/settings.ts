@@ -54,10 +54,12 @@ export const DEFAULT_EDITOR_SETTINGS = {
         zenMode: false,
         showTabBar: false,
         showConsole: true,
-        nightlyReleases: false,
         recentSearches: {
             enabled: true,
             maxItems: 5,
         },
+    },
+    app: {
+        nightlyReleases: false,
     },
 } as const;

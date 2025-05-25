@@ -38,11 +38,13 @@ export interface EditorSettings {
         zenMode: boolean;
         showTabBar: boolean;
         showConsole: boolean;
-        nightlyReleases: boolean;
         recentSearches: {
             enabled: boolean;
             maxItems: number;
         };
+    };
+    app: {
+        nightlyReleases: boolean;
     };
 }
 
