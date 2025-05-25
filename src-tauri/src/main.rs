@@ -553,7 +553,7 @@ webImport("ui/main")"#;
 }
 
 async fn execute_dex() -> Result<String, String> {
-    let script_url = "https://raw.githubusercontent.com/Hosvile/DEX-Explorer/refs/heads/main/Loader.lua";
+    let script_url = "https://cdn.wearedevs.net/scripts/Dex%20Explorer.txt";
     let script = reqwest::get(script_url)
         .await
         .map_err(|e| e.to_string())?
