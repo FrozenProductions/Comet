@@ -11,6 +11,7 @@ export type SettingsSection = {
 export type SettingsContextType = {
     settings: EditorSettings;
     updateSettings: (newSettings: Partial<EditorSettings>) => void;
+    hasLocalStorageError: boolean;
 };
 
 export interface EditorSettings {
