@@ -304,6 +304,12 @@ export const ApplicationSection: FC = () => {
                                                                     try {
                                                                         await invoke(
                                                                             "download_and_install_update",
+                                                                            {
+                                                                                checkNightly:
+                                                                                    settings
+                                                                                        .app
+                                                                                        .nightlyReleases,
+                                                                            },
                                                                         );
                                                                     } catch (error) {
                                                                         toast.error(

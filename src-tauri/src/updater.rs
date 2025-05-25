@@ -7,7 +7,7 @@ use dirs;
 use tauri::Manager;
 use std::io::Write;
 
-const CURRENT_VERSION: &str = "1.0.4";
+const CURRENT_VERSION: &str = "1.0.3";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
 const DOWNLOAD_URL: &str = "https://github.com/FrozenProductions/Comet/releases/download";
 const APP_PATH: &str = "/Applications/Comet.app";
@@ -47,9 +47,9 @@ pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, St
         .map_err(|e| format!("Failed to parse JSON response: {}", e))?;
 
     let current = Version::parse(CURRENT_VERSION).unwrap();
-    let stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
+    let _stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
     
-    if stable > current {
+    if _stable > current {
         return Ok(Some(status.version));
     }
     
@@ -66,7 +66,7 @@ pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, St
 }
 
 #[tauri::command]
-pub async fn download_and_install_update(window: tauri::Window) -> Result<(), String> {
+pub async fn download_and_install_update(window: tauri::Window, check_nightly: bool) -> Result<(), String> {
     let client = reqwest::Client::new();
     
     window.emit("update-progress", UpdateProgress {
@@ -85,8 +85,20 @@ pub async fn download_and_install_update(window: tauri::Window) -> Result<(), St
         .await
         .map_err(|e| e.to_string())?;
 
-    let version_to_use = if status.prerelease.is_some() {
-        status.prerelease.unwrap()
+    let current = Version::parse(CURRENT_VERSION).unwrap();
+    let _stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
+    
+    let version_to_use = if check_nightly {
+        if let Some(prerelease) = &status.prerelease {
+            let nightly = Version::parse(prerelease).map_err(|e| e.to_string())?;
+            if nightly > current {
+                prerelease.clone()
+            } else {
+                status.version
+            }
+        } else {
+            status.version
+        }
     } else {
         status.version
     };
@@ -162,7 +174,7 @@ if [ ! -d \"") + APP_PATH + &String::from("\" ]; then
     exit 1
 fi
 
-chmod -R 755 \"") + APP_PATH + &String::from("\"
+chmod -R 777 \"") + APP_PATH + &String::from("\"
 
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f \"") + APP_PATH + &String::from("\"
 
