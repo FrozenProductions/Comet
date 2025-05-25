@@ -13,7 +13,7 @@ const HeroSection: FC = () => {
     const handleDocs = () => {
         window.open(
             "https://github.com/FrozenProductions/Comet/blob/main/docs/documentation.md",
-            "_blank"
+            "_blank",
         );
     };
 
@@ -22,15 +22,15 @@ const HeroSection: FC = () => {
     };
 
     return (
-        <main className="relative flex items-center justify-center min-h-[90vh] lg:min-h-screen py-16 lg:py-0">
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-full bg-theme-accent/[0.01]" />
+        <main className="relative flex min-h-[90vh] items-center justify-center py-8 lg:min-h-screen lg:py-16">
+            <div className="pointer-events-none absolute inset-0">
+                <div className="bg-theme-accent/[0.01] absolute left-0 top-0 h-full w-full" />
             </div>
 
-            <div className="w-full max-w-[1000px] mx-auto px-4 sm:px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
                     <motion.div
-                        className="space-y-8 lg:col-span-5 text-center lg:text-left order-2 lg:order-1"
+                        className="order-2 space-y-6 text-center lg:order-1 lg:col-span-5 lg:space-y-8 lg:text-left"
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.4 }}
@@ -38,7 +38,7 @@ const HeroSection: FC = () => {
                         <div className="space-y-6">
                             <div>
                                 <motion.div
-                                    className="inline-flex items-center gap-1.5 px-2 py-1 bg-theme-surface/40 text-theme-subtle rounded-full text-xs font-medium mb-4"
+                                    className="bg-theme-surface/40 text-theme-subtle mb-4 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium"
                                     initial={{ opacity: 0, y: -5 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.1 }}
@@ -47,23 +47,23 @@ const HeroSection: FC = () => {
                                     <span>Modern Executor Interface</span>
                                 </motion.div>
 
-                                <div className="flex items-center gap-3 mb-3 justify-center lg:justify-start">
+                                <div className="mb-4 flex items-center justify-center gap-3 lg:justify-start">
                                     <img
                                         src="https://github.com/FrozenProductions/Comet/blob/main/public/Icon-tray.png?raw=true"
                                         alt="Comet Logo"
-                                        className="w-10 h-10"
+                                        className="h-12 w-12 lg:h-14 lg:w-14"
                                     />
-                                    <span className="font-semibold text-theme-bright text-3xl lg:text-4xl tracking-tight">
+                                    <span className="text-theme-bright text-3xl font-semibold tracking-tight lg:text-4xl xl:text-5xl">
                                         Comet
                                     </span>
                                 </div>
 
-                                <p className="text-theme-subtle text-base lg:text-lg max-w-lg mx-auto lg:mx-0 leading-relaxed">
+                                <p className="text-theme-subtle mx-auto max-w-xl text-base leading-relaxed lg:mx-0 lg:text-lg xl:text-xl">
                                     {LANDING_CONTENT.DESCRIPTION}
                                 </p>
                             </div>
 
-                            <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                            <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
                                 <ActionButton
                                     label="GitHub"
                                     icon={<Github size={16} />}
@@ -85,20 +85,20 @@ const HeroSection: FC = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
-                            <div className="p-3 bg-theme-surface/30 rounded-lg">
-                                <h3 className="text-theme-bright font-medium mb-1 text-sm">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-theme-surface/30 rounded-lg p-4">
+                                <h3 className="text-theme-bright mb-2 text-sm font-medium lg:text-base">
                                     Modern UI
                                 </h3>
-                                <p className="text-theme-subtle text-xs">
+                                <p className="text-theme-subtle text-xs lg:text-sm">
                                     Clean, intuitive interface
                                 </p>
                             </div>
-                            <div className="p-3 bg-theme-surface/30 rounded-lg">
-                                <h3 className="text-theme-bright font-medium mb-1 text-sm">
+                            <div className="bg-theme-surface/30 rounded-lg p-4">
+                                <h3 className="text-theme-bright mb-2 text-sm font-medium lg:text-base">
                                     Performance
                                 </h3>
-                                <p className="text-theme-subtle text-xs">
+                                <p className="text-theme-subtle text-xs lg:text-sm">
                                     Optimized for speed
                                 </p>
                             </div>
@@ -109,9 +109,9 @@ const HeroSection: FC = () => {
                         initial={{ opacity: 0, x: 10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.4, delay: 0.1 }}
-                        className="lg:col-span-7 order-1 lg:order-2"
+                        className="order-1 lg:order-2 lg:col-span-7"
                     >
-                        <div className="max-w-[600px] mx-auto">
+                        <div className="mx-auto w-full max-w-[800px]">
                             <GallerySection images={GALLERY_IMAGES} />
                         </div>
                     </motion.div>
