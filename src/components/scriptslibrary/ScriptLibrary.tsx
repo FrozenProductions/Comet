@@ -24,6 +24,8 @@ import {
     ChevronRight,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useRecentSearches } from "../../hooks/useRecentSearches";
+import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
 
 type FilterOption = {
     label: string;
@@ -98,6 +100,9 @@ export const ScriptLibrary = () => {
     const { createTabWithContent } = useEditor();
     const [searchQuery, setSearchQuery] = useState("");
     const [showFilters, setShowFilters] = useState(false);
+    const [showRecentSearches, setShowRecentSearches] = useState(false);
+    const { recentSearches, addRecentSearch, clearRecentSearches } =
+        useRecentSearches();
     const [selectedSortBy, setSelectedSortBy] = useState<
         "updatedAt" | "views" | "createdAt"
     >("updatedAt");
@@ -116,6 +121,7 @@ export const ScriptLibrary = () => {
     const handleSearch = useCallback(
         (page = 1) => {
             if (searchQuery.trim()) {
+                addRecentSearch(searchQuery);
                 searchScripts({
                     q: searchQuery,
                     sortBy: selectedSortBy,
@@ -130,13 +136,37 @@ export const ScriptLibrary = () => {
                 });
             }
         },
-        [searchQuery, selectedSortBy, selectedOrder, filters, searchScripts],
+        [
+            searchQuery,
+            selectedSortBy,
+            selectedOrder,
+            filters,
+            searchScripts,
+            addRecentSearch,
+        ],
     );
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (
+            e.key === "Enter" &&
+            !e.shiftKey &&
+            !e.metaKey &&
+            !e.ctrlKey &&
+            !e.altKey
+        ) {
+            e.preventDefault();
+            handleSearch(1);
+        }
+    };
+
     useEffect(() => {
-        handleSearch(1);
-        setCurrentPage(1);
-    }, [searchQuery, selectedSortBy, selectedOrder, filters, handleSearch]);
+        if (searchQuery.trim()) {
+            const timeoutId = setTimeout(() => {
+                setCurrentPage(1);
+            }, 300);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [searchQuery]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -405,7 +435,14 @@ export const ScriptLibrary = () => {
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search for scripts..."
+                                onKeyDown={handleKeyDown}
+                                onFocus={() => setShowRecentSearches(true)}
+                                onBlur={() => {
+                                    setTimeout(() => {
+                                        setShowRecentSearches(false);
+                                    }, 200);
+                                }}
+                                placeholder="Search for scripts... (Press Enter to search)"
                                 className="h-9 w-full rounded-lg border border-white/5 bg-ctp-surface0 pl-9 pr-3 text-sm text-ctp-text placeholder:text-ctp-subtext0 focus:outline-none focus:ring-1 focus:ring-white/20"
                                 autoComplete="off"
                                 autoCorrect="off"
@@ -418,12 +455,24 @@ export const ScriptLibrary = () => {
                             />
                             {searchQuery && (
                                 <button
-                                    onClick={() => setSearchQuery("")}
+                                    onClick={() => {
+                                        setSearchQuery("");
+                                        setCurrentPage(1);
+                                    }}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
                                 >
                                     <X size={14} />
                                 </button>
                             )}
+                            <RecentSearchesDropdown
+                                recentSearches={recentSearches}
+                                onSelect={(search) => {
+                                    setSearchQuery(search);
+                                    handleSearch(1);
+                                }}
+                                onClear={clearRecentSearches}
+                                visible={showRecentSearches}
+                            />
                         </div>
 
                         <button

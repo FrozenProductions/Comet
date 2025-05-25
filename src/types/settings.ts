@@ -38,6 +38,10 @@ export interface EditorSettings {
         showTabBar: boolean;
         showConsole: boolean;
         nightlyReleases: boolean;
+        recentSearches: {
+            enabled: boolean;
+            maxItems: number;
+        };
     };
 }
 

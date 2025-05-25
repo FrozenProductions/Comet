@@ -55,5 +55,9 @@ export const DEFAULT_EDITOR_SETTINGS = {
         showTabBar: false,
         showConsole: true,
         nightlyReleases: false,
+        recentSearches: {
+            enabled: true,
+            maxItems: 5,
+        },
     },
 } as const;

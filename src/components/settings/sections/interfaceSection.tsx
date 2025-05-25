@@ -1,10 +1,16 @@
 import { FC, useState } from "react";
-import { Settings as SettingsIcon, LayoutGrid, Palette } from "lucide-react";
+import {
+    Settings as SettingsIcon,
+    LayoutGrid,
+    Palette,
+    History,
+} from "lucide-react";
 import { Checkbox } from "../../ui/checkbox";
 import { useSettings } from "../../../hooks/useSettings";
 import { SettingGroup } from "../settingGroup";
 import { Modal } from "../../ui/modal";
 import { toast } from "react-hot-toast";
+import { Slider } from "../../ui/slider";
 
 export const InterfaceSection: FC = () => {
     const { settings, updateSettings } = useSettings();
@@ -96,6 +102,50 @@ export const InterfaceSection: FC = () => {
                         }}
                         label="Compact Tab Bar"
                         description="Show only the current file name in a compact view"
+                    />
+                </SettingGroup>
+
+                <SettingGroup
+                    title="Recent Searches"
+                    description="Configure recent search history"
+                    icon={<History size={14} className="text-accent" />}
+                >
+                    <Checkbox
+                        checked={settings.interface.recentSearches.enabled}
+                        onChange={() => {
+                            updateSettings({
+                                interface: {
+                                    ...settings.interface,
+                                    recentSearches: {
+                                        ...settings.interface.recentSearches,
+                                        enabled:
+                                            !settings.interface.recentSearches
+                                                .enabled,
+                                    },
+                                },
+                            });
+                        }}
+                        label="Show Recent Searches"
+                        description="Display recent search history in the script library"
+                    />
+                    <Slider
+                        value={settings.interface.recentSearches.maxItems}
+                        onChange={(value) => {
+                            updateSettings({
+                                interface: {
+                                    ...settings.interface,
+                                    recentSearches: {
+                                        ...settings.interface.recentSearches,
+                                        maxItems: value,
+                                    },
+                                },
+                            });
+                        }}
+                        min={1}
+                        max={10}
+                        step={1}
+                        label="Maximum Recent Searches"
+                        description="Number of recent searches to remember"
                     />
                 </SettingGroup>
             </div>
