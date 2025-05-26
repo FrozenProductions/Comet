@@ -81,13 +81,15 @@ export const ApplicationSection: FC = () => {
                                     />
                                     GitHub
                                 </a>
-                                <button
-                                    disabled
-                                    className="flex cursor-not-allowed items-center gap-1.5 rounded-md bg-accent/50 px-3 py-1.5 text-xs font-medium text-ctp-base/70"
+                                <a
+                                    href="https://www.comet-ui.fun/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-ctp-base"
                                 >
                                     <Globe size={12} className="stroke-[2.5]" />
                                     Website
-                                </button>
+                                </a>
                                 <a
                                     href="https://github.com/FrozenProductions/Comet/blob/main/docs/documentation.md"
                                     target="_blank"
