@@ -37,10 +37,13 @@ export const FastFlagsProfileService = {
     },
 
     createNewProfile(name: string): FastFlagsProfile {
+        const now = new Date().toISOString();
         return {
             id: uuidv4(),
             name,
             flags: {},
+            createdAt: now,
+            updatedAt: now,
         };
     },
 
