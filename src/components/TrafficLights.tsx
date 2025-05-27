@@ -1,18 +1,10 @@
 import { FC } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
+import { WindowService } from "../services/windowService";
 
 export const TrafficLights: FC = () => {
-    const handleClose = async () => {
-        await invoke("close_window");
-    };
-
-    const handleMinimize = async () => {
-        await invoke("minimize_window");
-    };
-
-    const handleMaximize = async () => {
-        await invoke("toggle_maximize_window");
-    };
+    const handleClose = () => WindowService.closeWindow();
+    const handleMinimize = () => WindowService.minimizeWindow();
+    const handleMaximize = () => WindowService.toggleMaximizeWindow();
 
     return (
         <div className="z-50 flex items-center gap-2 px-3">
