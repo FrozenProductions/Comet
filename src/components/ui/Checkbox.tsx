@@ -1,13 +1,7 @@
 import { FC } from "react";
 import { Check } from "lucide-react";
 import { motion } from "framer-motion";
-
-interface CheckboxProps {
-    checked: boolean;
-    onChange: () => void;
-    label: string;
-    description?: string;
-}
+import { CheckboxProps } from "../../types/ui";
 
 export const Checkbox: FC<CheckboxProps> = ({
     checked,

@@ -28,6 +28,23 @@ export interface EditorState {
     duplicateTab: (id: string) => void;
     executeTab: (id: string) => Promise<void>;
     executeScript: (
-        options?: ScriptExecutionOptions
+        options?: ScriptExecutionOptions,
     ) => Promise<ScriptExecutionResult>;
+}
+
+export interface Suggestion {
+    type:
+        | "function"
+        | "variable"
+        | "class"
+        | "interface"
+        | "enum"
+        | "property"
+        | "method"
+        | "type"
+        | "library"
+        | "keyword";
+    label: string;
+    detail?: string;
+    documentation?: string;
 }

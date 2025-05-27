@@ -1,16 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Script, ScriptSearchParams } from "../types/scriptBlox";
+import { ScriptSearchParams, ScriptSearchState } from "../types/scriptBlox";
 import { ScriptBloxService } from "../services/scriptBlox";
-
-interface ScriptSearchState {
-    scripts: Script[];
-    isLoading: boolean;
-    isSearching: boolean;
-    error: string | null;
-    isApiDown: boolean;
-    totalPages: number;
-    currentPage: number;
-}
 
 export const useScriptSearch = (debounceMs = 300) => {
     const [state, setState] = useState<ScriptSearchState>({
@@ -62,9 +52,8 @@ export const useScriptSearch = (debounceMs = 300) => {
                     abortControllerRef.current = new AbortController();
                     setState((prev) => ({ ...prev, isLoading: true }));
 
-                    const response = await ScriptBloxService.searchScripts(
-                        params
-                    );
+                    const response =
+                        await ScriptBloxService.searchScripts(params);
                     setState({
                         scripts: response.result.scripts || [],
                         isLoading: false,
@@ -89,13 +78,13 @@ export const useScriptSearch = (debounceMs = 300) => {
                         error: isDown
                             ? "The ScriptBlox API is currently unavailable. Please try again later."
                             : error instanceof Error
-                            ? error.message
-                            : "An error occurred while fetching scripts",
+                              ? error.message
+                              : "An error occurred while fetching scripts",
                     }));
                 }
             }, debounceMs);
         },
-        [debounceMs]
+        [debounceMs],
     );
 
     useEffect(() => {

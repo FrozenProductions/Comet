@@ -1,16 +1,6 @@
 import { FC, useState } from "react";
 import { motion } from "framer-motion";
-
-interface SliderProps {
-    value: number;
-    onChange: (value: number) => void;
-    min: number;
-    max: number;
-    step?: number;
-    label: string;
-    description?: string;
-    unit?: string;
-}
+import { SliderProps } from "../../types/ui";
 
 export const Slider: FC<SliderProps> = ({
     value,

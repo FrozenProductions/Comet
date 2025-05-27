@@ -26,12 +26,7 @@ import {
 import { toast } from "react-hot-toast";
 import { useRecentSearches } from "../../hooks/useRecentSearches";
 import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
-
-type FilterOption = {
-    label: string;
-    value: string;
-    icon: React.ReactNode;
-};
+import { FilterOption } from "../../types/scriptBlox";
 
 const sortOptions: FilterOption[] = [
     {

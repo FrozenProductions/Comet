@@ -71,3 +71,14 @@ export interface FastFlagManagerProps {
     validationError?: string | null;
     validateSelectedProfileFlags?: () => Promise<void>;
 }
+
+export interface FastFlagsResponse {
+    success: boolean;
+    flags?: Record<string, any>;
+    error?: string;
+}
+
+export interface LoadProfilesResponse {
+    profiles: FastFlagsProfile[];
+    activeProfileId: string | null;
+}

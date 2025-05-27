@@ -1,11 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { FastFlagsProfile } from "../types/fastFlags";
+import { FastFlagsProfile, LoadProfilesResponse } from "../types/fastFlags";
 import { v4 as uuidv4 } from "uuid";
-
-export interface LoadProfilesResponse {
-    profiles: FastFlagsProfile[];
-    activeProfileId: string | null;
-}
 
 export const FastFlagsProfileService = {
     async loadProfiles(): Promise<LoadProfilesResponse> {

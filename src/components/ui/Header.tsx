@@ -1,11 +1,5 @@
-import { FC, ReactNode } from "react";
-
-interface HeaderProps {
-    title: string;
-    description?: string;
-    icon?: ReactNode;
-    actions?: ReactNode;
-}
+import { FC } from "react";
+import { HeaderProps } from "../../types/ui";
 
 export const Header: FC<HeaderProps> = ({
     title,

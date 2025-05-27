@@ -9,35 +9,11 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { Modal } from "../ui/modal";
-
-interface WorkspaceProps {
-    workspaces: Array<{ id: string; name: string }>;
-    activeWorkspace: string | null;
-    onWorkspaceChange: (id: string) => Promise<void>;
-    onWorkspaceDelete: (id: string) => Promise<void>;
-    onCreateWorkspace: (name: string) => Promise<void>;
-    onRenameWorkspace: (id: string, newName: string) => Promise<void>;
-}
-
-interface WorkspaceDropdownPortalProps {
-    show: boolean;
-    anchorRef: React.RefObject<HTMLDivElement>;
-    dropdownRef: React.RefObject<HTMLDivElement>;
-    workspaces: Array<{ id: string; name: string }>;
-    activeWorkspace: string | null;
-    isCreatingWorkspace: boolean;
-    onWorkspaceChange: (id: string) => void;
-    onWorkspaceDelete: (id: string) => void;
-    onRenameWorkspace: (id: string, newName: string) => Promise<void>;
-    onCreateWorkspace: (name: string) => void;
-    onCreateClick: (e?: React.MouseEvent) => void;
-}
-
-interface DeleteWorkspaceState {
-    isOpen: boolean;
-    workspaceId: string | null;
-    workspaceName: string | null;
-}
+import {
+    WorkspaceProps,
+    WorkspaceDropdownPortalProps,
+    DeleteWorkspaceState,
+} from "../../types/workspace";
 
 const WorkspaceInput = memo(
     ({ onSubmit }: { onSubmit: (name: string) => void }) => {

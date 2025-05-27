@@ -1,10 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-
-export interface FastFlagsResponse {
-    success: boolean;
-    flags?: Record<string, any>;
-    error?: string;
-}
+import { FastFlagsResponse } from "../types/fastFlags";
 
 export class FastFlagsService {
     private static serializeValue(value: string): any {

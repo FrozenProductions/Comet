@@ -1,4 +1,4 @@
-import { Suggestion } from "./suggestions";
+import { Suggestion } from "../types/editor";
 
 export const luaTableOperations: Suggestion[] = [
     {

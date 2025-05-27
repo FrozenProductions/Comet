@@ -1,27 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-
-type ContextMenuItem = {
-    type?: "separator";
-    label?: string;
-    icon?: React.ReactNode;
-    onClick?: () => void;
-    danger?: boolean;
-    disabled?: boolean;
-    submenu?: ContextMenuItem[];
-};
-
-type Position = {
-    x: number;
-    y: number;
-};
-
-type ContextMenuProps = {
-    items: ContextMenuItem[];
-    position: Position | null;
-    onClose: () => void;
-};
+import { ContextMenuItem, ContextMenuProps } from "../../types/ui";
 
 export const ContextMenu: FC<ContextMenuProps> = ({
     items,

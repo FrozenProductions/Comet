@@ -9,7 +9,7 @@ import {
     KEYBIND_CATEGORY_MAPPING,
 } from "../../../constants/keybinds";
 import { AnimatePresence } from "framer-motion";
-
+import { KeybindSectionProps } from "../../../types/settings";
 const getKeybindTitle = (action: KeybindAction): string => {
     switch (action) {
         case "newTab":
@@ -48,12 +48,6 @@ const getKeybindTitle = (action: KeybindAction): string => {
             return action;
     }
 };
-
-interface KeybindSectionProps {
-    category: string;
-    keybinds: Keybind[];
-    onEditKeybind: (keybind: Keybind) => void;
-}
 
 const KeybindSection: FC<KeybindSectionProps> = ({
     category,

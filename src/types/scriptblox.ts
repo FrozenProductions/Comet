@@ -62,3 +62,24 @@ export interface ScriptDetailResponse {
         updatedAt: string;
     };
 }
+
+export type FilterOption = {
+    label: string;
+    value: string;
+    icon: React.ReactNode;
+};
+
+export interface ScriptCardProps {
+    script: Script;
+    onSelect: (script: Script) => void;
+}
+
+export interface ScriptSearchState {
+    scripts: Script[];
+    isLoading: boolean;
+    isSearching: boolean;
+    error: string | null;
+    isApiDown: boolean;
+    totalPages: number;
+    currentPage: number;
+}

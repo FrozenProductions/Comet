@@ -42,7 +42,7 @@ export interface KeybindsContextType {
     keybinds: Keybind[];
     updateKeybind: (
         action: KeybindAction,
-        newKeybind: Partial<Keybind>
+        newKeybind: Partial<Keybind>,
     ) => void;
     isCommandPaletteOpen: boolean;
     toggleCommandPalette: () => void;

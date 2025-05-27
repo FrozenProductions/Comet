@@ -3,12 +3,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { useSettings } from "../hooks/useSettings";
 import toast from "react-hot-toast";
-
-interface UpdateProgress {
-    state: string;
-    progress: number | null;
-    debug_message?: string;
-}
+import { UpdateProgress } from "../types/updater";
 
 export const UpdateChecker: FC = () => {
     const { settings } = useSettings();

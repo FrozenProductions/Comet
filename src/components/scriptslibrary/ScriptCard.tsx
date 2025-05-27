@@ -1,11 +1,6 @@
-import { Script } from "../../types/scriptBlox";
+import { ScriptCardProps } from "../../types/scriptBlox";
 import { motion } from "framer-motion";
 import { Eye, Shield, Globe, AlertTriangle, Key, Code } from "lucide-react";
-
-interface ScriptCardProps {
-    script: Script;
-    onSelect: (script: Script) => void;
-}
 
 export const ScriptCard = ({ script, onSelect }: ScriptCardProps) => {
     const formatNumber = (num: number | undefined) => {

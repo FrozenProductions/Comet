@@ -1,10 +1,6 @@
 import React from "react";
 import { mergeClasses } from "../../utils/clsx";
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "primary" | "secondary" | "destructive";
-    size?: "sm" | "md" | "lg";
-}
+import { ButtonProps } from "../../types/ui";
 
 export const Button: React.FC<ButtonProps> = ({
     children,

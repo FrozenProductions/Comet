@@ -1,9 +1,10 @@
 import React from "react";
 import { mergeClasses } from "../../utils/clsx";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-export const Input: React.FC<InputProps> = ({ className, ...props }) => {
+export const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
+    className,
+    ...props
+}) => {
     return (
         <input
             className={mergeClasses(

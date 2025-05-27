@@ -1,18 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ReactNode } from "react";
 import { Button } from "./button";
-
-export interface ModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    title: string;
-    description?: string;
-    children?: ReactNode;
-    footer?: ReactNode;
-    onConfirm?: () => void;
-    confirmText?: string;
-    confirmVariant?: "destructive" | "primary" | "secondary";
-}
+import { ModalProps } from "../../types/ui";
 
 export const Modal = ({
     isOpen,

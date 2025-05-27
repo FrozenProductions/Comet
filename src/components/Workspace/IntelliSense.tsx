@@ -9,7 +9,7 @@ import {
     Hash,
 } from "lucide-react";
 import { useSettings } from "../../hooks/useSettings";
-import type { Suggestion } from "../../utils/suggestions";
+import { Suggestion } from "../../types/editor";
 
 const getIconForType = (type: Suggestion["type"]) => {
     switch (type) {

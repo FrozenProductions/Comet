@@ -20,23 +20,7 @@ import {
     consoleLibrary,
     cryptoLibrary,
 } from "./UNCSuggestions";
-
-export interface Suggestion {
-    type:
-        | "function"
-        | "variable"
-        | "class"
-        | "interface"
-        | "enum"
-        | "property"
-        | "method"
-        | "type"
-        | "library"
-        | "keyword";
-    label: string;
-    detail?: string;
-    documentation?: string;
-}
+import { Suggestion } from "../types/editor";
 
 export const luaKeywords: Suggestion[] = [
     {
@@ -973,7 +957,7 @@ export const marketplaceOperations: Suggestion[] = [
 export const getSuggestions = (
     model: monaco.editor.ITextModel,
     position: monaco.Position,
-    settings: { maxSuggestions: number }
+    settings: { maxSuggestions: number },
 ): Suggestion[] => {
     const word = model.getWordUntilPosition(position);
     const wordText = word.word.toLowerCase();

@@ -1,13 +1,7 @@
 import { FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { History, X } from "lucide-react";
-
-interface RecentSearchesDropdownProps {
-    recentSearches: string[];
-    onSelect: (search: string) => void;
-    onClear: () => void;
-    visible: boolean;
-}
+import { RecentSearchesDropdownProps } from "../../types/ui";
 
 export const RecentSearchesDropdown: FC<RecentSearchesDropdownProps> = ({
     recentSearches,

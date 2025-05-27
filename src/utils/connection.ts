@@ -1,12 +1,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
+import { ConnectionState } from "../types/connection";
 
-export interface ConnectionStatus {
-    isConnected: boolean;
-    port: number | null;
-    error?: string;
-}
-
-export const checkConnection = async (): Promise<ConnectionStatus> => {
+export const checkConnection = async (): Promise<ConnectionState> => {
     try {
         const port = await invoke<number>("get_port");
         return {
@@ -33,7 +28,7 @@ export const sendScript = async (script: string): Promise<boolean> => {
 
 export const changeSetting = async (
     key: string,
-    value: string
+    value: string,
 ): Promise<boolean> => {
     try {
         return await invoke<boolean>("change_setting", { key, value });

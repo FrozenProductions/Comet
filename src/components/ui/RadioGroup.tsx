@@ -1,17 +1,5 @@
 import { motion } from "framer-motion";
-
-interface Option<T extends string> {
-    value: T;
-    label: string;
-}
-
-interface RadioGroupProps<T extends string> {
-    value: T;
-    options: Option<T>[];
-    onChange: (value: T) => void;
-    label?: string;
-    description?: string;
-}
+import { RadioGroupProps } from "../../types/ui";
 
 export const RadioGroup = <T extends string>({
     value,

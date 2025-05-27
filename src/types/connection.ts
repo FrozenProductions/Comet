@@ -10,3 +10,9 @@ export interface ConnectionContextType {
     refreshConnection: () => Promise<void>;
     incrementPort: () => Promise<void>;
 }
+
+export interface ConnectionState {
+    isConnected: boolean;
+    port: number | null;
+    error?: string;
+}

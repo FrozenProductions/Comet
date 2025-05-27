@@ -10,10 +10,7 @@ import { motion } from "framer-motion";
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import toast from "react-hot-toast";
-
-interface InstallProgress {
-    state: string;
-}
+import { InstallProgress } from "../../types/ui";
 
 const LoadingDots = () => {
     return (

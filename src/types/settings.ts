@@ -1,5 +1,6 @@
 import { Code2 } from "lucide-react";
 import { ReactNode } from "react";
+import { Keybind } from "./keybinds";
 
 export type SettingsSection = {
     id: string;
@@ -64,4 +65,10 @@ export interface TechStackItemProps {
     href: string;
     icon: string;
     invertIcon?: boolean;
+}
+
+export interface KeybindSectionProps {
+    category: string;
+    keybinds: Keybind[];
+    onEditKeybind: (keybind: Keybind) => void;
 }
