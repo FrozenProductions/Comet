@@ -17,7 +17,7 @@ export const UpdateChecker: FC = () => {
         const checkForUpdates = async () => {
             try {
                 await invoke<string | null>("check_for_updates", {
-                    checkNightly: settings.interface.nightlyReleases ?? false,
+                    checkNightly: settings.app.nightlyReleases ?? false,
                 });
             } catch (error) {
                 console.error("Failed to check for updates:", error);
