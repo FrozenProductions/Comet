@@ -4,7 +4,7 @@ import { useScriptSearch } from "../../hooks/useScriptSearch";
 import { ScriptCard } from "./scriptCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEditor } from "../../hooks/useEditor";
-import { ScriptBloxService } from "../../services/scriptBlox";
+import { ScriptBloxService } from "../../services/scriptBloxService";
 import {
     Search,
     SlidersHorizontal,

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { ScriptSearchParams, ScriptSearchState } from "../types/scriptBlox";
-import { ScriptBloxService } from "../services/scriptBlox";
+import { ScriptBloxService } from "../services/scriptBloxService";
 
 export const useScriptSearch = (debounceMs = 300) => {
     const [state, setState] = useState<ScriptSearchState>({
