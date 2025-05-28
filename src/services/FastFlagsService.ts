@@ -62,3 +62,35 @@ export class FastFlagsService {
         }
     }
 }
+
+/**
+ * Cleans up the fast flags file after profile deletion
+ * @returns Object containing success status and optional error message
+ * @throws Error if the cleanup operation fails
+ */
+export const cleanupFastFlags = async (): Promise<{
+    success: boolean;
+    error?: string;
+}> => {
+    try {
+        return await invoke<{ success: boolean; error?: string }>(
+            "cleanup_fast_flags",
+        );
+    } catch (error) {
+        console.error("Failed to clean up fast flags file:", error);
+        throw error;
+    }
+};
+
+/**
+ * Opens the fast flags directory in the system file explorer
+ * @throws Error if the directory cannot be opened
+ */
+export const openFastFlagsDirectory = async (): Promise<void> => {
+    try {
+        await invoke("open_fast_flags_directory");
+    } catch (error) {
+        console.error("Failed to open fast flags directory:", error);
+        throw error;
+    }
+};

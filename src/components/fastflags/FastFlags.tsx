@@ -25,8 +25,11 @@ import { FastFlagManager } from "./fastFlagManager";
 import { EasyMode } from "./easyMode";
 import { Tooltip } from "react-tooltip";
 import { Modal } from "../ui/modal";
-import { invoke } from "@tauri-apps/api/tauri";
 import { FastFlagsProfileService } from "../../services/fastFlagsProfileService";
+import {
+    cleanupFastFlags,
+    openFastFlagsDirectory,
+} from "../../services/fastFlagsService";
 
 export const FastFlags: React.FC = () => {
     const {
@@ -125,10 +128,7 @@ export const FastFlags: React.FC = () => {
             }
             if (activeProfileId === profileId) {
                 try {
-                    const response = await invoke<{
-                        success: boolean;
-                        error?: string;
-                    }>("cleanup_fast_flags");
+                    const response = await cleanupFastFlags();
                     if (response.success) {
                         toast.success("Fast flags file cleaned up");
                     } else {
@@ -172,7 +172,7 @@ export const FastFlags: React.FC = () => {
 
     const handleOpenDirectory = async () => {
         try {
-            await invoke("open_fast_flags_directory");
+            await openFastFlagsDirectory();
         } catch (error) {
             console.error("Failed to open directory:", error);
             toast.error("Failed to open directory");

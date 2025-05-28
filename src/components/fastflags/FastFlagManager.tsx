@@ -15,7 +15,7 @@ import {
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Modal } from "../ui/modal";
-import { invoke } from "@tauri-apps/api/tauri";
+import { refreshFlagValidationCache } from "../../services/flagValidationService";
 
 export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     profile,
@@ -100,7 +100,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     const handleRefresh = async () => {
         setIsRefreshing(true);
         try {
-            await invoke("refresh_flag_validation_cache");
+            await refreshFlagValidationCache();
             await handleValidateFlags();
         } catch (error) {
             console.error("Failed to refresh flags:", error);
