@@ -1,19 +1,17 @@
 import { FC, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { useSettings } from "../hooks/useSettings";
 import toast from "react-hot-toast";
 import { UpdateProgress } from "../types/updater";
+import { checkForUpdates } from "../services/updateService";
 
 export const UpdateChecker: FC = () => {
     const { settings } = useSettings();
 
     useEffect(() => {
-        const checkForUpdates = async () => {
+        const performUpdateCheck = async () => {
             try {
-                await invoke<string | null>("check_for_updates", {
-                    checkNightly: settings.app.nightlyReleases ?? false,
-                });
+                await checkForUpdates(settings.app.nightlyReleases ?? false);
             } catch (error) {
                 console.error("Failed to check for updates:", error);
             }
@@ -49,8 +47,8 @@ export const UpdateChecker: FC = () => {
             }
         });
 
-        checkForUpdates();
-        const interval = setInterval(checkForUpdates, 60 * 60 * 1000);
+        performUpdateCheck();
+        const interval = setInterval(performUpdateCheck, 60 * 60 * 1000);
 
         return () => {
             clearInterval(interval);
