@@ -954,6 +954,13 @@ export const marketplaceOperations: Suggestion[] = [
     },
 ];
 
+/**
+ * Generates code suggestions based on the current editor state and cursor position
+ * @param model - The Monaco editor text model containing the code
+ * @param position - The current cursor position in the editor
+ * @param settings - Configuration object containing maxSuggestions limit
+ * @returns Array of code suggestions filtered and limited based on context
+ */
 export const getSuggestions = (
     model: monaco.editor.ITextModel,
     position: monaco.Position,
