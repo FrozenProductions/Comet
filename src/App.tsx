@@ -17,12 +17,13 @@ import { CommandPalette } from "./components/ui/commandPalette";
 import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
 import { ConsoleProvider } from "./contexts/console/consoleContext";
-import { invoke } from "@tauri-apps/api/tauri";
 import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
 import { WorkspaceProvider } from "./contexts/workspace/workspaceContext";
 import { UpdateChecker } from "./components/updater";
 import { useKeybinds } from "./hooks/useKeybinds";
 import { useConsole } from "./hooks/useConsole";
+import { checkHydrogenInstallation } from "./services/hydrogenService";
+
 const AppContent: FC = () => {
     const { settings } = useSettings();
     const {
@@ -87,8 +88,8 @@ const App: FC = () => {
     useEffect(() => {
         const checkHydrogen = async () => {
             try {
-                const isInstalled = await invoke("check_hydrogen_installation");
-                setIsHydrogenInstalled(isInstalled as boolean);
+                const isInstalled = await checkHydrogenInstallation();
+                setIsHydrogenInstalled(isInstalled);
             } catch (error) {
                 console.error("Failed to check Hydrogen installation:", error);
                 setIsHydrogenInstalled(false);
