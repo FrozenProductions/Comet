@@ -7,10 +7,10 @@ import {
     Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import toast from "react-hot-toast";
 import { InstallProgress } from "../../types/ui";
+import { installHydrogen } from "../../services/hydrogenService";
 
 const LoadingDots = () => {
     return (
@@ -95,7 +95,7 @@ export const HydrogenNotFound: FC = () => {
         setIsInstalling(true);
 
         try {
-            await invoke("install_hydrogen");
+            await installHydrogen();
         } catch (error) {
             console.error("Failed to install Hydrogen:", error);
             toast.error("Failed to install Hydrogen");

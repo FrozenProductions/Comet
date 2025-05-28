@@ -13,3 +13,16 @@ export const checkHydrogenInstallation = async (): Promise<boolean> => {
         throw error;
     }
 };
+
+/**
+ * Installs Hydrogen on the system
+ * @throws Error if the installation fails
+ */
+export const installHydrogen = async (): Promise<void> => {
+    try {
+        await invoke("install_hydrogen");
+    } catch (error) {
+        console.error("Failed to install Hydrogen:", error);
+        throw error;
+    }
+};
