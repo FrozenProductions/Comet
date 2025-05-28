@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { toast } from "react-hot-toast";
 import { ConnectionStatus } from "../../types/connection";
 import { ConnectionContext } from "./connectionContextType";
+import {
+    getConnectionStatus,
+    refreshConnection,
+    incrementPort as incrementConnectionPort,
+} from "../../services/connectionService";
 
 export const ConnectionProvider = ({
     children,
@@ -18,7 +22,7 @@ export const ConnectionProvider = ({
     });
 
     useEffect(() => {
-        invoke<ConnectionStatus>("get_connection_status")
+        getConnectionStatus()
             .then(setStatus)
             .catch((error) => {
                 console.error(
@@ -43,12 +47,11 @@ export const ConnectionProvider = ({
         };
     }, []);
 
-    const refreshConnection = async () => {
+    const handleRefreshConnection = async () => {
         try {
             setStatus((prev) => ({ ...prev, is_connecting: true }));
             const toastId = toast.loading("Refreshing connection...");
-            const newStatus =
-                await invoke<ConnectionStatus>("refresh_connection");
+            const newStatus = await refreshConnection();
             setStatus(newStatus);
 
             if (newStatus.is_connected) {
@@ -64,11 +67,11 @@ export const ConnectionProvider = ({
         }
     };
 
-    const incrementPort = async () => {
+    const handleIncrementPort = async () => {
         try {
             setStatus((prev) => ({ ...prev, is_connecting: true }));
             const toastId = toast.loading("Trying next port...");
-            const newStatus = await invoke<ConnectionStatus>("increment_port");
+            const newStatus = await incrementConnectionPort();
             setStatus(newStatus);
 
             if (newStatus.is_connected) {
@@ -93,7 +96,11 @@ export const ConnectionProvider = ({
 
     return (
         <ConnectionContext.Provider
-            value={{ status, refreshConnection, incrementPort }}
+            value={{
+                status,
+                refreshConnection: handleRefreshConnection,
+                incrementPort: handleIncrementPort,
+            }}
         >
             {children}
         </ConnectionContext.Provider>
