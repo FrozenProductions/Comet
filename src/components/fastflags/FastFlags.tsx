@@ -474,6 +474,7 @@ export const FastFlags: React.FC = () => {
                 {selectedProfile ? (
                     isAdvancedMode ? (
                         <FastFlagManager
+                            key={selectedProfile.id}
                             profile={selectedProfile}
                             onUpdateFlag={(key, value) =>
                                 handleUpdateFlag(selectedProfile.id, key, value)
@@ -486,6 +487,7 @@ export const FastFlags: React.FC = () => {
                         />
                     ) : (
                         <EasyMode
+                            key={selectedProfile.id}
                             profile={selectedProfile}
                             onUpdateFlag={(key, value) =>
                                 handleUpdateFlag(selectedProfile.id, key, value)
