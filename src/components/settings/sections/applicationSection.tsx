@@ -18,10 +18,17 @@ import { useSettings } from "../../../hooks/useSettings";
 import { SettingGroup } from "../settingGroup";
 import { Modal } from "../../ui/modal";
 import { toast } from "react-hot-toast";
-import { invoke } from "@tauri-apps/api/tauri";
 import { motion, AnimatePresence } from "framer-motion";
 import { Checkbox } from "../../ui/checkbox";
 import { TechStackItem } from "../techStackItem";
+import {
+    openCometFolder,
+    openHydrogenFolder,
+} from "../../../services/windowService";
+import {
+    downloadAndInstallUpdate,
+    checkForUpdates,
+} from "../../../services/updateService";
 
 export const ApplicationSection: FC = () => {
     const { settings, updateSettings } = useSettings();
@@ -129,14 +136,12 @@ export const ApplicationSection: FC = () => {
                                                 loading: true,
                                                 hasChecked: true,
                                             }));
-                                            const newVersion = await invoke<
-                                                string | null
-                                            >("check_for_updates", {
-                                                checkNightly:
+                                            const newVersion =
+                                                await checkForUpdates(
                                                     settings.app
                                                         .nightlyReleases ??
-                                                    false,
-                                            });
+                                                        false,
+                                                );
 
                                             if (newVersion) {
                                                 const isNightly =
@@ -304,14 +309,10 @@ export const ApplicationSection: FC = () => {
                                                             <button
                                                                 onClick={async () => {
                                                                     try {
-                                                                        await invoke(
-                                                                            "download_and_install_update",
-                                                                            {
-                                                                                checkNightly:
-                                                                                    settings
-                                                                                        .app
-                                                                                        .nightlyReleases,
-                                                                            },
+                                                                        await downloadAndInstallUpdate(
+                                                                            settings
+                                                                                .app
+                                                                                .nightlyReleases,
                                                                         );
                                                                     } catch (error) {
                                                                         toast.error(
@@ -412,7 +413,7 @@ export const ApplicationSection: FC = () => {
                                 <button
                                     onClick={async () => {
                                         try {
-                                            await invoke("open_comet_folder");
+                                            await openCometFolder();
                                         } catch (error) {
                                             toast.error(
                                                 "Failed to open app directory",
@@ -434,9 +435,7 @@ export const ApplicationSection: FC = () => {
                                 <button
                                     onClick={async () => {
                                         try {
-                                            await invoke(
-                                                "open_hydrogen_folder",
-                                            );
+                                            await openHydrogenFolder();
                                         } catch (error) {
                                             toast.error(
                                                 "Failed to open Hydrogen directory",

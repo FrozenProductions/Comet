@@ -13,3 +13,29 @@ export const WindowService = {
         await invoke("toggle_maximize_window");
     },
 };
+
+/**
+ * Opens the Comet application folder in the system file explorer
+ * @throws Error if the folder cannot be opened
+ */
+export const openCometFolder = async (): Promise<void> => {
+    try {
+        await invoke("open_comet_folder");
+    } catch (error) {
+        console.error("Failed to open Comet folder:", error);
+        throw error;
+    }
+};
+
+/**
+ * Opens the Hydrogen folder in the system file explorer
+ * @throws Error if the folder cannot be opened
+ */
+export const openHydrogenFolder = async (): Promise<void> => {
+    try {
+        await invoke("open_hydrogen_folder");
+    } catch (error) {
+        console.error("Failed to open Hydrogen folder:", error);
+        throw error;
+    }
+};
