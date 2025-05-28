@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
-import { invoke } from "@tauri-apps/api/tauri";
 import { ExecuteContext } from "./executeContextType";
+import { executeScript } from "../../services/scriptService";
 
 export const ExecuteProvider = ({
     children,
@@ -29,7 +29,7 @@ export const ExecuteProvider = ({
 
         try {
             setIsExecuting(true);
-            const result = await invoke<string>("execute_script", { script });
+            const result = await executeScript(script);
 
             toast.success(
                 () => (
@@ -38,7 +38,9 @@ export const ExecuteProvider = ({
                             Script executed successfully!
                         </div>
                         <div className="text-xs text-ctp-subtext0">
-                            {result}
+                            {result.success
+                                ? "Script executed successfully"
+                                : "Failed to execute script"}
                         </div>
                     </div>
                 ),

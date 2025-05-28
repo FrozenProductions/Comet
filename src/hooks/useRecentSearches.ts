@@ -3,6 +3,12 @@ import { useSettings } from "./useSettings";
 
 const RECENT_SEARCHES_KEY = "comet-recent-searches" as const;
 
+/**
+ * Hook for managing recent search history. Handles storing, retrieving and updating
+ * recent searches in localStorage. Respects user settings for max items and whether
+ * feature is enabled.
+ * @returns Object containing recent searches array and methods to manage them
+ */
 export const useRecentSearches = () => {
     const { settings } = useSettings();
     const [recentSearches, setRecentSearches] = useState<string[]>([]);

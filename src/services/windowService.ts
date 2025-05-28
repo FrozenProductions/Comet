@@ -1,17 +1,27 @@
 import { invoke } from "@tauri-apps/api/tauri";
 
-export const WindowService = {
-    async closeWindow(): Promise<void> {
-        await invoke("close_window");
-    },
+/**
+ * Closes the application window
+ * @throws Error if the window cannot be closed
+ */
+export const closeWindow = async (): Promise<void> => {
+    await invoke("close_window");
+};
 
-    async minimizeWindow(): Promise<void> {
-        await invoke("minimize_window");
-    },
+/**
+ * Minimizes the application window
+ * @throws Error if the window cannot be minimized
+ */
+export const minimizeWindow = async (): Promise<void> => {
+    await invoke("minimize_window");
+};
 
-    async toggleMaximizeWindow(): Promise<void> {
-        await invoke("toggle_maximize_window");
-    },
+/**
+ * Toggles the window between maximized and normal state
+ * @throws Error if the window state cannot be toggled
+ */
+export const toggleMaximizeWindow = async (): Promise<void> => {
+    await invoke("toggle_maximize_window");
 };
 
 /**

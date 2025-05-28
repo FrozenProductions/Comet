@@ -1,7 +1,15 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { ScriptSearchParams, ScriptSearchState } from "../types/scriptBlox";
-import { ScriptBloxService } from "../services/scriptBloxService";
+import { searchScripts as searchScriptsService } from "../services/scriptBloxService";
 
+/**
+ * Hook for managing script search functionality with debounced API calls.
+ * Handles searching scripts through ScriptBlox API, manages loading states,
+ * error handling, and pagination. Includes built-in request cancellation
+ * and API health detection.
+ * @param debounceMs Delay in milliseconds before executing search after input changes
+ * @returns Object containing search state and search function
+ */
 export const useScriptSearch = (debounceMs = 300) => {
     const [state, setState] = useState<ScriptSearchState>({
         scripts: [],
@@ -52,8 +60,7 @@ export const useScriptSearch = (debounceMs = 300) => {
                     abortControllerRef.current = new AbortController();
                     setState((prev) => ({ ...prev, isLoading: true }));
 
-                    const response =
-                        await ScriptBloxService.searchScripts(params);
+                    const response = await searchScriptsService(params);
                     setState({
                         scripts: response.result.scripts || [],
                         isLoading: false,

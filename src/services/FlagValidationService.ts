@@ -1,13 +1,18 @@
 import { invoke } from "@tauri-apps/api/tauri";
 
-export const FlagValidationService = {
-    async validateFlags(flags: string[]): Promise<string[]> {
+/**
+ * Validates a list of flags
+ * @param flags Array of flags to validate
+ * @returns Array of valid flags
+ * @throws Error if validation fails
+ */
+export const validateFlags = async (flags: string[]): Promise<string[]> => {
+    try {
         return await invoke<string[]>("validate_flags", { flags });
-    },
-
-    async refreshValidationCache(): Promise<void> {
-        await invoke("refresh_flag_validation_cache");
-    },
+    } catch (error) {
+        console.error("Failed to validate flags:", error);
+        throw error;
+    }
 };
 
 /**

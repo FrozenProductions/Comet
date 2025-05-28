@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useFastFlags } from "../../hooks/useFastFlags";
-import { FlagValidationService } from "../../services/flagValidationService";
+import { validateFlags } from "../../services/flagValidationService";
 import {
     Flag,
     Plus,
@@ -25,7 +25,10 @@ import { FastFlagManager } from "./fastFlagManager";
 import { EasyMode } from "./easyMode";
 import { Tooltip } from "react-tooltip";
 import { Modal } from "../ui/modal";
-import { FastFlagsProfileService } from "../../services/fastFlagsProfileService";
+import {
+    importFromFile,
+    exportToFile,
+} from "../../services/fastFlagsProfileService";
 import {
     cleanupFastFlags,
     openFastFlagsDirectory,
@@ -88,8 +91,7 @@ export const FastFlags: React.FC = () => {
 
         try {
             const flags = Object.keys(selectedProfile.flags);
-            const invalidFlags =
-                await FlagValidationService.validateFlags(flags);
+            const invalidFlags = await validateFlags(flags);
             setInvalidFlags(invalidFlags);
             setValidationError(null);
         } catch (error) {
@@ -198,7 +200,7 @@ export const FastFlags: React.FC = () => {
 
     const handleImport = async () => {
         try {
-            await FastFlagsProfileService.importFromFile();
+            await importFromFile();
             await loadProfiles();
             toast.success("Profiles imported successfully");
         } catch (error) {
@@ -283,7 +285,7 @@ export const FastFlags: React.FC = () => {
                         <Button
                             onClick={async () => {
                                 try {
-                                    await FastFlagsProfileService.exportToFile();
+                                    await exportToFile();
                                     toast.success(
                                         "Profiles exported successfully",
                                     );

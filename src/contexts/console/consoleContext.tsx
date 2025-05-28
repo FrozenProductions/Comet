@@ -2,7 +2,11 @@ import { FC, ReactNode, useState, useCallback, useEffect } from "react";
 import { ConsoleState } from "../../types/console";
 import { CONSOLE_STORAGE_KEY } from "../../constants/console";
 import { LogLine } from "../../types/robloxConsole";
-import { robloxLogService } from "../../services/robloxLogService";
+import {
+    startWatching as startWatchingService,
+    stopWatching as stopWatchingService,
+    subscribe as subscribeService,
+} from "../../services/robloxLogService";
 import { ConsoleContext } from "./consoleContextType";
 
 export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -44,7 +48,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const startWatching = useCallback(async () => {
         try {
-            await robloxLogService.startWatching();
+            await startWatchingService();
             setIsWatching(true);
         } catch (error) {
             setIsWatching(false);
@@ -58,7 +62,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const stopWatching = useCallback(async () => {
         try {
-            await robloxLogService.stopWatching();
+            await stopWatchingService();
             setIsWatching(false);
         } catch (error) {
             throw new Error(
@@ -74,7 +78,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        const unsubscribe = robloxLogService.subscribe(addLog);
+        const unsubscribe = subscribeService(addLog);
         return () => {
             unsubscribe();
             void stopWatching();

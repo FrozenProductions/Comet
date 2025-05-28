@@ -1,7 +1,13 @@
 import { FC, ReactNode, useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { toast } from "react-hot-toast";
 import { WorkspaceContext, Workspace } from "./workspaceContextType";
+import {
+    loadWorkspaces as loadWorkspacesService,
+    createWorkspace as createWorkspaceService,
+    deleteWorkspace as deleteWorkspaceService,
+    setActiveWorkspace as setActiveWorkspaceService,
+    renameWorkspace as renameWorkspaceService,
+} from "../../services/workspaceService";
 
 export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
     children,
@@ -12,10 +18,7 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 
     const loadWorkspaces = async () => {
         try {
-            const state = await invoke<{
-                workspaces: Workspace[];
-                active_workspace: string | null;
-            }>("load_workspaces");
+            const state = await loadWorkspacesService();
             setWorkspaces(state.workspaces);
             setActiveWorkspace(state.active_workspace);
         } catch (error) {
@@ -32,9 +35,7 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 
     const createWorkspace = async (name: string) => {
         try {
-            const workspace = await invoke<Workspace>("create_workspace", {
-                name,
-            });
+            const workspace = await createWorkspaceService(name);
             setWorkspaces((prev) => [...prev, workspace]);
             toast.success("Workspace created successfully");
         } catch (error) {
@@ -46,7 +47,7 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 
     const deleteWorkspace = async (id: string) => {
         try {
-            await invoke("delete_workspace", { workspaceId: id });
+            await deleteWorkspaceService(id);
             setWorkspaces((prev) => prev.filter((w) => w.id !== id));
             toast.success("Workspace deleted successfully");
         } catch (error) {
@@ -58,7 +59,7 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 
     const setActive = async (id: string) => {
         try {
-            await invoke("set_active_workspace", { workspaceId: id });
+            await setActiveWorkspaceService(id);
             setActiveWorkspace(id);
         } catch (error) {
             console.error("Failed to set active workspace:", error);
@@ -69,7 +70,7 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 
     const renameWorkspace = async (id: string, newName: string) => {
         try {
-            await invoke("rename_workspace", { workspaceId: id, newName });
+            await renameWorkspaceService(id, newName);
             await loadWorkspaces();
             toast.success("Workspace renamed successfully");
         } catch (error) {

@@ -1,15 +1,15 @@
 import { FC } from "react";
-import { WindowService } from "../services/windowService";
+import {
+    closeWindow,
+    minimizeWindow,
+    toggleMaximizeWindow,
+} from "../services/windowService";
 
 export const TrafficLights: FC = () => {
-    const handleClose = () => WindowService.closeWindow();
-    const handleMinimize = () => WindowService.minimizeWindow();
-    const handleMaximize = () => WindowService.toggleMaximizeWindow();
-
     return (
         <div className="z-50 flex items-center gap-2 px-3">
             <button
-                onClick={handleClose}
+                onClick={closeWindow}
                 className="group relative h-3 w-3 rounded-full bg-[#FF5F57] transition-all focus:outline-none"
             >
                 <div className="pointer-events-none absolute inset-0 rounded-full bg-[#450C0A] opacity-0 transition-opacity group-hover:opacity-10" />
@@ -28,7 +28,7 @@ export const TrafficLights: FC = () => {
                 </svg>
             </button>
             <button
-                onClick={handleMinimize}
+                onClick={minimizeWindow}
                 className="group relative h-3 w-3 rounded-full bg-[#FFBD2E] transition-all focus:outline-none"
             >
                 <div className="pointer-events-none absolute inset-0 rounded-full bg-[#9B6A0D] opacity-0 transition-opacity group-hover:opacity-10" />
@@ -47,7 +47,7 @@ export const TrafficLights: FC = () => {
                 </svg>
             </button>
             <button
-                onClick={handleMaximize}
+                onClick={toggleMaximizeWindow}
                 className="group relative h-3 w-3 rounded-full bg-[#28C940] transition-all focus:outline-none"
             >
                 <div className="pointer-events-none absolute inset-0 rounded-full bg-[#0B4F15] opacity-0 transition-opacity group-hover:opacity-10" />

@@ -4,7 +4,6 @@ import { useScriptSearch } from "../../hooks/useScriptSearch";
 import { ScriptCard } from "./scriptCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEditor } from "../../hooks/useEditor";
-import { ScriptBloxService } from "../../services/scriptBloxService";
 import {
     Search,
     SlidersHorizontal,
@@ -27,6 +26,7 @@ import { toast } from "react-hot-toast";
 import { useRecentSearches } from "../../hooks/useRecentSearches";
 import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
 import { FilterOption } from "../../types/scriptBlox";
+import { getScriptContent } from "../../services/scriptBloxService";
 
 const sortOptions: FilterOption[] = [
     {
@@ -175,9 +175,7 @@ export const ScriptLibrary = () => {
     const handleScriptSelect = async (script: Script) => {
         try {
             const loadingToast = toast.loading("Loading script content...");
-            const scriptDetail = await ScriptBloxService.getScriptContent(
-                script.slug,
-            );
+            const scriptDetail = await getScriptContent(script.slug);
 
             if (!scriptDetail.script || !scriptDetail.script.script) {
                 toast.error("Script content not available", {

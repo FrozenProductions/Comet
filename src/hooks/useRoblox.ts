@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { toast } from "react-hot-toast";
+import { openRoblox as openRobloxService } from "../services/robloxService";
 
 export const useRoblox = () => {
     const openRoblox = useCallback(async () => {
         try {
-            await invoke("open_roblox");
+            await openRobloxService();
             toast.success("Opening Roblox...", {
                 id: "open-roblox-toast",
             });

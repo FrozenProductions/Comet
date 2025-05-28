@@ -1,9 +1,17 @@
 import { FC, ReactNode, useState, useCallback, useEffect } from "react";
 import { nanoid } from "nanoid";
-import { invoke } from "@tauri-apps/api/tauri";
-import { EditorPosition, Tab } from "../../types/editor";
+import type { EditorPosition, Tab } from "../../types/editor";
 import type { ScriptExecutionOptions } from "../../types/script";
-import { scriptService } from "../../services/scriptService";
+import {
+    executeScript,
+    saveTab,
+    saveTabState,
+    loadTabs as loadTabsFromService,
+    getTabState,
+    deleteTab,
+    renameTab,
+    createTab as createTabService,
+} from "../../services/scriptService";
 import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../../constants/script";
 import { toast } from "react-hot-toast";
 import { useWorkspace } from "../../hooks/useWorkspace";
@@ -20,7 +28,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
 
-    const executeScript = useCallback(
+    const handleExecuteScript = useCallback(
         async ({
             content,
             showToast = true,
@@ -46,7 +54,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 return { success: false, error: SCRIPT_MESSAGES.EMPTY_SCRIPT };
             }
 
-            const result = await scriptService.executeScript(scriptContent);
+            const result = await executeScript(scriptContent);
 
             if (result.success) {
                 showToast &&
@@ -67,9 +75,9 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         async (id: string) => {
             const tab = tabs.find((t) => t.id === id);
             if (!tab) return;
-            await executeScript({ content: tab.content });
+            await handleExecuteScript({ content: tab.content });
         },
-        [tabs, executeScript],
+        [tabs, handleExecuteScript],
     );
 
     const createTab = useCallback(() => {
@@ -128,20 +136,16 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             };
 
             try {
-                await invoke("save_tab", {
-                    workspaceId: activeWorkspace,
-                    tab: newTab,
-                });
-
+                await createTabService(activeWorkspace, newTab);
                 setTabs((prev) => [...prev, newTab]);
                 setActiveTab(id);
 
-                await invoke("save_tab_state", {
-                    workspaceId: activeWorkspace,
-                    activeTab: id,
-                    tabOrder: [...tabs.map((tab) => tab.id), id],
-                    tabs: [...tabs, newTab],
-                });
+                await saveTabState(
+                    activeWorkspace,
+                    id,
+                    [...tabs.map((tab) => tab.id), id],
+                    [...tabs, newTab],
+                );
 
                 return id;
             } catch (error) {
@@ -158,18 +162,15 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const saveTabs = async () => {
             try {
                 for (const tab of tabs) {
-                    await invoke("save_tab", {
-                        workspaceId: activeWorkspace,
-                        tab,
-                    });
+                    await saveTab(activeWorkspace, tab);
                 }
 
-                await invoke("save_tab_state", {
-                    workspaceId: activeWorkspace,
+                await saveTabState(
+                    activeWorkspace,
                     activeTab,
-                    tabOrder: tabs.map((tab) => tab.id),
+                    tabs.map((tab) => tab.id),
                     tabs,
-                });
+                );
             } catch (error) {
                 console.error("Failed to save tabs:", error);
             }
@@ -195,15 +196,8 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
             setIsInitialized(false);
             try {
-                const loadedTabs = await invoke<Tab[]>("load_tabs", {
-                    workspaceId: activeWorkspace,
-                });
-                const tabState = await invoke<{
-                    active_tab: string | null;
-                    tab_order: string[];
-                }>("get_tab_state", {
-                    workspaceId: activeWorkspace,
-                });
+                const loadedTabs = await loadTabsFromService(activeWorkspace);
+                const tabState = await getTabState(activeWorkspace);
 
                 if (loadedTabs.length === 0) {
                     const id = nanoid();
@@ -252,10 +246,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             try {
                 const tab = tabs.find((t) => t.id === id);
                 if (tab) {
-                    await invoke("delete_tab", {
-                        workspaceId: activeWorkspace,
-                        title: tab.title,
-                    });
+                    await deleteTab(activeWorkspace, tab.title);
                     setTabs((prev) => prev.filter((tab) => tab.id !== id));
                     if (activeTab === id) {
                         const remainingTabs = tabs.filter(
@@ -288,17 +279,14 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     ...updates,
                 };
 
-                await invoke("save_tab", {
-                    workspaceId: activeWorkspace,
-                    tab: updatedTab,
-                });
+                await saveTab(activeWorkspace, updatedTab);
 
                 if (updates.title && updates.title !== currentTab.title) {
-                    await invoke("rename_tab", {
-                        workspaceId: activeWorkspace,
-                        oldTitle: currentTab.title,
-                        newTitle: updates.title,
-                    });
+                    await renameTab(
+                        activeWorkspace,
+                        currentTab.title,
+                        updates.title,
+                    );
                 }
 
                 setTabs((prev) => {
@@ -310,12 +298,12 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     return newTabs;
                 });
 
-                await invoke("save_tab_state", {
-                    workspaceId: activeWorkspace,
+                await saveTabState(
+                    activeWorkspace,
                     activeTab,
-                    tabOrder: tabs.map((tab) => tab.id),
+                    tabs.map((tab) => tab.id),
                     tabs,
-                });
+                );
             } catch (error) {
                 console.error("Failed to update tab:", error);
             }
@@ -365,10 +353,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
             };
 
             try {
-                await invoke("save_tab", {
-                    workspaceId: activeWorkspace,
-                    tab: newTab,
-                });
+                await createTabService(activeWorkspace, newTab);
                 setTabs((prev) => [...prev, newTab]);
                 setActiveTab(newId);
             } catch (error) {
@@ -394,7 +379,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setTabs,
         duplicateTab,
         executeTab,
-        executeScript,
+        executeScript: handleExecuteScript,
     };
 
     return (

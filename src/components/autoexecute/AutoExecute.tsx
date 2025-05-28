@@ -6,7 +6,7 @@ import {
     deleteAutoExecuteFile,
     renameAutoExecuteFile,
     openAutoExecuteDirectory,
-} from "../../services/autoExecute";
+} from "../../services/autoExecuteService";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {

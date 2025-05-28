@@ -84,3 +84,11 @@ export interface DeleteWorkspaceState {
     workspaceId: string | null;
     workspaceName: string | null;
 }
+
+export interface Workspace {
+    id: string;
+    name: string;
+    path: string;
+    createdAt: string;
+    updatedAt: string;
+}
