@@ -2,7 +2,7 @@
 
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use tauri::{State, Manager, Window, CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, WindowEvent};
+use tauri::{State, Manager, Window, CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, WindowEvent, GlobalShortcutManager};
 use std::thread;
 use serde::{Serialize, Deserialize};
 use reqwest::blocking::Client as BlockingClient;
@@ -629,6 +629,11 @@ fn main() {
             let window = app.get_window("main").unwrap();
             let state = app.state::<AppState>();
             
+            let window_handle = window.clone();
+            app.handle().global_shortcut_manager().register("CmdOrCtrl+Q", move || {
+                window_handle.hide().unwrap();
+            }).unwrap();
+
             thread::spawn(move || {
                 loop {
                     let mut should_try_connect = false;
