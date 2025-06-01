@@ -19,6 +19,12 @@
   <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" />
 </div>
 
+<div align="center">
+  <a href="raycast/comet/README.md">
+    <img src="https://img.shields.io/badge/Raycast_Extension-FF6363?style=for-the-badge&logo=raycast&logoColor=white" alt="Raycast Extension" />
+  </a>
+</div>
+
 ## <div align="center">✨ Preview</div>
 
 <div align="center">
