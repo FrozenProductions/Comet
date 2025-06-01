@@ -3,4 +3,5 @@ export type ActionButtonProps = {
     icon: React.ReactNode;
     onClick: () => void;
     variant?: "primary" | "secondary";
+    className?: string;
 };

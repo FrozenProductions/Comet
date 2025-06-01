@@ -7,6 +7,7 @@ const ActionButton: FC<ActionButtonProps> = ({
     icon,
     onClick,
     variant = "primary",
+    className = "",
 }) => {
     const baseStyles =
         "inline-flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-sm font-medium tracking-wide transition-all duration-200";
@@ -20,7 +21,7 @@ const ActionButton: FC<ActionButtonProps> = ({
     return (
         <motion.button
             onClick={onClick}
-            className={`${baseStyles} ${variantStyles[variant]}`}
+            className={`${baseStyles} ${variantStyles[variant]} ${className}`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             initial={{ opacity: 0, y: 20 }}
@@ -31,8 +32,8 @@ const ActionButton: FC<ActionButtonProps> = ({
                 damping: 20,
             }}
         >
-            <span className="text-[15px] relative z-10">{label}</span>
-            <span className="opacity-80 relative z-10">{icon}</span>
+            <span className="relative z-10 text-[15px]">{label}</span>
+            <span className="relative z-10 opacity-80">{icon}</span>
         </motion.button>
     );
 };
