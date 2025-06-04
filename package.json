@@ -16,7 +16,6 @@
         "tauri:build:universal": "tauri build --target universal-apple-darwin"
     },
     "dependencies": {
-        "@monaco-editor/react": "^4.7.0",
         "@tauri-apps/api": "^1.5.3",
         "@types/node": "^22.15.14",
         "@types/uuid": "^10.0.0",
@@ -24,6 +23,7 @@
         "framer-motion": "^12.4.3",
         "lodash": "^4.17.21",
         "lucide-react": "^0.475.0",
+        "monaco-editor": "^0.45.0",
         "nanoid": "^5.1.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
