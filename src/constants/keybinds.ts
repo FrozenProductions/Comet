@@ -11,6 +11,7 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
     KeybindAction,
     keyof typeof KEYBIND_CATEGORIES
 > = {
+    hideWindow: "APPLICATION",
     newTab: "EDITOR",
     closeTab: "EDITOR",
     executeScript: "EDITOR",
@@ -30,6 +31,12 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
 };
 
 export const DEFAULT_KEYBINDS: Keybind[] = [
+    {
+        key: "q",
+        modifiers: { cmd: true },
+        action: "hideWindow",
+        description: "Hide application window",
+    },
     {
         key: "t",
         modifiers: { cmd: true },

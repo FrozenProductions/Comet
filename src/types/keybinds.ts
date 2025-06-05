@@ -6,6 +6,7 @@ export type Screen =
     | "AutoExecution";
 
 export type KeybindAction =
+    | "hideWindow"
     | "newTab"
     | "closeTab"
     | "nextTab"

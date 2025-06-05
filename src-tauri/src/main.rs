@@ -2,7 +2,7 @@
 
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use tauri::{State, Manager, Window, CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, WindowEvent, GlobalShortcutManager};
+use tauri::{State, Manager, Window, CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, WindowEvent};
 use std::thread;
 use serde::{Serialize, Deserialize};
 use reqwest::blocking::Client as BlockingClient;
@@ -25,10 +25,22 @@ struct ConnectionStatus {
 }
 
 #[derive(Debug)]
-
 struct ConnectionManager {
     client: BlockingClient,
     port: Option<u16>,
+}
+
+#[derive(Debug)]
+struct WindowState {
+    is_focused: Arc<Mutex<bool>>,
+}
+
+impl WindowState {
+    fn new() -> Self {
+        Self {
+            is_focused: Arc::new(Mutex::new(false)),
+        }
+    }
 }
 
 impl ConnectionManager {
@@ -230,6 +242,11 @@ fn toggle_maximize_window(window: tauri::Window) {
     } else {
         window.maximize().unwrap();
     }
+}
+
+#[tauri::command]
+fn hide_window(window: Window) {
+    window.hide().unwrap();
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -614,9 +631,11 @@ fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
+    let window_state = WindowState::new();
 
     tauri::Builder::default()
         .manage(app_state)
+        .manage(window_state)
         .system_tray(create_tray_menu())
         .on_system_tray_event(handle_tray_event)
         .on_window_event(|event| {
@@ -624,17 +643,17 @@ fn main() {
                 event.window().hide().unwrap();
                 api.prevent_close();
             }
+            
+            if let WindowEvent::Focused(focused) = event.event() {
+                let state: State<WindowState> = event.window().state();
+                *state.is_focused.lock().unwrap() = *focused;
+            }
         })
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             let state = app.state::<AppState>();
             
-            let window_handle = window.clone();
-            app.handle().global_shortcut_manager().register("CmdOrCtrl+Q", move || {
-                window_handle.hide().unwrap();
-            }).unwrap();
-
-            thread::spawn(move || {
+            tauri::async_runtime::spawn(async move {
                 loop {
                     let mut should_try_connect = false;
                     {
@@ -711,6 +730,7 @@ fn main() {
             open_comet_folder,
             fast_flags_profiles::export_fast_flags_profiles,
             fast_flags_profiles::import_fast_flags_profiles,
+            hide_window,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

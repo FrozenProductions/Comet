@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { Screen, Keybind, KeybindAction } from "../../types/keybinds";
 import { DEFAULT_KEYBINDS } from "../../constants/keybinds";
 import { KeybindsContext } from "./keybindsContextType";
+import { invoke } from "@tauri-apps/api/tauri";
 
 export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -40,6 +41,9 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
     const handleKeybindAction = useCallback(
         (keybind: Keybind) => {
             switch (keybind.action) {
+                case "hideWindow":
+                    invoke("hide_window");
+                    break;
                 case "newTab":
                     createTab();
                     break;

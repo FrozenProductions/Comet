@@ -9,7 +9,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
     res.setHeader(
         "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
+        "Origin, X-Requested-With, Content-Type, Accept",
     );
     res.setHeader("X-Content-Type-Options", "nosniff");
 
