@@ -44,7 +44,7 @@ if [ -z "$LATEST_VERSION" ]; then
     exit 1
 fi
 
-DOWNLOAD_URL="https://github.com/FrozenProductions/Comet/releases/download/v${LATEST_VERSION}/Comet_1.0.0_universal.dmg"
+DOWNLOAD_URL="https://github.com/FrozenProductions/Comet/releases/download/v${LATEST_VERSION}/Hydrogen-M_1.0.0_universal.dmg"
 
 if ! curl -L -o "$TEMP_DMG" "$DOWNLOAD_URL" 2>/dev/null; then
     echo -e "${RED}Error: Failed to download Comet${NC}"
@@ -54,12 +54,12 @@ fi
 
 echo -e "${BLUE}Installing Comet...${NC}"
 
-if [ -d "/Applications/Comet.app" ]; then
-    sudo rm -rf "/Applications/Comet.app"
+if [ -d "/Applications/Hydrogen-M.app" ]; then
+    sudo rm -rf "/Applications/Hydrogen-M.app"
 fi
 
 hdiutil attach -nobrowse -noautoopen "$TEMP_DMG" > /dev/null
-MOUNT_POINT="/Volumes/Comet"
+MOUNT_POINT="/Volumes/Hydrogen"
 
 if [ ! -d "$MOUNT_POINT" ]; then
     echo -e "${RED}Error: Failed to mount disk image${NC}"
@@ -67,27 +67,27 @@ if [ ! -d "$MOUNT_POINT" ]; then
     exit 1
 fi
 
-if [ ! -d "$MOUNT_POINT/Comet.app" ]; then
-    echo -e "${RED}Error: Could not find Comet.app in the mounted image${NC}"
+if [ ! -d "$MOUNT_POINT/Hydrogen-M.app" ]; then
+    echo -e "${RED}Error: Could not find Hydrogen-M.app in the mounted image${NC}"
     hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1
     rm -f "$TEMP_DMG" 2>/dev/null
     exit 1
 fi
 
-if pgrep -f "Comet" > /dev/null; then
-    echo -e "${YELLOW}Closing Comet...${NC}"
-    osascript -e 'quit app "Comet"' 2>/dev/null
+if pgrep -f "Hydrogen-M" > /dev/null; then
+    echo -e "${YELLOW}Closing Hydrogen-M...${NC}"
+    osascript -e 'quit app "Hydrogen-M"' 2>/dev/null
     sleep 2
 fi
 
-if [ -d "/Applications/Comet.app" ]; then
-    sudo rm -rf "/Applications/Comet.app"
+if [ -d "/Applications/Hydrogen-M.app" ]; then
+    sudo rm -rf "/Applications/Hydrogen-M.app"
 fi
 
-if sudo /usr/bin/ditto -rsrc "$MOUNT_POINT/Comet.app" "/Applications/Comet.app"; then
-    sudo chown -R $(whoami):staff "/Applications/Comet.app"
-    sudo chmod -R 777 "/Applications/Comet.app"
-    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/Comet.app
+if sudo /usr/bin/ditto -rsrc "$MOUNT_POINT/Hydrogen-M.app" "/Applications/Hydrogen-M.app"; then
+    sudo chown -R $(whoami):staff "/Applications/Hydrogen-M.app"
+    sudo chmod -R 777 "/Applications/Hydrogen-M.app"
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/Hydrogen-M.app
     echo -e "${GREEN}✓ Comet has been installed successfully!${NC}"
 else
     echo -e "${RED}Error: Failed to install Comet${NC}"

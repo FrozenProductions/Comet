@@ -7,10 +7,10 @@ use dirs;
 use tauri::Manager;
 use std::io::Write;
 
-const CURRENT_VERSION: &str = "1.0.4";
+const CURRENT_VERSION: &str = "1.0.5";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
 const DOWNLOAD_URL: &str = "https://github.com/FrozenProductions/Comet/releases/download";
-const APP_PATH: &str = "/Applications/Comet.app";
+const APP_PATH: &str = "/Applications/Hydrogen-M.app";
 
 #[derive(Debug, Serialize, Deserialize)]
 struct StatusResponse {
@@ -103,8 +103,8 @@ pub async fn download_and_install_update(window: tauri::Window, check_nightly: b
         status.version
     };
 
-    let download_url = format!("{}/v{}/Comet_1.0.0_universal.dmg", DOWNLOAD_URL, version_to_use);
-    let dmg_path = get_downloads_dir().join("Comet_1.0.0_universal.dmg");
+    let download_url = format!("{}/v{}/Hydrogen-M_1.0.0_universal.dmg", DOWNLOAD_URL, version_to_use);
+    let dmg_path = get_downloads_dir().join("Hydrogen-M_1.0.0_universal.dmg");
     let script_path = get_downloads_dir().join("comet_installer.sh");
 
     window.emit("update-progress", UpdateProgress {
@@ -156,12 +156,12 @@ while ps -p $parent_pid > /dev/null; do
     sleep 1
 done
 
-if [ -d \"/Volumes/Comet\" ]; then
-    hdiutil detach \"/Volumes/Comet\" -force || true
+if [ -d \"/Volumes/Hydrogen-M\" ]; then
+    hdiutil detach \"/Volumes/Hydrogen-M\" -force || true
 fi
 
 hdiutil attach \"") + &dmg_path.display().to_string() + &String::from("\" -nobrowse
-if [ ! -d \"/Volumes/Comet\" ]; then
+if [ ! -d \"/Volumes/Hydrogen-M\" ]; then
     exit 1
 fi
 
@@ -169,7 +169,7 @@ if [ -d \"") + APP_PATH + &String::from("\" ]; then
     rm -rf \"") + APP_PATH + &String::from("\"
 fi
 
-cp -R \"/Volumes/Comet/Comet.app\" \"") + APP_PATH + &String::from("\"
+cp -R \"/Volumes/Hydrogen-M/Hydrogen-M.app\" \"") + APP_PATH + &String::from("\"
 if [ ! -d \"") + APP_PATH + &String::from("\" ]; then
     exit 1
 fi
@@ -178,7 +178,7 @@ chmod -R 777 \"") + APP_PATH + &String::from("\"
 
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f \"") + APP_PATH + &String::from("\"
 
-hdiutil detach \"/Volumes/Comet\" -force
+hdiutil detach \"/Volumes/Hydrogen-M\" -force
 
 rm -f \"") + &dmg_path.display().to_string() + &String::from("\"
 
