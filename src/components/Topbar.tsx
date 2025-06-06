@@ -13,7 +13,9 @@ export const Topbar: FC = () => {
                 <TrafficLights />
             </div>
             <div className="flex h-full items-center justify-center gap-2">
-                <span className="text-sm font-medium text-ctp-text">Comet</span>
+                <span className="text-sm font-medium text-ctp-text">
+                    Hydrogen - Comet
+                </span>
                 <div className="flex items-center gap-2 text-xs">
                     <span className="text-ctp-subtext0">•</span>
                     <div className="flex items-center gap-1.5 rounded-full border border-white/5 bg-ctp-surface0/50 px-2 py-0.5">
