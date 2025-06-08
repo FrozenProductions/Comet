@@ -15,7 +15,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.json({
         status: "ok",
-        version: "1.0.5",
-        prerelease: "1.0.5-dp.1",
+        version: "1.0.4",
+        prerelease: "1.0.4-dp.1",
     });
 }
