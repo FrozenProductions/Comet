@@ -28,13 +28,13 @@ if ! command -v curl &> /dev/null; then
     exit 1
 fi
 
-echo -e "${YELLOW}Administrator access is required for installation${NC}"
+echo -e "${YELLOW}Administrator access is required for installation. Please enter your MacBook password.${NC}"
 if ! sudo -v; then
     echo -e "${RED}Error: Failed to obtain administrator privileges${NC}"
     exit 1
 fi
 
-echo -e "${BLUE}Downloading Comet...${NC}"
+echo -e "${BLUE}Checking for latest version...${NC}"
 TEMP_DMG=$(mktemp)
 
 LATEST_VERSION=$(curl -s https://www.comet-ui.fun/api/v1/status | grep -o '"version":"[^\"]*' | grep -o '[0-9.]*')
@@ -44,15 +44,18 @@ if [ -z "$LATEST_VERSION" ]; then
     exit 1
 fi
 
+echo -e "${BLUE}Latest version: ${GREEN}v${LATEST_VERSION}${NC}"
+echo -e "${BLUE}Downloading Comet v${LATEST_VERSION}...${NC}"
+
 DOWNLOAD_URL="https://github.com/FrozenProductions/Comet/releases/download/v${LATEST_VERSION}/Comet_1.0.0_universal.dmg"
 
 if ! curl -L -o "$TEMP_DMG" "$DOWNLOAD_URL" 2>/dev/null; then
-    echo -e "${RED}Error: Failed to download Comet${NC}"
+    echo -e "${RED}Error: Failed to download Comet v${LATEST_VERSION}${NC}"
     rm -f "$TEMP_DMG" 2>/dev/null
     exit 1
 fi
 
-echo -e "${BLUE}Installing Comet...${NC}"
+echo -e "${BLUE}Installing Comet v${LATEST_VERSION}...${NC}"
 
 if [ -d "/Applications/Comet.app" ]; then
     sudo rm -rf "/Applications/Comet.app"
@@ -88,9 +91,9 @@ if sudo /usr/bin/ditto -rsrc "$MOUNT_POINT/Comet.app" "/Applications/Comet.app";
     sudo chown -R $(whoami):staff "/Applications/Comet.app"
     sudo chmod -R 777 "/Applications/Comet.app"
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/Comet.app
-    echo -e "${GREEN}✓ Comet has been installed successfully!${NC}"
+    echo -e "${GREEN}✓ Comet v${LATEST_VERSION} has been installed successfully!${NC}"
 else
-    echo -e "${RED}Error: Failed to install Comet${NC}"
+    echo -e "${RED}Error: Failed to install Comet v${LATEST_VERSION}${NC}"
     hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1
     rm -f "$TEMP_DMG" 2>/dev/null
     exit 1
@@ -99,7 +102,7 @@ fi
 hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1
 rm -f "$TEMP_DMG" 2>/dev/null
 
-echo -e "${BLUE}Launching Comet...${NC}"
+echo -e "${BLUE}Launching Comet v${LATEST_VERSION}...${NC}"
 open -a "Comet"
 
-echo -e "${GREEN}Installation complete! Enjoy using Comet!${NC}" 
+echo -e "${GREEN}Installation complete! Enjoy using Comet v${LATEST_VERSION}!${NC}"
