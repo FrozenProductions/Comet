@@ -6,7 +6,7 @@
         "distDir": "../dist"
     },
     "package": {
-        "productName": "Hydrogen-M",
+        "productName": "Comet",
         "version": "1.0.0"
     },
     "tauri": {

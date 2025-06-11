@@ -13,7 +13,6 @@ dist-ssr
 *.local
 target
 config.txt
-installer.sh
 
 # Editor directories and files
 .vscode/*
