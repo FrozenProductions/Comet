@@ -1,34 +1,77 @@
-import React, { useState } from "react";
-import { FAST_FLAG_CATEGORIES } from "../../constants/fastFlags";
+import React, { useState, useEffect } from "react";
 import { Slider } from "../ui/slider";
 import { RadioGroup } from "../ui/radioGroup";
 import {
     User,
     Zap,
-    Gauge,
-    Layers,
     Cpu,
-    Cloud,
     Radio,
     Volume2,
+    Loader2,
+    Sun,
+    LucideIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import {
-    LightingTechnology,
-    RenderingAPI,
-    HyperThreading,
-    GraySky,
-    TelemetryMode,
     FastFlagManagerProps,
     FastFlagDefinition,
+    FastFlagCategory,
 } from "../../types/fastFlags";
+import { getFastFlagCategories } from "../../services/fastFlagsService";
+
+type CategoryConfig = {
+    icon: LucideIcon;
+};
+
+const CATEGORY_ICONS: Record<string, CategoryConfig> = {
+    graphics: {
+        icon: Zap,
+    },
+    lighting: {
+        icon: Sun,
+    },
+    threading: {
+        icon: Cpu,
+    },
+    telemetry: {
+        icon: Radio,
+    },
+    voiceChat: {
+        icon: Volume2,
+    },
+} as const;
 
 export const EasyMode: React.FC<FastFlagManagerProps> = ({
     profile,
     onUpdateFlag,
 }) => {
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
+    const [categories, setCategories] = useState<
+        Record<string, FastFlagCategory>
+    >({});
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await getFastFlagCategories();
+                setCategories(data);
+            } catch (err) {
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : "Failed to fetch categories",
+                );
+                toast.error("Failed to load fast flags categories");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const handleFlagChange = async (flag: FastFlagDefinition, value: any) => {
         try {
@@ -70,45 +113,49 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
         }
     };
 
-    const graphicsFlags = FAST_FLAG_CATEGORIES[0].flags;
-    const threadingFlags = FAST_FLAG_CATEGORIES[1].flags;
-    const telemetryFlags = FAST_FLAG_CATEGORIES[2].flags;
-    const voiceChatFlags = FAST_FLAG_CATEGORIES[3].flags;
+    if (isLoading) {
+        return (
+            <div className="flex flex-1 flex-col bg-ctp-base">
+                <div className="flex h-14 items-center border-b border-white/5 px-4">
+                    <div className="flex items-center gap-2">
+                        <User size={16} className="text-white/50" />
+                        <h3 className="text-sm font-medium text-ctp-text">
+                            {profile.name}
+                        </h3>
+                    </div>
+                </div>
+                <div className="flex flex-1 items-center justify-center">
+                    <div className="flex flex-col items-center gap-3">
+                        <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                        <span className="text-sm text-ctp-text">
+                            Loading fast flags...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-    const fpsFlag = graphicsFlags[0];
-    const lightingFlag = graphicsFlags[1];
-    const renderingFlag = graphicsFlags[2];
-    const graySkyFlag = graphicsFlags[3];
-    const hyperThreadingFlag = threadingFlags[0];
-    const maxThreadsFlag = threadingFlags[1];
-    const minThreadsFlag = threadingFlags[2];
-    const telemetryFlag = telemetryFlags[0];
-    const voiceChatMinDistanceFlag = voiceChatFlags[0];
-    const voiceChatMaxDistanceFlag = voiceChatFlags[1];
-
-    const currentFps = Number(
-        profile.flags[fpsFlag.key] ?? fpsFlag.defaultValue,
-    );
-    const currentMaxThreads = Number(
-        profile.flags[Object.keys(maxThreadsFlag.relatedFlags!)[0]] ??
-            maxThreadsFlag.defaultValue,
-    );
-    const currentMinThreads = Number(
-        profile.flags[Object.keys(minThreadsFlag.relatedFlags!)[0]] ??
-            minThreadsFlag.defaultValue,
-    );
-    const currentVoiceChatMinDistance = Number(
-        profile.flags[voiceChatMinDistanceFlag.key] ??
-            voiceChatMinDistanceFlag.defaultValue,
-    );
-    const currentVoiceChatMaxDistance = Number(
-        profile.flags[voiceChatMaxDistanceFlag.key] ??
-            voiceChatMaxDistanceFlag.defaultValue,
-    );
+    if (error) {
+        return (
+            <div className="flex h-full items-center justify-center">
+                <div className="text-center">
+                    <p className="text-sm text-red-500">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="mt-4 rounded-md bg-accent px-4 py-2 text-sm text-white hover:bg-accent/90"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     const getCurrentValue = (flag: FastFlagDefinition) => {
         if (!flag.relatedFlags || typeof flag.relatedFlags === "function") {
-            return profile.flags[flag.key] ?? flag.defaultValue;
+            const value = profile.flags[flag.key];
+            return value !== undefined ? value : flag.defaultValue;
         }
 
         for (const [value, flags] of Object.entries(flag.relatedFlags)) {
@@ -120,13 +167,87 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
         return "default";
     };
 
-    const currentLighting = getCurrentValue(lightingFlag) as LightingTechnology;
-    const currentRendering = getCurrentValue(renderingFlag) as RenderingAPI;
-    const currentHyperThreading = getCurrentValue(
-        hyperThreadingFlag,
-    ) as HyperThreading;
-    const currentGraySky = getCurrentValue(graySkyFlag) as GraySky;
-    const currentTelemetry = getCurrentValue(telemetryFlag) as TelemetryMode;
+    const renderFlag = (flag: FastFlagDefinition) => (
+        <div key={flag.key} className="relative">
+            <AnimatePresence>
+                {isUpdating === flag.key && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
+                    >
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            {flag.type === "slider" ? (
+                <Slider
+                    value={Number(getCurrentValue(flag)) || flag.defaultValue}
+                    min={flag.min ?? 0}
+                    max={flag.max ?? 100}
+                    step={flag.step ?? 1}
+                    onChange={(value) => handleFlagChange(flag, value)}
+                    label={flag.label}
+                    description={flag.description}
+                    unit={
+                        flag.key.includes("Distance")
+                            ? " studs"
+                            : flag.key.includes("Fps")
+                              ? " FPS"
+                              : ""
+                    }
+                />
+            ) : flag.type === "radio" && flag.options ? (
+                <RadioGroup
+                    value={getCurrentValue(flag)}
+                    onChange={(value) => handleFlagChange(flag, value)}
+                    options={flag.options}
+                />
+            ) : null}
+        </div>
+    );
+
+    const renderCategoryHeader = (
+        category: FastFlagCategory,
+        IconComponent: React.ElementType,
+    ) => (
+        <div className="border-b border-white/5 p-4">
+            <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+                    <IconComponent size={20} className="text-accent" />
+                </div>
+                <div>
+                    <h3 className="text-sm font-medium text-ctp-text">
+                        {category.label}
+                    </h3>
+                    <p className="text-xs text-ctp-subtext0">
+                        {category.description}
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderCategory = (category: FastFlagCategory) => {
+        const categoryConfig =
+            CATEGORY_ICONS[category.id as keyof typeof CATEGORY_ICONS];
+        if (!categoryConfig) return null;
+
+        return (
+            <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-white/5 bg-ctp-mantle"
+            >
+                {renderCategoryHeader(category, categoryConfig.icon)}
+                <div className="space-y-6 p-4">
+                    {category.flags.map((flag) => renderFlag(flag))}
+                </div>
+            </motion.div>
+        );
+    };
 
     return (
         <div className="flex flex-1 flex-col bg-ctp-base">
@@ -151,494 +272,9 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                     </div>
 
                     <div className="space-y-6">
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="rounded-xl border border-white/5 bg-ctp-mantle"
-                        >
-                            <div className="border-b border-white/5 p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                                        <Gauge
-                                            size={20}
-                                            className="text-accent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-ctp-text">
-                                            Performance Settings
-                                        </h3>
-                                        <p className="text-xs text-ctp-subtext0">
-                                            Adjust game performance and frame
-                                            rate
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="p-4">
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === fpsFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <Slider
-                                        value={currentFps}
-                                        min={fpsFlag.min ?? 30}
-                                        max={fpsFlag.max ?? 360}
-                                        step={fpsFlag.step ?? 1}
-                                        onChange={(value) =>
-                                            handleFlagChange(fpsFlag, value)
-                                        }
-                                        label={fpsFlag.label}
-                                        description={fpsFlag.description}
-                                        unit=" FPS"
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="rounded-xl border border-white/5 bg-ctp-mantle"
-                        >
-                            <div className="border-b border-white/5 p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                                        <Zap
-                                            size={20}
-                                            className="text-accent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-ctp-text">
-                                            Graphics Technology
-                                        </h3>
-                                        <p className="text-xs text-ctp-subtext0">
-                                            Choose advanced lighting and
-                                            rendering features
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="p-4">
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === lightingFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <RadioGroup
-                                        value={currentLighting}
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                lightingFlag,
-                                                value,
-                                            )
-                                        }
-                                        options={[
-                                            ...(lightingFlag.options ?? []),
-                                        ]}
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="rounded-xl border border-white/5 bg-ctp-mantle"
-                        >
-                            <div className="border-b border-white/5 p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                                        <Layers
-                                            size={20}
-                                            className="text-accent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-ctp-text">
-                                            Rendering API
-                                        </h3>
-                                        <p className="text-xs text-ctp-subtext0">
-                                            Select the graphics API for optimal
-                                            performance
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="p-4">
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === renderingFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <RadioGroup
-                                        value={currentRendering}
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                renderingFlag,
-                                                value,
-                                            )
-                                        }
-                                        options={[
-                                            ...(renderingFlag.options ?? []),
-                                        ]}
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="rounded-xl border border-white/5 bg-ctp-mantle"
-                        >
-                            <div className="border-b border-white/5 p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                                        <Cloud
-                                            size={20}
-                                            className="text-accent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-ctp-text">
-                                            Sky & Shadows
-                                        </h3>
-                                        <p className="text-xs text-ctp-subtext0">
-                                            Adjust sky and shadow settings
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6 p-4">
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === graySkyFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <RadioGroup
-                                        value={currentGraySky}
-                                        onChange={(value) =>
-                                            handleFlagChange(graySkyFlag, value)
-                                        }
-                                        options={[
-                                            ...(graySkyFlag.options ?? []),
-                                        ]}
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="rounded-xl border border-white/5 bg-ctp-mantle"
-                        >
-                            <div className="border-b border-white/5 p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                                        <Cpu
-                                            size={20}
-                                            className="text-accent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-ctp-text">
-                                            Threading Settings
-                                        </h3>
-                                        <p className="text-xs text-ctp-subtext0">
-                                            Configure CPU thread utilization
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6 p-4">
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating ===
-                                            hyperThreadingFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <RadioGroup
-                                        value={currentHyperThreading}
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                hyperThreadingFlag,
-                                                value,
-                                            )
-                                        }
-                                        options={[
-                                            ...(hyperThreadingFlag.options ??
-                                                []),
-                                        ]}
-                                    />
-                                </div>
-
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === maxThreadsFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <Slider
-                                        value={currentMaxThreads}
-                                        min={maxThreadsFlag.min ?? 100}
-                                        max={maxThreadsFlag.max ?? 2400}
-                                        step={maxThreadsFlag.step ?? 100}
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                maxThreadsFlag,
-                                                value,
-                                            )
-                                        }
-                                        label={maxThreadsFlag.label}
-                                        description={maxThreadsFlag.description}
-                                    />
-                                </div>
-
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === minThreadsFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <Slider
-                                        value={currentMinThreads}
-                                        min={minThreadsFlag.min ?? 1}
-                                        max={minThreadsFlag.max ?? 12}
-                                        step={minThreadsFlag.step ?? 1}
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                minThreadsFlag,
-                                                value,
-                                            )
-                                        }
-                                        label={minThreadsFlag.label}
-                                        description={minThreadsFlag.description}
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="rounded-xl border border-white/5 bg-ctp-mantle"
-                        >
-                            <div className="border-b border-white/5 p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                                        <Radio
-                                            size={20}
-                                            className="text-accent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-ctp-text">
-                                            {telemetryFlag.label}
-                                        </h3>
-                                        <p className="text-xs text-ctp-subtext0">
-                                            {telemetryFlag.description}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="p-4">
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating === telemetryFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <RadioGroup
-                                        value={currentTelemetry}
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                telemetryFlag,
-                                                value,
-                                            )
-                                        }
-                                        options={[
-                                            ...(telemetryFlag.options ?? []),
-                                        ]}
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="rounded-xl border border-white/5 bg-ctp-mantle"
-                        >
-                            <div className="border-b border-white/5 p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                                        <Volume2
-                                            size={20}
-                                            className="text-accent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-ctp-text">
-                                            Voice Chat
-                                        </h3>
-                                        <p className="text-xs text-ctp-subtext0">
-                                            Adjust voice chat distance settings
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6 p-4">
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating ===
-                                            voiceChatMinDistanceFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <Slider
-                                        value={currentVoiceChatMinDistance}
-                                        min={voiceChatMinDistanceFlag.min ?? 1}
-                                        max={voiceChatMinDistanceFlag.max ?? 20}
-                                        step={
-                                            voiceChatMinDistanceFlag.step ?? 1
-                                        }
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                voiceChatMinDistanceFlag,
-                                                value,
-                                            )
-                                        }
-                                        label={voiceChatMinDistanceFlag.label}
-                                        description={
-                                            voiceChatMinDistanceFlag.description
-                                        }
-                                        unit=" studs"
-                                    />
-                                </div>
-
-                                <div className="relative">
-                                    <AnimatePresence>
-                                        {isUpdating ===
-                                            voiceChatMaxDistanceFlag.key && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-                                            >
-                                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                    <Slider
-                                        value={currentVoiceChatMaxDistance}
-                                        min={voiceChatMaxDistanceFlag.min ?? 20}
-                                        max={
-                                            voiceChatMaxDistanceFlag.max ?? 150
-                                        }
-                                        step={
-                                            voiceChatMaxDistanceFlag.step ?? 5
-                                        }
-                                        onChange={(value) =>
-                                            handleFlagChange(
-                                                voiceChatMaxDistanceFlag,
-                                                value,
-                                            )
-                                        }
-                                        label={voiceChatMaxDistanceFlag.label}
-                                        description={
-                                            voiceChatMaxDistanceFlag.description
-                                        }
-                                        unit=" studs"
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
+                        {Object.values(categories).map((category) =>
+                            renderCategory(category),
+                        )}
                     </div>
                 </div>
             </div>

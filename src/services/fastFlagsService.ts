@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { FastFlagsResponse } from "../types/fastFlags";
+import { FastFlagCategory } from "../types/fastFlags";
 
 const serializeValue = (value: string): any => {
     if (!isNaN(Number(value))) {
@@ -84,6 +85,24 @@ export const cleanupFastFlags = async (): Promise<{
         );
     } catch (error) {
         console.error("Failed to clean up fast flags file:", error);
+        throw error;
+    }
+};
+
+/**
+ * Fetches fast flag categories from the backend
+ * @returns Promise with fast flag categories
+ * @throws Error if fetching categories fails
+ */
+export const getFastFlagCategories = async (): Promise<
+    Record<string, FastFlagCategory>
+> => {
+    try {
+        return await invoke<Record<string, FastFlagCategory>>(
+            "get_fast_flag_categories",
+        );
+    } catch (error) {
+        console.error("[FastFlags] Error fetching categories:", error);
         throw error;
     }
 };

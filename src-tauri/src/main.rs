@@ -731,6 +731,8 @@ fn main() {
             fast_flags_profiles::export_fast_flags_profiles,
             fast_flags_profiles::import_fast_flags_profiles,
             hide_window,
+            fast_flags::save_fast_flags,
+            fast_flags::get_fast_flag_categories,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -12,6 +12,36 @@ pub struct FastFlagsResponse {
     pub error: Option<String>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct FastFlagOption {
+    pub label: String,
+    pub value: String,
+    pub description: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct FastFlagDefinition {
+    pub key: String,
+    pub label: String,
+    pub description: Option<String>,
+    #[serde(rename = "type")]
+    pub flag_type: String,
+    pub default_value: Value,
+    pub options: Option<Vec<FastFlagOption>>,
+    pub min: Option<i64>,
+    pub max: Option<i64>,
+    pub step: Option<i64>,
+    pub related_flags: Option<Value>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct FastFlagCategory {
+    pub id: String,
+    pub label: String,
+    pub description: Option<String>,
+    pub flags: Vec<FastFlagDefinition>,
+}
+
 fn get_fast_flags_path() -> Result<PathBuf, String> {
     let path = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
     Ok(path)
@@ -125,4 +155,25 @@ pub async fn cleanup_fast_flags() -> FastFlagsResponse {
 pub async fn open_fast_flags_directory() -> Result<(), String> {
     let path = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings");
     crate::open_directory(path)
+}
+
+#[tauri::command]
+pub async fn get_fast_flag_categories() -> Result<Value, String> {
+    let client = reqwest::Client::new();
+    let response = client
+        .get("https://www.comet-ui.fun/api/v1/fastflags")
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if !response.status().is_success() {
+        return Err(format!("API error: {}", response.status()));
+    }
+
+    let categories: Value = response
+        .json()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(categories)
 } 
