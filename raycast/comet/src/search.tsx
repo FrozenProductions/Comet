@@ -232,15 +232,23 @@ export default function Command() {
               ]}
               actions={
                 <ActionPanel>
-                  <Action.CopyToClipboard
-                    title="Copy Script"
-                    content={script.script}
-                    onCopy={() => copyScript(script)}
+                  <Action
+                    title="Execute Script"
+                    icon={{ source: Icon.Play, tintColor: Color.Green }}
+                    onAction={() => copyScript(script)}
+                    shortcut={{ modifiers: [], key: "enter" }}
                   />
                   <Action
                     title={isFavorite(script) ? "Remove from Favorites" : "Add to Favorites"}
                     icon={isFavorite(script) ? { source: Icon.StarDisabled, tintColor: Color.Yellow } : Icon.Star}
                     onAction={() => toggleFavorite(script)}
+                    shortcut={{ modifiers: ["cmd"], key: "enter" }}
+                  />
+                  <Action.CopyToClipboard
+                    title="Copy Script"
+                    content={script.script}
+                    onCopy={() => copyScript(script)}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
                   />
                   <Action.Push
                     title="View Details"
@@ -262,22 +270,6 @@ export default function Command() {
                               </List.Item.Detail.Metadata>
                             }
                           />
-                        }
-                        actions={
-                          <ActionPanel>
-                            <Action.CopyToClipboard
-                              title="Copy Script"
-                              content={script.script}
-                              onCopy={() => copyScript(script)}
-                            />
-                            <Action
-                              title={isFavorite(script) ? "Remove from Favorites" : "Add to Favorites"}
-                              icon={
-                                isFavorite(script) ? { source: Icon.StarDisabled, tintColor: Color.Yellow } : Icon.Star
-                              }
-                              onAction={() => toggleFavorite(script)}
-                            />
-                          </ActionPanel>
                         }
                       />
                     }
