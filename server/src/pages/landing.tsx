@@ -1,9 +1,9 @@
 import { FC, useState, useEffect } from "react";
-import HeroSection from "../sections/HeroSection";
-import FeaturesSection from "../sections/FeaturesSection";
-import TechStackSection from "../sections/TechStackSection";
-import InstallationSection from "../sections/InstallationSection";
-import Footer from "../components/Footer";
+import HeroSection from "../sections/heroSection";
+import FeaturesSection from "../sections/featuresSection";
+import TechStackSection from "../sections/techStackSection";
+import InstallationSection from "../sections/installationSection";
+import Footer from "../components/footer";
 
 const Landing: FC = () => {
     const [hasScrolled, setHasScrolled] = useState(false);
