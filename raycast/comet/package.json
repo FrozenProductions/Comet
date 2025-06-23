@@ -20,6 +20,13 @@
       "subtitle": "Search ScriptBlox",
       "description": "Search for scripts on ScriptBlox",
       "mode": "view"
+    },
+    {
+      "name": "logs",
+      "title": "Logs",
+      "subtitle": "View Logs",
+      "description": "View the logs of the Hydrogen executor",
+      "mode": "view"
     }
   ],
   "dependencies": {
