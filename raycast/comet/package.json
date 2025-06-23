@@ -27,6 +27,13 @@
       "subtitle": "View Logs",
       "description": "View the logs of the Hydrogen executor",
       "mode": "view"
+    },
+    {
+      "name": "autoExecute",
+      "title": "Auto Execute",
+      "subtitle": "Auto Execute Scripts",
+      "description": "Auto execute scripts when they are added to the favorites",
+      "mode": "view"
     }
   ],
   "dependencies": {
