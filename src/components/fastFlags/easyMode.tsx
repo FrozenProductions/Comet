@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Slider } from "../ui/slider";
-import { RadioGroup } from "../ui/radioGroup";
 import {
     User,
     Zap,
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { Tooltip } from "react-tooltip";
 import {
     FastFlagManagerProps,
     FastFlagDefinition,
@@ -199,11 +199,62 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                     }
                 />
             ) : flag.type === "radio" && flag.options ? (
-                <RadioGroup
-                    value={getCurrentValue(flag)}
-                    onChange={(value) => handleFlagChange(flag, value)}
-                    options={flag.options}
-                />
+                <div>
+                    <div className="mb-2">
+                        <h4 className="text-sm font-medium text-ctp-text">
+                            {flag.label}
+                        </h4>
+                        <p className="text-xs text-ctp-subtext0">
+                            {flag.description}
+                        </p>
+                    </div>
+                    <div className="flex gap-3">
+                        {flag.options.map((option) => (
+                            <div
+                                key={option.value}
+                                data-tooltip-id="fastflags-tooltip"
+                                data-tooltip-content={option.description}
+                                className="flex-1"
+                            >
+                                <motion.button
+                                    onClick={() =>
+                                        handleFlagChange(flag, option.value)
+                                    }
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className={`w-full rounded-xl border px-4 py-3 transition-all duration-200 ${
+                                        getCurrentValue(flag) === option.value
+                                            ? "border-transparent bg-accent-gradient text-ctp-base shadow-lg shadow-white/5"
+                                            : "border-white/5 hover:bg-white/5"
+                                    } `}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div
+                                            className={`flex h-4 w-4 items-center justify-center rounded-full border-2 transition-colors duration-200 ${
+                                                getCurrentValue(flag) ===
+                                                option.value
+                                                    ? "border-ctp-base"
+                                                    : "border-accent-light"
+                                            } `}
+                                        >
+                                            {getCurrentValue(flag) ===
+                                                option.value && (
+                                                <motion.div
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    className="h-2 w-2 rounded-full bg-ctp-base"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="text-sm font-medium">
+                                            {option.label}
+                                        </div>
+                                    </div>
+                                </motion.button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             ) : null}
         </div>
     );
@@ -278,6 +329,13 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
                     </div>
                 </div>
             </div>
+            <Tooltip
+                id="fastflags-tooltip"
+                className="!z-50 !rounded-lg !border !border-white/5 !bg-ctp-mantle !px-2.5 !py-1.5 !text-xs !font-medium !shadow-lg"
+                classNameArrow="!hidden"
+                delayShow={50}
+                delayHide={0}
+            />
         </div>
     );
 };
