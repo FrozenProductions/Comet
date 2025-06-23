@@ -13,6 +13,10 @@
         {
             "src": "/api/v1/installer",
             "dest": "/api/installer"
+        },
+        {
+            "src": "/api/v1/fastflags",
+            "dest": "/api/fastFlags"
         }
     ],
     "buildCommand": "npm run build",
