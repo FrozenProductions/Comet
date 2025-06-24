@@ -6,6 +6,7 @@ use semver::Version;
 use dirs;
 use tauri::Manager;
 use std::io::Write;
+use crate::logging::LogEntry;
 
 const CURRENT_VERSION: &str = "1.0.5";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
@@ -31,7 +32,23 @@ fn get_downloads_dir() -> PathBuf {
 }
 
 #[tauri::command]
-pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, String> {
+pub async fn check_for_updates(app_handle: tauri::AppHandle, check_nightly: bool) -> Result<Option<String>, String> {
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: format!("Checking for updates (nightly: {})", check_nightly),
+        details: Some(serde_json::json!({
+            "current_version": CURRENT_VERSION,
+            "check_nightly": check_nightly
+        })),
+    };
+    
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        if let Ok(logger) = logger.lock() {
+            let _ = logger.write_entry(log_entry);
+        }
+    }
+
     let client = reqwest::Client::new();
     
     let response = client
@@ -39,27 +56,84 @@ pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, St
         .header("User-Agent", "Comet-App")
         .send()
         .await
-        .map_err(|e| format!("Failed to fetch status: {}", e))?;
+        .map_err(|e| {
+            let error_msg = format!("Failed to fetch status: {}", e);
+            let log_entry = LogEntry {
+                timestamp: chrono::Local::now().to_rfc3339(),
+                level: "error".to_string(),
+                message: error_msg.clone(),
+                details: None,
+            };
+            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+                if let Ok(logger) = logger.lock() {
+                    let _ = logger.write_entry(log_entry);
+                }
+            }
+            error_msg
+        })?;
 
-    let status: StatusResponse = response
-        .json()
+    let status = response
+        .json::<StatusResponse>()
         .await
         .map_err(|e| format!("Failed to parse JSON response: {}", e))?;
 
     let current = Version::parse(CURRENT_VERSION).unwrap();
-    let _stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
+    let stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
     
-    if _stable > current {
+    if stable > current {
+        let log_entry = LogEntry {
+            timestamp: chrono::Local::now().to_rfc3339(),
+            level: "info".to_string(),
+            message: format!("New stable version available: {}", status.version),
+            details: Some(serde_json::json!({
+                "current_version": CURRENT_VERSION,
+                "new_version": status.version
+            })),
+        };
+        if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+            if let Ok(logger) = logger.lock() {
+                let _ = logger.write_entry(log_entry);
+            }
+        }
         return Ok(Some(status.version));
     }
     
     if check_nightly {
-        if let Some(prerelease) = status.prerelease {
+        if let Some(ref prerelease) = status.prerelease {
             let latest = Version::parse(&prerelease).map_err(|e| e.to_string())?;
             if latest > current {
-                return Ok(Some(prerelease));
+                let log_entry = LogEntry {
+                    timestamp: chrono::Local::now().to_rfc3339(),
+                    level: "info".to_string(),
+                    message: format!("New nightly version available: {}", prerelease),
+                    details: Some(serde_json::json!({
+                        "current_version": CURRENT_VERSION,
+                        "new_version": prerelease,
+                        "is_nightly": true
+                    })),
+                };
+                if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+                    if let Ok(logger) = logger.lock() {
+                        let _ = logger.write_entry(log_entry);
+                    }
+                }
+                return Ok(Some(prerelease.clone()));
             }
         }
+    }
+
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: "No updates available".to_string(),
+        details: Some(serde_json::json!({
+            "current_version": CURRENT_VERSION,
+            "latest_stable": status.version,
+            "latest_nightly": &status.prerelease
+        })),
+    };
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        let _ = logger.lock().map_err(|e| e.to_string())?.write_entry(log_entry);
     }
 
     Ok(None)
@@ -67,6 +141,19 @@ pub async fn check_for_updates(check_nightly: bool) -> Result<Option<String>, St
 
 #[tauri::command]
 pub async fn download_and_install_update(window: tauri::Window, check_nightly: bool) -> Result<(), String> {
+    let app_handle = window.app_handle();
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: "Starting update download and installation".to_string(),
+        details: Some(serde_json::json!({
+            "check_nightly": check_nightly
+        })),
+    };
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        let _ = logger.lock().map_err(|e| e.to_string())?.write_entry(log_entry);
+    }
+
     let client = reqwest::Client::new();
     
     window.emit("update-progress", UpdateProgress {
@@ -75,21 +162,35 @@ pub async fn download_and_install_update(window: tauri::Window, check_nightly: b
         debug_message: None,
     }).unwrap();
 
-    let status: StatusResponse = client
+    let status = client
         .get(STATUS_URL)
         .header("User-Agent", "Comet-App")
         .send()
         .await
-        .map_err(|e| e.to_string())?
-        .json()
+        .map_err(|e| {
+            let error_msg = format!("Failed to fetch status: {}", e);
+            let log_entry = LogEntry {
+                timestamp: chrono::Local::now().to_rfc3339(),
+                level: "error".to_string(),
+                message: error_msg.clone(),
+                details: None,
+            };
+            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+                if let Ok(logger) = logger.lock() {
+                    let _ = logger.write_entry(log_entry);
+                }
+            }
+            error_msg
+        })?
+        .json::<StatusResponse>()
         .await
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("Failed to parse JSON response: {}", e))?;
 
     let current = Version::parse(CURRENT_VERSION).unwrap();
     let _stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
     
     let version_to_use = if check_nightly {
-        if let Some(prerelease) = &status.prerelease {
+        if let Some(ref prerelease) = status.prerelease {
             let nightly = Version::parse(prerelease).map_err(|e| e.to_string())?;
             if nightly > current {
                 prerelease.clone()
@@ -140,7 +241,21 @@ pub async fn download_and_install_update(window: tauri::Window, check_nightly: b
         }
     }
 
+    let bytes_len = bytes.len();
     fs::write(&dmg_path, bytes).map_err(|e| e.to_string())?;
+
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: format!("Download completed: {} bytes", bytes_len),
+        details: Some(serde_json::json!({
+            "file_size": bytes_len,
+            "dmg_path": dmg_path.to_string_lossy()
+        })),
+    };
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        let _ = logger.lock().map_err(|e| e.to_string())?.write_entry(log_entry);
+    }
 
     window.emit("update-progress", UpdateProgress {
         state: "preparing".to_string(),
@@ -191,6 +306,18 @@ exit 0");
     let mut file = std::fs::File::create(&script_path).map_err(|e| e.to_string())?;
     file.write_all(script_content.as_bytes()).map_err(|e| e.to_string())?;
 
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: "Installation script prepared".to_string(),
+        details: Some(serde_json::json!({
+            "script_path": script_path.to_string_lossy()
+        })),
+    };
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        let _ = logger.lock().map_err(|e| e.to_string())?.write_entry(log_entry);
+    }
+
     let chmod_output = Command::new("chmod")
         .arg("+x")
         .arg(&script_path)
@@ -225,6 +352,16 @@ exit 0");
     }).unwrap();
 
     std::thread::sleep(std::time::Duration::from_secs(2));
+
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: "Update installation complete, restarting application".to_string(),
+        details: None,
+    };
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        let _ = logger.lock().map_err(|e| e.to_string())?.write_entry(log_entry);
+    }
 
     window.app_handle().exit(0);
     Ok(())

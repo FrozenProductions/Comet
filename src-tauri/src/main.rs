@@ -443,9 +443,11 @@ mod roblox_logs;
 mod hydrogen;
 mod workspace;
 mod updater;
+mod logging;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use flag_validator::FlagValidator;
+use logging::{Logger, write_log_entry, get_logs, clear_logs};
 
 #[tauri::command]
 async fn open_roblox() -> Result<(), String> {
@@ -481,7 +483,7 @@ async fn delete_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: Str
 #[tauri::command]
 async fn activate_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: String) -> Result<FastFlagsProfile, String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    profile_manager.activate_profile(&profile_id).await
+    profile_manager.activate_profile(&app_handle, &profile_id).await
 }
 
 #[tauri::command]
@@ -680,6 +682,9 @@ fn main() {
             }
         })
         .setup(|app| {
+            let logger = Logger::new(&app.handle())?;
+            app.manage(Mutex::new(logger));
+
             let window = app.get_window("main").unwrap();
             let state = app.state::<AppState>();
             
@@ -764,6 +769,9 @@ fn main() {
             fast_flags::save_fast_flags,
             fast_flags::get_fast_flag_categories,
             fetch_version_messages,
+            write_log_entry,
+            get_logs,
+            clear_logs,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

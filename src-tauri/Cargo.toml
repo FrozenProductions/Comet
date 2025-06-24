@@ -23,6 +23,7 @@ notify="6.1"
 sha2 = "0.10"
 semver = "1.0.20"
 futures-util = "0.3"
+chrono = "0.4"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]

@@ -4,7 +4,6 @@ use std::collections::HashSet;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use std::time::Duration;
-
 #[derive(Debug, Clone, Default)]
 pub struct FlagCache {
     mac: Option<HashSet<String>>,
@@ -54,12 +53,22 @@ impl FlagValidator {
     pub async fn refresh_cache(&self) {
         let mut cache = self.cache.write().await;
         
-        if let Ok(mac_flags) = self.fetch_mac_flags().await {
-            cache.mac = Some(mac_flags);
+        match self.fetch_mac_flags().await {
+            Ok(mac_flags) => {
+                cache.mac = Some(mac_flags.clone());
+            }
+            Err(e) => {
+                eprintln!("Failed to fetch Mac flags: {}", e);
+            }
         }
 
-        if let Ok(client_flags) = self.fetch_client_flags().await {
-            cache.client = Some(client_flags);
+        match self.fetch_client_flags().await {
+            Ok(client_flags) => {
+                cache.client = Some(client_flags.clone());
+            }
+            Err(e) => {
+                eprintln!("Failed to fetch client flags: {}", e);
+            }
         }
     }
 

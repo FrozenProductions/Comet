@@ -70,7 +70,7 @@ impl FastFlagsProfileManager {
         Ok(profiles)
     }
 
-    pub async fn save_profile(&self, profile: FastFlagsProfile, _app_handle: &tauri::AppHandle) -> Result<(), String> {
+    pub async fn save_profile(&self, profile: FastFlagsProfile, app_handle: &tauri::AppHandle) -> Result<(), String> {
         let profile_path = self.profiles_dir.join(format!("{}.json", profile.id));
         let content = serde_json::to_string_pretty(&profile)
             .map_err(|e| format!("Failed to serialize profile: {}", e))?;
@@ -81,7 +81,7 @@ impl FastFlagsProfileManager {
         if let Some(active_id) = self.get_active_profile_id()? {
             if active_id == profile.id {
                 let flags_map: Map<String, serde_json::Value> = profile.flags.clone().into_iter().collect();
-                match save_fast_flags(flags_map).await {
+                match save_fast_flags(app_handle.clone(), flags_map).await {
                     FastFlagsResponse { success: true, .. } => Ok(()),
                     FastFlagsResponse { error: Some(err), .. } => Err(err),
                     _ => Err("Unknown error while saving flags".to_string()),
@@ -109,7 +109,7 @@ impl FastFlagsProfileManager {
         Ok(())
     }
 
-    pub async fn activate_profile(&self, profile_id: &str) -> Result<FastFlagsProfile, String> {
+    pub async fn activate_profile(&self, app_handle: &tauri::AppHandle, profile_id: &str) -> Result<FastFlagsProfile, String> {
         let profile_path = self.profiles_dir.join(format!("{}.json", profile_id));
         
         if !profile_path.exists() {
@@ -124,7 +124,7 @@ impl FastFlagsProfileManager {
 
         let flags_map: Map<String, serde_json::Value> = profile.flags.clone().into_iter().collect();
 
-        let response = save_fast_flags(flags_map).await;
+        let response = save_fast_flags(app_handle.clone(), flags_map).await;
         match response {
             FastFlagsResponse { success: true, .. } => {
                 self.set_active_profile_id(profile_id)?;
