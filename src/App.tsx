@@ -23,6 +23,8 @@ import { UpdateChecker } from "./components/updater";
 import { useKeybinds } from "./hooks/useKeybinds";
 import { useConsole } from "./hooks/useConsole";
 import { checkHydrogenInstallation } from "./services/hydrogenService";
+import { MessageModal } from "./components/ui/messageModal";
+import { APP_CONSTANTS } from "./constants/app";
 
 const AppContent: FC = () => {
     const { settings } = useSettings();
@@ -113,6 +115,11 @@ const App: FC = () => {
                                 <FastFlagsProvider>
                                     <KeybindsProvider>
                                         <AppContent />
+                                        <MessageModal
+                                            currentVersion={
+                                                APP_CONSTANTS.currentVersion
+                                            }
+                                        />
                                         <UpdateChecker />
                                         <Toaster />
                                     </KeybindsProvider>

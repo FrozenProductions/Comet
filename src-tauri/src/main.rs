@@ -628,6 +628,36 @@ fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct VersionMessage {
+    message: String,
+    nfu: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct VersionMessages {
+    messages: std::collections::HashMap<String, VersionMessage>,
+}
+
+#[tauri::command]
+async fn fetch_version_messages() -> Result<VersionMessages, String> {
+    let client = reqwest::Client::new();
+    let response = client
+        .get("https://comet-ui.fun/api/v1/messages")
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if !response.status().is_success() {
+        return Err("Failed to fetch messages".to_string());
+    }
+
+    response
+        .json::<VersionMessages>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
@@ -733,6 +763,7 @@ fn main() {
             hide_window,
             fast_flags::save_fast_flags,
             fast_flags::get_fast_flag_categories,
+            fetch_version_messages,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
