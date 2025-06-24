@@ -1,6 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
+import { StatusService } from "./database/services/statusService.js";
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== "GET") {
         return res.status(405).json({ error: "Method not allowed" });
     }
@@ -13,9 +14,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     );
     res.setHeader("X-Content-Type-Options", "nosniff");
 
-    return res.json({
-        status: "ok",
-        version: "1.0.5",
-        prerelease: "1.0.5-dp.1",
-    });
+    try {
+        const statusService = new StatusService();
+        const statusInfo = await statusService.getStatus();
+        return res.json(statusInfo);
+    } catch (error) {
+        console.error("Error fetching status:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
 }
