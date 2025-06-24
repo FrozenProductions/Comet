@@ -71,7 +71,7 @@ export const ApplicationSection: FC = () => {
                                         Version
                                     </div>
                                     <div className="select-none text-xs text-ctp-subtext0">
-                                        1.0.5-Public
+                                        1.0.6-Public
                                     </div>
                                 </div>
                             </div>
