@@ -1,10 +1,5 @@
 import { SupabaseService } from "./supabaseService.js";
-
-export interface StatusInfo {
-    status: string;
-    version: string;
-    prerelease: string;
-}
+import { StatusInfo } from "../types/status.js";
 
 export class StatusService {
     private supabase: SupabaseService;
