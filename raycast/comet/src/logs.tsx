@@ -13,6 +13,9 @@ interface LogEntry {
   source?: string;
 }
 
+const LOGS_PER_PAGE = 100;
+const MAX_LOGS = 1000;
+
 export default function Command() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +23,8 @@ export default function Command() {
   const [isShowingDetail, setIsShowingDetail] = useState(true);
   const [selectedType, setSelectedType] = useState<string>("all");
   const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const findLatestLogFile = async () => {
     try {
@@ -64,7 +69,7 @@ export default function Command() {
     return true;
   };
 
-  const readLogFile = async (filePath: string) => {
+  const readLogFile = async (filePath: string, page: number) => {
     const entries: LogEntry[] = [];
     const fileStream = createReadStream(filePath);
     const rl = createInterface({
@@ -72,18 +77,36 @@ export default function Command() {
       crlfDelay: Infinity,
     });
 
+    let lineCount = 0;
+    const startLine = (page - 1) * LOGS_PER_PAGE;
+    const endLine = page * LOGS_PER_PAGE;
+
     for await (const line of rl) {
+      if (lineCount >= MAX_LOGS) {
+        setHasMore(false);
+        break;
+      }
+
       if (line.trim() && shouldIncludeLog(line)) {
-        entries.push({
-          content: line,
-          timestamp: new Date(),
-          type: parseLogType(line),
-          source: parseLogSource(line),
-        });
+        if (lineCount >= startLine && lineCount < endLine) {
+          entries.push({
+            content: line,
+            timestamp: new Date(),
+            type: parseLogType(line),
+            source: parseLogSource(line),
+          });
+        }
+        lineCount++;
       }
     }
 
+    setHasMore(lineCount >= endLine);
     return entries.reverse();
+  };
+
+  const loadMoreLogs = async () => {
+    if (!hasMore) return;
+    setCurrentPage((prev) => prev + 1);
   };
 
   const refreshLogs = async () => {
@@ -94,8 +117,8 @@ export default function Command() {
         return;
       }
 
-      const entries = await readLogFile(logPath);
-      setLogs(entries);
+      const entries = await readLogFile(logPath, currentPage);
+      setLogs((prevLogs) => [...prevLogs, ...entries]);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error occurred");
@@ -106,9 +129,9 @@ export default function Command() {
 
   useEffect(() => {
     refreshLogs();
-    const interval = setInterval(refreshLogs, 1000);
+    const interval = setInterval(refreshLogs, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentPage]);
 
   const getLogIcon = (type: LogEntry["type"]) => {
     switch (type) {
@@ -177,14 +200,13 @@ export default function Command() {
           <List.Dropdown.Item title="Flag" value="flag" icon={{ source: Icon.Flag, tintColor: Color.Green }} />
         </List.Dropdown>
       }
+      onSelectionChange={(id) => {
+        if (id && filteredLogs.length - Number(id) < 20 && hasMore) {
+          loadMoreLogs();
+        }
+      }}
       actions={
         <ActionPanel>
-          <Action
-            title="Refresh"
-            icon={Icon.ArrowClockwise}
-            onAction={refreshLogs}
-            shortcut={{ modifiers: ["cmd"], key: "r" }}
-          />
           <Action
             title="Toggle Detail View"
             icon={Icon.Sidebar}
