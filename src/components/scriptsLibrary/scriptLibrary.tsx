@@ -117,6 +117,7 @@ export const ScriptLibrary = () => {
         (page = 1) => {
             if (searchQuery.trim()) {
                 addRecentSearch(searchQuery);
+                setCurrentPage(page);
                 searchScripts({
                     q: searchQuery,
                     sortBy: selectedSortBy,
@@ -150,6 +151,7 @@ export const ScriptLibrary = () => {
             !e.altKey
         ) {
             e.preventDefault();
+            setShowRecentSearches(false);
             handleSearch(1);
         }
     };
@@ -427,9 +429,18 @@ export const ScriptLibrary = () => {
                             <input
                                 type="text"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    if (!isLoading) {
+                                        setShowRecentSearches(true);
+                                    }
+                                }}
                                 onKeyDown={handleKeyDown}
-                                onFocus={() => setShowRecentSearches(true)}
+                                onFocus={() => {
+                                    if (!isLoading) {
+                                        setShowRecentSearches(true);
+                                    }
+                                }}
                                 onBlur={() => {
                                     setTimeout(() => {
                                         setShowRecentSearches(false);
@@ -459,9 +470,27 @@ export const ScriptLibrary = () => {
                             )}
                             <RecentSearchesDropdown
                                 recentSearches={recentSearches}
-                                onSelect={(search) => {
-                                    setSearchQuery(search);
-                                    handleSearch(1);
+                                onSelect={async (search) => {
+                                    setShowRecentSearches(false);
+                                    await setSearchQuery(search);
+                                    searchScripts({
+                                        q: search,
+                                        sortBy: selectedSortBy,
+                                        order: selectedOrder,
+                                        page: 1,
+                                        max: 20,
+                                        strict: true,
+                                        verified: filters.verified
+                                            ? 1
+                                            : undefined,
+                                        universal: filters.universal
+                                            ? 1
+                                            : undefined,
+                                        patched: filters.patched
+                                            ? 0
+                                            : undefined,
+                                        key: filters.key ? 0 : undefined,
+                                    });
                                 }}
                                 onClear={clearRecentSearches}
                                 visible={showRecentSearches}
