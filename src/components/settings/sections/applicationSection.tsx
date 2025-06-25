@@ -490,6 +490,12 @@ export const ApplicationSection: FC = () => {
                             icon="/assets/tailwind.svg"
                         />
                         <TechStackItem
+                            name="Supabase"
+                            description="Open source Firebase alternative with PostgreSQL database"
+                            href="https://supabase.io"
+                            icon="/assets/supabase.svg"
+                        />
+                        <TechStackItem
                             name="Framer Motion"
                             description="Production-ready library for smooth animations and gestures"
                             href="https://www.framer.com"
