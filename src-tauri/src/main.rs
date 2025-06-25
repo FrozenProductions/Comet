@@ -761,6 +761,7 @@ fn main() {
             workspace::rename_workspace,
             updater::check_for_updates,
             updater::download_and_install_update,
+            updater::is_official_app,
             open_hydrogen_folder,
             open_comet_folder,
             fast_flags_profiles::export_fast_flags_profiles,

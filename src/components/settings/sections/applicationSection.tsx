@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import {
     Settings2,
     Box,
@@ -29,10 +29,12 @@ import {
     downloadAndInstallUpdate,
     checkForUpdates,
 } from "../../../services/updateService";
+import { invoke } from "@tauri-apps/api/tauri";
 
 export const ApplicationSection: FC = () => {
     const { settings, updateSettings } = useSettings();
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [isOfficialApp, setIsOfficialApp] = useState(true);
     const [updateCheck, setUpdateCheck] = useState<{
         loading: boolean;
         version: string | null;
@@ -44,6 +46,21 @@ export const ApplicationSection: FC = () => {
         isNightly: false,
         hasChecked: false,
     });
+
+    // Check if the app is official
+    useEffect(() => {
+        const checkAppOfficial = async () => {
+            try {
+                const isOfficial = await invoke<boolean>("is_official_app");
+                setIsOfficialApp(isOfficial);
+            } catch (error) {
+                console.error("Failed to check if app is official:", error);
+                setIsOfficialApp(false);
+            }
+        };
+
+        checkAppOfficial();
+    }, []);
 
     return (
         <>
@@ -124,12 +141,20 @@ export const ApplicationSection: FC = () => {
                                         </div>
                                     </div>
                                     <div className="select-none text-xs text-ctp-subtext0">
-                                        Check if a new version of Comet is
-                                        available
+                                        {isOfficialApp
+                                            ? "Check if a new version of Comet is available"
+                                            : "Updates are only available in official Comet builds"}
                                     </div>
                                 </div>
                                 <button
                                     onClick={async () => {
+                                        if (!isOfficialApp) {
+                                            toast.error(
+                                                "Updates are disabled for unofficial builds",
+                                            );
+                                            return;
+                                        }
+
                                         try {
                                             setUpdateCheck((prev) => ({
                                                 ...prev,
@@ -176,7 +201,9 @@ export const ApplicationSection: FC = () => {
                                             );
                                         }
                                     }}
-                                    disabled={updateCheck.loading}
+                                    disabled={
+                                        updateCheck.loading || !isOfficialApp
+                                    }
                                     className="flex items-center gap-1.5 rounded-md border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-ctp-text transition-all hover:border-accent/20 hover:bg-accent/5 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <RefreshCw
@@ -355,20 +382,22 @@ export const ApplicationSection: FC = () => {
                             </AnimatePresence>
                         </div>
                     </div>
-                    <Checkbox
-                        checked={settings.app.nightlyReleases}
-                        onChange={() => {
-                            updateSettings({
-                                app: {
-                                    ...settings.app,
-                                    nightlyReleases:
-                                        !settings.app.nightlyReleases,
-                                },
-                            });
-                        }}
-                        label="Check for nightly releases"
-                        description="Receive updates for development preview builds"
-                    />
+                    {isOfficialApp && (
+                        <Checkbox
+                            checked={settings.app.nightlyReleases}
+                            onChange={() => {
+                                updateSettings({
+                                    app: {
+                                        ...settings.app,
+                                        nightlyReleases:
+                                            !settings.app.nightlyReleases,
+                                    },
+                                });
+                            }}
+                            label="Check for nightly releases"
+                            description="Receive updates for development preview builds"
+                        />
+                    )}
                 </SettingGroup>
 
                 <SettingGroup

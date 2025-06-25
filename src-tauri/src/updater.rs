@@ -32,7 +32,34 @@ fn get_downloads_dir() -> PathBuf {
 }
 
 #[tauri::command]
+pub fn is_official_app(app_handle: tauri::AppHandle) -> bool {
+    let app_name = app_handle.package_info().name.clone();
+    app_name == "Comet"
+}
+
+#[tauri::command]
 pub async fn check_for_updates(app_handle: tauri::AppHandle, check_nightly: bool) -> Result<Option<String>, String> {
+    if !is_official_app(app_handle.clone()) {
+        let app_name = app_handle.package_info().name.clone();
+        let log_entry = LogEntry {
+            timestamp: chrono::Local::now().to_rfc3339(),
+            level: "info".to_string(),
+            message: format!("Update check skipped - app name is {}, not Comet", app_name),
+            details: Some(serde_json::json!({
+                "app_name": app_name,
+                "expected": "Comet"
+            })),
+        };
+        
+        if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+            if let Ok(logger) = logger.lock() {
+                let _ = logger.write_entry(log_entry);
+            }
+        }
+        
+        return Ok(None);
+    }
+
     let log_entry = LogEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
         level: "info".to_string(),
@@ -142,6 +169,34 @@ pub async fn check_for_updates(app_handle: tauri::AppHandle, check_nightly: bool
 #[tauri::command]
 pub async fn download_and_install_update(window: tauri::Window, check_nightly: bool) -> Result<(), String> {
     let app_handle = window.app_handle();
+    
+    let app_name = app_handle.package_info().name.clone();
+    if app_name != "Comet" {
+        let log_entry = LogEntry {
+            timestamp: chrono::Local::now().to_rfc3339(),
+            level: "info".to_string(),
+            message: format!("Update installation skipped - app name is {}, not Comet", app_name),
+            details: Some(serde_json::json!({
+                "app_name": app_name,
+                "expected": "Comet"
+            })),
+        };
+        
+        if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+            if let Ok(logger) = logger.lock() {
+                let _ = logger.write_entry(log_entry);
+            }
+        }
+        
+        window.emit("update-progress", UpdateProgress {
+            state: "completed".to_string(),
+            progress: None,
+            debug_message: Some(format!("Updates not available for {}", app_name)),
+        }).unwrap();
+        
+        return Ok(());
+    }
+    
     let log_entry = LogEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
         level: "info".to_string(),
