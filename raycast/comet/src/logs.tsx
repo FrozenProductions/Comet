@@ -16,6 +16,10 @@ interface LogEntry {
 const LOGS_PER_PAGE = 100;
 const MAX_LOGS = 1000;
 
+const EXCLUDED_LOG_PATTERNS = ["Stack Begin", "Stack End", '}"', "*******"];
+const EXCLUDED_LOG_PREFIXES = ["    "];
+const FLAG_PATTERNS = ["flag", "FInt", "FFlag", "DFString", "FLogRoblox"];
+
 export default function Command() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +57,15 @@ export default function Command() {
     const lowerContent = content.toLowerCase();
     if (lowerContent.includes("error")) return "error";
     if (lowerContent.includes("warn")) return "warning";
-    if (lowerContent.includes("flag")) return "flag";
+
+    for (const pattern of FLAG_PATTERNS) {
+      if (pattern === "flag") {
+        if (lowerContent.includes(pattern)) return "flag";
+      } else if (content.includes(pattern)) {
+        return "flag";
+      }
+    }
+
     return "info";
   };
 
@@ -64,8 +76,17 @@ export default function Command() {
 
   const shouldIncludeLog = (line: string): boolean => {
     const trimmedLine = line.trim();
-    if (trimmedLine.includes("Stack Begin") || trimmedLine.includes("Stack End")) return false;
-    if (trimmedLine.startsWith("    ")) return false;
+
+    for (const pattern of EXCLUDED_LOG_PATTERNS) {
+      if (trimmedLine.includes(pattern)) return false;
+    }
+
+    for (const prefix of EXCLUDED_LOG_PREFIXES) {
+      if (trimmedLine.startsWith(prefix)) return false;
+    }
+
+    if (trimmedLine.length <= 1) return false;
+
     return true;
   };
 
@@ -142,7 +163,7 @@ export default function Command() {
       case "flag":
         return { source: Icon.Flag, tintColor: Color.Green };
       default:
-        return { source: Icon.Circle, tintColor: Color.Blue };
+        return { source: Icon.Info, tintColor: Color.Blue };
     }
   };
 
