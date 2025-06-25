@@ -10,6 +10,7 @@ import {
     Flag,
     Terminal,
     Maximize2,
+    AlignLeft,
 } from "lucide-react";
 import { useEditor } from "../../hooks/useEditor";
 import { useSettings } from "../../hooks/useSettings";
@@ -19,6 +20,7 @@ import { useFastFlags } from "../../hooks/useFastFlags";
 import { CommandItem, CommandPaletteProps } from "../../types/commandPalette";
 import { toast } from "react-hot-toast";
 import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
+import { useWorkspace } from "../../hooks/useWorkspace";
 
 export const CommandPalette: FC<CommandPaletteProps> = ({
     isOpen,
@@ -34,12 +36,44 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
     const { settings, updateSettings } = useSettings();
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
+    const { createWorkspace } = useWorkspace();
     const {
         state: { profiles, activeProfileId },
         activateProfile,
         deactivateProfile,
     } = useFastFlags();
     const { toggleConsoleVisibility } = useConsoleVisibility();
+
+    useEffect(() => {
+        const handleGlobalKeyDown = (e: KeyboardEvent) => {
+            if (
+                e.key === "w" &&
+                (e.metaKey || e.ctrlKey) &&
+                e.shiftKey &&
+                !isOpen
+            ) {
+                e.preventDefault();
+                document.dispatchEvent(
+                    new KeyboardEvent("keydown", { key: "k", metaKey: true }),
+                );
+
+                setTimeout(() => {
+                    setSearchQuery(">workspace ");
+                    if (inputRef.current) {
+                        const len = inputRef.current.value.length;
+                        inputRef.current.focus();
+                        inputRef.current.setSelectionRange(len, len);
+                    }
+                }, 100);
+            }
+        };
+
+        document.addEventListener("keydown", handleGlobalKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleGlobalKeyDown);
+        };
+    }, [isOpen]);
 
     const executeCommand = (action: () => any) => async () => {
         await Promise.resolve(action());
@@ -64,6 +98,20 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             description: "Create a new editor tab",
             icon: <Plus size={16} className="stroke-[2.5]" />,
             action: executeCommand(() => createTab()),
+        },
+        {
+            id: "new-workspace",
+            title: "New Workspace",
+            description: "Create a new workspace",
+            icon: <AlignLeft size={16} className="stroke-[2.5]" />,
+            action: () => {
+                setSearchQuery(">workspace ");
+                if (inputRef.current) {
+                    const len = inputRef.current.value.length;
+                    inputRef.current.focus();
+                    inputRef.current.setSelectionRange(len, len);
+                }
+            },
         },
         {
             id: "toggle-zen",
@@ -293,6 +341,40 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             }));
         }
 
+        if (command === "workspace" || command === "w") {
+            if (param) {
+                return [
+                    {
+                        id: "create-workspace",
+                        title: `Create workspace "${param}"`,
+                        description: "Create a new workspace with this name",
+                        icon: <AlignLeft size={16} className="stroke-[2.5]" />,
+                        action: executeCommand(async () => {
+                            try {
+                                await createWorkspace(param);
+                            } catch (error) {
+                                console.error(
+                                    "Failed to create workspace:",
+                                    error,
+                                );
+                                toast.error("Failed to create workspace");
+                            }
+                        }),
+                    },
+                ];
+            }
+
+            return [
+                {
+                    id: "workspace-prompt",
+                    title: "Create Workspace",
+                    description: "Type a name for your new workspace",
+                    icon: <AlignLeft size={16} className="stroke-[2.5]" />,
+                    action: () => {},
+                },
+            ];
+        }
+
         return commands.filter((command) => {
             if (!query) return true;
             return (
@@ -320,6 +402,17 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 
             if (e.key === "Meta") {
                 setIsCmdPressed(true);
+                return;
+            }
+
+            if (e.key === "w" && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+                e.preventDefault();
+                setSearchQuery(">workspace ");
+                if (inputRef.current) {
+                    const len = inputRef.current.value.length;
+                    inputRef.current.focus();
+                    inputRef.current.setSelectionRange(len, len);
+                }
                 return;
             }
 
@@ -427,7 +520,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                                             searchQuery.startsWith(">") ||
                                             searchQuery.startsWith("/")
                                                 ? "Type a command..."
-                                                : "Search tabs or type > for commands..."
+                                                : "Search tabs or type > for commands... ('>workspace' for workspaces)"
                                         }
                                         className="flex-1 border-none bg-transparent text-sm text-ctp-text outline-none placeholder:text-ctp-subtext0"
                                         autoComplete="off"
