@@ -1,7 +1,7 @@
 # <div align="center">Comet CLI</div>
 
 <div align="center">
-  <img src="../.github/assets/Icon.png" alt="Comet" width="120" />
+  <img src="../.github/assets/Icon_cli.png" alt="Comet" width="120" />
 </div>
 
 <div align="center">
