@@ -2,4 +2,13 @@
 
 import { showCli } from "./interface/comet.js";
 
-showCli().catch(console.error);
+async function main() {
+    try {
+        await showCli();
+    } catch (error) {
+        console.error("An error occurred:", error);
+        process.exit(1);
+    }
+}
+
+main();

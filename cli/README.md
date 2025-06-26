@@ -26,11 +26,25 @@
 
 ## <div align="center">🚀 Getting Started</div>
 
-### Installation
+### Quick Start (No Installation)
+
+Run directly with npx:
 
 ```bash
+# Run without installing
+npx comet-cli-tool
+```
+
+### Installation
+
+#### Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/FrozenProductions/Comet.git
+
 # Navigate to the CLI directory
-cd cli
+cd Comet/cli
 
 # Install dependencies
 npm install
@@ -38,13 +52,9 @@ npm install
 # Build the CLI
 npm run build
 
-# Create a global symlink
+# Start the CLI
+npm start
+
+# link
 npm link
-```
-
-### Usage
-
-```bash
-# Start the interactive CLI
-comet
 ```

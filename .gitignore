@@ -9,6 +9,8 @@ lerna-debug.log*
 
 .env
 server/api/database/scripts/
+cli/bundle/
+cli/scripts
 
 node_modules
 dist
