@@ -23,6 +23,9 @@
   <a href="raycast/comet/README.md">
     <img src="https://img.shields.io/badge/Raycast_Extension-FF6363?style=for-the-badge&logo=raycast&logoColor=white" alt="Raycast Extension" />
   </a>
+  <a href="cli/README.md">
+    <img src="https://img.shields.io/npm/v/comet-cli-tool?style=for-the-badge&color=dee0ef" alt="CLI Tool" />
+  </a>
 </div>
 
 ## <div align="center">✨ Preview</div>
