@@ -2,6 +2,8 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import { saveScript } from "../services/scriptService.js";
 import { Script } from "../types/script.js";
+import fs from "fs/promises";
+import path from "path";
 
 /**
  * Creates a new Luau script by prompting the user for a name and content.
@@ -40,21 +42,69 @@ export async function createScript(
         },
     ]);
 
-    const { content } = await inquirer.prompt([
+    const { inputMethod } = await inquirer.prompt([
         {
-            type: "editor",
-            name: "content",
-            message:
-                "Write your Luau script (press ESC and then Enter when done):",
-            default: "",
-            validate: (input: string) => {
-                if (!input.trim()) {
-                    return "Script content cannot be empty.";
-                }
-                return true;
-            },
+            type: "list",
+            name: "inputMethod",
+            message: "How would you like to input the script content?",
+            choices: [
+                { name: "Use editor", value: "editor" },
+                { name: "Select existing file", value: "file" },
+            ],
         },
     ]);
+
+    let content = "";
+
+    if (inputMethod === "editor") {
+        const response = await inquirer.prompt([
+            {
+                type: "editor",
+                name: "content",
+                message:
+                    "Write your Luau script (press ESC and then Enter when done):",
+                default: "",
+                validate: (input: string) => {
+                    if (!input.trim()) {
+                        return "Script content cannot be empty.";
+                    }
+                    return true;
+                },
+            },
+        ]);
+        content = response.content;
+    } else {
+        const { filePath } = await inquirer.prompt([
+            {
+                type: "input",
+                name: "filePath",
+                message: "Enter the path to the file:",
+                validate: async (input: string) => {
+                    try {
+                        const stats = await fs.stat(input);
+                        if (!stats.isFile()) {
+                            return "The specified path is not a file.";
+                        }
+                        return true;
+                    } catch {
+                        return "File does not exist or cannot be accessed.";
+                    }
+                },
+            },
+        ]);
+
+        try {
+            content = await fs.readFile(filePath, "utf-8");
+            console.log(chalk.green(`File loaded: ${path.basename(filePath)}`));
+        } catch (error) {
+            console.log(
+                chalk.red(`Error reading file: ${(error as Error).message}`),
+            );
+            await promptContinue();
+            await returnToMenu();
+            return;
+        }
+    }
 
     const script: Script = {
         name,
