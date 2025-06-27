@@ -463,7 +463,13 @@ async fn open_roblox() -> Result<(), String> {
 
 #[tauri::command]
 async fn load_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(Vec<FastFlagsProfile>, Option<String>), String> {
+    let settings_file = std::path::PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
+    
+    if !settings_file.exists() {
+        let _ = profile_manager.clear_active_profile();
+    }
+    
     let profiles = profile_manager.load_profiles()?;
     let active_id = profile_manager.get_active_profile_id()?;
     Ok((profiles, active_id))
@@ -600,26 +606,17 @@ fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
             }
             "infinite_yield" => {
                 tauri::async_runtime::spawn(async {
-                    match execute_infinite_yield().await {
-                        Ok(_) => println!("Successfully executed Infinite Yield"),
-                        Err(e) => eprintln!("Failed to execute Infinite Yield: {}", e),
-                    }
+                    let _ = execute_infinite_yield().await;
                 });
             }
             "hydroxide" => {
                 tauri::async_runtime::spawn(async {
-                    match execute_hydroxide().await {
-                        Ok(_) => println!("Successfully executed Hydroxide"),
-                        Err(e) => eprintln!("Failed to execute Hydroxide: {}", e),
-                    }
+                    let _ = execute_hydroxide().await;
                 });
             }
             "dex" => {
                 tauri::async_runtime::spawn(async {
-                    match execute_dex().await {
-                        Ok(_) => println!("Successfully executed DEX Explorer"),
-                        Err(e) => eprintln!("Failed to execute DEX Explorer: {}", e),
-                    }
+                    let _ = execute_dex().await;
                 });
             }
             "quit" => {

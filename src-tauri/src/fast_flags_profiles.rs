@@ -32,7 +32,7 @@ fn get_profiles_dir() -> PathBuf {
     path
 }
 
-fn get_active_profile_file() -> PathBuf {
+pub fn get_active_profile_file() -> PathBuf {
     let mut path = get_profiles_dir();
     path.push("active_profile.json");
     path
@@ -46,6 +46,12 @@ impl FastFlagsProfileManager {
     }
 
     pub fn load_profiles(&self) -> Result<Vec<FastFlagsProfile>, String> {
+        let settings_file = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
+        
+        if !settings_file.exists() {
+            let _ = self.clear_active_profile();
+        }
+
         let mut profiles = Vec::new();
         
         if let Ok(entries) = fs::read_dir(&self.profiles_dir) {
@@ -136,14 +142,33 @@ impl FastFlagsProfileManager {
     }
 
     pub fn get_active_profile_id(&self) -> Result<Option<String>, String> {
+        let settings_file = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
+        
+        if !settings_file.exists() {
+            let _ = self.clear_active_profile();
+            return Ok(None);
+        }
+
         let active_file = get_active_profile_file();
+        
         if !active_file.exists() {
             return Ok(None);
         }
 
         match fs::read_to_string(&active_file) {
-            Ok(content) => serde_json::from_str(&content).map_err(|e| e.to_string()),
-            Err(_) => Ok(None),
+            Ok(content) => {
+                if content.trim().is_empty() {
+                    return Ok(None);
+                }
+                match serde_json::from_str(&content) {
+                    Ok(id) => Ok(Some(id)),
+                    Err(_) => {
+                        let _ = fs::remove_file(&active_file);
+                        Ok(None)
+                    }
+                }
+            },
+            Err(_) => Ok(None)
         }
     }
 
@@ -159,11 +184,17 @@ impl FastFlagsProfileManager {
 
     pub fn clear_active_profile(&self) -> Result<(), String> {
         let active_file = get_active_profile_file();
+        
         if active_file.exists() {
-            fs::remove_file(&active_file)
-                .map_err(|e| format!("Failed to clear active profile: {}", e))?;
+            match fs::remove_file(&active_file) {
+                Ok(_) => Ok(()),
+                Err(_) => {
+                    fs::write(&active_file, "").map_err(|e| format!("Failed to clear active profile: {}", e))
+                }
+            }
+        } else {
+            Ok(())
         }
-        Ok(())
     }
 
     pub fn export_profiles(&self) -> Result<Vec<FastFlagsProfile>, String> {

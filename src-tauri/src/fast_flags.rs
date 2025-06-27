@@ -51,10 +51,30 @@ fn get_fast_flags_path() -> Result<PathBuf, String> {
 
 fn ensure_client_settings_dir() -> Result<(), String> {
     let dir = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings");
+    let settings_file = dir.join("ClientAppSettings.json");
+    
+    let should_clear_profile = !dir.exists() || !settings_file.exists();
+    
     if !dir.exists() {
         fs::create_dir_all(&dir)
             .map_err(|e| format!("Failed to create settings directory: {}", e))?;
     }
+    
+    if should_clear_profile {
+        let active_file = crate::fast_flags_profiles::get_active_profile_file();
+        
+        if active_file.exists() {
+            match fs::remove_file(&active_file) {
+                Ok(_) => {
+                    let _ = fs::write(&active_file, "");
+                },
+                Err(_) => {
+                    let _ = fs::write(&active_file, "");
+                }
+            }
+        }
+    }
+    
     Ok(())
 }
 
