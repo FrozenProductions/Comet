@@ -1,6 +1,6 @@
 {
     "name": "comet-cli-tool",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Comet Script Executor CLI",
     "type": "module",
     "main": "dist/index.js",
