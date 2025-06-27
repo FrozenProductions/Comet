@@ -4,10 +4,11 @@ export interface ScriptExecutionOptions {
 	toastId?: string;
 }
 
-export interface ScriptExecutionResult {
+export type ScriptExecutionResult = {
 	success: boolean;
 	error?: string;
-}
+	content: string;
+};
 
 export interface ScriptTab {
 	id: string;

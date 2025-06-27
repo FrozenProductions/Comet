@@ -16,6 +16,7 @@ import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../../constants/script";
 import { toast } from "react-hot-toast";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import { EditorContext } from "./editorContextType";
+import { useExecutionHistory } from "../../hooks/useExecutionHistory";
 
 export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const { activeWorkspace } = useWorkspace();
@@ -27,6 +28,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [tabs, setTabs] = useState<Tab[]>([]);
 	const [activeTab, setActiveTab] = useState<string | null>(null);
 	const [isInitialized, setIsInitialized] = useState(false);
+	const { addExecution } = useExecutionHistory();
 
 	const handleExecuteScript = useCallback(
 		async ({
@@ -39,22 +41,23 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			if (!scriptContent) {
 				if (!tabs.length || !activeTab) {
 					showToast && toast.error(SCRIPT_MESSAGES.NO_SCRIPT);
-					return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT };
+					return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT, content: "" };
 				}
 				const tab = tabs.find((t) => t.id === activeTab);
 				if (!tab) {
 					showToast && toast.error(SCRIPT_MESSAGES.NO_SCRIPT);
-					return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT };
+					return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT, content: "" };
 				}
 				scriptContent = tab.content;
 			}
 
 			if (!scriptContent.trim()) {
 				showToast && toast.error(SCRIPT_MESSAGES.EMPTY_SCRIPT);
-				return { success: false, error: SCRIPT_MESSAGES.EMPTY_SCRIPT };
+				return { success: false, error: SCRIPT_MESSAGES.EMPTY_SCRIPT, content: "" };
 			}
 
 			const result = await executeScript(scriptContent);
+			addExecution(result);
 
 			if (result.success) {
 				showToast &&
@@ -68,7 +71,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 			return result;
 		},
-		[activeTab, tabs],
+		[activeTab, tabs, addExecution],
 	);
 
 	const executeTab = useCallback(

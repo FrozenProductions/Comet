@@ -25,6 +25,7 @@ import { useConsole } from "./hooks/useConsole";
 import { checkHydrogenInstallation } from "./services/hydrogenService";
 import { MessageModal } from "./components/ui/messageModal";
 import { APP_CONSTANTS } from "./constants/app";
+import { ExecutionHistoryProvider } from "./contexts/execution/executionHistoryContext";
 
 const AppContent: FC = () => {
 	const { settings } = useSettings();
@@ -110,20 +111,22 @@ const App: FC = () => {
 			<ExecuteProvider>
 				<SettingsProvider>
 					<WorkspaceProvider>
-						<EditorProvider>
-							<ConsoleProvider>
-								<FastFlagsProvider>
-									<KeybindsProvider>
-										<AppContent />
-										<MessageModal
-											currentVersion={APP_CONSTANTS.currentVersion}
-										/>
-										<UpdateChecker />
-										<Toaster />
-									</KeybindsProvider>
-								</FastFlagsProvider>
-							</ConsoleProvider>
-						</EditorProvider>
+						<ExecutionHistoryProvider>
+							<EditorProvider>
+								<ConsoleProvider>
+									<FastFlagsProvider>
+										<KeybindsProvider>
+											<AppContent />
+											<MessageModal
+												currentVersion={APP_CONSTANTS.currentVersion}
+											/>
+											<UpdateChecker />
+											<Toaster />
+										</KeybindsProvider>
+									</FastFlagsProvider>
+								</ConsoleProvider>
+							</EditorProvider>
+						</ExecutionHistoryProvider>
 					</WorkspaceProvider>
 				</SettingsProvider>
 			</ExecuteProvider>

@@ -444,6 +444,7 @@ mod hydrogen;
 mod workspace;
 mod updater;
 mod logging;
+mod execution_history;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use flag_validator::FlagValidator;
@@ -773,6 +774,9 @@ fn main() {
             write_log_entry,
             get_logs,
             clear_logs,
+            execution_history::load_execution_history,
+            execution_history::save_execution_record,
+            execution_history::clear_execution_history,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

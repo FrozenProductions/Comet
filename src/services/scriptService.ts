@@ -13,11 +13,12 @@ export const executeScript = async (
 ): Promise<ScriptExecutionResult> => {
 	try {
 		await invoke("execute_script", { script });
-		return { success: true };
+		return { success: true, content: script };
 	} catch (error) {
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : "Unknown error occurred",
+			content: script,
 		};
 	}
 };
@@ -35,11 +36,12 @@ export const saveScript = async (
 ): Promise<ScriptExecutionResult> => {
 	try {
 		await invoke("save_script", { path, content });
-		return { success: true };
+		return { success: true, content };
 	} catch (error) {
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : "Unknown error occurred",
+			content,
 		};
 	}
 };
