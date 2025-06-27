@@ -108,11 +108,11 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
         }
     };
 
-    const bottomSpacing: "bottom-6" | "bottom-12" =
+    const bottomSpacing: "bottom-4" | "bottom-12" =
         settings.interface.zenMode ||
         isFloating ||
         !settings.interface.showConsole
-            ? "bottom-6"
+            ? "bottom-4"
             : "bottom-12";
 
     return (
