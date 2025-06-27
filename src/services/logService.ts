@@ -102,7 +102,6 @@ class LogService {
         try {
             await invoke("write_log_entry", { logEntry });
         } catch (error) {
-            // Fallback to original console if logging fails
             console.error("Failed to write log entry:", error);
         }
     }

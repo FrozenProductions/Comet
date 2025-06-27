@@ -47,7 +47,6 @@ export const ApplicationSection: FC = () => {
         hasChecked: false,
     });
 
-    // Check if the app is official
     useEffect(() => {
         const checkAppOfficial = async () => {
             try {
