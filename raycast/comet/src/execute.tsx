@@ -10,6 +10,7 @@ import {
 	List,
 } from "@raycast/api";
 import { useEffect, useState } from "react";
+import { useHydrogen } from "./hooks/useHydrogen";
 
 type Values = {
 	scriptInput: string;
@@ -21,88 +22,31 @@ interface RecentScript {
 	executed: boolean;
 }
 
-const START_PORT = 6969;
-const END_PORT = 7069;
 const MAX_RECENT_SCRIPTS = 10;
 const RECENT_SCRIPTS_KEY = "recent-scripts";
 
 export default function Command() {
-	const [serverPort, setServerPort] = useState<number | null>(null);
-	const [isConnecting, setIsConnecting] = useState(true);
-	const [connectionError, setConnectionError] = useState<string | null>(null);
 	const [recentScripts, setRecentScripts] = useState<RecentScript[]>([]);
 	const [isShowingRecent, setIsShowingRecent] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [currentScript, setCurrentScript] = useState("");
+	const { serverPort, isConnecting, connect, execute } = useHydrogen();
 
 	useEffect(() => {
-		async function loadRecentScripts() {
-			try {
-				const storedScripts =
-					await LocalStorage.getItem<string>(RECENT_SCRIPTS_KEY);
-				if (storedScripts) {
-					setRecentScripts(JSON.parse(storedScripts));
-				}
-			} catch (error) {
-				console.error("Failed to load recent scripts:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-
 		loadRecentScripts();
-		findHydrogenServer();
 	}, []);
 
-	async function findHydrogenServer() {
-		setIsConnecting(true);
-		setConnectionError(null);
-
-		let lastError = "";
-
-		for (let port = START_PORT; port <= END_PORT; port++) {
-			try {
-				const res = await fetch(`http://127.0.0.1:${port}/secret`, {
-					method: "GET",
-				});
-
-				if (res.ok && (await res.text()) === "0xdeadbeef") {
-					setServerPort(port);
-					setIsConnecting(false);
-					return;
-				}
-			} catch (error: unknown) {
-				lastError = error instanceof Error ? error.message : String(error);
+	async function loadRecentScripts() {
+		try {
+			const storedScripts = await LocalStorage.getItem<string>(RECENT_SCRIPTS_KEY);
+			if (storedScripts) {
+				setRecentScripts(JSON.parse(storedScripts));
 			}
+		} catch (error) {
+			console.error("Failed to load recent scripts:", error);
+		} finally {
+			setIsLoading(false);
 		}
-
-		setConnectionError(
-			`Could not locate Hydrogen server on ports ${START_PORT}-${END_PORT}. Last error: ${lastError}`,
-		);
-		setIsConnecting(false);
-	}
-
-	async function executeScript(scriptContent: string) {
-		if (!serverPort) {
-			throw new Error(
-				`Could not locate Hydrogen server on ports ${START_PORT}-${END_PORT}`,
-			);
-		}
-
-		const response = await fetch(`http://127.0.0.1:${serverPort}/execute`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "text/plain",
-			},
-			body: scriptContent,
-		});
-
-		if (!response.ok) {
-			const errorText = await response.text();
-			throw new Error(`HTTP ${response.status}: ${errorText}`);
-		}
-
-		return await response.text();
 	}
 
 	async function saveRecentScript(scriptContent: string, executed: boolean) {
@@ -151,25 +95,10 @@ export default function Command() {
 			return;
 		}
 
-		const toast = await showToast({
-			style: Toast.Style.Animated,
-			title: "Executing Script",
-		});
-
 		try {
-			const result = await executeScript(scriptToExecute);
+			await execute(scriptToExecute);
 			await saveRecentScript(scriptToExecute, true);
-
-			toast.style = Toast.Style.Success;
-			toast.title = "Script Executed";
-			toast.message = "Check Roblox for results";
-
-			console.log("Execution result:", result);
 		} catch (error) {
-			toast.style = Toast.Style.Failure;
-			toast.title = "Execution Failed";
-			toast.message = error instanceof Error ? error.message : String(error);
-
 			await saveRecentScript(scriptToExecute, false);
 		}
 	}
@@ -215,7 +144,7 @@ export default function Command() {
 						<Action
 							title="Refresh Connection"
 							icon={Icon.Redo}
-							onAction={findHydrogenServer}
+							onAction={connect}
 						/>
 					</ActionPanel>
 				}
@@ -247,35 +176,11 @@ export default function Command() {
 										title="Execute Now"
 										icon={{ source: Icon.Play, tintColor: Color.Green }}
 										onAction={async () => {
-											if (!serverPort) {
-												showToast({
-													style: Toast.Style.Failure,
-													title: "Not Connected",
-													message:
-														"Cannot execute scripts without Hydrogen connection",
-												});
-												return;
-											}
-
-											const toast = await showToast({
-												style: Toast.Style.Animated,
-												title: "Executing Script",
-											});
-
 											try {
-												await executeScript(script.content);
+												await execute(script.content);
 												await saveRecentScript(script.content, true);
-
-												toast.style = Toast.Style.Success;
-												toast.title = "Script Executed";
-												toast.message = "Check Roblox for results";
 											} catch (error) {
-												toast.style = Toast.Style.Failure;
-												toast.title = "Execution Failed";
-												toast.message =
-													error instanceof Error
-														? error.message
-														: String(error);
+												await saveRecentScript(script.content, false);
 											}
 										}}
 									/>
@@ -309,12 +214,12 @@ export default function Command() {
 					<Action
 						title="Retry Connection"
 						icon={Icon.Redo}
-						onAction={findHydrogenServer}
+						onAction={connect}
 					/>
 					<Action.CopyToClipboard
 						title="Copy Script"
 						shortcut={{ modifiers: ["cmd"], key: "c" }}
-						content=""
+						content={currentScript}
 					/>
 				</ActionPanel>
 			}
@@ -349,7 +254,7 @@ export default function Command() {
 							? "Connection Status"
 							: "Connection Error"
 				}
-				text={connectionError || getConnectionStatus()}
+				text={getConnectionStatus()}
 			/>
 		</Form>
 	);

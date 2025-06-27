@@ -9,6 +9,10 @@ import {
 	LocalStorage,
 } from "@raycast/api";
 import { useState, useEffect } from "react";
+import { useHydrogen } from "./hooks/useHydrogen";
+
+const START_PORT = 6969;
+const END_PORT = 7069;
 
 interface Script {
 	title: string;
@@ -40,26 +44,26 @@ export default function Command() {
 	const [showFavorites, setShowFavorites] = useState(false);
 	const [selectedGame, setSelectedGame] = useState<string | null>(null);
 	const [games, setGames] = useState<Set<string>>(new Set());
+	const { serverPort, isConnecting, connect, execute } = useHydrogen();
 
 	useEffect(() => {
-		async function loadFavorites() {
-			try {
-				const storedFavorites =
-					await LocalStorage.getItem<string>(FAVORITES_KEY);
-				if (storedFavorites) {
-					setFavorites(JSON.parse(storedFavorites));
-				}
-			} catch (error) {
-				showToast({
-					style: Toast.Style.Failure,
-					title: "Failed to load favorites",
-					message: error instanceof Error ? error.message : String(error),
-				});
-			}
-		}
-
 		loadFavorites();
 	}, []);
+
+	async function loadFavorites() {
+		try {
+			const storedFavorites = await LocalStorage.getItem<string>(FAVORITES_KEY);
+			if (storedFavorites) {
+				setFavorites(JSON.parse(storedFavorites));
+			}
+		} catch (error) {
+			showToast({
+				style: Toast.Style.Failure,
+				title: "Failed to load favorites",
+				message: error instanceof Error ? error.message : String(error),
+			});
+		}
+	}
 
 	async function searchScripts(query: string) {
 		if (!query) return;
@@ -125,23 +129,6 @@ export default function Command() {
 
 		return () => clearTimeout(debounceTimeout);
 	}, [searchText, showFavorites]);
-
-	async function copyScript(script: Script) {
-		try {
-			await showToast({
-				style: Toast.Style.Success,
-				title: "Script Copied",
-				message: "Ready to paste in the executor",
-			});
-			return script.script;
-		} catch (error) {
-			showToast({
-				style: Toast.Style.Failure,
-				title: "Failed to copy script",
-				message: error instanceof Error ? error.message : String(error),
-			});
-		}
-	}
 
 	async function toggleFavorite(script: Script) {
 		try {
@@ -224,6 +211,31 @@ export default function Command() {
 						</ActionPanel>
 					}
 				/>
+				<List.Item
+					title="Retry Connection"
+					icon={Icon.Redo}
+					accessories={[
+						{
+							text: isConnecting
+								? "Connecting..."
+								: serverPort
+									? `Connected on port ${serverPort}`
+									: "Not connected",
+							icon: serverPort
+								? { source: Icon.CheckCircle, tintColor: Color.Green }
+								: { source: Icon.XmarkCircle, tintColor: Color.Red },
+						},
+					]}
+					actions={
+						<ActionPanel>
+							<Action
+								title="Retry Connection"
+								onAction={connect}
+								icon={Icon.Redo}
+							/>
+						</ActionPanel>
+					}
+				/>
 			</List.Section>
 
 			<List.Section
@@ -265,7 +277,7 @@ export default function Command() {
 									<Action
 										title="Execute Script"
 										icon={{ source: Icon.Play, tintColor: Color.Green }}
-										onAction={() => copyScript(script)}
+										onAction={() => execute(script.script)}
 										shortcut={{ modifiers: [], key: "enter" }}
 									/>
 									<Action
@@ -285,7 +297,6 @@ export default function Command() {
 									<Action.CopyToClipboard
 										title="Copy Script"
 										content={script.script}
-										onCopy={() => copyScript(script)}
 										shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
 									/>
 									<Action.Push
