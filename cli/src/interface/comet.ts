@@ -6,6 +6,7 @@ import { listScripts } from "./listScripts.js";
 import { createScript } from "./createScript.js";
 import { executeScriptMenu } from "./executeScript.js";
 import { deleteScriptMenu } from "./deleteScript.js";
+import { logsViewer } from "./logsViewer.js";
 
 /**
  * Displays the main menu and handles user selection of actions
@@ -21,6 +22,7 @@ async function mainMenu(): Promise<void> {
                 { name: "Create script", value: "create" },
                 { name: "Execute script", value: "execute" },
                 { name: "Delete script", value: "delete" },
+                { name: "View Roblox logs", value: "logs" },
                 { name: "Exit", value: "exit" },
             ],
         },
@@ -38,6 +40,9 @@ async function mainMenu(): Promise<void> {
             break;
         case "delete":
             await deleteScriptMenu(promptContinue, mainMenu);
+            break;
+        case "logs":
+            await logsViewer(promptContinue, mainMenu);
             break;
         case "exit":
             console.log(chalk.green("\nThank you for using Comet. Goodbye!"));

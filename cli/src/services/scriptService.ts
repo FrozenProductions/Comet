@@ -19,9 +19,7 @@ async function findServerPort(): Promise<number | null> {
             if (res.ok && (await res.text()) === "0xdeadbeef") {
                 return port;
             }
-        } catch {
-            // Continue trying next port
-        }
+        } catch {}
     }
 
     return null;
