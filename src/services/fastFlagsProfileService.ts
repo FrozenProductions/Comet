@@ -8,13 +8,13 @@ import { v4 as uuidv4 } from "uuid";
  * @throws Error if loading profiles fails
  */
 export const loadProfiles = async (): Promise<LoadProfilesResponse> => {
-    const [profiles, activeId] = await invoke<
-        [FastFlagsProfile[], string | null]
-    >("load_fast_flags_profiles");
-    return {
-        profiles,
-        activeProfileId: activeId || null,
-    };
+	const [profiles, activeId] = await invoke<
+		[FastFlagsProfile[], string | null]
+	>("load_fast_flags_profiles");
+	return {
+		profiles,
+		activeProfileId: activeId || null,
+	};
 };
 
 /**
@@ -23,7 +23,7 @@ export const loadProfiles = async (): Promise<LoadProfilesResponse> => {
  * @throws Error if saving profile fails
  */
 export const saveProfile = async (profile: FastFlagsProfile): Promise<void> => {
-    await invoke("save_fast_flags_profile", { profile });
+	await invoke("save_fast_flags_profile", { profile });
 };
 
 /**
@@ -32,7 +32,7 @@ export const saveProfile = async (profile: FastFlagsProfile): Promise<void> => {
  * @throws Error if deleting profile fails
  */
 export const deleteProfile = async (profileId: string): Promise<void> => {
-    await invoke("delete_fast_flags_profile", { profileId });
+	await invoke("delete_fast_flags_profile", { profileId });
 };
 
 /**
@@ -41,7 +41,7 @@ export const deleteProfile = async (profileId: string): Promise<void> => {
  * @throws Error if activating profile fails
  */
 export const activateProfile = async (profileId: string): Promise<void> => {
-    await invoke("activate_fast_flags_profile", { profileId });
+	await invoke("activate_fast_flags_profile", { profileId });
 };
 
 /**
@@ -49,12 +49,12 @@ export const activateProfile = async (profileId: string): Promise<void> => {
  * @throws Error if the deactivation fails
  */
 export const deactivateProfile = async (): Promise<void> => {
-    try {
-        await invoke("cleanup_fast_flags");
-    } catch (error) {
-        console.error("Failed to deactivate profile:", error);
-        throw error;
-    }
+	try {
+		await invoke("cleanup_fast_flags");
+	} catch (error) {
+		console.error("Failed to deactivate profile:", error);
+		throw error;
+	}
 };
 
 /**
@@ -64,17 +64,17 @@ export const deactivateProfile = async (): Promise<void> => {
  * @throws Error if renaming profile fails or profile not found
  */
 export const renameProfile = async (
-    profileId: string,
-    newName: string,
+	profileId: string,
+	newName: string,
 ): Promise<void> => {
-    const [profiles] = await invoke<[FastFlagsProfile[], string | null]>(
-        "load_fast_flags_profiles",
-    );
-    const profile = profiles.find((p) => p.id === profileId);
-    if (!profile) throw new Error("Profile not found");
+	const [profiles] = await invoke<[FastFlagsProfile[], string | null]>(
+		"load_fast_flags_profiles",
+	);
+	const profile = profiles.find((p) => p.id === profileId);
+	if (!profile) throw new Error("Profile not found");
 
-    const updatedProfile = { ...profile, name: newName };
-    await invoke("save_fast_flags_profile", { profile: updatedProfile });
+	const updatedProfile = { ...profile, name: newName };
+	await invoke("save_fast_flags_profile", { profile: updatedProfile });
 };
 
 /**
@@ -83,14 +83,14 @@ export const renameProfile = async (
  * @returns The created profile object
  */
 export const createNewProfile = (name: string): FastFlagsProfile => {
-    const now = new Date().toISOString();
-    return {
-        id: uuidv4(),
-        name,
-        flags: {},
-        createdAt: now,
-        updatedAt: now,
-    };
+	const now = new Date().toISOString();
+	return {
+		id: uuidv4(),
+		name,
+		flags: {},
+		createdAt: now,
+		updatedAt: now,
+	};
 };
 
 /**
@@ -99,7 +99,7 @@ export const createNewProfile = (name: string): FastFlagsProfile => {
  * @throws Error if exporting profiles fails
  */
 export const exportProfiles = async (): Promise<FastFlagsProfile[]> => {
-    return await invoke<FastFlagsProfile[]>("export_fast_flags_profiles");
+	return await invoke<FastFlagsProfile[]>("export_fast_flags_profiles");
 };
 
 /**
@@ -108,9 +108,9 @@ export const exportProfiles = async (): Promise<FastFlagsProfile[]> => {
  * @throws Error if importing profiles fails
  */
 export const importProfiles = async (
-    profiles: FastFlagsProfile[],
+	profiles: FastFlagsProfile[],
 ): Promise<void> => {
-    await invoke("import_fast_flags_profiles", { profiles });
+	await invoke("import_fast_flags_profiles", { profiles });
 };
 
 /**
@@ -118,7 +118,7 @@ export const importProfiles = async (
  * @throws Error if exporting to file fails
  */
 export const exportToFile = async (): Promise<void> => {
-    await invoke("export_fast_flags_profiles");
+	await invoke("export_fast_flags_profiles");
 };
 
 /**
@@ -126,5 +126,5 @@ export const exportToFile = async (): Promise<void> => {
  * @throws Error if importing from file fails
  */
 export const importFromFile = async (): Promise<void> => {
-    await invoke("import_fast_flags_profiles");
+	await invoke("import_fast_flags_profiles");
 };

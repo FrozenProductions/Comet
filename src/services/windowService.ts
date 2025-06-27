@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api/tauri";
  * @throws Error if the window cannot be closed
  */
 export const closeWindow = async (): Promise<void> => {
-    await invoke("close_window");
+	await invoke("close_window");
 };
 
 /**
@@ -13,7 +13,7 @@ export const closeWindow = async (): Promise<void> => {
  * @throws Error if the window cannot be minimized
  */
 export const minimizeWindow = async (): Promise<void> => {
-    await invoke("minimize_window");
+	await invoke("minimize_window");
 };
 
 /**
@@ -21,7 +21,7 @@ export const minimizeWindow = async (): Promise<void> => {
  * @throws Error if the window state cannot be toggled
  */
 export const toggleMaximizeWindow = async (): Promise<void> => {
-    await invoke("toggle_maximize_window");
+	await invoke("toggle_maximize_window");
 };
 
 /**
@@ -29,12 +29,12 @@ export const toggleMaximizeWindow = async (): Promise<void> => {
  * @throws Error if the folder cannot be opened
  */
 export const openCometFolder = async (): Promise<void> => {
-    try {
-        await invoke("open_comet_folder");
-    } catch (error) {
-        console.error("Failed to open Comet folder:", error);
-        throw error;
-    }
+	try {
+		await invoke("open_comet_folder");
+	} catch (error) {
+		console.error("Failed to open Comet folder:", error);
+		throw error;
+	}
 };
 
 /**
@@ -42,10 +42,10 @@ export const openCometFolder = async (): Promise<void> => {
  * @throws Error if the folder cannot be opened
  */
 export const openHydrogenFolder = async (): Promise<void> => {
-    try {
-        await invoke("open_hydrogen_folder");
-    } catch (error) {
-        console.error("Failed to open Hydrogen folder:", error);
-        throw error;
-    }
+	try {
+		await invoke("open_hydrogen_folder");
+	} catch (error) {
+		console.error("Failed to open Hydrogen folder:", error);
+		throw error;
+	}
 };

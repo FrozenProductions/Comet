@@ -11,12 +11,12 @@ import path from "path";
  * @param returnToMenu Function to return to main menu
  */
 export async function createScript(
-    promptContinue: () => Promise<void>,
-    returnToMenu: () => Promise<void>,
+	promptContinue: () => Promise<void>,
+	returnToMenu: () => Promise<void>,
 ): Promise<void> {
-    console.clear();
-    console.log(
-        chalk.blue.bold(`
+	console.clear();
+	console.log(
+		chalk.blue.bold(`
  ░▒▓██████▓▒░ ░▒▓███████▓▒░ ░▒▓████████▓▒░ ░▒▓██████▓▒░░▒▓████████▓▒░░▒▓████████▓▒░ 
 ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░       ░▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░    ░▒▓█▓▒░        
 ░▒▓█▓▒░       ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░       ░▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░    ░▒▓█▓▒░        
@@ -25,100 +25,97 @@ export async function createScript(
 ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░       ░▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░    ░▒▓█▓▒░        
  ░▒▓██████▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓████████▓▒░░▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░    ░▒▓████████▓▒░
  `),
-    );
+	);
 
-    const { name } = await inquirer.prompt([
-        {
-            type: "input",
-            name: "name",
-            message: "Enter script name:",
-            validate: (input: string) => {
-                if (!input.trim()) return "Script name cannot be empty.";
-                if (!/^[a-zA-Z0-9_-]+$/.test(input)) {
-                    return "Script name can only contain letters, numbers, underscores, and hyphens.";
-                }
-                return true;
-            },
-        },
-    ]);
+	const { name } = await inquirer.prompt([
+		{
+			type: "input",
+			name: "name",
+			message: "Enter script name:",
+			validate: (input: string) => {
+				if (!input.trim()) return "Script name cannot be empty.";
+				if (!/^[a-zA-Z0-9_-]+$/.test(input)) {
+					return "Script name can only contain letters, numbers, underscores, and hyphens.";
+				}
+				return true;
+			},
+		},
+	]);
 
-    const { inputMethod } = await inquirer.prompt([
-        {
-            type: "list",
-            name: "inputMethod",
-            message: "How would you like to input the script content?",
-            choices: [
-                { name: "Use editor", value: "editor" },
-                { name: "Select existing file", value: "file" },
-            ],
-        },
-    ]);
+	const { inputMethod } = await inquirer.prompt([
+		{
+			type: "list",
+			name: "inputMethod",
+			message: "How would you like to input the script content?",
+			choices: [
+				{ name: "Use editor", value: "editor" },
+				{ name: "Select existing file", value: "file" },
+			],
+		},
+	]);
 
-    let content = "";
+	let content = "";
 
-    if (inputMethod === "editor") {
-        const response = await inquirer.prompt([
-            {
-                type: "editor",
-                name: "content",
-                message:
-                    "Write your Luau script (press ESC and then Enter when done):",
-                default: "",
-                validate: (input: string) => {
-                    if (!input.trim()) {
-                        return "Script content cannot be empty.";
-                    }
-                    return true;
-                },
-            },
-        ]);
-        content = response.content;
-    } else {
-        const { filePath } = await inquirer.prompt([
-            {
-                type: "input",
-                name: "filePath",
-                message: "Enter the path to the file:",
-                validate: async (input: string) => {
-                    try {
-                        const stats = await fs.stat(input);
-                        if (!stats.isFile()) {
-                            return "The specified path is not a file.";
-                        }
-                        return true;
-                    } catch {
-                        return "File does not exist or cannot be accessed.";
-                    }
-                },
-            },
-        ]);
+	if (inputMethod === "editor") {
+		const response = await inquirer.prompt([
+			{
+				type: "editor",
+				name: "content",
+				message: "Write your Luau script (press ESC and then Enter when done):",
+				default: "",
+				validate: (input: string) => {
+					if (!input.trim()) {
+						return "Script content cannot be empty.";
+					}
+					return true;
+				},
+			},
+		]);
+		content = response.content;
+	} else {
+		const { filePath } = await inquirer.prompt([
+			{
+				type: "input",
+				name: "filePath",
+				message: "Enter the path to the file:",
+				validate: async (input: string) => {
+					try {
+						const stats = await fs.stat(input);
+						if (!stats.isFile()) {
+							return "The specified path is not a file.";
+						}
+						return true;
+					} catch {
+						return "File does not exist or cannot be accessed.";
+					}
+				},
+			},
+		]);
 
-        try {
-            content = await fs.readFile(filePath, "utf-8");
-            console.log(chalk.green(`File loaded: ${path.basename(filePath)}`));
-        } catch (error) {
-            console.log(
-                chalk.red(`Error reading file: ${(error as Error).message}`),
-            );
-            await promptContinue();
-            await returnToMenu();
-            return;
-        }
-    }
+		try {
+			content = await fs.readFile(filePath, "utf-8");
+			console.log(chalk.green(`File loaded: ${path.basename(filePath)}`));
+		} catch (error) {
+			console.log(chalk.red(`Error reading file: ${(error as Error).message}`));
+			await promptContinue();
+			await returnToMenu();
+			return;
+		}
+	}
 
-    const script: Script = {
-        name,
-        content,
-    };
+	const script: Script = {
+		name,
+		content,
+	};
 
-    const success = await saveScript(script);
+	const success = await saveScript(script);
 
-    if (success) {
-        console.log(chalk.green(`\nScript "${name}" created successfully.`));
-    } else {
-        console.log(chalk.red(`\nFailed to create script "${name}".`));
-    }
+	if (success) {
+		console.log(chalk.green(`\nScript "${name}" created successfully.`));
+	} else {
+		console.log(chalk.red(`\nFailed to create script "${name}".`));
+	}
 
-    await promptContinue();
-    await returnToMenu();
+	await promptContinue();
+	await returnToMenu();
 }

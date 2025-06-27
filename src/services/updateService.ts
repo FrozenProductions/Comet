@@ -6,16 +6,16 @@ import { invoke } from "@tauri-apps/api/tauri";
  * @returns Promise that resolves to update check result
  */
 export const checkForUpdates = async (
-    checkNightly: boolean,
+	checkNightly: boolean,
 ): Promise<string | null> => {
-    try {
-        return await invoke<string | null>("check_for_updates", {
-            checkNightly,
-        });
-    } catch (error) {
-        console.error("Failed to check for updates:", error);
-        throw error;
-    }
+	try {
+		return await invoke<string | null>("check_for_updates", {
+			checkNightly,
+		});
+	} catch (error) {
+		console.error("Failed to check for updates:", error);
+		throw error;
+	}
 };
 
 /**
@@ -24,14 +24,14 @@ export const checkForUpdates = async (
  * @throws Error if the update installation fails
  */
 export const downloadAndInstallUpdate = async (
-    checkNightly: boolean,
+	checkNightly: boolean,
 ): Promise<void> => {
-    try {
-        await invoke("download_and_install_update", {
-            checkNightly,
-        });
-    } catch (error) {
-        console.error("Failed to download and install update:", error);
-        throw error;
-    }
+	try {
+		await invoke("download_and_install_update", {
+			checkNightly,
+		});
+	} catch (error) {
+		console.error("Failed to download and install update:", error);
+		throw error;
+	}
 };

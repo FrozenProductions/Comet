@@ -9,20 +9,17 @@ import type { Tab } from "../types/editor";
  * @throws Error if the script execution fails
  */
 export const executeScript = async (
-    script: string,
+	script: string,
 ): Promise<ScriptExecutionResult> => {
-    try {
-        await invoke("execute_script", { script });
-        return { success: true };
-    } catch (error) {
-        return {
-            success: false,
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "Unknown error occurred",
-        };
-    }
+	try {
+		await invoke("execute_script", { script });
+		return { success: true };
+	} catch (error) {
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : "Unknown error occurred",
+		};
+	}
 };
 
 /**
@@ -33,21 +30,18 @@ export const executeScript = async (
  * @throws Error if the save operation fails
  */
 export const saveScript = async (
-    path: string,
-    content: string,
+	path: string,
+	content: string,
 ): Promise<ScriptExecutionResult> => {
-    try {
-        await invoke("save_script", { path, content });
-        return { success: true };
-    } catch (error) {
-        return {
-            success: false,
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "Unknown error occurred",
-        };
-    }
+	try {
+		await invoke("save_script", { path, content });
+		return { success: true };
+	} catch (error) {
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : "Unknown error occurred",
+		};
+	}
 };
 
 /**
@@ -57,12 +51,12 @@ export const saveScript = async (
  * @throws Error if the save operation fails
  */
 export const saveTab = async (workspaceId: string, tab: Tab): Promise<void> => {
-    try {
-        await invoke("save_tab", { workspaceId, tab });
-    } catch (error) {
-        console.error("Failed to save tab:", error);
-        throw error;
-    }
+	try {
+		await invoke("save_tab", { workspaceId, tab });
+	} catch (error) {
+		console.error("Failed to save tab:", error);
+		throw error;
+	}
 };
 
 /**
@@ -74,22 +68,22 @@ export const saveTab = async (workspaceId: string, tab: Tab): Promise<void> => {
  * @throws Error if the save operation fails
  */
 export const saveTabState = async (
-    workspaceId: string,
-    activeTab: string | null,
-    tabOrder: string[],
-    tabs: Tab[],
+	workspaceId: string,
+	activeTab: string | null,
+	tabOrder: string[],
+	tabs: Tab[],
 ): Promise<void> => {
-    try {
-        await invoke("save_tab_state", {
-            workspaceId,
-            activeTab,
-            tabOrder,
-            tabs,
-        });
-    } catch (error) {
-        console.error("Failed to save tab state:", error);
-        throw error;
-    }
+	try {
+		await invoke("save_tab_state", {
+			workspaceId,
+			activeTab,
+			tabOrder,
+			tabs,
+		});
+	} catch (error) {
+		console.error("Failed to save tab state:", error);
+		throw error;
+	}
 };
 
 /**
@@ -99,12 +93,12 @@ export const saveTabState = async (
  * @throws Error if the load operation fails
  */
 export const loadTabs = async (workspaceId: string): Promise<Tab[]> => {
-    try {
-        return await invoke<Tab[]>("load_tabs", { workspaceId });
-    } catch (error) {
-        console.error("Failed to load tabs:", error);
-        throw error;
-    }
+	try {
+		return await invoke<Tab[]>("load_tabs", { workspaceId });
+	} catch (error) {
+		console.error("Failed to load tabs:", error);
+		throw error;
+	}
 };
 
 /**
@@ -114,14 +108,14 @@ export const loadTabs = async (workspaceId: string): Promise<Tab[]> => {
  * @throws Error if the operation fails
  */
 export const getTabState = async (
-    workspaceId: string,
+	workspaceId: string,
 ): Promise<{ active_tab: string | null; tab_order: string[] }> => {
-    try {
-        return await invoke("get_tab_state", { workspaceId });
-    } catch (error) {
-        console.error("Failed to get tab state:", error);
-        throw error;
-    }
+	try {
+		return await invoke("get_tab_state", { workspaceId });
+	} catch (error) {
+		console.error("Failed to get tab state:", error);
+		throw error;
+	}
 };
 
 /**
@@ -131,15 +125,15 @@ export const getTabState = async (
  * @throws Error if the delete operation fails
  */
 export const deleteTab = async (
-    workspaceId: string,
-    title: string,
+	workspaceId: string,
+	title: string,
 ): Promise<void> => {
-    try {
-        await invoke("delete_tab", { workspaceId, title });
-    } catch (error) {
-        console.error("Failed to delete tab:", error);
-        throw error;
-    }
+	try {
+		await invoke("delete_tab", { workspaceId, title });
+	} catch (error) {
+		console.error("Failed to delete tab:", error);
+		throw error;
+	}
 };
 
 /**
@@ -150,16 +144,16 @@ export const deleteTab = async (
  * @throws Error if the rename operation fails
  */
 export const renameTab = async (
-    workspaceId: string,
-    oldTitle: string,
-    newTitle: string,
+	workspaceId: string,
+	oldTitle: string,
+	newTitle: string,
 ): Promise<void> => {
-    try {
-        await invoke("rename_tab", { workspaceId, oldTitle, newTitle });
-    } catch (error) {
-        console.error("Failed to rename tab:", error);
-        throw error;
-    }
+	try {
+		await invoke("rename_tab", { workspaceId, oldTitle, newTitle });
+	} catch (error) {
+		console.error("Failed to rename tab:", error);
+		throw error;
+	}
 };
 
 /**
@@ -169,13 +163,13 @@ export const renameTab = async (
  * @throws Error if the creation fails
  */
 export const createTab = async (
-    workspaceId: string,
-    tab: Tab,
+	workspaceId: string,
+	tab: Tab,
 ): Promise<void> => {
-    try {
-        await invoke("save_tab", { workspaceId, tab });
-    } catch (error) {
-        console.error("Failed to create tab:", error);
-        throw error;
-    }
+	try {
+		await invoke("save_tab", { workspaceId, tab });
+	} catch (error) {
+		console.error("Failed to create tab:", error);
+		throw error;
+	}
 };

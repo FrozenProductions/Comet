@@ -2,27 +2,25 @@ import { useSettings } from "../hooks/useSettings";
 import { toast } from "react-hot-toast";
 
 export const useConsoleVisibility = () => {
-    const { settings, updateSettings } = useSettings();
+	const { settings, updateSettings } = useSettings();
 
-    const toggleConsoleVisibility = () => {
-        updateSettings({
-            interface: {
-                ...settings.interface,
-                showConsole: !settings.interface.showConsole,
-            },
-        });
-        toast.success(
-            !settings.interface.showConsole
-                ? "Console shown"
-                : "Console hidden",
-            {
-                id: "console-visibility-toast",
-            }
-        );
-    };
+	const toggleConsoleVisibility = () => {
+		updateSettings({
+			interface: {
+				...settings.interface,
+				showConsole: !settings.interface.showConsole,
+			},
+		});
+		toast.success(
+			!settings.interface.showConsole ? "Console shown" : "Console hidden",
+			{
+				id: "console-visibility-toast",
+			},
+		);
+	};
 
-    return {
-        isConsoleVisible: settings.interface.showConsole,
-        toggleConsoleVisibility,
-    };
+	return {
+		isConsoleVisible: settings.interface.showConsole,
+		toggleConsoleVisibility,
+	};
 };

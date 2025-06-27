@@ -7,7 +7,7 @@ import { AutoExecuteFile } from "../types/autoExecute";
  * @throws Error if fetching files fails
  */
 export const getAutoExecuteFiles = async (): Promise<AutoExecuteFile[]> => {
-    return invoke("get_auto_execute_files");
+	return invoke("get_auto_execute_files");
 };
 
 /**
@@ -17,10 +17,10 @@ export const getAutoExecuteFiles = async (): Promise<AutoExecuteFile[]> => {
  * @throws Error if saving file fails
  */
 export const saveAutoExecuteFile = async (
-    name: string,
-    content: string,
+	name: string,
+	content: string,
 ): Promise<void> => {
-    return invoke("save_auto_execute_file", { name, content });
+	return invoke("save_auto_execute_file", { name, content });
 };
 
 /**
@@ -29,7 +29,7 @@ export const saveAutoExecuteFile = async (
  * @throws Error if deleting file fails
  */
 export const deleteAutoExecuteFile = async (name: string): Promise<void> => {
-    return invoke("delete_auto_execute_file", { name });
+	return invoke("delete_auto_execute_file", { name });
 };
 
 /**
@@ -39,10 +39,10 @@ export const deleteAutoExecuteFile = async (name: string): Promise<void> => {
  * @throws Error if renaming file fails
  */
 export const renameAutoExecuteFile = async (
-    oldName: string,
-    newName: string,
+	oldName: string,
+	newName: string,
 ): Promise<void> => {
-    return invoke("rename_auto_execute_file", { oldName, newName });
+	return invoke("rename_auto_execute_file", { oldName, newName });
 };
 
 /**
@@ -50,5 +50,5 @@ export const renameAutoExecuteFile = async (
  * @throws Error if opening directory fails
  */
 export const openAutoExecuteDirectory = async (): Promise<void> => {
-    return invoke("open_auto_execute_directory");
+	return invoke("open_auto_execute_directory");
 };

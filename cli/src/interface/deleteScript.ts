@@ -9,12 +9,12 @@ import { ScriptChoice } from "../types/menu.js";
  * @param returnToMenu Function to return to main menu
  */
 export async function deleteScriptMenu(
-    promptContinue: () => Promise<void>,
-    returnToMenu: () => Promise<void>,
+	promptContinue: () => Promise<void>,
+	returnToMenu: () => Promise<void>,
 ): Promise<void> {
-    console.clear();
-    console.log(
-        chalk.blue.bold(`
+	console.clear();
+	console.log(
+		chalk.blue.bold(`
 ░▒▓███████▓▒░ ░▒▓████████▓▒░░▒▓█▓▒░       ░▒▓████████▓▒░░▒▓████████▓▒░░▒▓████████▓▒░ 
 ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░       ░▒▓█▓▒░       ░▒▓█▓▒░          ░▒▓█▓▒░    ░▒▓█▓▒░        
 ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░       ░▒▓█▓▒░       ░▒▓█▓▒░          ░▒▓█▓▒░    ░▒▓█▓▒░        
@@ -23,68 +23,64 @@ export async function deleteScriptMenu(
 ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░       ░▒▓█▓▒░       ░▒▓█▓▒░          ░▒▓█▓▒░    ░▒▓█▓▒░        
 ░▒▓███████▓▒░ ░▒▓████████▓▒░░▒▓████████▓▒░░▒▓████████▓▒░   ░▒▓█▓▒░    ░▒▓████████▓▒░
 `),
-    );
+	);
 
-    const scripts = await loadScripts();
+	const scripts = await loadScripts();
 
-    if (scripts.length === 0) {
-        console.log(chalk.yellow("\nNo scripts available to delete."));
-        await promptContinue();
-        await returnToMenu();
-        return;
-    }
+	if (scripts.length === 0) {
+		console.log(chalk.yellow("\nNo scripts available to delete."));
+		await promptContinue();
+		await returnToMenu();
+		return;
+	}
 
-    const scriptChoices: ScriptChoice<string>[] = scripts.map((script) => ({
-        name: script.name,
-        value: script.name,
-    }));
+	const scriptChoices: ScriptChoice<string>[] = scripts.map((script) => ({
+		name: script.name,
+		value: script.name,
+	}));
 
-    scriptChoices.push({
-        name: "Back to main menu",
-        value: null as unknown as string,
-    });
+	scriptChoices.push({
+		name: "Back to main menu",
+		value: null as unknown as string,
+	});
 
-    const { selectedScript } = await inquirer.prompt([
-        {
-            type: "list",
-            name: "selectedScript",
-            message: "Select a script to delete:",
-            choices: scriptChoices,
-        },
-    ]);
+	const { selectedScript } = await inquirer.prompt([
+		{
+			type: "list",
+			name: "selectedScript",
+			message: "Select a script to delete:",
+			choices: scriptChoices,
+		},
+	]);
 
-    if (!selectedScript) {
-        await returnToMenu();
-        return;
-    }
+	if (!selectedScript) {
+		await returnToMenu();
+		return;
+	}
 
-    const { confirm } = await inquirer.prompt([
-        {
-            type: "confirm",
-            name: "confirm",
-            message: `Are you sure you want to delete script "${selectedScript}"?`,
-            default: false,
-        },
-    ]);
+	const { confirm } = await inquirer.prompt([
+		{
+			type: "confirm",
+			name: "confirm",
+			message: `Are you sure you want to delete script "${selectedScript}"?`,
+			default: false,
+		},
+	]);
 
-    if (confirm) {
-        const success = await deleteScript(selectedScript);
+	if (confirm) {
+		const success = await deleteScript(selectedScript);
 
-        if (success) {
-            console.log(
-                chalk.green(
-                    `\nScript "${selectedScript}" deleted successfully.`,
-                ),
-            );
-        } else {
-            console.log(
-                chalk.red(`\nFailed to delete script "${selectedScript}".`),
-            );
-        }
-    } else {
-        console.log(chalk.yellow("\nDeletion cancelled."));
-    }
+		if (success) {
+			console.log(
+				chalk.green(`\nScript "${selectedScript}" deleted successfully.`),
+			);
+		} else {
+			console.log(chalk.red(`\nFailed to delete script "${selectedScript}".`));
+		}
+	} else {
+		console.log(chalk.yellow("\nDeletion cancelled."));
+	}
 
-    await promptContinue();
-    await returnToMenu();
+	await promptContinue();
+	await returnToMenu();
 }

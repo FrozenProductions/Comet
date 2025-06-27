@@ -7,18 +7,18 @@ import type { VersionMessages, VersionMessage } from "../types/versionMessages";
  * @returns Version message if available, null otherwise
  */
 export const fetchVersionMessage = async (
-    currentVersion: string,
+	currentVersion: string,
 ): Promise<VersionMessage | null> => {
-    try {
-        const data = await invoke<VersionMessages>("fetch_version_messages");
-        const versionMessage = data.messages[currentVersion];
+	try {
+		const data = await invoke<VersionMessages>("fetch_version_messages");
+		const versionMessage = data.messages[currentVersion];
 
-        if (versionMessage && versionMessage.message.trim() !== "") {
-            return versionMessage;
-        }
-        return null;
-    } catch (error) {
-        console.error("Error fetching version message:", error);
-        return null;
-    }
+		if (versionMessage && versionMessage.message.trim() !== "") {
+			return versionMessage;
+		}
+		return null;
+	} catch (error) {
+		console.error("Error fetching version message:", error);
+		return null;
+	}
 };

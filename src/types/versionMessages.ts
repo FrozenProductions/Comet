@@ -1,12 +1,12 @@
 export type VersionMessage = {
-    message: string;
-    nfu: boolean;
+	message: string;
+	nfu: boolean;
 };
 
 export type VersionMessages = {
-    messages: Record<string, VersionMessage>;
+	messages: Record<string, VersionMessage>;
 };
 
 export type MessageModalProps = {
-    currentVersion: string;
+	currentVersion: string;
 };

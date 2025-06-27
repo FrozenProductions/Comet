@@ -3,66 +3,66 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        color-scheme: dark;
-    }
+	:root {
+		color-scheme: dark;
+	}
 
-    body {
-        @apply bg-transparent text-ctp-text antialiased;
-        min-height: 100vh;
-    }
+	body {
+		@apply bg-transparent text-ctp-text antialiased;
+		min-height: 100vh;
+	}
 
-    * {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
+	* {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
 
-    *::-webkit-scrollbar {
-        display: none;
-    }
+	*::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 @layer components {
-    .btn-primary {
-        @apply px-6 py-3 bg-primary-500/80 hover:bg-primary-600/90 text-ctp-text rounded-lg font-medium transition-colors;
-    }
+	.btn-primary {
+		@apply px-6 py-3 bg-primary-500/80 hover:bg-primary-600/90 text-ctp-text rounded-lg font-medium transition-colors;
+	}
 
-    .btn-secondary {
-        @apply px-6 py-3 bg-ctp-surface1/50 hover:bg-ctp-surface1/60 text-ctp-text rounded-lg font-medium transition-colors;
-    }
+	.btn-secondary {
+		@apply px-6 py-3 bg-ctp-surface1/50 hover:bg-ctp-surface1/60 text-ctp-text rounded-lg font-medium transition-colors;
+	}
 
-    .glass-panel {
-        @apply bg-dark-700/40 border border-dark-500/30 rounded-lg shadow-lg;
-    }
+	.glass-panel {
+		@apply bg-dark-700/40 border border-dark-500/30 rounded-lg shadow-lg;
+	}
 
-    .glass-input {
-        @apply bg-ctp-surface1/50 border border-ctp-surface1/30 rounded-md px-4 py-2 text-ctp-text placeholder-ctp-subtext1 focus:outline-none focus:ring-2 focus:ring-ctp-mauve/50;
-    }
+	.glass-input {
+		@apply bg-ctp-surface1/50 border border-ctp-surface1/30 rounded-md px-4 py-2 text-ctp-text placeholder-ctp-subtext1 focus:outline-none focus:ring-2 focus:ring-ctp-mauve/50;
+	}
 }
 
 @layer utilities {
-    .text-gradient {
-        @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-primary-600;
-    }
+	.text-gradient {
+		@apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-primary-600;
+	}
 
-    .hide-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
+	.hide-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
 
-    .hide-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+	.hide-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
 
-    .glass {
-        @apply bg-dark-700/40;
-    }
+	.glass {
+		@apply bg-dark-700/40;
+	}
 }
 
 .search-match-current {
-    background-color: rgba(165, 174, 212, 0.6) !important;
+	background-color: rgba(165, 174, 212, 0.6) !important;
 }
 
 .search-match {
-    background-color: rgba(165, 174, 212, 0.3) !important;
+	background-color: rgba(165, 174, 212, 0.3) !important;
 }

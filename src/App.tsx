@@ -27,110 +27,108 @@ import { MessageModal } from "./components/ui/messageModal";
 import { APP_CONSTANTS } from "./constants/app";
 
 const AppContent: FC = () => {
-    const { settings } = useSettings();
-    const {
-        isCommandPaletteOpen,
-        toggleCommandPalette,
-        activeScreen,
-        handleScreenChange,
-    } = useKeybinds();
-    const { isFloating, setIsFloating } = useConsole();
+	const { settings } = useSettings();
+	const {
+		isCommandPaletteOpen,
+		toggleCommandPalette,
+		activeScreen,
+		handleScreenChange,
+	} = useKeybinds();
+	const { isFloating, setIsFloating } = useConsole();
 
-    const toggleFloating = () => {
-        setIsFloating(!isFloating);
-    };
+	const toggleFloating = () => {
+		setIsFloating(!isFloating);
+	};
 
-    const renderScreen = () => {
-        switch (activeScreen) {
-            case "Editor":
-                return <Workspace />;
-            case "Settings":
-                return <Settings />;
-            case "Library":
-                return <Library />;
-            case "AutoExecution":
-                return <AutoExecute />;
-            case "FastFlags":
-                return <FastFlags />;
-            default:
-                return null;
-        }
-    };
+	const renderScreen = () => {
+		switch (activeScreen) {
+			case "Editor":
+				return <Workspace />;
+			case "Settings":
+				return <Settings />;
+			case "Library":
+				return <Library />;
+			case "AutoExecution":
+				return <AutoExecute />;
+			case "FastFlags":
+				return <FastFlags />;
+			default:
+				return null;
+		}
+	};
 
-    if (!settings) {
-        return null;
-    }
+	if (!settings) {
+		return null;
+	}
 
-    return (
-        <div className="flex h-screen flex-col bg-ctp-base text-ctp-text">
-            <Topbar />
-            <div className="flex flex-1 overflow-hidden">
-                {!settings.interface.zenMode && (
-                    <Sidebar
-                        activeScreen={activeScreen}
-                        onScreenChange={handleScreenChange}
-                    />
-                )}
-                <main className="relative flex-1">{renderScreen()}</main>
-            </div>
-            <CommandPalette
-                isOpen={isCommandPaletteOpen}
-                onClose={toggleCommandPalette}
-                onFloatToggle={toggleFloating}
-            />
-        </div>
-    );
+	return (
+		<div className="flex h-screen flex-col bg-ctp-base text-ctp-text">
+			<Topbar />
+			<div className="flex flex-1 overflow-hidden">
+				{!settings.interface.zenMode && (
+					<Sidebar
+						activeScreen={activeScreen}
+						onScreenChange={handleScreenChange}
+					/>
+				)}
+				<main className="relative flex-1">{renderScreen()}</main>
+			</div>
+			<CommandPalette
+				isOpen={isCommandPaletteOpen}
+				onClose={toggleCommandPalette}
+				onFloatToggle={toggleFloating}
+			/>
+		</div>
+	);
 };
 
 const App: FC = () => {
-    const [isHydrogenInstalled, setIsHydrogenInstalled] = useState<
-        boolean | null
-    >(null);
+	const [isHydrogenInstalled, setIsHydrogenInstalled] = useState<
+		boolean | null
+	>(null);
 
-    useEffect(() => {
-        const checkHydrogen = async () => {
-            try {
-                const isInstalled = await checkHydrogenInstallation();
-                setIsHydrogenInstalled(isInstalled);
-            } catch (error) {
-                console.error("Failed to check Hydrogen installation:", error);
-                setIsHydrogenInstalled(false);
-            }
-        };
+	useEffect(() => {
+		const checkHydrogen = async () => {
+			try {
+				const isInstalled = await checkHydrogenInstallation();
+				setIsHydrogenInstalled(isInstalled);
+			} catch (error) {
+				console.error("Failed to check Hydrogen installation:", error);
+				setIsHydrogenInstalled(false);
+			}
+		};
 
-        checkHydrogen();
-    }, []);
+		checkHydrogen();
+	}, []);
 
-    if (isHydrogenInstalled === false) {
-        return <HydrogenNotFound />;
-    }
+	if (isHydrogenInstalled === false) {
+		return <HydrogenNotFound />;
+	}
 
-    return (
-        <ConnectionProvider>
-            <ExecuteProvider>
-                <SettingsProvider>
-                    <WorkspaceProvider>
-                        <EditorProvider>
-                            <ConsoleProvider>
-                                <FastFlagsProvider>
-                                    <KeybindsProvider>
-                                        <AppContent />
-                                        <MessageModal
-                                            currentVersion={
-                                                APP_CONSTANTS.currentVersion
-                                            }
-                                        />
-                                        <UpdateChecker />
-                                        <Toaster />
-                                    </KeybindsProvider>
-                                </FastFlagsProvider>
-                            </ConsoleProvider>
-                        </EditorProvider>
-                    </WorkspaceProvider>
-                </SettingsProvider>
-            </ExecuteProvider>
-        </ConnectionProvider>
-    );
+	return (
+		<ConnectionProvider>
+			<ExecuteProvider>
+				<SettingsProvider>
+					<WorkspaceProvider>
+						<EditorProvider>
+							<ConsoleProvider>
+								<FastFlagsProvider>
+									<KeybindsProvider>
+										<AppContent />
+										<MessageModal
+											currentVersion={APP_CONSTANTS.currentVersion}
+										/>
+										<UpdateChecker />
+										<Toaster />
+									</KeybindsProvider>
+								</FastFlagsProvider>
+							</ConsoleProvider>
+						</EditorProvider>
+					</WorkspaceProvider>
+				</SettingsProvider>
+			</ExecuteProvider>
+		</ConnectionProvider>
+	);
 };
 
 export default App;

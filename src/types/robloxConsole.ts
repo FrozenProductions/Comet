@@ -1,20 +1,20 @@
 export type LogLevel = "INFO" | "WARN" | "ERROR" | "DEBUG";
 
 export interface LogLine {
-    timestamp: string;
-    level: LogLevel;
-    message: string;
-    raw: string;
+	timestamp: string;
+	level: LogLevel;
+	message: string;
+	raw: string;
 }
 
 export interface RobloxConsoleProps {
-    isOpen: boolean;
-    onToggle: () => void;
-    isFloating: boolean;
-    onFloatToggle: () => void;
+	isOpen: boolean;
+	onToggle: () => void;
+	isFloating: boolean;
+	onFloatToggle: () => void;
 }
 
 export interface ConsolePosition {
-    x: number;
-    y: number;
+	x: number;
+	y: number;
 }

@@ -1,5 +1,5 @@
 export interface StatusInfo {
-    status: string;
-    version: string;
-    prerelease: string;
+	status: string;
+	version: string;
+	prerelease: string;
 }

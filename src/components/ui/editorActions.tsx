@@ -13,7 +13,7 @@ import { Tooltip } from "react-tooltip";
 import type { ActionMenuProps } from "../../types/workspace";
 import { useConsole } from "../../hooks/useConsole";
 import { useSettings } from "../../hooks/useSettings";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
     getEditorContent,
