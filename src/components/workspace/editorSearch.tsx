@@ -25,6 +25,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 
 	const handleClose = useCallback(() => {
 		clearDecorations();
+		setSearchTerm("");
 		onClose();
 	}, [clearDecorations, onClose]);
 
