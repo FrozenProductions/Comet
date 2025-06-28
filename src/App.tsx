@@ -26,6 +26,7 @@ import { checkHydrogenInstallation } from "./services/hydrogenService";
 import { MessageModal } from "./components/ui/messageModal";
 import { APP_CONSTANTS } from "./constants/app";
 import { ExecutionHistoryProvider } from "./contexts/execution/executionHistoryContext";
+import { SidebarProvider } from "./contexts/sidebar/sidebarContext";
 
 const AppContent: FC = () => {
 	const { settings } = useSettings();
@@ -116,12 +117,14 @@ const App: FC = () => {
 								<ConsoleProvider>
 									<FastFlagsProvider>
 										<KeybindsProvider>
-											<AppContent />
-											<MessageModal
-												currentVersion={APP_CONSTANTS.currentVersion}
-											/>
-											<UpdateChecker />
-											<Toaster />
+											<SidebarProvider>
+												<AppContent />
+												<MessageModal
+													currentVersion={APP_CONSTANTS.currentVersion}
+												/>
+												<UpdateChecker />
+												<Toaster />
+											</SidebarProvider>
 										</KeybindsProvider>
 									</FastFlagsProvider>
 								</ConsoleProvider>

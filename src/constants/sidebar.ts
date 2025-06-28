@@ -10,3 +10,5 @@ export const MAIN_SCREENS: SidebarItem[] = [
 ] as const;
 
 export const BUTTON_SPACING = 50 as const;
+
+export const SIDEBAR_STORAGE_KEY = "comet-sidebar-visible" as const;
