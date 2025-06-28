@@ -136,7 +136,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 						size="sm"
 						data-tooltip-id="fastflags-tooltip"
 						data-tooltip-content="Add Flag"
-						className="group inline-flex h-8 w-8 items-center justify-center bg-white/10 hover:bg-white/20"
+						className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 					>
 						<Plus
 							size={14}
@@ -157,7 +157,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 							onClick={handleRefresh}
 							size="sm"
 							disabled={isRefreshing}
-							className="h-7 bg-ctp-yellow/10 px-2 text-ctp-yellow hover:bg-ctp-yellow/20 disabled:opacity-50"
+							className="flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-2 text-accent transition-colors hover:bg-white/10 disabled:opacity-50"
 						>
 							<RefreshCw
 								size={14}
@@ -230,7 +230,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 														onClick={() => setEditingFlagId(null)}
 														data-tooltip-id="fastflags-tooltip"
 														data-tooltip-content="Cancel"
-														className="inline-flex h-7 w-7 items-center justify-center bg-white/5 p-0 hover:bg-white/10"
+														className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 													>
 														<X size={14} className="stroke-[2.5]" />
 													</Button>
@@ -241,7 +241,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 														}
 														data-tooltip-id="fastflags-tooltip"
 														data-tooltip-content="Save"
-														className="inline-flex h-7 w-7 items-center justify-center bg-accent p-0 hover:bg-accent/90"
+														className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-accent text-white transition-colors hover:bg-accent/90"
 													>
 														<Save size={14} className="stroke-[2.5]" />
 													</Button>
@@ -274,9 +274,9 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 												onClick={() => startEditing(key, value)}
 												data-tooltip-id="fastflags-tooltip"
 												data-tooltip-content="Edit Flag"
-												className="inline-flex h-6 w-6 items-center justify-center bg-white/5 p-0 hover:bg-white/10"
+												className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 											>
-												<Edit2 size={12} className="stroke-[2.5]" />
+												<Edit2 size={14} className="stroke-[2.5]" />
 											</Button>
 											<Button
 												variant="destructive"
@@ -284,9 +284,9 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 												onClick={() => setFlagToDelete(key)}
 												data-tooltip-id="fastflags-tooltip"
 												data-tooltip-content="Delete Flag"
-												className="inline-flex h-6 w-6 items-center justify-center bg-ctp-red/10 p-0 text-ctp-red hover:bg-ctp-red/20"
+												className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-ctp-red transition-colors hover:bg-white/10"
 											>
-												<Trash2 size={12} className="stroke-[2.5]" />
+												<Trash2 size={14} className="stroke-[2.5]" />
 											</Button>
 										</div>
 									)}

@@ -256,7 +256,7 @@ export const FastFlags: React.FC = () => {
 							size="sm"
 							data-tooltip-id="fastflags-tooltip"
 							data-tooltip-content="Open Directory"
-							className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
+							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 						>
 							<FolderOpen size={14} className="stroke-[2.5]" />
 						</Button>
@@ -265,7 +265,7 @@ export const FastFlags: React.FC = () => {
 							size="sm"
 							data-tooltip-id="fastflags-tooltip"
 							data-tooltip-content={`${isAdvancedMode ? "Easy" : "Advanced"} Mode`}
-							className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
+							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 						>
 							<Settings
 								size={14}
@@ -288,7 +288,7 @@ export const FastFlags: React.FC = () => {
 							size="sm"
 							data-tooltip-id="fastflags-tooltip"
 							data-tooltip-content="Export Profiles"
-							className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
+							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 						>
 							<Download size={14} className="stroke-[2.5]" />
 						</Button>
@@ -297,7 +297,7 @@ export const FastFlags: React.FC = () => {
 							size="sm"
 							data-tooltip-id="fastflags-tooltip"
 							data-tooltip-content="Import Profiles"
-							className="inline-flex h-8 items-center gap-2 bg-white/5 px-3 hover:bg-white/10"
+							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 						>
 							<Upload size={14} className="stroke-[2.5]" />
 						</Button>
@@ -317,7 +317,7 @@ export const FastFlags: React.FC = () => {
 							size="sm"
 							data-tooltip-id="fastflags-tooltip"
 							data-tooltip-content="New Profile"
-							className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
+							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 						>
 							<Plus
 								size={14}
@@ -377,7 +377,7 @@ export const FastFlags: React.FC = () => {
 									>
 										{profile.name}
 									</span>
-									<div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+									<div className="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
 										<Button
 											onClick={(e) => {
 												e.stopPropagation();
@@ -390,9 +390,11 @@ export const FastFlags: React.FC = () => {
 											size="sm"
 											data-tooltip-id="fastflags-tooltip"
 											data-tooltip-content="Rename Profile"
-											className="inline-flex h-5 w-5 items-center justify-center bg-white/5 p-0 hover:bg-white/10"
+											className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10 ${
+												selectedProfileId === profile.id ? "opacity-100" : ""
+											}`}
 										>
-											<Edit2 size={10} className="stroke-[2.5]" />
+											<Edit2 size={14} className="stroke-[2.5]" />
 										</Button>
 										<Button
 											onClick={(e) => {
@@ -406,13 +408,13 @@ export const FastFlags: React.FC = () => {
 													? "Active Profile"
 													: "Set Active"
 											}
-											className={`inline-flex h-5 w-5 items-center justify-center p-0 ${
+											className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 transition-colors ${
 												activeProfileId === profile.id
-													? "bg-accent hover:bg-accent/90"
-													: "bg-white/5 hover:bg-white/10"
-											}`}
+													? "bg-accent text-white hover:bg-accent/90"
+													: "bg-ctp-surface1 text-accent hover:bg-white/10"
+											} ${selectedProfileId === profile.id ? "opacity-100" : ""}`}
 										>
-											<Check size={10} className="stroke-[2.5]" />
+											<Check size={14} className="stroke-[2.5]" />
 										</Button>
 										<Button
 											onClick={(e) => {
@@ -426,11 +428,11 @@ export const FastFlags: React.FC = () => {
 											size="sm"
 											data-tooltip-id="fastflags-tooltip"
 											data-tooltip-content="Delete Profile"
-											className={`inline-flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 ${
-												selectedProfileId === profile.id ? "!opacity-100" : ""
-											} h-5 w-5 bg-ctp-red/10 p-0 text-ctp-red hover:bg-ctp-red/20`}
+											className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-ctp-red transition-colors hover:bg-white/10 ${
+												selectedProfileId === profile.id ? "opacity-100" : ""
+											}`}
 										>
-											<Trash2 size={10} className="stroke-[2.5]" />
+											<Trash2 size={14} className="stroke-[2.5]" />
 										</Button>
 									</div>
 								</motion.button>
