@@ -380,59 +380,61 @@ export const Tabbar: FC<TabbarProps> = ({
 										onContextMenu={(e: React.MouseEvent) =>
 											handleContextMenu(e, tab.id)
 										}
-										className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center gap-1.5 whitespace-nowrap rounded-md px-2 transition-colors ${
+										className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center whitespace-nowrap rounded-lg border border-ctp-surface2 transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
 											isDragging ? "cursor-grabbing" : "cursor-grab"
 										} ${
 											activeTab === tab.id
-												? "bg-ctp-surface0 text-ctp-text"
-												: "text-ctp-subtext1 hover:bg-ctp-surface0/50 hover:text-ctp-text"
+												? "border-accent/50 bg-ctp-surface1 text-accent"
+												: "bg-ctp-surface0 text-ctp-subtext1 hover:border-accent/30 hover:bg-ctp-surface1 hover:text-accent"
 										} `}
 										onClick={() => !isDragging && onTabClick(tab.id)}
 									>
-										<FileCode size={13} className="flex-shrink-0 opacity-75" />
-										{editingTab === tab.id ? (
-											<input
-												ref={inputRef}
-												type="text"
-												value={editValue}
-												maxLength={30}
-												placeholder="script.lua"
-												onChange={(e) => {
-													let value = e.target.value;
-													if (value.toLowerCase().endsWith(".lua")) {
-														value = value.slice(0, -4);
-													}
-													setEditValue(value);
-												}}
-												onBlur={() => handleRename(tab.id)}
-												onKeyDown={(e) => {
-													if (e.key === "Enter") {
-														handleRename(tab.id);
-													} else if (e.key === "Escape") {
-														setEditingTab(null);
-													}
-												}}
-												onClick={(e) => e.stopPropagation()}
-												className="w-[100px] border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
-											/>
-										) : (
-											<span className="select-none text-xs font-medium">
-												{tab.title.length > 15
-													? `${tab.title.slice(0, 15)}...`
-													: tab.title}
-											</span>
-										)}
-										<motion.button
-											whileHover={{ scale: 1.1 }}
-											whileTap={{ scale: 0.9 }}
-											onClick={(e) => {
-												e.stopPropagation();
-												onTabClose(tab.id);
-											}}
-											className={`flex-shrink-0 rounded p-0.5 opacity-0 transition-all duration-150 hover:bg-ctp-surface1 hover:text-ctp-red group-hover:opacity-100`}
-										>
-											<X size={11} />
-										</motion.button>
+										<div className="flex items-center gap-1.5 px-2">
+											<FileCode size={13} className="flex-shrink-0 opacity-75" />
+											{editingTab === tab.id ? (
+												<input
+													ref={inputRef}
+													type="text"
+													value={editValue}
+													maxLength={30}
+													placeholder="script.lua"
+													onChange={(e) => {
+														let value = e.target.value;
+														if (value.toLowerCase().endsWith(".lua")) {
+															value = value.slice(0, -4);
+														}
+														setEditValue(value);
+													}}
+													onBlur={() => handleRename(tab.id)}
+													onKeyDown={(e) => {
+														if (e.key === "Enter") {
+															handleRename(tab.id);
+														} else if (e.key === "Escape") {
+															setEditingTab(null);
+														}
+													}}
+													onClick={(e) => e.stopPropagation()}
+													className="w-[100px] border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
+												/>
+											) : (
+												<span className="select-none text-xs font-medium">
+													{tab.title.length > 15
+														? `${tab.title.slice(0, 15)}...`
+														: tab.title}
+												</span>
+											)}
+											<div className="overflow-hidden transition-[width,margin] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group-hover:ml-1 group-hover:w-5 w-0">
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														onTabClose(tab.id);
+													}}
+													className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border border-ctp-surface2 bg-ctp-surface1 transition-colors hover:border-red-500/30 hover:bg-red-500/10 hover:text-ctp-red"
+												>
+													<X size={11} />
+												</button>
+											</div>
+										</div>
 									</Reorder.Item>
 								))}
 							</AnimatePresence>
@@ -497,10 +499,10 @@ export const Tabbar: FC<TabbarProps> = ({
 
 			<div className="flex h-full w-10 flex-shrink-0 items-center justify-center border-l border-white/5">
 				<motion.button
-					whileHover={{ scale: 1.1 }}
-					whileTap={{ scale: 0.9 }}
+					whileHover={{ scale: 1.05 }}
+					whileTap={{ scale: 0.95 }}
 					onClick={onNewTab}
-					className="flex h-7 w-7 items-center justify-center rounded-md text-ctp-subtext1 transition-colors hover:bg-ctp-surface0/50 hover:text-ctp-text"
+					className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-ctp-surface0"
 				>
 					<Plus size={13} className="stroke-[2.5]" />
 				</motion.button>
