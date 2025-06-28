@@ -37,6 +37,7 @@
     <img src=".github/assets/preview_3.png" alt="Comet Scripts Library" width="390" />
     <img src=".github/assets/preview_4.png" alt="Comet Auto Execute" width="390" />
     <img src=".github/assets/preview_5.png" alt="Comet Fast Flags" width="390" />
+    <img src=".github/assets/preview_6.png" alt="Comet command palette" width="390" />
   </div>
 </div>
 
