@@ -1,5 +1,6 @@
 import { FC, useEffect, useState, useRef, useCallback } from "react";
 import * as monaco from "monaco-editor";
+import debounce from "lodash/debounce";
 import {
 	monacoTheme,
 	luaLanguage,
@@ -44,6 +45,12 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			lastWord: "",
 		},
 	);
+
+	const debouncedSave = useCallback(() => {
+		return debounce((value: string) => {
+			onChange?.(value);
+		}, 300);
+	}, [onChange])();
 
 	const saveEditorState = useCallback(() => {
 		if (!editorRef.current || !activeTab) return;
@@ -247,12 +254,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			}
 		});
 
-		editor.onDidChangeModelContent((e) => {
+		editor.onDidChangeModelContent(() => {
 			const model = editor.getModel();
 			const position = editor.getPosition();
 			if (!model || !position) return;
-
-			if (e.changes.some((change) => change.text === "")) return;
 
 			const word = model.getWordUntilPosition(position);
 			const currentWord = word.word;
@@ -286,10 +291,20 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 				setIntellisenseState((prev) => ({ ...prev, isVisible: false }));
 			}
 
-			onChange?.(model.getValue());
+			const currentValue = model.getValue();
+			debouncedSave(currentValue);
+		});
+
+		editor.onDidPaste(() => {
+			const model = editor.getModel();
+			if (!model) return;
+			
+			const currentValue = model.getValue();
+			debouncedSave(currentValue);
 		});
 
 		return () => {
+			debouncedSave.cancel();
 			saveEditorState();
 			editor.dispose();
 		};
