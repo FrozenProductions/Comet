@@ -262,7 +262,7 @@ export const ScriptLibrary = () => {
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
 						onClick={handleRetry}
-						className="flex h-8 items-center gap-2 rounded-lg bg-white/10 px-4 text-xs font-medium text-white transition-colors hover:bg-white/20"
+						className="flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 					>
 						<RefreshCw size={14} className="stroke-[2.5]" />
 						Retry
@@ -310,7 +310,7 @@ export const ScriptLibrary = () => {
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 							onClick={handleRetry}
-							className="mt-4 flex h-8 items-center gap-2 rounded-lg bg-white/10 px-4 text-xs font-medium text-white transition-colors hover:bg-white/20"
+							className="mt-4 flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 						>
 							<RefreshCw size={14} className="stroke-[2.5]" />
 							Retry
@@ -486,14 +486,13 @@ export const ScriptLibrary = () => {
 
 						<button
 							onClick={() => setShowFilters(!showFilters)}
-							className={`flex h-9 items-center gap-2 rounded-lg px-3 text-sm ${
+							className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 transition-colors ${
 								showFilters
-									? "bg-white/10 text-white"
-									: "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
-							} border border-white/5`}
+									? "bg-accent text-white hover:bg-accent/90"
+									: "bg-ctp-surface1 text-accent hover:bg-white/10"
+							}`}
 						>
 							<SlidersHorizontal size={14} className="stroke-[2.5]" />
-							<span>Filters</span>
 						</button>
 					</div>
 
@@ -526,19 +525,19 @@ export const ScriptLibrary = () => {
 															setSelectedOrder("desc");
 														}
 													}}
-													className={`flex h-8 items-center gap-2 rounded-lg px-3 text-xs font-medium transition-colors ${
+													className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
 														selectedSortBy === option.value
-															? "bg-white/10 text-white"
-															: "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
-													} `}
+															? "bg-accent text-white hover:bg-accent/90"
+															: "bg-ctp-surface1 text-accent hover:bg-white/10"
+													}`}
 												>
 													{option.icon}
 													<span>{option.label}</span>
 													{selectedSortBy === option.value &&
 														(selectedOrder === "asc" ? (
-															<ArrowUp size={12} className="ml-1" />
+															<ArrowUp size={12} className="stroke-[2.5]" />
 														) : (
-															<ArrowDown size={12} className="ml-1" />
+															<ArrowDown size={12} className="stroke-[2.5]" />
 														))}
 												</button>
 											))}
@@ -560,11 +559,11 @@ export const ScriptLibrary = () => {
 																!prev[option.value as keyof typeof prev],
 														}))
 													}
-													className={`flex h-8 items-center gap-2 rounded-lg px-3 text-xs font-medium transition-colors ${
+													className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
 														filters[option.value as keyof typeof filters]
-															? "bg-white/10 text-white"
-															: "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
-													} `}
+															? "bg-accent text-white hover:bg-accent/90"
+															: "bg-ctp-surface1 text-accent hover:bg-white/10"
+													}`}
 												>
 													{option.icon}
 													<span>{option.label}</span>
