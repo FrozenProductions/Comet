@@ -1,7 +1,7 @@
 {
     "name": "comet",
     "private": true,
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "Comet - A modern, minimalist interface for Hydrogen executor developed with Tauri",
     "author": "FrozenProductions",
     "license": "MIT",

@@ -8,7 +8,7 @@ use tauri::Manager;
 use std::io::Write;
 use crate::logging::LogEntry;
 
-const CURRENT_VERSION: &str = "1.0.6";
+const CURRENT_VERSION: &str = "1.0.7";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
 const DOWNLOAD_URL: &str = "https://github.com/FrozenProductions/Comet/releases/download";
 const APP_PATH: &str = "/Applications/Comet.app";
