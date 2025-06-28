@@ -208,12 +208,9 @@ export const AutoExecute: React.FC = () => {
 						size="sm"
 						data-tooltip-id="autoexecute-tooltip"
 						data-tooltip-content="Open Directory"
-						className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
+						className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 					>
-						<FolderOpen
-							size={14}
-							className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
-						/>
+						<FolderOpen size={14} className="stroke-[2.5]" />
 					</Button>
 				}
 			/>
@@ -230,12 +227,9 @@ export const AutoExecute: React.FC = () => {
 							size="sm"
 							data-tooltip-id="autoexecute-tooltip"
 							data-tooltip-content="New Script"
-							className="group inline-flex h-7 w-7 items-center justify-center bg-white/10 hover:bg-white/20"
+							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 						>
-							<Plus
-								size={14}
-								className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
-							/>
+							<Plus size={14} className="stroke-[2.5]" />
 						</Button>
 					</div>
 					<div className="flex-1 space-y-1 overflow-y-auto px-1.5 pb-2">
@@ -277,13 +271,14 @@ export const AutoExecute: React.FC = () => {
 											handleDelete(file);
 										}}
 										variant="destructive"
+										size="sm"
 										data-tooltip-id="autoexecute-tooltip"
 										data-tooltip-content="Delete Script"
-										className={`inline-flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 ${
+										className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-ctp-red transition-colors hover:bg-white/10 opacity-0 group-hover:opacity-100 ${
 											selectedFile?.path === file.path ? "!opacity-100" : ""
-										} h-5 w-5 bg-ctp-red/10 p-0 text-ctp-red hover:bg-ctp-red/20`}
+										}`}
 									>
-										<Trash2 size={12} className="stroke-[2.5]" />
+										<Trash2 size={14} className="stroke-[2.5]" />
 									</Button>
 								</motion.button>
 							))
@@ -313,12 +308,9 @@ export const AutoExecute: React.FC = () => {
 											size="sm"
 											data-tooltip-id="autoexecute-tooltip"
 											data-tooltip-content="Save"
-											className="group inline-flex h-8 w-8 items-center justify-center bg-white/10 hover:bg-white/20"
+											className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-accent text-white transition-colors hover:bg-accent/90"
 										>
-											<Check
-												size={14}
-												className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
-											/>
+											<Check size={14} className="stroke-[2.5]" />
 										</Button>
 										<Button
 											onClick={() => setIsRenaming(false)}
@@ -326,12 +318,9 @@ export const AutoExecute: React.FC = () => {
 											size="sm"
 											data-tooltip-id="autoexecute-tooltip"
 											data-tooltip-content="Cancel"
-											className="group inline-flex h-8 w-8 items-center justify-center bg-ctp-surface0 hover:bg-ctp-surface1"
+											className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 										>
-											<X
-												size={14}
-												className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
-											/>
+											<X size={14} className="stroke-[2.5]" />
 										</Button>
 									</div>
 								) : (
@@ -346,12 +335,9 @@ export const AutoExecute: React.FC = () => {
 											variant="secondary"
 											data-tooltip-id="autoexecute-tooltip"
 											data-tooltip-content="Rename"
-											className="group inline-flex h-7 w-7 items-center justify-center bg-ctp-surface0 p-0 hover:bg-ctp-surface1"
+											className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 										>
-											<Pencil
-												size={14}
-												className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
-											/>
+											<Pencil size={14} className="stroke-[2.5]" />
 										</Button>
 										{isSaving && (
 											<div className="flex items-center gap-1.5 rounded-md bg-white/5 px-2 py-1 text-xs text-ctp-subtext0">
