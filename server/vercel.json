@@ -21,7 +21,11 @@
 		{
 			"src": "/api/v1/messages",
 			"dest": "/api/messages"
-		}
+		},
+        {
+            "src": "/api/v1/suggestions",
+            "dest": "/api/unc"
+        }
 	],
 	"buildCommand": "npm run build",
 	"outputDirectory": "dist"
