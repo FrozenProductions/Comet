@@ -16,6 +16,10 @@ import { Actions } from "../ui/editorActions";
 import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
 
 const modelsMap = new Map<string, monaco.editor.ITextModel>();
+const editorStatesMap = new Map<string, {
+	viewState: monaco.editor.ICodeEditorViewState | null;
+	position: monaco.Position | null;
+}>();
 
 export const CodeEditor: FC<CodeEditorProps> = ({
 	content,
@@ -40,6 +44,33 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		},
 	);
 
+	const saveEditorState = useCallback(() => {
+		if (!editorRef.current || !activeTab) return;
+		
+		const viewState = editorRef.current.saveViewState();
+		const position = editorRef.current.getPosition();
+		
+		editorStatesMap.set(activeTab, {
+			viewState,
+			position,
+		});
+	}, [activeTab]);
+
+	const restoreEditorState = useCallback(() => {
+		if (!editorRef.current || !activeTab) return;
+		
+		const savedState = editorStatesMap.get(activeTab);
+		if (savedState) {
+			if (savedState.viewState) {
+				editorRef.current.restoreViewState(savedState.viewState);
+			}
+			if (savedState.position) {
+				editorRef.current.setPosition(savedState.position);
+				editorRef.current.revealPositionInCenter(savedState.position);
+			}
+		}
+	}, [activeTab]);
+
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver(() => {
 			if (editorRef.current) {
@@ -59,69 +90,44 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	useEffect(() => {
 		if (!containerRef.current || !activeTab) return;
 
+		if (editorRef.current) {
+			saveEditorState();
+			editorRef.current.dispose();
+		}
+
 		monaco.languages.register({ id: "lua" });
 		monaco.languages.setMonarchTokensProvider("lua", luaLanguage);
 		monaco.languages.setLanguageConfiguration("lua", luaLanguageConfig);
 		monaco.editor.defineTheme("Comet", monacoTheme);
 		monaco.editor.setTheme("Comet");
 
-		monaco.editor.addKeybindingRule({
-			keybinding:
-				monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyG,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding:
-				monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyK,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding: monaco.KeyCode.F1,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding: monaco.KeyCode.F3,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyI,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyE,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyG,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding:
-				monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyE,
-			command: null,
-		});
-		monaco.editor.addKeybindingRule({
-			keybinding:
-				monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyL,
-			command: null,
+		const keybindingRules = [
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyG },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyK },
+			{ key: monaco.KeyCode.F1 },
+			{ key: monaco.KeyCode.F3 },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyI },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyE },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyG },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyE },
+			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyL },
+		];
+
+		keybindingRules.forEach(({ key }) => {
+			monaco.editor.addKeybindingRule({
+				keybinding: key,
+				command: null,
+			});
 		});
 
 		let model = modelsMap.get(activeTab);
 		if (!model) {
 			model = monaco.editor.createModel(content, language);
 			modelsMap.set(activeTab, model);
-		} else {
-			if (model.getValue() !== content) {
-				model.setValue(content);
-			}
+		} else if (model.getValue() !== content) {
+			model.setValue(content);
 		}
 		modelRef.current = model;
 
@@ -142,6 +148,8 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		});
 
 		editorRef.current = editor;
+
+		restoreEditorState();
 
 		keybinds.forEach((keybind) => {
 			let monacoKey = 0;
@@ -281,20 +289,19 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		});
 
 		return () => {
+			saveEditorState();
 			editor.dispose();
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeTab, language, settings, keybinds]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeTab, language, settings, keybinds, saveEditorState, restoreEditorState]);
 
 	useEffect(() => {
 		return () => {
-			if (activeTab && modelsMap.has(activeTab)) {
-				const model = modelsMap.get(activeTab);
-				model?.dispose();
-				modelsMap.delete(activeTab);
-			}
+			modelsMap.forEach((model) => model.dispose());
+			modelsMap.clear();
+			editorStatesMap.clear();
 		};
-	}, [activeTab]);
+	}, []);
 
 	useEffect(() => {
 		if (modelRef.current && modelRef.current.getValue() !== content) {
