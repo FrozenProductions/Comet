@@ -1,49 +1,67 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { scanRobloxLogs } from "../services/logService.js";
-import { LogEntry } from "../types/logs.js";
+import { LogEntry, ViewType } from "../types/logs.js";
+import { setupKeyboardListener } from "../services/keyboardService.js";
+import { LogAction } from "../types/keybinds.js";
+
+let isOptionsActive = false;
+let currentPrompt: any = null;
+
+let currentViewType: ViewType = "all";
+let currentKeyword: string | null = null;
+
+function filterEntriesByViewType(entries: LogEntry[], viewType: ViewType, keyword: string | null = null): LogEntry[] {
+	let filtered = [...entries];
+	
+	if (keyword) {
+		filtered = filtered.filter((entry) =>
+			entry.raw.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+
+	switch (viewType) {
+		case "errors":
+			return filtered.filter((entry) => entry.level === "ERROR");
+		case "warnings":
+			return filtered.filter(
+				(entry) => entry.level === "ERROR" || entry.level === "WARNING"
+			);
+		default:
+			return filtered;
+	}
+}
 
 /**
  * Displays logs with pagination and auto-refresh functionality
  * @param entries Initial array of log entries to display
  * @param title Title to show at the top of the logs view
- * @param promptContinue Function to prompt user to continue
  * @param returnToLogOptions Function to return to log options menu
- * @param enableAutoRefresh Whether auto-refresh should be enabled initially
+ * @param viewType Type of logs to display
+ * @param keyword Keyword to filter logs by
  */
 async function showLogs(
 	entries: LogEntry[],
 	title: string,
-	promptContinue: () => Promise<void>,
 	returnToLogOptions: () => Promise<void>,
-	enableAutoRefresh = false,
+	viewType: ViewType = "all",
+	keyword: string | null = null
 ): Promise<void> {
+	currentViewType = viewType;
+	currentKeyword = keyword;
 	const PAGE_SIZE = 10;
 	let currentPage = 0;
-
-	let autoRefreshEnabled = enableAutoRefresh;
-	let refreshIntervalId: NodeJS.Timeout | null = null;
 	let latestEntries = [...entries];
 
-	const renderPage = (showUpdatedMessage = false) => {
+	const renderPage = () => {
 		console.clear();
-		const newTotalPages = Math.ceil(latestEntries.length / PAGE_SIZE);
+		const totalPages = Math.ceil(latestEntries.length / PAGE_SIZE);
 
-		if (currentPage >= newTotalPages && newTotalPages > 0) {
-			currentPage = newTotalPages - 1;
+		if (currentPage >= totalPages && totalPages > 0) {
+			currentPage = totalPages - 1;
 		}
 
-		console.log(
-			chalk.blue.bold(`${title} (Page ${currentPage + 1}/${newTotalPages})`) +
-				(autoRefreshEnabled
-					? chalk.green(" [Auto-refresh ON]")
-					: chalk.red(" [Auto-refresh OFF]")),
-		);
-
-		if (showUpdatedMessage && autoRefreshEnabled) {
-			console.log(chalk.green("Logs updated automatically"));
-		}
-
+		console.log(chalk.blue.bold(`${title} (Page ${currentPage + 1}/${totalPages})`));
 		console.log(chalk.dim("----------------------------------------"));
 
 		const pageEntries = latestEntries.slice(
@@ -73,37 +91,8 @@ async function showLogs(
 		console.log(chalk.dim("\n----------------------------------------"));
 	};
 
-	const startAutoRefresh = () => {
-		if (refreshIntervalId) clearInterval(refreshIntervalId);
-
-		refreshIntervalId = setInterval(async () => {
-			let userIsSelecting = false;
-			try {
-				const ui = inquirer.ui as any;
-				userIsSelecting = ui && ui.activePrompt;
-			} catch {}
-
-			if (userIsSelecting) return;
-
-			const result = await scanRobloxLogs();
-			if (result.success && result.entries.length > 0) {
-				if (result.entries.length > latestEntries.length) {
-					latestEntries = [...result.entries];
-
-					if (!userIsSelecting) {
-						renderPage(false);
-					}
-				}
-			}
-		}, 5000);
-	};
-
-	if (autoRefreshEnabled) {
-		startAutoRefresh();
-	}
-
 	while (true) {
-		renderPage(false);
+		renderPage();
 
 		const navigationChoices = [];
 
@@ -114,15 +103,6 @@ async function showLogs(
 		if (currentPage > 0) {
 			navigationChoices.push({ name: "Previous page", value: "prev" });
 		}
-
-		navigationChoices.push({
-			name: autoRefreshEnabled
-				? "Turn auto-refresh OFF"
-				: "Turn auto-refresh ON",
-			value: "toggle_refresh",
-		});
-
-		navigationChoices.push({ name: "Refresh logs now", value: "refresh" });
 
 		if (latestEntries.length > PAGE_SIZE) {
 			navigationChoices.push({
@@ -146,88 +126,9 @@ async function showLogs(
 			currentPage--;
 		} else if (action === "next") {
 			currentPage++;
-		} else if (action === "toggle_refresh") {
-			autoRefreshEnabled = !autoRefreshEnabled;
-			if (autoRefreshEnabled) {
-				console.log(
-					chalk.green(
-						"\nAuto-refresh enabled. Logs will update every 5 seconds.",
-					),
-				);
-				startAutoRefresh();
-			} else {
-				console.log(chalk.yellow("\nAuto-refresh disabled."));
-				if (refreshIntervalId) {
-					clearInterval(refreshIntervalId);
-					refreshIntervalId = null;
-				}
-			}
-			await new Promise((resolve) => setTimeout(resolve, 1500));
-		} else if (action === "refresh") {
-			console.log(chalk.dim("\nRefreshing logs..."));
-
-			try {
-				const result = await scanRobloxLogs();
-				if (result.success) {
-					latestEntries = [...result.entries];
-					console.log(
-						chalk.green(
-							`\nLogs refreshed. Found ${result.entries.length} entries.`,
-						),
-					);
-
-					console.log(chalk.dim("----------------------------------------"));
-
-					const pageEntries = latestEntries.slice(
-						currentPage * PAGE_SIZE,
-						(currentPage + 1) * PAGE_SIZE,
-					);
-
-					if (pageEntries.length === 0) {
-						console.log(chalk.yellow("\nNo logs to display."));
-					} else {
-						for (const entry of pageEntries) {
-							const levelColor =
-								entry.level === "ERROR"
-									? chalk.red
-									: entry.level === "WARNING"
-										? chalk.yellow
-										: chalk.green;
-
-							console.log(
-								chalk.blue(`[${entry.timestamp}]`) +
-									levelColor(` [${entry.level}]`) +
-									chalk.white(` ${entry.message}`),
-							);
-						}
-					}
-
-					console.log(chalk.dim("\n----------------------------------------"));
-					console.log(
-						chalk.green(
-							"Navigation options remain below. Press up/down to see them.",
-						),
-					);
-				} else {
-					console.log(chalk.red(`\nFailed to refresh logs: ${result.error}`));
-				}
-			} catch (error) {
-				console.log(
-					chalk.red(
-						"\nError during refresh: " +
-							(error instanceof Error ? error.message : String(error)),
-					),
-				);
-			}
-
-			await new Promise((resolve) => setTimeout(resolve, 1000));
 		} else if (action === "latest") {
 			currentPage = Math.ceil(latestEntries.length / PAGE_SIZE) - 1;
 		} else if (action === "back") {
-			if (refreshIntervalId) {
-				clearInterval(refreshIntervalId);
-				refreshIntervalId = null;
-			}
 			await returnToLogOptions();
 			break;
 		}
@@ -237,15 +138,11 @@ async function showLogs(
 /**
  * Filters logs based on a user-provided keyword
  * @param entries Array of log entries to filter
- * @param promptContinue Function to prompt user to continue
  * @param returnToMenu Function to return to main menu
- * @param enableAutoRefresh Whether auto-refresh should be enabled
  */
 async function filterLogs(
 	entries: LogEntry[],
-	promptContinue: () => Promise<void>,
 	returnToMenu: () => Promise<void>,
-	enableAutoRefresh = false,
 ): Promise<void> {
 	const { keyword } = await inquirer.prompt([
 		{
@@ -261,35 +158,25 @@ async function filterLogs(
 		},
 	]);
 
-	const filtered = entries.filter((entry) =>
-		entry.raw.toLowerCase().includes(keyword.toLowerCase()),
-	);
+	currentKeyword = keyword;
+	const filtered = filterEntriesByViewType(entries, currentViewType, keyword);
 
 	if (filtered.length === 0) {
-		console.log(chalk.yellow(`\nNo logs found containing '${keyword}'.`));
-		await promptContinue();
+		console.log(chalk.yellow(`\nNo logs found containing "${keyword}".`));
 		await showLogsOptions(
 			entries,
-			promptContinue,
 			returnToMenu,
-			enableAutoRefresh,
 		);
 	} else {
 		console.log(
-			chalk.green(`\nFound ${filtered.length} logs containing '${keyword}'.`),
+			chalk.green(`\nFound ${filtered.length} logs containing "${keyword}".`),
 		);
 		await showLogs(
 			filtered,
-			`Logs containing '${keyword}'`,
-			promptContinue,
-			() =>
-				showLogsOptions(
-					entries,
-					promptContinue,
-					returnToMenu,
-					enableAutoRefresh,
-				),
-			enableAutoRefresh,
+			`Logs containing "${keyword}"`,
+			() => showLogsOptions(entries, returnToMenu),
+			currentViewType,
+			currentKeyword
 		);
 	}
 }
@@ -297,132 +184,78 @@ async function filterLogs(
 /**
  * Displays options for viewing logs including filtering and refresh capabilities
  * @param entries Array of log entries to display options for
- * @param promptContinue Function to prompt user to continue
  * @param returnToMenu Function to return to main menu
- * @param enableAutoRefresh Whether auto-refresh should be enabled
  */
 async function showLogsOptions(
 	entries: LogEntry[],
-	promptContinue: () => Promise<void>,
 	returnToMenu: () => Promise<void>,
-	enableAutoRefresh = false,
 ): Promise<void> {
-	try {
-		const refreshResult = await scanRobloxLogs();
-		if (refreshResult.success && refreshResult.entries.length > 0) {
-			entries = [...refreshResult.entries];
-		}
-	} catch {}
+	const errorLogs = entries.filter((entry) => entry.level === "ERROR");
+	const warningLogs = entries.filter((entry) => entry.level === "WARNING");
 
-	const errorCount = entries.filter((entry) => entry.level === "ERROR").length;
-	const warningCount = entries.filter(
-		(entry) => entry.level === "WARNING",
-	).length;
-
-	const { option } = await inquirer.prompt([
-		{
-			type: "list",
-			name: "option",
-			message: "What would you like to view?",
-			choices: [
-				{
-					name: `View all logs (${entries.length} entries)`,
-					value: "all",
-				},
-				{
-					name: `View error logs only (${errorCount} entries)`,
-					value: "errors",
-				},
-				{
-					name: `View warnings & errors (${errorCount + warningCount} entries)`,
-					value: "warnings",
-				},
-				{ name: "Filter logs by keyword", value: "filter" },
-				{ name: "Refresh logs", value: "refresh" },
-				{ name: "Return to main menu", value: "back" },
-			],
+	isOptionsActive = true;
+	const cleanup = setupKeyboardListener(
+		async (action) => {
+			if (currentPrompt) {
+				currentPrompt.ui.close();
+				currentPrompt = null;
+			}
+			isOptionsActive = false;
+			cleanup();
+			console.clear();
+			await handleLogAction(action as LogAction, entries, returnToMenu);
 		},
-	]);
+		() => isOptionsActive,
+		true
+	);
 
-	switch (option) {
-		case "all":
-			await showLogs(
-				entries,
-				"All Logs",
-				promptContinue,
-				() =>
-					showLogsOptions(
-						entries,
-						promptContinue,
-						returnToMenu,
-						enableAutoRefresh,
-					),
-				enableAutoRefresh,
-			);
-			break;
+	try {
+		const prompt = inquirer.createPromptModule();
+		const promptInstance = prompt([
+			{
+				type: "list",
+				name: "option",
+				message: "What would you like to view?",
+				choices: [
+					{
+						name: `View all logs (${entries.length} entries) (1)`,
+						value: "all",
+					},
+					{
+						name: `View error logs only (${errorLogs.length} entries) (2)`,
+						value: "errors",
+					},
+					{
+						name: `View warnings & errors (${errorLogs.length + warningLogs.length} entries) (3)`,
+						value: "warnings",
+					},
+					{ name: "Filter logs by keyword (4)", value: "filter" },
+					{ name: "Return to main menu (q)", value: "back" },
+				],
+			},
+		]);
 
-		case "errors":
-			const errorLogs = entries.filter((entry) => entry.level === "ERROR");
-			await showLogs(
-				errorLogs,
-				"Error Logs",
-				promptContinue,
-				() =>
-					showLogsOptions(
-						entries,
-						promptContinue,
-						returnToMenu,
-						enableAutoRefresh,
-					),
-				enableAutoRefresh,
-			);
-			break;
-
-		case "warnings":
-			const warningLogs = entries.filter(
-				(entry) => entry.level === "ERROR" || entry.level === "WARNING",
-			);
-			await showLogs(
-				warningLogs,
-				"Warnings & Errors",
-				promptContinue,
-				() =>
-					showLogsOptions(
-						entries,
-						promptContinue,
-						returnToMenu,
-						enableAutoRefresh,
-					),
-				enableAutoRefresh,
-			);
-			break;
-
-		case "filter":
-			await filterLogs(
-				entries,
-				promptContinue,
-				returnToMenu,
-				enableAutoRefresh,
-			);
-			break;
-
-		case "refresh":
-			await refreshLogs(promptContinue, returnToMenu);
-			break;
-
-		case "back":
-			await returnToMenu();
-			break;
+		currentPrompt = promptInstance;
+		const result = await promptInstance;
+		currentPrompt = null;
+		isOptionsActive = false;
+		cleanup();
+		await handleLogAction(result.option as LogAction, entries, returnToMenu);
+	} catch (error) {
+		if (currentPrompt) {
+			currentPrompt.ui.close();
+			currentPrompt = null;
+		}
+		isOptionsActive = false;
+		cleanup();
 	}
 }
 
 /**
  * Main entry point for the logs viewer interface
- * @param promptContinue Function to prompt user to continue
  * @param returnToMenu Function to return to main menu
  */
 export async function logsViewer(
-	promptContinue: () => Promise<void>,
 	returnToMenu: () => Promise<void>,
 ): Promise<void> {
 	console.clear();
@@ -452,7 +285,6 @@ export async function logsViewer(
 	if (!result.success) {
 		console.log(chalk.red.bold("\nError scanning logs:"));
 		console.log(chalk.red(result.error));
-		await promptContinue();
 		await returnToMenu();
 		return;
 	}
@@ -463,58 +295,59 @@ export async function logsViewer(
 
 	if (result.entries.length === 0) {
 		console.log(chalk.yellow("\nNo log entries to display."));
-		await promptContinue();
 		await returnToMenu();
 		return;
 	}
 
 	let allEntries = [...result.entries];
-
-	await showLogsOptions(allEntries, promptContinue, returnToMenu, true);
+	await showLogsOptions(allEntries, returnToMenu);
 }
 
-/**
- * Refreshes logs from the source and displays updated entries
- * @param promptContinue Function to prompt user to continue
- * @param returnToMenu Function to return to main menu
- */
-async function refreshLogs(
-	promptContinue: () => Promise<void>,
+async function handleLogAction(
+	action: LogAction,
+	entries: LogEntry[],
 	returnToMenu: () => Promise<void>,
 ): Promise<void> {
-	console.log(chalk.dim("\nRefreshing logs..."));
-
-	const spinner = ["◐", "◓", "◑", "◒"];
-	let i = 0;
-	const intervalId = setInterval(() => {
-		process.stdout.write(`\r${spinner[i++ % spinner.length]} `);
-	}, 100);
-
-	const result = await scanRobloxLogs();
-
-	clearInterval(intervalId);
-	process.stdout.write("\r");
-
-	if (!result.success) {
-		console.log(chalk.red.bold("\nError refreshing logs:"));
-		console.log(chalk.red(result.error));
-		await promptContinue();
-		await returnToMenu();
-		return;
+	const filtered = filterEntriesByViewType(entries, currentViewType, currentKeyword);
+	
+	switch (action) {
+		case "all":
+			currentViewType = "all";
+			currentKeyword = null;
+			await showLogs(
+				entries,
+				"All Logs",
+				() => showLogsOptions(entries, returnToMenu),
+				"all"
+			);
+			break;
+		case "errors":
+			currentViewType = "errors";
+			await showLogs(
+				filterEntriesByViewType(entries, "errors", currentKeyword),
+				"Error Logs",
+				() => showLogsOptions(entries, returnToMenu),
+				"errors",
+				currentKeyword
+			);
+			break;
+		case "warnings":
+			currentViewType = "warnings";
+			await showLogs(
+				filterEntriesByViewType(entries, "warnings", currentKeyword),
+				"Warnings & Errors",
+				() => showLogsOptions(entries, returnToMenu),
+				"warnings",
+				currentKeyword
+			);
+			break;
+		case "filter":
+			await filterLogs(entries, returnToMenu);
+			break;
+		case "back":
+			currentViewType = "all";
+			currentKeyword = null;
+			await returnToMenu();
+			break;
 	}
-
-	console.log(
-		chalk.green.bold(
-			`\nRefreshed: ${result.entries.length} log entries found.`,
-		),
-	);
-
-	if (result.entries.length === 0) {
-		console.log(chalk.yellow("\nNo log entries available."));
-		await promptContinue();
-		await returnToMenu();
-		return;
-	}
-
-	await showLogsOptions(result.entries, promptContinue, returnToMenu, true);
 }

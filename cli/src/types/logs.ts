@@ -10,3 +10,5 @@ export interface LogScanResult {
 	entries: LogEntry[];
 	error?: string;
 }
+
+export type ViewType = "all" | "errors" | "warnings";
