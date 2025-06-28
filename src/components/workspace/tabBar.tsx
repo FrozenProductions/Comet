@@ -105,8 +105,6 @@ export const Tabbar: FC<TabbarProps> = ({
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	if (tabs.length === 0) return null;
-
 	const handleContextMenu = (e: React.MouseEvent, tabId: string) => {
 		e.preventDefault();
 		e.stopPropagation();
