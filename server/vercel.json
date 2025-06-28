@@ -1,31 +1,15 @@
 {
 	"version": 2,
 	"functions": {
-		"api/**/*.ts": {
+		"api/index.ts": {
 			"runtime": "@vercel/node@3.0.0"
 		}
 	},
 	"routes": [
 		{
-			"src": "/api/v1/status",
-			"dest": "/api/status"
-		},
-		{
-			"src": "/api/v1/installer",
-			"dest": "/api/installer"
-		},
-		{
-			"src": "/api/v1/fastflags",
-			"dest": "/api/fastFlags"
-		},
-		{
-			"src": "/api/v1/messages",
-			"dest": "/api/messages"
-		},
-        {
-            "src": "/api/v1/suggestions",
-            "dest": "/api/unc"
-        }
+			"src": "/api/v1/(.*)",
+			"dest": "/api"
+		}
 	],
 	"buildCommand": "npm run build",
 	"outputDirectory": "dist"
