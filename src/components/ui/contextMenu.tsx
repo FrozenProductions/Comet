@@ -45,19 +45,14 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 				initial={{ opacity: 0, x: -10 }}
 				animate={{ opacity: 1, x: 0 }}
 				exit={{ opacity: 0, x: -10 }}
+				transition={{ duration: 0.15 }}
 				className="absolute left-full top-0 ml-0.5"
 			>
-				<div className="w-48 overflow-hidden rounded-lg border border-white/5 bg-ctp-mantle py-1.5 shadow-xl">
+				<div className="w-48 overflow-hidden rounded-lg border border-ctp-surface2 bg-ctp-surface0 shadow-lg">
 					{submenuItems.map((item, idx) => {
 						if (item.type === "separator") {
-							return <div key={idx} className="my-1.5 h-px bg-white/5" />;
+							return <div key={idx} className="my-1 h-px bg-ctp-surface2" />;
 						}
-
-						const isFirstItem = idx === 0;
-						const nonSeparatorItems = submenuItems.filter(
-							(i) => i.type !== "separator",
-						);
-						const isLastNonSeparator = idx === nonSeparatorItems.length - 1;
 
 						return (
 							<button
@@ -67,15 +62,19 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 									onClose();
 								}}
 								disabled={item.disabled}
-								className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${isFirstItem ? "-mt-1.5" : ""} ${isLastNonSeparator ? "-mb-1.5" : ""} ${
+								className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${
 									item.disabled
 										? "cursor-not-allowed opacity-50"
 										: item.danger
-											? "text-ctp-red hover:bg-ctp-red/10"
-											: "text-ctp-text hover:bg-ctp-surface0"
-								} `}
+											? "text-ctp-red hover:bg-red-500/10"
+											: "text-ctp-text hover:bg-ctp-surface1"
+								}`}
 							>
-								{item.icon && <span className="h-4 w-4">{item.icon}</span>}
+								{item.icon && (
+									<span className="h-4 w-4 text-accent">
+										{item.icon}
+									</span>
+								)}
 								<span className="flex-1">{item.label}</span>
 							</button>
 						);
@@ -100,20 +99,13 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 					initial={{ opacity: 0, scale: 0.95 }}
 					animate={{ opacity: 1, scale: 1 }}
 					exit={{ opacity: 0, scale: 0.95 }}
-					transition={{ type: "spring", stiffness: 500, damping: 30 }}
-					className="w-48 overflow-hidden rounded-lg border border-white/5 bg-ctp-mantle py-1.5 shadow-xl"
+					transition={{ duration: 0.15 }}
+					className="w-32 overflow-hidden rounded-lg border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
 				>
 					{items.map((item, index) => {
 						if (item.type === "separator") {
-							return <div key={index} className="my-1.5 h-px bg-white/5" />;
+							return <div key={index} className="my-1 h-px bg-ctp-surface2" />;
 						}
-
-						const isFirstItem = index === 0;
-						const nonSeparatorItems = items.filter(
-							(i) => i.type !== "separator",
-						);
-						const isLastNonSeparator =
-							nonSeparatorItems.indexOf(item) === nonSeparatorItems.length - 1;
 
 						return (
 							<button
@@ -128,18 +120,22 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 									setActiveSubmenu(item.submenu ? index : null)
 								}
 								disabled={item.disabled}
-								className={`relative flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${isFirstItem ? "-mt-1.5" : ""} ${isLastNonSeparator ? "-mb-1.5" : ""} ${
+								className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${
 									item.disabled
 										? "cursor-not-allowed opacity-50"
 										: item.danger
-											? "text-ctp-red hover:bg-ctp-red/10"
-											: "text-ctp-text hover:bg-ctp-surface0"
-								} `}
+											? "text-ctp-red hover:bg-red-500/10"
+											: "text-ctp-text hover:bg-ctp-surface1"
+								}`}
 							>
-								{item.icon && <span className="h-4 w-4">{item.icon}</span>}
+								{item.icon && (
+									<span className="h-4 w-4 text-accent">
+										{item.icon}
+									</span>
+								)}
 								<span className="flex-1">{item.label}</span>
 								{item.submenu && (
-									<ChevronRight size={12} className="stroke-[2.5] opacity-75" />
+									<ChevronRight size={12} className="stroke-[2.5] text-accent opacity-75" />
 								)}
 								{item.submenu && renderSubmenu(item.submenu, index)}
 							</button>
