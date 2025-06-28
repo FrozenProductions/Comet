@@ -290,4 +290,27 @@ pub async fn rename_tab(app_handle: tauri::AppHandle, workspace_id: String, old_
 
     fs::rename(old_path, new_path).map_err(|e| e.to_string())?;
     Ok(())
+}
+
+#[tauri::command]
+pub async fn export_tab(app_handle: tauri::AppHandle, workspace_id: String, title: String, content: String, target_path: String) -> Result<(), String> {
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: format!("Exporting tab: {} to {}", title, target_path),
+        details: Some(serde_json::json!({
+            "workspace_id": workspace_id,
+            "title": title,
+            "target_path": target_path
+        })),
+    };
+
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        if let Ok(logger) = logger.lock() {
+            let _ = logger.write_entry(log_entry);
+        }
+    }
+
+    fs::write(target_path, content).map_err(|e| e.to_string())?;
+    Ok(())
 } 

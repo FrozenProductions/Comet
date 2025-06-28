@@ -8,6 +8,7 @@ import {
 	ChevronDown,
 	MoreHorizontal,
 	Copy,
+	Download,
 } from "lucide-react";
 import { ContextMenu } from "../ui/contextMenu";
 import { useSettings } from "../../hooks/useSettings";
@@ -15,6 +16,7 @@ import { useEditor } from "../../hooks/useEditor";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import type { Tab, TabbarProps } from "../../types/workspace";
 import { WorkspaceSelector } from "./workspaceSelector";
+import { exportTab } from "../../services/tabService";
 
 export const Tabbar: FC<TabbarProps> = ({
 	tabs,
@@ -133,6 +135,9 @@ export const Tabbar: FC<TabbarProps> = ({
 	};
 
 	const getContextMenuItems = (tabId: string) => {
+		const tab = tabs.find((t) => t.id === tabId);
+		if (!tab) return [];
+
 		return [
 			{
 				label: "Rename",
@@ -143,6 +148,15 @@ export const Tabbar: FC<TabbarProps> = ({
 				label: "Duplicate",
 				icon: <Copy size={14} className="stroke-[2.5]" />,
 				onClick: () => duplicateTab(tabId),
+			},
+			{
+				label: "Export",
+				icon: <Download size={14} className="stroke-[2.5]" />,
+				onClick: async () => {
+					if (activeWorkspace) {
+						await exportTab(tab, activeWorkspace);
+					}
+				},
 			},
 		];
 	};

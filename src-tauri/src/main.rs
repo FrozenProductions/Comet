@@ -774,6 +774,7 @@ fn main() {
             execution_history::load_execution_history,
             execution_history::save_execution_record,
             execution_history::clear_execution_history,
+            tabs::export_tab,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
