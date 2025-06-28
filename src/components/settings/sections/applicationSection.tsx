@@ -96,27 +96,27 @@ export const ApplicationSection: FC = () => {
 									href="https://github.com/FrozenProductions/Comet"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+									className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 								>
-									<Github size={12} className="stroke-[2.5]" />
+									<Github size={14} className="stroke-[2.5]" />
 									GitHub
 								</a>
 								<a
 									href="https://www.comet-ui.fun/"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-ctp-base"
+									className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-accent/90"
 								>
-									<Globe size={12} className="stroke-[2.5]" />
+									<Globe size={14} className="stroke-[2.5]" />
 									Website
 								</a>
 								<a
 									href="https://github.com/FrozenProductions/Comet/blob/main/docs/documentation.md"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+									className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 								>
-									<Book size={12} className="stroke-[2.5]" />
+									<Book size={14} className="stroke-[2.5]" />
 									Docs
 								</a>
 							</div>
@@ -184,11 +184,11 @@ export const ApplicationSection: FC = () => {
 										}
 									}}
 									disabled={updateCheck.loading || !isOfficialApp}
-									className="flex items-center gap-1.5 rounded-md border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-ctp-text transition-all hover:border-accent/20 hover:bg-accent/5 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+									className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
 								>
 									<RefreshCw
-										size={12}
-										className={`stroke-[2.5] transition-transform ${
+										size={14}
+										className={`stroke-[2.5] ${
 											updateCheck.loading ? "animate-spin" : ""
 										}`}
 									/>
@@ -306,10 +306,10 @@ export const ApplicationSection: FC = () => {
 																	console.error("Failed to update:", error);
 																}
 															}}
-															className={`mt-2 flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all ${
+															className={`mt-2 flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
 																updateCheck.isNightly
-																	? "bg-ctp-red/10 text-ctp-red hover:bg-ctp-red/20"
-																	: "bg-accent/10 text-accent hover:bg-accent/20"
+																	? "bg-ctp-surface1 text-ctp-red hover:bg-white/10"
+																	: "bg-ctp-surface1 text-accent hover:bg-white/10"
 															}`}
 														>
 															<div
@@ -368,9 +368,9 @@ export const ApplicationSection: FC = () => {
 							</div>
 							<button
 								onClick={() => setShowResetConfirm(true)}
-								className="flex items-center gap-1.5 rounded-md bg-ctp-red/10 px-3 py-1.5 text-xs font-medium text-ctp-red transition-colors hover:bg-ctp-red/20"
+								className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-ctp-red transition-colors hover:bg-white/10"
 							>
-								<RotateCcw size={12} className="stroke-[2.5]" />
+								<RotateCcw size={14} className="stroke-[2.5]" />
 								Reset Application Data
 							</button>
 						</div>
@@ -396,9 +396,9 @@ export const ApplicationSection: FC = () => {
 											console.error("Failed to open app directory", error);
 										}
 									}}
-									className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+									className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 								>
-									<Folder size={12} className="stroke-[2.5]" />
+									<Folder size={14} className="stroke-[2.5]" />
 									App Directory
 								</button>
 								<button
@@ -410,9 +410,9 @@ export const ApplicationSection: FC = () => {
 											console.error("Failed to open Hydrogen directory", error);
 										}
 									}}
-									className="flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+									className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 								>
-									<Folder size={12} className="stroke-[2.5]" />
+									<Folder size={14} className="stroke-[2.5]" />
 									Hydrogen Directory
 								</button>
 							</div>
