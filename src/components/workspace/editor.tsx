@@ -14,6 +14,7 @@ import { EditorSearch } from "./editorSearch";
 import { getSuggestions } from "../../utils/suggestions";
 import { Actions } from "../ui/editorActions";
 import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
+import { suggestionService } from "../../services/suggestionService";
 
 const modelsMap = new Map<string, monaco.editor.ITextModel>();
 const editorStatesMap = new Map<string, {
@@ -308,6 +309,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			modelRef.current.setValue(content);
 		}
 	}, [content]);
+
+	useEffect(() => {
+		suggestionService.loadSuggestions();
+	}, []);
 
 	const handleSuggestionSelect = (suggestion: string) => {
 		if (!editorRef.current) return;

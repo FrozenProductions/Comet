@@ -445,10 +445,12 @@ mod workspace;
 mod updater;
 mod logging;
 mod execution_history;
+mod suggestions;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use flag_validator::FlagValidator;
 use logging::{Logger, write_log_entry, get_logs, clear_logs};
+use suggestions::fetch_suggestions;
 
 #[tauri::command]
 async fn open_roblox() -> Result<(), String> {
@@ -768,6 +770,7 @@ fn main() {
             fast_flags::save_fast_flags,
             fast_flags::get_fast_flag_categories,
             fetch_version_messages,
+            fetch_suggestions,
             write_log_entry,
             get_logs,
             clear_logs,
