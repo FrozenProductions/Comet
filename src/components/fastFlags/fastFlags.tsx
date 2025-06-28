@@ -24,7 +24,7 @@ import { motion } from "framer-motion";
 import { FastFlagManager } from "./fastFlagManager";
 import { EasyMode } from "./easyMode";
 import { Tooltip } from "react-tooltip";
-import { Modal } from "../ui/modal";
+import { BaseMessageModal } from "../ui/messageModal";
 import {
 	importFromFile,
 	exportToFile,
@@ -495,16 +495,21 @@ export const FastFlags: React.FC = () => {
 				)}
 			</div>
 
-			<Modal
+			<BaseMessageModal
 				isOpen={isCreatingProfile}
 				onClose={() => {
 					setNewProfileName("");
 					setIsCreatingProfile(false);
 				}}
 				title="Create Profile"
-				description="Enter a name for your new fast flags profile."
+				message="Enter a name for your new fast flags profile."
+				variant="info"
+				primaryAction={{
+					label: "Create",
+					onClick: handleCreateProfile,
+				}}
 			>
-				<div className="space-y-4">
+				<div className="mt-4">
 					<Input
 						placeholder="Profile name"
 						value={newProfileName}
@@ -514,48 +519,36 @@ export const FastFlags: React.FC = () => {
 						autoFocus
 					/>
 				</div>
-				<div className="mt-4 flex justify-end gap-3">
-					<Button
-						onClick={() => {
-							setNewProfileName("");
-							setIsCreatingProfile(false);
-						}}
-						variant="secondary"
-						size="sm"
-						className="bg-white/5 hover:bg-white/10"
-					>
-						Cancel
-					</Button>
-					<Button
-						onClick={handleCreateProfile}
-						size="sm"
-						className="bg-accent hover:bg-accent/90"
-					>
-						Create
-					</Button>
-				</div>
-			</Modal>
+			</BaseMessageModal>
 
-			<Modal
+			<BaseMessageModal
 				isOpen={!!profileToDelete}
 				onClose={() => setProfileToDelete(null)}
 				title="Delete Profile"
-				description={`Are you sure you want to delete "${profileToDelete?.name}"? This action cannot be undone.`}
-				onConfirm={() => handleDeleteProfile(profileToDelete!.id)}
-				confirmText="Delete"
-				confirmVariant="destructive"
+				message={`Are you sure you want to delete "${profileToDelete?.name}"? This action cannot be undone.`}
+				variant="destructive"
+				icon={<AlertCircle size={14} className="text-ctp-red" />}
+				primaryAction={{
+					label: "Delete",
+					onClick: () => handleDeleteProfile(profileToDelete!.id),
+				}}
 			/>
 
-			<Modal
+			<BaseMessageModal
 				isOpen={!!profileToRename}
 				onClose={() => {
 					setProfileToRename(null);
 					setNewName("");
 				}}
 				title="Rename Profile"
-				description="Enter a new name for the profile."
+				message="Enter a new name for the profile."
+				variant="info"
+				primaryAction={{
+					label: "Rename",
+					onClick: handleRenameProfile,
+				}}
 			>
-				<div className="space-y-4">
+				<div className="mt-4">
 					<Input
 						placeholder="Profile name"
 						value={newName}
@@ -565,27 +558,7 @@ export const FastFlags: React.FC = () => {
 						autoFocus
 					/>
 				</div>
-				<div className="mt-4 flex justify-end gap-3">
-					<Button
-						onClick={() => {
-							setProfileToRename(null);
-							setNewName("");
-						}}
-						variant="secondary"
-						size="sm"
-						className="bg-white/5 hover:bg-white/10"
-					>
-						Cancel
-					</Button>
-					<Button
-						onClick={handleRenameProfile}
-						size="sm"
-						className="bg-accent hover:bg-accent/90"
-					>
-						Rename
-					</Button>
-				</div>
-			</Modal>
+			</BaseMessageModal>
 
 			<Tooltip
 				id="fastflags-tooltip"

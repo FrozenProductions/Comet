@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "./button";
 import { ModalProps } from "../../types/ui";
 
 export const Modal = ({
@@ -20,6 +19,7 @@ export const Modal = ({
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
+					transition={{ duration: 0.2 }}
 					className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
 					onClick={(e) => {
 						if (e.target === e.currentTarget) {
@@ -31,40 +31,39 @@ export const Modal = ({
 						initial={{ scale: 0.95, y: 20 }}
 						animate={{ scale: 1, y: 0 }}
 						exit={{ scale: 0.95, y: 20 }}
-						className="mx-4 w-full max-w-md rounded-xl border border-white/5 bg-ctp-mantle p-6 shadow-xl"
+						transition={{ duration: 0.2 }}
+						className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
 					>
-						<h3 className="mb-2 text-base font-medium text-ctp-text">
-							{title}
-						</h3>
-						{description && (
-							<p className="mb-4 text-sm text-ctp-subtext0">{description}</p>
-						)}
+						<div className="flex items-center justify-between border-b border-ctp-surface2 p-4">
+							<div className="flex-1">
+								<h3 className="text-sm font-medium text-ctp-text">{title}</h3>
+								{description && (
+									<p className="mt-1 text-sm text-ctp-subtext0">{description}</p>
+								)}
+							</div>
+						</div>
 
-						{children}
+						{children && <div className="p-4">{children}</div>}
 
 						{(footer || onConfirm) && (
-							<div className="mt-4 flex justify-end gap-3">
-								<Button
+							<div className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4">
+								<button
 									onClick={onClose}
-									variant="secondary"
-									size="sm"
-									className="bg-white/5 hover:bg-white/10"
+									className="flex h-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-ctp-surface2"
 								>
 									Cancel
-								</Button>
+								</button>
 								{onConfirm && (
-									<Button
+									<button
 										onClick={onConfirm}
-										variant={confirmVariant}
-										size="sm"
-										className={
+										className={`flex h-8 items-center justify-center rounded-lg px-3 text-xs font-medium transition-colors ${
 											confirmVariant === "destructive"
-												? "bg-ctp-red hover:bg-ctp-red/90"
-												: "bg-accent hover:bg-accent/90"
-										}
+												? "border border-red-500/30 bg-red-500/10 text-ctp-red hover:bg-red-500/20"
+												: "border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20"
+										}`}
 									>
 										{confirmText}
-									</Button>
+									</button>
 								)}
 								{footer}
 							</div>
