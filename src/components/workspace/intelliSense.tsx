@@ -160,6 +160,7 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
 									)}
 								</div>
 								{isSelected &&
+									!settings.intellisense.compactMode &&
 									(suggestion.detail || suggestion.documentation) && (
 										<div className="space-y-1 bg-ctp-surface1/30 px-2 pb-1.5">
 											{suggestion.detail && (

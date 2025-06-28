@@ -34,6 +34,7 @@ export interface EditorSettings {
 		enabled: boolean;
 		maxSuggestions: number;
 		acceptSuggestionKey: "Tab" | "Enter";
+		compactMode: boolean;
 	};
 	interface: {
 		zenMode: boolean;

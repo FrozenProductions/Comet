@@ -183,6 +183,19 @@ export const EditorSection: FC = () => {
 						label="Enable IntelliSense"
 						description="Show code suggestions while typing"
 					/>
+					<Checkbox
+						checked={settings.intellisense.compactMode}
+						onChange={() => {
+							updateSettings({
+								intellisense: {
+									...settings.intellisense,
+									compactMode: !settings.intellisense.compactMode,
+								},
+							});
+						}}
+						label="Compact Mode"
+						description="Hide suggestion details and documentation"
+					/>
 					<RadioGroup
 						value={settings.intellisense.acceptSuggestionKey}
 						onChange={(value) => {
