@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { ExecutionRecord } from "../types/execution";
+import type { ExecutionRecord } from "../types/executionHistory";
 
 /**
  * Loads the execution history from storage

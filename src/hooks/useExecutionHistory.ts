@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ExecutionHistoryContext } from "../contexts/execution/executionHistoryContextType";
-import type { ExecutionHistoryContextType } from "../types/execution";
+import type { ExecutionHistoryContextType } from "../types/executionHistory";
 
 export const useExecutionHistory = (): ExecutionHistoryContextType => {
     const context = useContext(ExecutionHistoryContext);

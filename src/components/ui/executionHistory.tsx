@@ -2,17 +2,37 @@ import { motion } from "framer-motion";
 import { Trash2, X } from "lucide-react";
 import { useExecutionHistory } from "../../hooks/useExecutionHistory";
 import { useEditor } from "../../hooks/useEditor";
-import { useState } from "react";
-import type { ExecutionHistoryProps } from "../../types/execution";
+import { useState, useEffect, useRef } from "react";
+import type { ExecutionHistoryProps, ExecutionHistoryState } from "../../types/executionHistory";
+import { EXECUTION_HISTORY_STORAGE_KEY, DEFAULT_EXECUTION_HISTORY_STATE } from "../../constants/executionHistory";
 
 export const ExecutionHistory = ({ isVisible, onClose }: ExecutionHistoryProps) => {
     const { history, clearHistory } = useExecutionHistory();
     const { createTabWithContent } = useEditor();
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [state, setState] = useState<ExecutionHistoryState>(() => {
+        const saved = localStorage.getItem(EXECUTION_HISTORY_STORAGE_KEY);
+        if (saved) {
+            try {
+                return JSON.parse(saved);
+            } catch {
+                return DEFAULT_EXECUTION_HISTORY_STATE;
+            }
+        }
+        return DEFAULT_EXECUTION_HISTORY_STATE;
+    });
+    
+    const [isDragging, setIsDragging] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
+    const dragStartPos = useRef<{ x: number; y: number } | null>(null);
+    const resizeStartState = useRef<ExecutionHistoryState | null>(null);
 
     const handleOpenInEditor = async (content: string) => {
         await createTabWithContent("history.lua", content);
     };
+
+    useEffect(() => {
+        localStorage.setItem(EXECUTION_HISTORY_STORAGE_KEY, JSON.stringify(state));
+    }, [state]);
 
     const containerVariants = {
         hidden: { opacity: 0, scale: 0.95, display: "none" },
@@ -24,35 +44,101 @@ export const ExecutionHistory = ({ isVisible, onClose }: ExecutionHistoryProps) 
         },
     };
 
+    const handleDragStart = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (!isResizing) {
+            setIsDragging(true);
+            dragStartPos.current = {
+                x: event.clientX - state.position.x,
+                y: event.clientY - state.position.y
+            };
+        }
+    };
+
+    const handleResizeStart = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        setIsResizing(true);
+        resizeStartState.current = {
+            position: { ...state.position },
+            size: { ...state.size }
+        };
+        dragStartPos.current = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    };
+
+    const handleDragEnd = () => {
+        setIsDragging(false);
+        setIsResizing(false);
+        dragStartPos.current = null;
+        resizeStartState.current = null;
+    };
+
+    useEffect(() => {
+        if (isDragging || isResizing) {
+            const handleDrag = (event: MouseEvent) => {
+                const dragStart = dragStartPos.current;
+                if (!dragStart) return;
+
+                if (isDragging) {
+                    setState(prev => ({
+                        ...prev,
+                        position: {
+                            x: event.clientX - dragStart.x,
+                            y: event.clientY - dragStart.y
+                        }
+                    }));
+                } else if (isResizing) {
+                    const resizeStart = resizeStartState.current;
+                    if (!resizeStart) return;
+
+                    const dx = event.clientX - dragStart.x;
+                    const dy = event.clientY - dragStart.y;
+                    setState(prev => ({
+                        ...prev,
+                        size: {
+                            width: Math.max(400, resizeStart.size.width + dx),
+                            height: Math.max(300, resizeStart.size.height + dy)
+                        }
+                    }));
+                }
+            };
+
+            window.addEventListener("mousemove", handleDrag);
+            window.addEventListener("mouseup", handleDragEnd);
+            return () => {
+                window.removeEventListener("mousemove", handleDrag);
+                window.removeEventListener("mouseup", handleDragEnd);
+            };
+        }
+    }, [isDragging, isResizing]);
+
     return (
         <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-ctp-base/50"
+            className="fixed z-50"
             initial={{ opacity: 0 }}
             animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
             exit={{ opacity: 0 }}
-            style={{ pointerEvents: isVisible ? "auto" : "none" }}
+            style={{ 
+                pointerEvents: isVisible ? "auto" : "none",
+                left: state.position.x,
+                top: state.position.y,
+            }}
         >
             <motion.div
-                className="flex h-[500px] w-[600px] flex-col overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
+                className="flex flex-col overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
                 variants={containerVariants}
                 initial="hidden"
                 animate={isVisible ? "visible" : "hidden"}
-                drag
-                dragConstraints={{ left: -500, right: 500, top: -300, bottom: 300 }}
-                dragElastic={0.1}
-                dragMomentum={false}
-                onDragEnd={(_, info) => {
-                    setPosition({
-                        x: position.x + info.offset.x,
-                        y: position.y + info.offset.y,
-                    });
-                }}
                 style={{
-                    x: position.x,
-                    y: position.y,
+                    width: state.size.width,
+                    height: state.size.height
                 }}
             >
-                <div className="flex cursor-move items-center justify-between border-b border-ctp-surface2 p-4">
+                <div 
+                    className="flex cursor-move items-center justify-between border-b border-ctp-surface2 p-4"
+                    onMouseDown={handleDragStart}
+                >
                     <h3 className="text-sm font-medium text-ctp-text">Execution History</h3>
                     <div className="flex items-center gap-2">
                         <button
@@ -114,6 +200,10 @@ export const ExecutionHistory = ({ isVisible, onClose }: ExecutionHistoryProps) 
                         </div>
                     )}
                 </div>
+                <div 
+                    className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize"
+                    onMouseDown={handleResizeStart}
+                />
             </motion.div>
         </motion.div>
     );

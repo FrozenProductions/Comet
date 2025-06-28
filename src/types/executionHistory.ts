@@ -32,4 +32,9 @@ export type ExecuteContextType = {
 export type ExecutionHistoryProps = {
     isVisible: boolean;
     onClose: () => void;
+};
+
+export type ExecutionHistoryState = {
+    position: { x: number; y: number };
+    size: { width: number; height: number };
 }; 
