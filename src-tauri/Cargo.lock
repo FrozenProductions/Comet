@@ -20,6 +20,7 @@ dependencies = [
  "tauri-build",
  "thiserror",
  "tokio",
+ "uuid",
 ]
 
 [[package]]

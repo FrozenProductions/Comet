@@ -278,7 +278,7 @@ export const FastFlags: React.FC = () => {
 						<Button
 							onClick={async () => {
 								try {
-									await exportToFile();
+									await exportToFile(selectedProfileId ?? undefined);
 									toast.success("Profiles exported successfully");
 								} catch (error) {
 									console.error("Failed to export profiles:", error);

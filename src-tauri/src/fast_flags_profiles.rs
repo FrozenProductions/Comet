@@ -5,6 +5,7 @@ use serde_json::Map;
 use crate::fast_flags::{save_fast_flags, FastFlagsResponse};
 use tauri::api::path::config_dir;
 use tauri::api::dialog;
+use uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FastFlagsProfile {
@@ -215,16 +216,32 @@ impl FastFlagsProfileManager {
 }
 
 #[tauri::command]
-pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle, selected_profile_id: Option<String>) -> Result<(), String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
     let profiles = profile_manager.export_profiles()?;
     
     if let Some(path) = dialog::blocking::FileDialogBuilder::new()
-        .add_filter("Fast Flags Profiles", &["json"])
-        .set_file_name("fast-flags-profiles.json")
+        .add_filter("Fast Flags", &["json"])
+        .set_file_name("fast-flags.json")
         .save_file() {
-            let content = serde_json::to_string_pretty(&profiles)
-                .map_err(|e| format!("Failed to serialize profiles: {}", e))?;
+            let content = if path.to_string_lossy().contains("profile") {
+                serde_json::to_string_pretty(&profiles)
+                    .map_err(|e| format!("Failed to serialize profiles: {}", e))?
+            } else {
+                let profile = if let Some(id) = selected_profile_id {
+                    profiles.iter().find(|p| p.id == id)
+                } else {
+                    profiles.first()
+                };
+
+                if let Some(profile) = profile {
+                    serde_json::to_string_pretty(&profile.flags)
+                        .map_err(|e| format!("Failed to serialize flags: {}", e))?
+                } else {
+                    "{}".to_string()
+                }
+            };
+            
             fs::write(path, content)
                 .map_err(|e| format!("Failed to write file: {}", e))?;
     }
@@ -234,17 +251,42 @@ pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<
 
 #[tauri::command]
 pub async fn import_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(), String> {
-    if let Some(path) = dialog::blocking::FileDialogBuilder::new()
-        .add_filter("Fast Flags Profiles", &["json"])
-        .pick_file() {
-            let content = fs::read_to_string(&path)
-                .map_err(|e| format!("Failed to read file: {}", e))?;
-            let profiles = serde_json::from_str(&content)
-                .map_err(|e| format!("Failed to parse profiles: {}", e))?;
-            
-            let profile_manager = FastFlagsProfileManager::new(&app_handle);
-            profile_manager.import_profiles(profiles)?;
-    }
+    let profile_manager = FastFlagsProfileManager::new(&app_handle);
     
+    let path = match dialog::blocking::FileDialogBuilder::new()
+        .add_filter("Fast Flags", &["json"])
+        .pick_file() {
+            Some(path) => path,
+            None => return Ok(())
+        };
+            
+    let content = fs::read_to_string(&path)
+        .map_err(|e| format!("Failed to read file: {}", e))?;
+        
+    let import_result = serde_json::from_str::<Vec<FastFlagsProfile>>(&content);
+        
+    let profiles = match import_result {
+        Ok(profiles) => profiles,
+        Err(_) => {
+            let flags: std::collections::HashMap<String, serde_json::Value> = serde_json::from_str(&content)
+                .map_err(|e| format!("Failed to parse JSON: {}", e))?;
+                
+            let mut profile_name = "Untitled".to_string();
+            let mut counter = 1;
+                
+            while profile_manager.load_profiles()?.iter().any(|p| p.name == profile_name) {
+                profile_name = format!("Untitled-{}", counter);
+                counter += 1;
+            }
+                
+            vec![FastFlagsProfile {
+                id: uuid::Uuid::new_v4().to_string(),
+                name: profile_name,
+                flags,
+            }]
+        }
+    };
+        
+    profile_manager.import_profiles(profiles)?;
     Ok(())
 } 
