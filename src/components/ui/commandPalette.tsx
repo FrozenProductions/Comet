@@ -464,7 +464,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
-						className="fixed inset-0 z-50 bg-black/50"
+						className="fixed inset-0 z-50 bg-black/20"
 						onClick={onClose}
 					/>
 					<motion.div
@@ -479,9 +479,9 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 						className="fixed inset-x-0 top-[20%] z-50 flex items-start justify-center"
 					>
 						<div className="mx-auto w-full max-w-xl px-4">
-							<div className="select-none overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle shadow-2xl">
-								<div className="flex items-center gap-3 border-b border-white/5 p-4">
-									<Command size={20} className="text-white/50" />
+							<div className="select-none overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg">
+								<div className="flex items-center gap-3 border-b border-ctp-surface2 p-4">
+									<Command size={20} className="text-ctp-subtext0" />
 									<input
 										ref={inputRef}
 										type="text"
@@ -490,14 +490,14 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 										placeholder={
 											searchQuery.startsWith(">") || searchQuery.startsWith("/")
 												? "Type a command..."
-												: "Search tabs or type > for commands... ('>workspace' for workspaces)"
+												: "Search tabs or type > for commands..."
 										}
 										className="flex-1 border-none bg-transparent text-sm text-ctp-text outline-none placeholder:text-ctp-subtext0"
 										autoComplete="off"
 										spellCheck="false"
 									/>
 									<div className="flex select-none items-center gap-1">
-										<kbd className="rounded bg-white/5 px-2 py-1 text-xs font-medium text-ctp-subtext0">
+										<kbd className="rounded bg-ctp-surface1 px-2 py-1 text-xs font-medium text-ctp-subtext0">
 											esc
 										</kbd>
 										<span className="text-xs text-ctp-subtext0">to close</span>
@@ -534,17 +534,17 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 														transition={{
 															delay: index * 0.03,
 														}}
-														className={`flex w-full select-none items-center gap-3 rounded-lg px-2 py-2 text-left ${
+														className={`flex w-full select-none items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors ${
 															selectedIndex === index
-																? "bg-white/10 text-white"
-																: "text-ctp-subtext0 hover:bg-white/5 hover:text-white"
+																? "bg-ctp-surface1 text-ctp-text"
+																: "text-ctp-subtext0 hover:bg-ctp-surface1/50 hover:text-ctp-text"
 														} `}
 														onClick={() => {
 															item.action();
 															onClose();
 														}}
 													>
-														<div className="flex h-5 w-5 items-center justify-center text-white/50">
+														<div className="flex h-5 w-5 items-center justify-center text-accent">
 															{item.icon}
 														</div>
 														<div className="min-w-0 flex-1">
@@ -557,14 +557,14 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 														</div>
 														{selectedIndex === index && (
 															<div className="flex select-none items-center gap-1 text-xs">
-																<kbd className="rounded bg-white/5 px-2 py-1">
+																<kbd className="rounded bg-ctp-surface1 px-2 py-1 text-ctp-subtext0">
 																	{!searchQuery.startsWith(">") &&
 																	!searchQuery.startsWith("/") &&
 																	isCmdPressed
 																		? "⌘ + enter"
 																		: "enter"}
 																</kbd>
-																<span>
+																<span className="text-ctp-subtext0">
 																	{!searchQuery.startsWith(">") &&
 																	!searchQuery.startsWith("/")
 																		? isCmdPressed
