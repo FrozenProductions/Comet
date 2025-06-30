@@ -216,14 +216,17 @@ impl FastFlagsProfileManager {
 }
 
 #[tauri::command]
-pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle, selected_profile_id: Option<String>) -> Result<(), String> {
+pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle, selected_profile_id: Option<String>) -> Result<bool, String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
     let profiles = profile_manager.export_profiles()?;
     
-    if let Some(path) = dialog::blocking::FileDialogBuilder::new()
+    let path = dialog::blocking::FileDialogBuilder::new()
         .add_filter("Fast Flags", &["json"])
         .set_file_name("fast-flags.json")
-        .save_file() {
+        .save_file();
+
+    match path {
+        Some(path) => {
             let content = if path.to_string_lossy().contains("profile") {
                 serde_json::to_string_pretty(&profiles)
                     .map_err(|e| format!("Failed to serialize profiles: {}", e))?
@@ -244,20 +247,21 @@ pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle, selected_p
             
             fs::write(path, content)
                 .map_err(|e| format!("Failed to write file: {}", e))?;
+            Ok(true)
+        },
+        None => Ok(false)
     }
-    
-    Ok(())
 }
 
 #[tauri::command]
-pub async fn import_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn import_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<bool, String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
     
     let path = match dialog::blocking::FileDialogBuilder::new()
         .add_filter("Fast Flags", &["json"])
         .pick_file() {
             Some(path) => path,
-            None => return Ok(())
+            None => return Ok(false)
         };
             
     let content = fs::read_to_string(&path)
@@ -288,5 +292,5 @@ pub async fn import_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<
     };
         
     profile_manager.import_profiles(profiles)?;
-    Ok(())
+    Ok(true)
 } 

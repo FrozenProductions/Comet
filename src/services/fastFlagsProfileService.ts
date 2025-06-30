@@ -118,14 +118,14 @@ export const importProfiles = async (
  * @param selectedProfileId Optional ID of the profile to export flags from
  * @throws Error if exporting to file fails
  */
-export const exportToFile = async (selectedProfileId?: string): Promise<void> => {
-	await invoke("export_fast_flags_profiles", { selectedProfileId });
+export const exportToFile = async (selectedProfileId?: string): Promise<boolean> => {
+	return await invoke("export_fast_flags_profiles", { selectedProfileId });
 };
 
 /**
  * Imports fast flags profiles from a file
  * @throws Error if importing from file fails
  */
-export const importFromFile = async (): Promise<void> => {
-	await invoke("import_fast_flags_profiles");
+export const importFromFile = async (): Promise<boolean> => {
+	return await invoke("import_fast_flags_profiles");
 };

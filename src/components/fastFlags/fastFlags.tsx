@@ -200,12 +200,26 @@ export const FastFlags: React.FC = () => {
 
 	const handleImport = async () => {
 		try {
-			await importFromFile();
-			await loadProfiles();
-			toast.success("Profiles imported successfully");
+			const imported = await importFromFile();
+			if (imported) {
+				await loadProfiles();
+				toast.success("Profiles imported successfully");
+			}
 		} catch (error) {
 			console.error("Failed to import profiles:", error);
 			toast.error("Failed to import profiles");
+		}
+	};
+
+	const handleExport = async () => {
+		try {
+			const exported = await exportToFile(selectedProfileId ?? undefined);
+			if (exported) {
+				toast.success("Profiles exported successfully");
+			}
+		} catch (error) {
+			console.error("Failed to export profiles:", error);
+			toast.error("Failed to export profiles");
 		}
 	};
 
@@ -276,15 +290,7 @@ export const FastFlags: React.FC = () => {
 						</Button>
 						<div className="h-4 w-px bg-white/5" />
 						<Button
-							onClick={async () => {
-								try {
-									await exportToFile(selectedProfileId ?? undefined);
-									toast.success("Profiles exported successfully");
-								} catch (error) {
-									console.error("Failed to export profiles:", error);
-									toast.error("Failed to export profiles");
-								}
-							}}
+							onClick={handleExport}
 							size="sm"
 							data-tooltip-id="fastflags-tooltip"
 							data-tooltip-content="Export Profiles"
