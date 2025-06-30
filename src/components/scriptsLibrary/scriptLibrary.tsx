@@ -355,10 +355,10 @@ export const ScriptLibrary = () => {
 				<button
 					key={i}
 					onClick={() => handlePageChange(i)}
-					className={`h-8 min-w-[2rem] rounded-lg px-2 text-xs font-medium ${
+					className={`h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 px-2 text-xs font-medium transition-colors ${
 						i === currentPage
-							? "bg-white/10 text-white"
-							: "bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text"
+							? "bg-accent text-white hover:bg-accent/90"
+							: "bg-ctp-surface1 text-accent hover:bg-white/10"
 					}`}
 				>
 					{i}
@@ -371,15 +371,15 @@ export const ScriptLibrary = () => {
 				<button
 					onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
 					disabled={currentPage === 1}
-					className="flex h-8 w-8 items-center justify-center rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text disabled:cursor-not-allowed disabled:opacity-50"
+					className="flex h-8 w-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					<ChevronLeft size={16} />
+					<ChevronLeft size={16} className="stroke-[2.5]" />
 				</button>
 				{startPage > 1 && (
 					<>
 						<button
 							onClick={() => handlePageChange(1)}
-							className="h-8 min-w-[2rem] rounded-lg bg-ctp-surface0 px-2 text-xs font-medium text-ctp-subtext0 hover:text-ctp-text"
+							className="h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-2 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 						>
 							1
 						</button>
@@ -394,7 +394,7 @@ export const ScriptLibrary = () => {
 						)}
 						<button
 							onClick={() => handlePageChange(totalPages)}
-							className="h-8 min-w-[2rem] rounded-lg bg-ctp-surface0 px-2 text-xs font-medium text-ctp-subtext0 hover:text-ctp-text"
+							className="h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-2 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 						>
 							{totalPages}
 						</button>
@@ -405,9 +405,9 @@ export const ScriptLibrary = () => {
 						handlePageChange(Math.min(totalPages, currentPage + 1))
 					}
 					disabled={currentPage === totalPages}
-					className="flex h-8 w-8 items-center justify-center rounded-lg bg-ctp-surface0 text-ctp-subtext0 hover:text-ctp-text disabled:cursor-not-allowed disabled:opacity-50"
+					className="flex h-8 w-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					<ChevronRight size={16} />
+					<ChevronRight size={16} className="stroke-[2.5]" />
 				</button>
 			</div>
 		);
