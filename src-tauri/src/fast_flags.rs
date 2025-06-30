@@ -142,33 +142,52 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
 
     ensure_client_settings_dir()?;
 
-    let formatted_flags: Map<String, Value> = flags
-        .into_iter()
-        .filter_map(|(k, v)| {
-            match v {
-                Value::Null => None,
-                Value::String(s) if s.is_empty() => None,
-                Value::String(s) => {
-                    let value = if s.eq_ignore_ascii_case("true") {
-                        Value::Bool(true)
-                    } else if s.eq_ignore_ascii_case("false") {
-                        Value::Bool(false)
-                    } else if let Ok(num) = s.parse::<i64>() {
-                        Value::Number(num.into())
-                    } else {
-                        Value::String(s)
-                    };
-                    Some((k, value))
-                }
-                _ => Some((k, v)),
-            }
-        })
-        .collect();
+    let mut existing_flags: Map<String, Value> = if flags_path.exists() {
+        match fs::read_to_string(&flags_path) {
+            Ok(content) if !content.trim().is_empty() => {
+                serde_json::from_str(&content).unwrap_or_default()
+            },
+            _ => Map::new()
+        }
+    } else {
+        Map::new()
+    };
 
-    let content = if formatted_flags.is_empty() {
+    for (k, v) in flags.into_iter() {
+        match v {
+            Value::Null => {
+                existing_flags.remove(&k);
+            },
+            Value::String(s) if s.is_empty() => {
+                existing_flags.remove(&k);
+            },
+            Value::String(s) => {
+                let value = if s.eq_ignore_ascii_case("true") {
+                    Value::Bool(true)
+                } else if s.eq_ignore_ascii_case("false") {
+                    Value::Bool(false)
+                } else if let Ok(num) = s.parse::<i64>() {
+                    Value::Number(num.into())
+                } else if let Ok(num) = s.parse::<f64>() {
+                    match serde_json::Number::from_f64(num) {
+                        Some(n) => Value::Number(n),
+                        None => Value::String(s)
+                    }
+                } else {
+                    Value::String(s)
+                };
+                existing_flags.insert(k, value);
+            },
+            _ => {
+                existing_flags.insert(k, v);
+            }
+        }
+    }
+
+    let content = if existing_flags.is_empty() {
         "{}".to_string()
     } else {
-        serde_json::to_string_pretty(&formatted_flags)
+        serde_json::to_string_pretty(&existing_flags)
             .map_err(|e| format!("Failed to serialize flags: {}", e))?
     };
 

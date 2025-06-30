@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { FastFlagManagerProps } from "../../types/fastFlags";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 import {
 	Plus,
 	Edit2,
@@ -11,6 +12,7 @@ import {
 	AlertTriangle,
 	User,
 	RefreshCw,
+	ClipboardPaste,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,6 +32,8 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 	const [editValue, setEditValue] = useState("");
 	const [flagToDelete, setFlagToDelete] = useState<string | null>(null);
 	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [isPasteModalOpen, setIsPasteModalOpen] = useState(false);
+	const [jsonInput, setJsonInput] = useState("");
 	const flagOrderRef = useRef<string[]>(Object.keys(profile.flags));
 
 	if (
@@ -109,6 +113,22 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 		}
 	};
 
+	const handlePasteJson = async () => {
+		try {
+			const parsedJson = JSON.parse(jsonInput);
+			if (typeof parsedJson !== 'object' || parsedJson === null) {
+				throw new Error('Invalid JSON format');
+			}
+
+			await onUpdateFlag(parsedJson);
+			setIsPasteModalOpen(false);
+			setJsonInput("");
+			toast.success("Flags added successfully");
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : "Invalid JSON format");
+		}
+	};
+
 	return (
 		<div className="flex flex-1 flex-col bg-ctp-base">
 			<div className="flex h-14 items-center justify-between border-b border-white/5 px-4">
@@ -139,6 +159,18 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 						className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 					>
 						<Plus
+							size={14}
+							className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
+						/>
+					</Button>
+					<Button
+						onClick={() => setIsPasteModalOpen(true)}
+						size="sm"
+						data-tooltip-id="fastflags-tooltip"
+						data-tooltip-content="Paste JSON"
+						className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
+					>
+						<ClipboardPaste
 							size={14}
 							className="stroke-[2.5] transition-transform duration-200 group-hover:scale-110"
 						/>
@@ -305,6 +337,29 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 				confirmText="Delete"
 				confirmVariant="destructive"
 			/>
+
+			<Modal
+				isOpen={isPasteModalOpen}
+				onClose={() => {
+					setIsPasteModalOpen(false);
+					setJsonInput("");
+				}}
+				title="Paste Fast Flags JSON"
+				description="Paste a JSON object containing fast flags. This will add new flags and update existing ones."
+				onConfirm={handlePasteJson}
+				confirmText="Add Flags"
+				confirmVariant="primary"
+			>
+				<div className="mt-4">
+					<Textarea
+						placeholder='{\n  "FFlagExample": "True",\n  "DFIntExample": "123"\n}'
+						value={jsonInput}
+						onChange={(e: any) => setJsonInput(e.target.value)}
+						className="h-64 w-full resize-none border-white/5 bg-ctp-surface0 font-mono text-sm focus:border-accent focus:ring-accent"
+						spellCheck={false}
+					/>
+				</div>
+			</Modal>
 		</div>
 	);
 };
