@@ -64,6 +64,8 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 			const files = e.dataTransfer?.files;
 			if (!files?.length) return;
 
+			let importSuccess = false;
+
 			for (const file of Array.from(files)) {
 				const fileName = file.name.toLowerCase();
 
@@ -84,16 +86,24 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 						reader.readAsText(file);
 					});
 
-					await createTabWithContent(
+					const id = await createTabWithContent(
 						file.name,
 						content,
 						fileName.endsWith(".luau") ? "luau" : "lua",
 					);
+					
+					if (id) {
+						importSuccess = true;
+					}
 					toast.success(`Imported ${file.name}`);
 				} catch (error) {
 					toast.error(`Failed to import ${file.name}`);
 					console.error("Failed to import file:", file.name, error);
 				}
+			}
+
+			if (importSuccess) {
+				window.location.reload();
 			}
 		};
 
