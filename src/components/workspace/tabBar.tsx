@@ -1,12 +1,10 @@
 import { FC, useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, Reorder } from "framer-motion";
 import {
 	FileCode,
 	X,
 	Edit2,
 	Plus,
 	ChevronDown,
-	MoreHorizontal,
 	Copy,
 	Download,
 } from "lucide-react";
@@ -14,7 +12,7 @@ import { ContextMenu } from "../ui/contextMenu";
 import { useSettings } from "../../hooks/useSettings";
 import { useEditor } from "../../hooks/useEditor";
 import { useWorkspace } from "../../hooks/useWorkspace";
-import type { Tab, TabbarProps } from "../../types/workspace";
+import type { TabbarProps } from "../../types/workspace";
 import { WorkspaceSelector } from "./workspaceSelector";
 import { exportTab } from "../../services/tabService";
 
@@ -25,7 +23,6 @@ export const Tabbar: FC<TabbarProps> = ({
 	onTabClose,
 	onTabRename,
 	onNewTab,
-	onTabReorder,
 }) => {
 	const { settings } = useSettings();
 	const { duplicateTab } = useEditor();
@@ -45,12 +42,9 @@ export const Tabbar: FC<TabbarProps> = ({
 	const [editingTab, setEditingTab] = useState<string | null>(null);
 	const [editValue, setEditValue] = useState("");
 	const [showDropdown, setShowDropdown] = useState(false);
-	const [showMoreDropdown, setShowMoreDropdown] = useState(false);
-	const [isDragging, setIsDragging] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
-	const moreDropdownRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (editingTab && inputRef.current) {
@@ -92,12 +86,6 @@ export const Tabbar: FC<TabbarProps> = ({
 				!dropdownRef.current.contains(event.target as Node)
 			) {
 				setShowDropdown(false);
-			}
-			if (
-				moreDropdownRef.current &&
-				!moreDropdownRef.current.contains(event.target as Node)
-			) {
-				setShowMoreDropdown(false);
 			}
 		};
 
@@ -320,7 +308,6 @@ export const Tabbar: FC<TabbarProps> = ({
 	}
 
 	const displayTabs = tabs;
-	const hiddenTabs: Tab[] = [];
 
 	return (
 		<div className="flex h-full items-stretch">
@@ -335,177 +322,84 @@ export const Tabbar: FC<TabbarProps> = ({
 			<div className="relative min-w-0 flex-1">
 				<div className="absolute inset-0 flex items-center">
 					<div className="w-[calc(100%-5px)] px-2">
-						<Reorder.Group
+						<div
 							ref={scrollContainerRef}
-							axis="x"
-							values={displayTabs}
-							onReorder={(newOrder) => {
-								const fromIndex = tabs.findIndex((tab) => tab.id === activeTab);
-								const toIndex = newOrder.findIndex(
-									(tab) => tab.id === activeTab,
-								);
-								if (fromIndex !== toIndex) {
-									onTabReorder(fromIndex, toIndex);
-								}
-							}}
 							className="scrollbar-none flex w-full items-center gap-0.5 overflow-x-auto overflow-y-hidden"
 						>
-							<AnimatePresence mode="popLayout" initial={false}>
-								{displayTabs.map((tab) => (
-									<Reorder.Item
-										key={tab.id}
-										value={tab}
-										data-tab-id={tab.id}
-										dragListener={!editingTab}
-										onDragStart={() => setIsDragging(true)}
-										onDragEnd={() => setIsDragging(false)}
-										layout="position"
-										initial={{ opacity: 0, width: 0 }}
-										animate={{
-											opacity: 1,
-											width: "auto",
-											transition: {
-												duration: 0.15,
-												ease: "easeOut",
-											},
-										}}
-										exit={{
-											opacity: 0,
-											width: 0,
-											transition: {
-												duration: 0.15,
-												ease: "easeIn",
-											},
-										}}
-										onContextMenu={(e: React.MouseEvent) =>
-											handleContextMenu(e, tab.id)
-										}
-										className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center whitespace-nowrap rounded-lg border border-ctp-surface2 transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
-											isDragging ? "cursor-grabbing" : "cursor-grab"
-										} ${
-											activeTab === tab.id
-												? "border-accent/50 bg-ctp-surface1 text-accent"
-												: "bg-ctp-surface0 text-ctp-subtext1 hover:border-accent/30 hover:bg-ctp-surface1 hover:text-accent"
-										} `}
-										onClick={() => !isDragging && onTabClick(tab.id)}
-									>
-										<div className="flex items-center gap-1.5 px-2">
-											<FileCode size={13} className="flex-shrink-0 opacity-75" />
-											{editingTab === tab.id ? (
-												<input
-													ref={inputRef}
-													type="text"
-													value={editValue}
-													maxLength={30}
-													placeholder="script.lua"
-													onChange={(e) => {
-														let value = e.target.value;
-														if (value.toLowerCase().endsWith(".lua")) {
-															value = value.slice(0, -4);
-														}
-														setEditValue(value);
-													}}
-													onBlur={() => handleRename(tab.id)}
-													onKeyDown={(e) => {
-														if (e.key === "Enter") {
-															handleRename(tab.id);
-														} else if (e.key === "Escape") {
-															setEditingTab(null);
-														}
-													}}
-													onClick={(e) => e.stopPropagation()}
-													className="w-[100px] border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
-												/>
-											) : (
-												<span className="select-none text-xs font-medium">
-													{tab.title.length > 15
-														? `${tab.title.slice(0, 15)}...`
-														: tab.title}
-												</span>
-											)}
-											<div className="overflow-hidden transition-[width,margin] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group-hover:ml-1 group-hover:w-5 w-0">
-												<button
-													onClick={(e) => {
-														e.stopPropagation();
-														onTabClose(tab.id);
-													}}
-													className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border border-ctp-surface2 bg-ctp-surface1 transition-colors hover:border-red-500/30 hover:bg-red-500/10 hover:text-ctp-red"
-												>
-													<X size={11} />
-												</button>
-											</div>
+							{displayTabs.map((tab) => (
+								<div
+									key={tab.id}
+									data-tab-id={tab.id}
+									onContextMenu={(e: React.MouseEvent) =>
+										handleContextMenu(e, tab.id)
+									}
+									className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center whitespace-nowrap rounded-lg border border-ctp-surface2 transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
+										activeTab === tab.id
+											? "border-accent/50 bg-ctp-surface1 text-accent"
+											: "bg-ctp-surface0 text-ctp-subtext1 hover:border-accent/30 hover:bg-ctp-surface1 hover:text-accent"
+									} `}
+									onClick={() => onTabClick(tab.id)}
+								>
+									<div className="flex items-center gap-1.5 px-2">
+										<FileCode size={13} className="flex-shrink-0 opacity-75" />
+										{editingTab === tab.id ? (
+											<input
+												ref={inputRef}
+												type="text"
+												value={editValue}
+												maxLength={30}
+												placeholder="script.lua"
+												onChange={(e) => {
+													let value = e.target.value;
+													if (value.toLowerCase().endsWith(".lua")) {
+														value = value.slice(0, -4);
+													}
+													setEditValue(value);
+												}}
+												onBlur={() => handleRename(tab.id)}
+												onKeyDown={(e) => {
+													if (e.key === "Enter") {
+														handleRename(tab.id);
+													} else if (e.key === "Escape") {
+														setEditingTab(null);
+													}
+												}}
+												onClick={(e) => e.stopPropagation()}
+												className="w-[100px] border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
+											/>
+										) : (
+											<span className="select-none text-xs font-medium">
+												{tab.title.length > 15
+													? `${tab.title.slice(0, 15)}...`
+													: tab.title}
+											</span>
+										)}
+										<div className="overflow-hidden transition-[width,margin] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group-hover:ml-1 group-hover:w-5 w-0">
+											<button
+												onClick={(e) => {
+													e.stopPropagation();
+													onTabClose(tab.id);
+												}}
+												className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border border-ctp-surface2 bg-ctp-surface1 transition-colors hover:border-red-500/30 hover:bg-red-500/10 hover:text-ctp-red"
+											>
+												<X size={11} />
+											</button>
 										</div>
-									</Reorder.Item>
-								))}
-							</AnimatePresence>
-
-							{hiddenTabs.length > 0 && (
-								<div ref={moreDropdownRef} className="relative flex-shrink-0">
-									<motion.button
-										whileHover={{ scale: 1.05 }}
-										whileTap={{ scale: 0.95 }}
-										onClick={() => setShowMoreDropdown(!showMoreDropdown)}
-										className={`flex h-7 cursor-pointer items-center gap-1 rounded-md px-2 text-ctp-subtext1 transition-colors hover:bg-ctp-surface0/50 hover:text-ctp-text ${showMoreDropdown ? "bg-ctp-surface0 text-ctp-text" : ""} `}
-									>
-										<MoreHorizontal size={13} />
-										<span className="text-xs">{hiddenTabs.length}</span>
-									</motion.button>
-
-									{showMoreDropdown && (
-										<div className="absolute right-0 top-full z-50 mt-1 min-w-[240px] rounded-lg border border-ctp-surface0 bg-ctp-mantle py-1 shadow-lg">
-											<div className="max-h-[200px] overflow-y-auto">
-												{hiddenTabs.map((tab) => (
-													<div
-														key={tab.id}
-														className={`flex cursor-pointer items-center gap-2 px-4 py-2.5 text-xs ${
-															activeTab === tab.id
-																? "bg-ctp-surface0 text-ctp-text"
-																: "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
-														} `}
-														onClick={() => {
-															onTabClick(tab.id);
-															setShowMoreDropdown(false);
-														}}
-													>
-														<FileCode
-															size={14}
-															className="flex-shrink-0 opacity-75"
-														/>
-														<span className="flex-1 truncate">
-															{tab.title.length > 15
-																? `${tab.title.slice(0, 15)}...`
-																: tab.title}
-														</span>
-														<button
-															onClick={(e) => {
-																e.stopPropagation();
-																onTabClose(tab.id);
-															}}
-															className="ml-2 rounded p-1 opacity-0 hover:bg-ctp-surface0/50 hover:text-ctp-red group-hover:opacity-100"
-														>
-															<X size={14} />
-														</button>
-													</div>
-												))}
-											</div>
-										</div>
-									)}
+									</div>
 								</div>
-							)}
-						</Reorder.Group>
+							))}
+						</div>
 					</div>
 				</div>
 			</div>
 
 			<div className="flex h-full w-10 flex-shrink-0 items-center justify-center border-l border-white/5">
-				<motion.button
-					whileHover={{ scale: 1.05 }}
-					whileTap={{ scale: 0.95 }}
+				<button
 					onClick={onNewTab}
 					className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-ctp-surface0"
 				>
 					<Plus size={13} className="stroke-[2.5]" />
-				</motion.button>
+				</button>
 			</div>
 
 			<ContextMenu
