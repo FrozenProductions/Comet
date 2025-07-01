@@ -23,6 +23,7 @@ export const Tabbar: FC<TabbarProps> = ({
 	onTabClose,
 	onTabRename,
 	onNewTab,
+	onTabReorder,
 }) => {
 	const { settings } = useSettings();
 	const { duplicateTab } = useEditor();
@@ -45,6 +46,8 @@ export const Tabbar: FC<TabbarProps> = ({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+	const [draggedTab, setDraggedTab] = useState<string | null>(null);
+	const [dragOverTab, setDragOverTab] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (editingTab && inputRef.current) {
@@ -151,6 +154,35 @@ export const Tabbar: FC<TabbarProps> = ({
 		? tabs.find((tab) => tab.id === activeTab)
 		: null;
 
+	const handleDragStart = (e: React.DragEvent, tabId: string) => {
+		e.dataTransfer.effectAllowed = 'move';
+		e.dataTransfer.setData('application/x-comet-tab', tabId);
+		setDraggedTab(tabId);
+	};
+
+	const handleDragOver = (e: React.DragEvent, tabId: string) => {
+		e.preventDefault();
+		if (!e.dataTransfer.types.includes('application/x-comet-tab')) return;
+		if (draggedTab === tabId) return;
+		setDragOverTab(tabId);
+	};
+
+	const handleDragEnd = () => {
+		if (draggedTab && dragOverTab) {
+			const fromIndex = tabs.findIndex(tab => tab.id === draggedTab);
+			const toIndex = tabs.findIndex(tab => tab.id === dragOverTab);
+			if (fromIndex !== -1 && toIndex !== -1) {
+				onTabReorder(fromIndex, toIndex);
+			}
+		}
+		setDraggedTab(null);
+		setDragOverTab(null);
+	};
+
+	const handleDragLeave = () => {
+		setDragOverTab(null);
+	};
+
 	if (settings.interface.showTabBar) {
 		return (
 			<div className="flex h-full items-stretch">
@@ -224,11 +256,16 @@ export const Tabbar: FC<TabbarProps> = ({
 								{tabs.map((tab) => (
 									<div
 										key={tab.id}
+										draggable
+										onDragStart={(e) => handleDragStart(e, tab.id)}
+										onDragOver={(e) => handleDragOver(e, tab.id)}
+										onDragEnd={handleDragEnd}
+										onDragLeave={handleDragLeave}
 										className={`flex cursor-pointer items-center gap-2 px-4 py-2.5 text-xs ${
 											activeTab === tab.id
 												? "bg-ctp-surface0 text-ctp-text"
 												: "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
-										} `}
+										} ${dragOverTab === tab.id ? "border-t-2 border-accent" : ""}`}
 										onClick={() => {
 											onTabClick(tab.id);
 											setShowDropdown(false);
@@ -237,39 +274,41 @@ export const Tabbar: FC<TabbarProps> = ({
 											handleContextMenu(e, tab.id)
 										}
 									>
-										<FileCode size={14} className="flex-shrink-0 opacity-75" />
-										{editingTab === tab.id ? (
-											<input
-												ref={inputRef}
-												type="text"
-												value={editValue}
-												maxLength={30}
-												placeholder="script.lua"
-												onChange={(e) => {
-													let value = e.target.value;
-													if (value.toLowerCase().endsWith(".lua")) {
-														value = value.slice(0, -4);
-													}
-													setEditValue(value);
-												}}
-												onBlur={() => handleRename(tab.id)}
-												onKeyDown={(e) => {
-													if (e.key === "Enter") {
-														handleRename(tab.id);
-													} else if (e.key === "Escape") {
-														setEditingTab(null);
-													}
-												}}
-												onClick={(e) => e.stopPropagation()}
-												className="min-w-0 max-w-[100px] flex-1 border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
-											/>
-										) : (
-											<span className="flex-1 select-none truncate">
-												{tab.title.length > 15
-													? `${tab.title.slice(0, 15)}...`
-													: tab.title}
-											</span>
-										)}
+										<div className="flex items-center gap-2 flex-1">
+											<FileCode size={14} className="flex-shrink-0 opacity-75" />
+											{editingTab === tab.id ? (
+												<input
+													ref={inputRef}
+													type="text"
+													value={editValue}
+													maxLength={30}
+													placeholder="script.lua"
+													onChange={(e) => {
+														let value = e.target.value;
+														if (value.toLowerCase().endsWith(".lua")) {
+															value = value.slice(0, -4);
+														}
+														setEditValue(value);
+													}}
+													onBlur={() => handleRename(tab.id)}
+													onKeyDown={(e) => {
+														if (e.key === "Enter") {
+															handleRename(tab.id);
+														} else if (e.key === "Escape") {
+															setEditingTab(null);
+														}
+													}}
+													onClick={(e) => e.stopPropagation()}
+													className="min-w-0 max-w-[100px] flex-1 border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
+												/>
+											) : (
+												<span className="flex-1 select-none truncate">
+													{tab.title.length > 15
+														? `${tab.title.slice(0, 15)}...`
+														: tab.title}
+												</span>
+											)}
+										</div>
 										{activeTab !== tab.id && (
 											<button
 												onClick={(e) => {
@@ -330,15 +369,20 @@ export const Tabbar: FC<TabbarProps> = ({
 								<div
 									key={tab.id}
 									data-tab-id={tab.id}
+									draggable
+									onDragStart={(e) => handleDragStart(e, tab.id)}
+									onDragOver={(e) => handleDragOver(e, tab.id)}
+									onDragEnd={handleDragEnd}
+									onDragLeave={handleDragLeave}
+									className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center whitespace-nowrap rounded-lg border transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
+										activeTab === tab.id
+											? "border-accent/50 bg-ctp-surface1 text-accent"
+											: "border-ctp-surface2 bg-ctp-surface0 text-ctp-subtext1 hover:border-accent/30 hover:bg-ctp-surface1 hover:text-accent"
+									} ${dragOverTab === tab.id ? "border-t-2 border-accent" : ""}`}
+									onClick={() => onTabClick(tab.id)}
 									onContextMenu={(e: React.MouseEvent) =>
 										handleContextMenu(e, tab.id)
 									}
-									className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center whitespace-nowrap rounded-lg border border-ctp-surface2 transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
-										activeTab === tab.id
-											? "border-accent/50 bg-ctp-surface1 text-accent"
-											: "bg-ctp-surface0 text-ctp-subtext1 hover:border-accent/30 hover:bg-ctp-surface1 hover:text-accent"
-									} `}
-									onClick={() => onTabClick(tab.id)}
 								>
 									<div className="flex items-center gap-1.5 px-2">
 										<FileCode size={13} className="flex-shrink-0 opacity-75" />

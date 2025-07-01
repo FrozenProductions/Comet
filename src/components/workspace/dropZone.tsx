@@ -18,6 +18,8 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 			e.preventDefault();
 			e.stopPropagation();
 
+			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
+
 			dragCounter.current++;
 
 			if (e.dataTransfer) {
@@ -31,6 +33,8 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 			e.preventDefault();
 			e.stopPropagation();
 
+			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
+
 			dragCounter.current--;
 			if (dragCounter.current === 0) {
 				setIsDragging(false);
@@ -40,6 +44,9 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 		const handleDragOver = (e: DragEvent) => {
 			e.preventDefault();
 			e.stopPropagation();
+
+			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
+
 			if (e.dataTransfer) {
 				e.dataTransfer.dropEffect = "copy";
 			}
@@ -48,6 +55,8 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 		const handleDrop = async (e: DragEvent) => {
 			e.preventDefault();
 			e.stopPropagation();
+
+			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
 
 			dragCounter.current = 0;
 			setIsDragging(false);
