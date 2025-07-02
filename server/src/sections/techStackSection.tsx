@@ -1,5 +1,5 @@
-import type { FC } from "react";
 import { motion } from "framer-motion";
+import type { FC } from "react";
 import { LANDING_CONTENT } from "../constants/landingContent";
 
 const TechStackSection: FC = () => {

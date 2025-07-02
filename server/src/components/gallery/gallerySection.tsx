@@ -1,5 +1,5 @@
-import { type FC, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { type FC, useCallback, useEffect, useState } from "react";
 import type { GallerySectionProps } from "../../types/gallery";
 
 const GallerySection: FC<GallerySectionProps> = ({ images }) => {
@@ -51,6 +51,7 @@ const GallerySection: FC<GallerySectionProps> = ({ images }) => {
 		<div className="relative w-full">
 			<div className="flex items-center gap-2 sm:gap-3">
 				<button
+					type="button"
 					className="bg-theme-surface/80 hover:bg-theme-surface text-theme-subtle hover:text-theme-bright rounded-lg p-1.5 transition-colors duration-200 sm:p-2"
 					onClick={() => paginate(-1)}
 				>
@@ -86,6 +87,7 @@ const GallerySection: FC<GallerySectionProps> = ({ images }) => {
 				</div>
 
 				<button
+					type="button"
 					className="bg-theme-surface/80 hover:bg-theme-surface text-theme-subtle hover:text-theme-bright rounded-lg p-1.5 transition-colors duration-200 sm:p-2"
 					onClick={() => paginate(1)}
 				>
@@ -94,9 +96,10 @@ const GallerySection: FC<GallerySectionProps> = ({ images }) => {
 			</div>
 
 			<div className="mt-3 flex justify-center gap-1.5 sm:mt-4 sm:gap-2">
-				{images.map((_, index) => (
+				{images.map((image, index) => (
 					<button
-						key={index}
+						type="button"
+						key={image.src}
 						className={`h-1 w-1 rounded-full transition-colors duration-200 sm:h-1.5 sm:w-1.5 ${
 							index === currentIndex
 								? "bg-theme-accent"

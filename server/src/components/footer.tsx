@@ -1,5 +1,5 @@
+import { ExternalLink, Github, Zap } from "lucide-react";
 import type { FC } from "react";
-import { Github, ExternalLink, Zap } from "lucide-react";
 import type { FooterProps } from "../types/footer";
 
 const Footer: FC<FooterProps> = ({
@@ -24,18 +24,21 @@ const Footer: FC<FooterProps> = ({
 					</div>
 					<div className="flex gap-4">
 						<button
+							type="button"
 							onClick={onGithubClick}
 							className="p-2 text-theme-subtle hover:text-theme-bright transition-colors"
 						>
 							<Github size={16} />
 						</button>
 						<button
+							type="button"
 							onClick={onDocsClick}
 							className="p-2 text-theme-subtle hover:text-theme-bright transition-colors"
 						>
 							<ExternalLink size={16} />
 						</button>
 						<button
+							type="button"
 							onClick={onHydrogenClick}
 							className="p-2 text-theme-subtle hover:text-theme-bright transition-colors"
 						>

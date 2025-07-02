@@ -1,6 +1,6 @@
-import { type FC, useState } from "react";
 import { motion } from "framer-motion";
-import { FileCode, Copy, Check } from "lucide-react";
+import { Check, Copy, FileCode } from "lucide-react";
+import { type FC, useState } from "react";
 import { LANDING_CONTENT } from "../constants/landingContent";
 
 const InstallationSection: FC = () => {
@@ -81,8 +81,8 @@ const InstallationSection: FC = () => {
 							Build from Source
 						</h3>
 						<div className="space-y-2 sm:space-y-3">
-							{LANDING_CONTENT.INSTALLATION.STEPS.map((step, index) => (
-								<div key={index} className="flex items-center gap-1.5 sm:gap-2">
+							{LANDING_CONTENT.INSTALLATION.STEPS.map((step) => (
+								<div key={step} className="flex items-center gap-1.5 sm:gap-2">
 									<span className="text-theme-accent min-w-[12px] text-center font-mono text-xs sm:text-sm">
 										{">"}
 									</span>

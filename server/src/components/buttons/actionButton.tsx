@@ -1,5 +1,5 @@
-import type { FC } from "react";
 import { motion } from "framer-motion";
+import type { FC } from "react";
 import type { ActionButtonProps } from "../../types/landing";
 
 const ActionButton: FC<ActionButtonProps> = ({

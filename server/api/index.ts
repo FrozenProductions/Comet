@@ -1,11 +1,14 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { MessagesService } from "./database/services/messagesService.js";
 import { FastFlagsService } from "./database/services/fastFlagsService.js";
+import { MessagesService } from "./database/services/messagesService.js";
 import { StatusService } from "./database/services/statusService.js";
 import { UncService } from "./database/services/uncService.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-	const { pathname } = new URL(req.url!, `http://${req.headers.host}`);
+	if (!req.url) {
+		return res.status(400).json({ error: "Missing URL in request" });
+	}
+	const { pathname } = new URL(req.url, `http://${req.headers.host}`);
 
 	if (req.method !== "GET") {
 		return res.status(405).json({ error: "Method not allowed" });

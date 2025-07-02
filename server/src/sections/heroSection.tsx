@@ -1,6 +1,6 @@
-import type { FC } from "react";
 import { motion } from "framer-motion";
-import { Github, ExternalLink, Code, Zap } from "lucide-react";
+import { Code, ExternalLink, Github, Zap } from "lucide-react";
+import type { FC } from "react";
 import ActionButton from "../components/buttons/actionButton";
 import GallerySection from "../components/gallery/gallerySection";
 import { GALLERY_IMAGES, LANDING_CONTENT } from "../constants/landingContent";

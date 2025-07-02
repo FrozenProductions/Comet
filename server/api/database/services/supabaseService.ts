@@ -1,9 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import type {
-	UploadResponse,
+	DeleteResponse,
 	DownloadResponse,
 	ListResponse,
-	DeleteResponse,
+	UploadResponse,
 } from "../types/supabase.ts";
 
 export class SupabaseService {

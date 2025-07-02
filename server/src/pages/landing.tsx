@@ -1,9 +1,9 @@
-import { type FC, useState, useEffect } from "react";
-import HeroSection from "../sections/heroSection";
-import FeaturesSection from "../sections/featuresSection";
-import TechStackSection from "../sections/techStackSection";
-import InstallationSection from "../sections/installationSection";
+import { type FC, useCallback, useEffect, useState } from "react";
 import Footer from "../components/footer";
+import FeaturesSection from "../sections/featuresSection";
+import HeroSection from "../sections/heroSection";
+import InstallationSection from "../sections/installationSection";
+import TechStackSection from "../sections/techStackSection";
 
 const Landing: FC = () => {
 	const [hasScrolled, setHasScrolled] = useState(false);
@@ -23,18 +23,18 @@ const Landing: FC = () => {
 		window.open("https://www.hydrogen.lat/", "_blank");
 	};
 
-	const handleScroll = () => {
+	const handleScroll = useCallback(() => {
 		if (window.scrollY > 50) {
 			setHasScrolled(true);
 		} else {
 			setHasScrolled(false);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
-	}, []);
+	}, [handleScroll]);
 
 	return (
 		<div className="min-h-screen bg-theme-base text-theme-text selection:bg-theme-accent/20 flex flex-col">
