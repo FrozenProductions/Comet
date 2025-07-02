@@ -57,19 +57,6 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent"> & { onArrowHo
 		},
 	};
 
-	const buttonVariants = {
-		hidden: { opacity: 0, x: 10 },
-		visible: { opacity: 1, x: 0 },
-		hover: {
-			scale: 1.05,
-			backgroundColor: "rgba(193, 199, 230, 0.1)",
-		},
-		tap: {
-			scale: 0.95,
-			backgroundColor: "rgba(193, 199, 230, 0.15)",
-		},
-	};
-
 	const handleExecute = async () => {
 		try {
 			if (getEditorContent) {
@@ -136,62 +123,54 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent"> & { onArrowHo
 							initial="hidden"
 							animate={isExpanded ? "visible" : "hidden"}
 						>
-							<motion.button
+							<button
+								type="button"
 								data-tooltip-id="editor-action-tooltip"
 								data-tooltip-content="Execution History"
-								variants={buttonVariants}
-								whileHover="hover"
-								whileTap="tap"
 								onClick={() => setShowHistory(!showHistory)}
-								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors"
+								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-all hover:bg-ctp-surface2 active:scale-95"
 							>
 								<History size={14} className="stroke-[2.5]" />
-							</motion.button>
+							</button>
 
-							<motion.button
+							<button
+								type="button"
 								data-tooltip-id="editor-action-tooltip"
 								data-tooltip-content={
 									settings.interface.showConsole
 										? "Hide Console"
 										: "Show Console"
 								}
-								variants={buttonVariants}
-								whileHover="hover"
-								whileTap="tap"
 								onClick={toggleConsole}
-								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors"
+								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-all hover:bg-ctp-surface2 active:scale-95"
 							>
 								<Terminal size={14} className="stroke-[2.5]" />
-							</motion.button>
+							</button>
 
-							<motion.button
+							<button
+								type="button"
 								data-tooltip-id="editor-action-tooltip"
 								data-tooltip-content="Open Roblox"
-								variants={buttonVariants}
-								whileHover="hover"
-								whileTap="tap"
 								onClick={openRoblox}
-								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors"
+								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-all hover:bg-ctp-surface2 active:scale-95"
 							>
 								<ExternalLink size={14} className="stroke-[2.5]" />
-							</motion.button>
+							</button>
 
-							<motion.button
+							<button
+								type="button"
 								data-tooltip-id="editor-action-tooltip"
 								data-tooltip-content="Execute Script"
-								variants={buttonVariants}
-								whileHover="hover"
-								whileTap="tap"
 								onClick={handleExecute}
 								disabled={isExecuting}
-								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+								className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-all hover:bg-ctp-surface2 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
 							>
 								{isExecuting ? (
 									<Loader2 size={14} className="animate-spin stroke-[2.5]" />
 								) : (
 									<Play size={14} className="ml-0.5 stroke-[2.5]" />
 								)}
-							</motion.button>
+							</button>
 						</motion.div>
 					</div>
 
