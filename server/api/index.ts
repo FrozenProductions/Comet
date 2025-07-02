@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { FastFlagsService } from "./database/services/fastFlagsService.js";
 import { MessagesService } from "./database/services/messagesService.js";
+import { ScriptsService } from "./database/services/scriptsService.js";
 import { StatusService } from "./database/services/statusService.js";
 import { UncService } from "./database/services/uncService.js";
 
@@ -48,6 +49,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 				const uncService = new UncService();
 				const unc = await uncService.getUnc();
 				return res.status(200).json(unc);
+			}
+
+			case "/api/v1/scripts": {
+				const scriptsService = new ScriptsService();
+				const scripts = await scriptsService.getScripts();
+				return res.status(200).json(scripts);
 			}
 
 			default:
