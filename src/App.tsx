@@ -6,7 +6,6 @@ import { Topbar } from "./components/topbar";
 import { Sidebar } from "./components/sidebar";
 import { SettingsProvider } from "./contexts/settings/settingsContext";
 import { ExecuteProvider } from "./contexts/execute/executeContext";
-import { ConnectionProvider } from "./contexts/connection/connectionContext";
 import { KeybindsProvider } from "./contexts/keybinds/keybindsContext";
 import { Toaster } from "./components/ui/toast";
 import { Library } from "./components/library";
@@ -108,7 +107,6 @@ const App: FC = () => {
 	}
 
 	return (
-		<ConnectionProvider>
 			<ExecuteProvider>
 				<SettingsProvider>
 					<WorkspaceProvider>
@@ -133,7 +131,6 @@ const App: FC = () => {
 					</WorkspaceProvider>
 				</SettingsProvider>
 			</ExecuteProvider>
-		</ConnectionProvider>
 	);
 };
 
