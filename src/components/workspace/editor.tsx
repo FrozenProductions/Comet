@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useRef, useCallback } from "react";
+import { type FC, useEffect, useState, useRef, useCallback } from "react";
 import * as monaco from "monaco-editor";
 import debounce from "lodash/debounce";
 import {
@@ -10,6 +10,7 @@ import { EDITOR_DEFAULT_OPTIONS } from "../../constants/workspace";
 import { useEditor } from "../../hooks/useEditor";
 import { useSettings } from "../../hooks/useSettings";
 import { useKeybinds } from "../../hooks/useKeybinds";
+import { useConsole } from "../../hooks/useConsole";
 import { IntelliSense } from "./intelliSense";
 import { EditorSearch } from "./editorSearch";
 import { getSuggestions } from "../../utils/suggestions";
@@ -35,10 +36,12 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	const { setPosition, activeTab } = useEditor();
 	const { settings } = useSettings();
 	const { keybinds } = useKeybinds();
+	const { isFloating } = useConsole();
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const modelRef = useRef<monaco.editor.ITextModel | null>(null);
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
+	const [showFirstTimeTooltip, setShowFirstTimeTooltip] = useState(false);
 	const [intellisenseState, setIntellisenseState] = useState<IntellisenseState>(
 		{
 			isVisible: false,
@@ -98,6 +101,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		};
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
 	useEffect(() => {
 		if (!containerRef.current || !activeTab) return;
 
@@ -347,6 +351,20 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		suggestionService.loadSuggestions();
 	}, []);
 
+	useEffect(() => {
+		const hasVisited = localStorage.getItem('hasVisitedBefore');
+		if (!hasVisited) {
+			setShowFirstTimeTooltip(true);
+		}
+	}, []);
+
+	const handleArrowHover = () => {
+		if (showFirstTimeTooltip) {
+			setShowFirstTimeTooltip(false);
+			localStorage.setItem('hasVisitedBefore', 'true');
+		}
+	};
+
 	const handleSuggestionSelect = (suggestion: string) => {
 		if (!editorRef.current) return;
 
@@ -401,7 +419,17 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 				isVisible={isSearchVisible}
 				onClose={() => setIsSearchVisible(false)}
 			/>
-			{showActions && <Actions getEditorContent={getEditorContent} />}
+			{showActions && (
+				<>
+					{showFirstTimeTooltip && (
+						<div className={`absolute right-4 ${settings.interface.zenMode || isFloating || !settings.interface.showConsole ? "bottom-16" : "bottom-24"} z-50 rounded-lg border border-ctp-surface2 bg-ctp-mantle px-3 py-2 text-sm font-medium text-ctp-text shadow-lg`}>
+							Hover here to see available actions!
+							<div className="absolute -bottom-2 right-4 h-3 w-3 rotate-45 border-b border-r border-ctp-surface2 bg-ctp-mantle"></div>
+						</div>
+					)}
+					<Actions getEditorContent={getEditorContent} onArrowHover={handleArrowHover} />
+				</>
+			)}
 		</div>
 	);
 };

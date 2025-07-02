@@ -17,8 +17,9 @@ import { useSettings } from "../../hooks/useSettings";
 import { type FC, useState } from "react";
 import { ExecutionHistory } from "./executionHistory";
 
-export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
+export const Actions: FC<Pick<ActionMenuProps, "getEditorContent"> & { onArrowHover?: () => void }> = ({
 	getEditorContent,
+	onArrowHover,
 }) => {
 	const { isExecuting } = useExecute();
 	const { openRoblox } = useRoblox();
@@ -100,6 +101,7 @@ export const Actions: FC<Pick<ActionMenuProps, "getEditorContent">> = ({
 		if (!isPinned) {
 			setIsExpanded(true);
 		}
+		onArrowHover?.();
 	};
 
 	const handleHoverEnd = () => {
