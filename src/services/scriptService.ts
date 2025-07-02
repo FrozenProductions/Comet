@@ -12,6 +12,8 @@ export const executeScript = async (
 	script: string,
 ): Promise<ScriptExecutionResult> => {
 	try {
+		await invoke("save_last_script", { script });
+
 		await invoke("execute_script", { script });
 		return { success: true, content: script };
 	} catch (error) {

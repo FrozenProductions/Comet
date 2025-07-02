@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { ExecuteContext } from "./executeContextType";
 import { executeScript } from "../../services/scriptService";
+import { invoke } from "@tauri-apps/api/tauri";
 
 export const ExecuteProvider = ({
 	children,
@@ -26,6 +27,13 @@ export const ExecuteProvider = ({
 		try {
 			setIsExecuting(true);
 			const result = await executeScript(script);
+			
+			localStorage.setItem('lastExecutedScript', script);
+			try {
+				await invoke('save_last_script', { script });
+			} catch (error) {
+				console.error("Failed to save last script:", error);
+			}
 
 			toast.success(
 				() => (

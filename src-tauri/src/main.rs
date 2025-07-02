@@ -539,6 +539,7 @@ fn create_tray_menu() -> SystemTray {
     let infinite_yield = CustomMenuItem::new("infinite_yield".to_string(), "Execute Infinite Yield");
     let hydroxide = CustomMenuItem::new("hydroxide".to_string(), "Execute Hydroxide");
     let dex = CustomMenuItem::new("dex".to_string(), "Execute DEX Explorer");
+    let last_script = CustomMenuItem::new("last_script".to_string(), "Execute Last Script");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
 
     let tray_menu = SystemTrayMenu::new()
@@ -548,6 +549,7 @@ fn create_tray_menu() -> SystemTray {
         .add_item(infinite_yield)
         .add_item(hydroxide)
         .add_item(dex)
+        .add_item(last_script)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(quit);
 
@@ -592,6 +594,41 @@ async fn execute_dex() -> Result<String, String> {
     execute_script(script).await
 }
 
+#[tauri::command]
+async fn execute_last_script() -> Result<String, String> {
+    let script_path = tauri::api::path::local_data_dir()
+        .ok_or("Could not find local data directory")?
+        .join("com.comet.dev")
+        .join("last_script.txt");
+
+    if !script_path.exists() {
+        return Err("No last script found".to_string());
+    }
+
+    let content = std::fs::read_to_string(&script_path)
+        .map_err(|e| format!("Failed to read last script: {}", e))?;
+
+    execute_script(content).await
+}
+
+#[tauri::command]
+async fn save_last_script(script: String) -> Result<(), String> {
+    let script_path = tauri::api::path::local_data_dir()
+        .ok_or("Could not find local data directory")?
+        .join("com.comet.dev");
+
+    std::fs::create_dir_all(&script_path)
+        .map_err(|e| format!("Failed to create directory: {}", e))?;
+
+    let script_file = script_path.join("last_script.txt");
+    std::fs::write(&script_file, script)
+        .map_err(|e| {
+            println!("Failed to write script file: {}", e);
+            format!("Failed to save last script: {}", e)
+        })?;
+    Ok(())
+}
+
 fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
     match event {
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
@@ -619,6 +656,11 @@ fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
             "dex" => {
                 tauri::async_runtime::spawn(async {
                     let _ = execute_dex().await;
+                });
+            }
+            "last_script" => {
+                tauri::async_runtime::spawn(async {
+                    let _ = execute_last_script().await;
                 });
             }
             "quit" => {
@@ -734,6 +776,8 @@ fn main() {
             minimize_window,
             toggle_maximize_window,
             execute_script,
+            execute_last_script,
+            save_last_script,
             search_scripts,
             get_script_content,
             auto_execute::get_auto_execute_files,
