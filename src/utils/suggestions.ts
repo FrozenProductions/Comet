@@ -51,9 +51,10 @@ export const getSuggestions = (
 		.forEach((s) => suggestions.push(s));
 
 	const text = model.getValue();
-	let match;
+	let match: RegExpExecArray | null;
 
-	while ((match = localPattern.exec(text)) !== null) {
+	match = localPattern.exec(text);
+	while (match !== null) {
 		const varName = match[1];
 		if (varName.toLowerCase().includes(wordText)) {
 			suggestions.push({
@@ -63,9 +64,11 @@ export const getSuggestions = (
 				documentation: "Local variable declared in the current file",
 			});
 		}
+		match = localPattern.exec(text);
 	}
 
-	while ((match = functionPattern.exec(text)) !== null) {
+	match = functionPattern.exec(text);
+	while (match !== null) {
 		const funcName = match[1];
 		if (funcName.toLowerCase().includes(wordText)) {
 			suggestions.push({
@@ -75,9 +78,11 @@ export const getSuggestions = (
 				documentation: "Function declared in the current file",
 			});
 		}
+		match = functionPattern.exec(text);
 	}
 
-	while ((match = methodPattern.exec(text)) !== null) {
+	match = methodPattern.exec(text);
+	while (match !== null) {
 		const methodName = match[2];
 		if (methodName.toLowerCase().includes(wordText)) {
 			suggestions.push({
@@ -87,6 +92,7 @@ export const getSuggestions = (
 				documentation: "Method called in the current file",
 			});
 		}
+		match = methodPattern.exec(text);
 	}
 
 	const maxSuggestions = settings?.maxSuggestions || 10;
