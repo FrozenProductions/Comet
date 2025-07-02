@@ -14,8 +14,23 @@ export const executeScript = async (
 	try {
 		await invoke("save_last_script", { script });
 
-		await invoke("execute_script", { script });
-		return { success: true, content: script };
+		try {
+			await invoke("execute_script", { script });
+			return { success: true, content: script };
+		} catch (execError) {
+			const errorMessage =
+				execError instanceof Error
+					? execError.message
+					: typeof execError === "string"
+						? execError
+						: "Unknown error occurred";
+
+			return {
+				success: false,
+				error: errorMessage,
+				content: script,
+			};
+		}
 	} catch (error) {
 		return {
 			success: false,

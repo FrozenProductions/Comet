@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import { Trash2, X } from "lucide-react";
+import { Trash2, X, ChevronDown, ChevronRight } from "lucide-react";
 import { useExecutionHistory } from "../../hooks/useExecutionHistory";
 import { useEditor } from "../../hooks/useEditor";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type KeyboardEvent, useCallback, type MouseEvent } from "react";
 import type {
 	ExecutionHistoryProps,
 	ExecutionHistoryState,
@@ -18,6 +18,7 @@ export const ExecutionHistory = ({
 }: ExecutionHistoryProps) => {
 	const { history, clearHistory } = useExecutionHistory();
 	const { createTabWithContent } = useEditor();
+	const [expandedErrors, setExpandedErrors] = useState<Set<string>>(new Set());
 	const [state, setState] = useState<ExecutionHistoryState>(() => {
 		const saved = localStorage.getItem(EXECUTION_HISTORY_STORAGE_KEY);
 		if (saved) {
@@ -53,7 +54,14 @@ export const ExecutionHistory = ({
 		},
 	};
 
-	const handleDragStart = (event: React.MouseEvent<HTMLDivElement>) => {
+	const handleDragEnd = useCallback(() => {
+		setIsDragging(false);
+		setIsResizing(false);
+		dragStartPos.current = null;
+		resizeStartState.current = null;
+	}, []);
+
+	const handleDragStart = (event: MouseEvent<HTMLButtonElement>) => {
 		if (!isResizing) {
 			setIsDragging(true);
 			dragStartPos.current = {
@@ -63,7 +71,7 @@ export const ExecutionHistory = ({
 		}
 	};
 
-	const handleResizeStart = (event: React.MouseEvent<HTMLDivElement>) => {
+	const handleResizeStart = (event: MouseEvent<HTMLButtonElement>) => {
 		event.stopPropagation();
 		setIsResizing(true);
 		resizeStartState.current = {
@@ -76,16 +84,9 @@ export const ExecutionHistory = ({
 		};
 	};
 
-	const handleDragEnd = () => {
-		setIsDragging(false);
-		setIsResizing(false);
-		dragStartPos.current = null;
-		resizeStartState.current = null;
-	};
-
 	useEffect(() => {
 		if (isDragging || isResizing) {
-			const handleDrag = (event: MouseEvent) => {
+			const handleDrag = (event: globalThis.MouseEvent) => {
 				const dragStart = dragStartPos.current;
 				if (!dragStart) return;
 
@@ -120,7 +121,43 @@ export const ExecutionHistory = ({
 				window.removeEventListener("mouseup", handleDragEnd);
 			};
 		}
-	}, [isDragging, isResizing]);
+	}, [isDragging, isResizing, handleDragEnd]);
+
+	const toggleErrorExpand = (id: string) => {
+		setExpandedErrors(prev => {
+			const newSet = new Set(prev);
+			if (newSet.has(id)) {
+				newSet.delete(id);
+			} else {
+				newSet.add(id);
+			}
+			return newSet;
+		});
+	};
+
+	const handleErrorKeyPress = (e: KeyboardEvent<HTMLButtonElement>, id: string) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			toggleErrorExpand(id);
+		}
+	};
+
+	const needsTruncation = (error: string) => {
+		const lines = error.split('\n');
+		return lines.length > 1 || lines[0].length > 85;
+	};
+
+	const truncateError = (error: string) => {
+		const firstLine = error.split('\n')[0];
+		if (firstLine.length > 85) {
+			return `${firstLine.slice(0, 82)}...`;
+		}
+		return firstLine;
+	};
+
+	const getFirstLine = (error: string) => {
+		return error.split('\n')[0];
+	};
 
 	return (
 		<motion.div
@@ -144,8 +181,9 @@ export const ExecutionHistory = ({
 					height: state.size.height,
 				}}
 			>
-				<div
-					className="flex cursor-move items-center justify-between border-b border-ctp-surface2 p-4"
+				<button
+					type="button"
+					className="flex cursor-move items-center justify-between border-b border-ctp-surface2 p-4 w-full"
 					onMouseDown={handleDragStart}
 				>
 					<h3 className="text-sm font-medium text-ctp-text">
@@ -153,19 +191,21 @@ export const ExecutionHistory = ({
 					</h3>
 					<div className="flex items-center gap-2">
 						<button
+							type="button"
 							onClick={clearHistory}
 							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-ctp-surface2"
 						>
 							<Trash2 size={14} className="stroke-[2.5]" />
 						</button>
 						<button
+							type="button"
 							onClick={onClose}
 							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-ctp-surface2"
 						>
 							<X size={14} className="stroke-[2.5]" />
 						</button>
 					</div>
-				</div>
+				</button>
 				<div className="flex-1 overflow-y-auto p-4">
 					{history.length === 0 ? (
 						<div className="flex h-full items-center justify-center text-sm text-ctp-subtext0">
@@ -191,6 +231,7 @@ export const ExecutionHistory = ({
 												{record.success ? "Success" : "Error"}
 											</span>
 											<button
+												type="button"
 												onClick={() => handleOpenInEditor(record.content)}
 												className="text-xs text-accent hover:underline"
 											>
@@ -204,8 +245,34 @@ export const ExecutionHistory = ({
 										</pre>
 									</div>
 									{record.error && (
-										<div className="rounded bg-ctp-red/10 p-2 text-xs text-ctp-red">
-											{record.error}
+										<div 
+											className="rounded bg-ctp-red/10 p-2 text-xs text-ctp-red"
+										>
+											{needsTruncation(record.error) ? (
+												<button
+													type="button"
+													className="flex w-full items-center gap-1 text-left"
+													onClick={() => toggleErrorExpand(record.id)}
+													onKeyDown={(e) => handleErrorKeyPress(e, record.id)}
+													aria-expanded={expandedErrors.has(record.id)}
+													aria-label={expandedErrors.has(record.id) ? "Collapse error" : "Expand error"}
+												>
+													{expandedErrors.has(record.id) ? (
+														<ChevronDown size={14} className="flex-shrink-0" />
+													) : (
+														<ChevronRight size={14} className="flex-shrink-0" />
+													)}
+													<span className="whitespace-pre-wrap">
+														{expandedErrors.has(record.id) 
+															? record.error 
+															: truncateError(record.error)}
+													</span>
+												</button>
+											) : (
+												<span className="whitespace-pre-wrap">
+													{getFirstLine(record.error)}
+												</span>
+											)}
 										</div>
 									)}
 								</div>
@@ -213,7 +280,8 @@ export const ExecutionHistory = ({
 						</div>
 					)}
 				</div>
-				<div
+				<button
+					type="button"
 					className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize"
 					onMouseDown={handleResizeStart}
 				/>
