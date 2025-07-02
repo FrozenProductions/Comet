@@ -10,6 +10,7 @@ use std::process::Command;
 use std::fs;
 use std::path::PathBuf;
 use dirs;
+use serde_json::Value;
 
 const HOST: &str = "127.0.0.1";
 const MIN_PORT: u16 = 6969;
@@ -533,43 +534,75 @@ async fn open_comet_folder() -> Result<(), String> {
     open_directory(app_dir)
 }
 
-fn create_tray_menu() -> SystemTray {
-    let open = CustomMenuItem::new("open".to_string(), "Show");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-    let infinite_yield = CustomMenuItem::new("infinite_yield".to_string(), "Execute Infinite Yield");
-    let hydroxide = CustomMenuItem::new("hydroxide".to_string(), "Execute Hydroxide");
-    let dex = CustomMenuItem::new("dex".to_string(), "Execute DEX Explorer");
-    let last_script = CustomMenuItem::new("last_script".to_string(), "Execute Last Script");
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-
-    let tray_menu = SystemTrayMenu::new()
-        .add_item(open)
-        .add_item(hide)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(infinite_yield)
-        .add_item(hydroxide)
-        .add_item(dex)
-        .add_item(last_script)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit);
-
-    SystemTray::new().with_menu(tray_menu)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ScriptConfig {
+    fetch: Option<bool>,
+    url: Option<String>,
+    execute: Option<bool>,
+    #[serde(default)]
+    content: Option<String>,
+    display_name: Option<String>,
 }
 
-async fn execute_infinite_yield() -> Result<String, String> {
-    let script_url = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source";
-    let script = reqwest::get(script_url)
-        .await
-        .map_err(|e| e.to_string())?
-        .text()
-        .await
-        .map_err(|e| e.to_string())?;
-    
-    execute_script(script).await
+impl ScriptConfig {
+    fn from_value(value: Value) -> Result<Self, String> {
+        let fetch = value.get("fetch").and_then(|v| v.as_bool());
+        let url = value.get("url").and_then(|v| v.as_str()).map(String::from);
+        let execute = value.get("execute").and_then(|v| v.as_bool());
+        let content = value.get("content").and_then(|v| {
+            if v.is_string() {
+                v.as_str().map(String::from)
+            } else {
+                Some(v.to_string())
+            }
+        });
+        let display_name = value.get("display_name").and_then(|v| v.as_str()).map(String::from);
+
+        Ok(ScriptConfig {
+            fetch,
+            url,
+            execute,
+            content,
+            display_name,
+        })
+    }
 }
 
-async fn execute_hydroxide() -> Result<String, String> {
-    let script = r#"local owner = "Upbolt"
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ScriptsResponse {
+    scripts: std::collections::HashMap<String, ScriptConfig>,
+}
+
+fn format_script_name(key: &str) -> String {
+    key.split('_')
+        .map(|word| {
+            let mut chars = word.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => {
+                    let first_upper = first.to_uppercase().collect::<String>();
+                    first_upper + &chars.as_str().to_lowercase()
+                }
+            }
+        })
+        .collect::<Vec<String>>()
+        .join(" ")
+}
+
+fn create_fallback_config(key: &str) -> Option<ScriptConfig> {
+    match key {
+        "infinite_yield" => Some(ScriptConfig {
+            fetch: Some(true),
+            url: Some("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source".to_string()),
+            execute: None,
+            content: None,
+            display_name: Some("Infinite Yield".to_string()),
+        }),
+        "hydroxide" => Some(ScriptConfig {
+            fetch: None,
+            url: None,
+            execute: Some(true),
+            content: Some(r#"local owner = "Upbolt"
 local branch = "revision"
 
 local function webImport(file)
@@ -577,21 +610,95 @@ local function webImport(file)
 end
 
 webImport("init")
-webImport("ui/main")"#;
-    
-    execute_script(script.to_string()).await
+webImport("ui/main")"#.to_string()),
+            display_name: Some("Hydroxide".to_string()),
+        }),
+        "dex_explorer" => Some(ScriptConfig {
+            fetch: Some(true),
+            url: Some("https://cdn.wearedevs.net/scripts/Dex%20Explorer.txt".to_string()),
+            execute: None,
+            content: None,
+            display_name: Some("DEX Explorer".to_string()),
+        }),
+        _ => None,
+    }
 }
 
-async fn execute_dex() -> Result<String, String> {
-    let script_url = "https://cdn.wearedevs.net/scripts/Dex%20Explorer.txt";
-    let script = reqwest::get(script_url)
-        .await
-        .map_err(|e| e.to_string())?
-        .text()
-        .await
-        .map_err(|e| e.to_string())?;
+async fn fetch_script_configs() -> Result<ScriptsResponse, String> {
+    let client = reqwest::Client::new();
+    match client
+        .get("https://www.comet-ui.fun/api/v1/scripts")
+        .send()
+        .await {
+            Ok(response) => {
+                if !response.status().is_success() {
+                    return Err("Failed to fetch script configs".to_string());
+                }
+
+                let text = response.text().await.map_err(|e| e.to_string())?;
+                
+                let json: Value = serde_json::from_str(&text)
+                    .map_err(|e| format!("Failed to parse script configs: {}", e))?;
+                
+                let scripts_obj = json.get("scripts")
+                    .and_then(|v| v.as_object())
+                    .ok_or("Invalid scripts object")?;
+                
+                let mut scripts = std::collections::HashMap::new();
+                
+                for (key, value) in scripts_obj {
+                    if let Ok(config) = ScriptConfig::from_value(value.clone()) {
+                        scripts.insert(key.clone(), config);
+                    }
+                }
+
+                let mut scripts_response = ScriptsResponse { scripts };
+
+                for (key, config) in scripts_response.scripts.iter_mut() {
+                    if config.display_name.is_none() {
+                        config.display_name = Some(format_script_name(key));
+                    }
+                }
+
+                Ok(scripts_response)
+            },
+            Err(_) => {
+                let mut scripts = std::collections::HashMap::new();
+                let fallback_keys = ["infinite_yield", "hydroxide", "dex_explorer"];
+                
+                for key in fallback_keys.iter() {
+                    if let Some(config) = create_fallback_config(key) {
+                        scripts.insert(key.to_string(), config);
+                    }
+                }
+                
+                Ok(ScriptsResponse { scripts })
+            }
+        }
+}
+
+async fn execute_script_by_key(key: &str) -> Result<String, String> {
+    let configs = fetch_script_configs().await?;
+    let config = configs.scripts.get(key)
+        .ok_or_else(|| format!("{} config not found", format_script_name(key)))?;
     
-    execute_script(script).await
+    if let Some(true) = config.fetch {
+        let url = config.url.as_ref()
+            .ok_or_else(|| format!("{} URL not found", format_script_name(key)))?;
+        let script = reqwest::get(url)
+            .await
+            .map_err(|e| e.to_string())?
+            .text()
+            .await
+            .map_err(|e| e.to_string())?;
+        execute_script(script).await
+    } else if let Some(true) = config.execute {
+        let content = config.content.as_ref()
+            .ok_or_else(|| format!("{} content not found", format_script_name(key)))?;
+        execute_script(content.to_string()).await
+    } else {
+        Err(format!("Invalid {} config", format_script_name(key)))
+    }
 }
 
 #[tauri::command]
@@ -629,45 +736,71 @@ async fn save_last_script(script: String) -> Result<(), String> {
     Ok(())
 }
 
+fn create_tray_menu() -> SystemTray {
+    let open = CustomMenuItem::new("open".to_string(), "Show");
+    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+
+    let mut tray_menu = SystemTrayMenu::new()
+        .add_item(open)
+        .add_item(hide)
+        .add_native_item(SystemTrayMenuItem::Separator);
+
+    match tauri::async_runtime::block_on(fetch_script_configs()) {
+        Ok(configs) => {
+            for (key, config) in configs.scripts {
+                let display_name = config.display_name.unwrap_or_else(|| format_script_name(&key));
+                let menu_item = CustomMenuItem::new(format!("execute_{}", key), format!("Execute {}", display_name));
+                tray_menu = tray_menu.add_item(menu_item);
+            }
+        },
+        Err(_) => {
+            let failed_item = CustomMenuItem::new("failed_fetch".to_string(), "Failed to fetch scripts")
+                .disabled();
+            tray_menu = tray_menu.add_item(failed_item);
+        }
+    }
+
+    tray_menu = tray_menu
+        .add_item(CustomMenuItem::new("last_script".to_string(), "Execute Last Script"))
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(quit);
+
+    SystemTray::new().with_menu(tray_menu)
+}
+
 fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
     match event {
-        SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-            "open" => {
-                if let Some(window) = app.get_window("main") {
-                    window.show().unwrap();
-                    window.set_focus().unwrap();
+        SystemTrayEvent::MenuItemClick { id, .. } => {
+            match id.as_str() {
+                "open" => {
+                    if let Some(window) = app.get_window("main") {
+                        window.show().unwrap();
+                        window.set_focus().unwrap();
+                    }
                 }
-            }
-            "hide" => {
-                if let Some(window) = app.get_window("main") {
-                    window.hide().unwrap();
+                "hide" => {
+                    if let Some(window) = app.get_window("main") {
+                        window.hide().unwrap();
+                    }
                 }
+                id if id.starts_with("execute_") => {
+                    let script_key = id.strip_prefix("execute_").unwrap().to_string();
+                    tauri::async_runtime::spawn(async move {
+                        let _ = execute_script_by_key(&script_key).await;
+                    });
+                }
+                "last_script" => {
+                    tauri::async_runtime::spawn(async {
+                        let _ = execute_last_script().await;
+                    });
+                }
+                "quit" => {
+                    app.exit(0);
+                }
+                _ => {}
             }
-            "infinite_yield" => {
-                tauri::async_runtime::spawn(async {
-                    let _ = execute_infinite_yield().await;
-                });
-            }
-            "hydroxide" => {
-                tauri::async_runtime::spawn(async {
-                    let _ = execute_hydroxide().await;
-                });
-            }
-            "dex" => {
-                tauri::async_runtime::spawn(async {
-                    let _ = execute_dex().await;
-                });
-            }
-            "last_script" => {
-                tauri::async_runtime::spawn(async {
-                    let _ = execute_last_script().await;
-                });
-            }
-            "quit" => {
-                app.exit(0);
-            }
-            _ => {}
-        },
+        }
         _ => {}
     }
 }
