@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 use dirs;
 use crate::logging::LogEntry;
 use tauri::Manager;
+use tauri::api::path::config_dir;
+use std::path::PathBuf;
 
 const VALID_EXTENSIONS: [&str; 3] = [".lua", ".luau", ".txt"];
 
@@ -13,6 +15,27 @@ pub struct AutoExecuteFile {
     pub name: String,
     pub content: String,
     pub path: String,
+}
+
+fn get_comet_dir() -> PathBuf {
+    let base_dir = config_dir().expect("Failed to get Application Support directory");
+    let mut app_dir = base_dir;
+    app_dir.push("com.comet.dev");
+    fs::create_dir_all(&app_dir).expect("Failed to create directory");
+    app_dir
+}
+
+fn get_scripts_dir() -> PathBuf {
+    let mut path = get_comet_dir();
+    path.push("scripts");
+    fs::create_dir_all(&path).expect("Failed to create directory");
+    path
+}
+
+fn get_state_file() -> PathBuf {
+    let mut path = get_comet_dir();
+    path.push("auto_execute_disabled");
+    path
 }
 
 fn read_file_content(path: &Path) -> Result<String, String> {
@@ -46,17 +69,31 @@ fn ensure_valid_extension(name: &str) -> String {
     }
 }
 
+fn get_auto_execute_state(_app_handle: &tauri::AppHandle) -> Result<bool, String> {
+    Ok(!get_state_file().exists())
+}
+
+fn set_auto_execute_state(_app_handle: &tauri::AppHandle, enabled: bool) -> Result<(), String> {
+    let state_file = get_state_file();
+
+    if !enabled {
+        fs::write(&state_file, "").map_err(|e| e.to_string())?;
+    } else if state_file.exists() {
+        fs::remove_file(&state_file).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 #[tauri::command]
 pub fn get_auto_execute_files(app_handle: tauri::AppHandle) -> Result<Vec<AutoExecuteFile>, String> {
-    let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let auto_execute_dir = home.join("Hydrogen/autoexecute");
+    let scripts_dir = get_scripts_dir();
 
     let log_entry = LogEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
         level: "info".to_string(),
         message: "Loading auto-execute files".to_string(),
         details: Some(serde_json::json!({
-            "directory": auto_execute_dir.to_string_lossy()
+            "directory": scripts_dir.to_string_lossy()
         })),
     };
     if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
@@ -65,11 +102,11 @@ pub fn get_auto_execute_files(app_handle: tauri::AppHandle) -> Result<Vec<AutoEx
         }
     }
 
-    if !auto_execute_dir.exists() {
-        fs::create_dir_all(&auto_execute_dir).map_err(|e| e.to_string())?;
+    if !scripts_dir.exists() {
+        fs::create_dir_all(&scripts_dir).map_err(|e| e.to_string())?;
     }
 
-    let entries = fs::read_dir(&auto_execute_dir).map_err(|e| e.to_string())?;
+    let entries = fs::read_dir(&scripts_dir).map_err(|e| e.to_string())?;
     let mut files = Vec::new();
 
     for entry in entries {
@@ -111,8 +148,8 @@ pub fn get_auto_execute_files(app_handle: tauri::AppHandle) -> Result<Vec<AutoEx
 #[tauri::command]
 pub fn save_auto_execute_file(app_handle: tauri::AppHandle, name: String, content: String) -> Result<(), String> {
     let file_name = ensure_valid_extension(&name);
-    let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let file_path = home.join("Hydrogen/autoexecute").join(&file_name);
+    let scripts_dir = get_scripts_dir();
+    let file_path = scripts_dir.join(&file_name);
 
     let log_entry = LogEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
@@ -146,13 +183,24 @@ pub fn save_auto_execute_file(app_handle: tauri::AppHandle, name: String, conten
         }
         error_msg
     })?;
+
+    if get_auto_execute_state(&app_handle)? {
+        let home = dirs::home_dir().ok_or("Could not find home directory")?;
+        let hydrogen_dir = home.join("Hydrogen/autoexecute");
+        if !hydrogen_dir.exists() {
+            fs::create_dir_all(&hydrogen_dir).map_err(|e| e.to_string())?;
+        }
+        let hydrogen_path = hydrogen_dir.join(&file_name);
+        fs::copy(&file_path, &hydrogen_path).map_err(|e| e.to_string())?;
+    }
+
     Ok(())
 }
 
 #[tauri::command]
 pub fn delete_auto_execute_file(app_handle: tauri::AppHandle, name: String) -> Result<(), String> {
-    let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let file_path = home.join("Hydrogen/autoexecute").join(&name);
+    let scripts_dir = get_scripts_dir();
+    let file_path = scripts_dir.join(&name);
 
     let log_entry = LogEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
@@ -168,37 +216,27 @@ pub fn delete_auto_execute_file(app_handle: tauri::AppHandle, name: String) -> R
         }
     }
 
-    if !file_path.exists() {
-        return Ok(());
+    if file_path.exists() {
+        fs::remove_file(&file_path).map_err(|e| e.to_string())?;
     }
 
-    fs::remove_file(&file_path).map_err(|e| {
-        let error_msg = e.to_string();
-        let log_entry = LogEntry {
-            timestamp: chrono::Local::now().to_rfc3339(),
-            level: "error".to_string(),
-            message: "Failed to delete auto-execute file".to_string(),
-            details: Some(serde_json::json!({
-                "path": file_path.to_string_lossy(),
-                "error": error_msg
-            })),
-        };
-        if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-            if let Ok(logger) = logger.lock() {
-                let _ = logger.write_entry(log_entry);
-            }
+    if get_auto_execute_state(&app_handle)? {
+        let home = dirs::home_dir().ok_or("Could not find home directory")?;
+        let hydrogen_path = home.join("Hydrogen/autoexecute").join(&name);
+        if hydrogen_path.exists() {
+            fs::remove_file(&hydrogen_path).map_err(|e| e.to_string())?;
         }
-        error_msg
-    })?;
+    }
+
     Ok(())
 }
 
 #[tauri::command]
 pub fn rename_auto_execute_file(app_handle: tauri::AppHandle, old_name: String, new_name: String) -> Result<(), String> {
     let new_file_name = ensure_valid_extension(&new_name);
-    let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let old_path = home.join("Hydrogen/autoexecute").join(&old_name);
-    let new_path = home.join("Hydrogen/autoexecute").join(&new_file_name);
+    let scripts_dir = get_scripts_dir();
+    let old_path = scripts_dir.join(&old_name);
+    let new_path = scripts_dir.join(&new_file_name);
 
     let log_entry = LogEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
@@ -270,20 +308,75 @@ pub fn rename_auto_execute_file(app_handle: tauri::AppHandle, old_name: String, 
         }
         error_msg
     })?;
+
+    if get_auto_execute_state(&app_handle)? {
+        let home = dirs::home_dir().ok_or("Could not find home directory")?;
+        let hydrogen_dir = home.join("Hydrogen/autoexecute");
+        let old_hydrogen_path = hydrogen_dir.join(&old_name);
+        let new_hydrogen_path = hydrogen_dir.join(&new_file_name);
+        
+        if old_hydrogen_path.exists() {
+            fs::rename(&old_hydrogen_path, &new_hydrogen_path).map_err(|e| e.to_string())?;
+        }
+    }
+
     Ok(())
 }
 
 #[tauri::command]
-pub fn open_auto_execute_directory(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub fn is_auto_execute_enabled(app_handle: tauri::AppHandle) -> Result<bool, String> {
+    get_auto_execute_state(&app_handle)
+}
+
+#[tauri::command]
+pub fn toggle_auto_execute(app_handle: tauri::AppHandle) -> Result<bool, String> {
     let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let auto_execute_dir = home.join("Hydrogen/autoexecute");
+    let hydrogen_dir = home.join("Hydrogen/autoexecute");
+    let scripts_dir = get_scripts_dir();
+
+    let currently_enabled = get_auto_execute_state(&app_handle)?;
+    
+    if currently_enabled {
+        if hydrogen_dir.exists() {
+            let entries = fs::read_dir(&hydrogen_dir).map_err(|e| e.to_string())?;
+            for entry in entries {
+                let entry = entry.map_err(|e| e.to_string())?;
+                let path = entry.path();
+                if path.is_file() && is_valid_script_file(&path) {
+                    fs::remove_file(&path).map_err(|e| e.to_string())?;
+                }
+            }
+        }
+    } else {
+        if !hydrogen_dir.exists() {
+            fs::create_dir_all(&hydrogen_dir).map_err(|e| e.to_string())?;
+        }
+
+        let entries = fs::read_dir(&scripts_dir).map_err(|e| e.to_string())?;
+        for entry in entries {
+            let entry = entry.map_err(|e| e.to_string())?;
+            let path = entry.path();
+            
+            if path.is_file() && is_valid_script_file(&path) {
+                let file_name = path.file_name()
+                    .ok_or("Invalid filename")?
+                    .to_string_lossy()
+                    .into_owned();
+                let hydrogen_path = hydrogen_dir.join(&file_name);
+                fs::copy(&path, &hydrogen_path).map_err(|e| e.to_string())?;
+            }
+        }
+    }
+
+    let new_state = !currently_enabled;
+    set_auto_execute_state(&app_handle, new_state)?;
 
     let log_entry = LogEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
         level: "info".to_string(),
-        message: "Opening auto-execute directory".to_string(),
+        message: format!("Auto-execute {} ", if new_state { "enabled" } else { "disabled" }),
         details: Some(serde_json::json!({
-            "path": auto_execute_dir.to_string_lossy()
+            "new_state": new_state
         })),
     };
     if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
@@ -292,5 +385,26 @@ pub fn open_auto_execute_directory(app_handle: tauri::AppHandle) -> Result<(), S
         }
     }
 
-    crate::open_directory(auto_execute_dir)
+    Ok(new_state)
+}
+
+#[tauri::command]
+pub fn open_auto_execute_directory(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let scripts_dir = get_scripts_dir();
+
+    let log_entry = LogEntry {
+        timestamp: chrono::Local::now().to_rfc3339(),
+        level: "info".to_string(),
+        message: "Opening auto-execute directory".to_string(),
+        details: Some(serde_json::json!({
+            "path": scripts_dir.to_string_lossy()
+        })),
+    };
+    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
+        if let Ok(logger) = logger.lock() {
+            let _ = logger.write_entry(log_entry);
+        }
+    }
+
+    crate::open_directory(scripts_dir)
 } 

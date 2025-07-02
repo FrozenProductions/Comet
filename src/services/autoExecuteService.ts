@@ -52,3 +52,21 @@ export const renameAutoExecuteFile = async (
 export const openAutoExecuteDirectory = async (): Promise<void> => {
 	return invoke("open_auto_execute_directory");
 };
+
+/**
+ * Checks if auto-execute is enabled
+ * @returns Promise with boolean indicating if auto-execute is enabled
+ * @throws Error if checking state fails
+ */
+export const isAutoExecuteEnabled = async (): Promise<boolean> => {
+	return invoke("is_auto_execute_enabled");
+};
+
+/**
+ * Toggles auto-execute state and moves scripts between directories
+ * @returns Promise with new auto-execute state
+ * @throws Error if toggling state fails
+ */
+export const toggleAutoExecute = async (): Promise<boolean> => {
+	return invoke("toggle_auto_execute");
+};

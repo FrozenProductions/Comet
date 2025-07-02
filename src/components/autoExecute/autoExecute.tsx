@@ -9,6 +9,7 @@ import {
 	Loader2,
 	Pencil,
 	Plus,
+	Power,
 	Syringe,
 	Trash2,
 	X,
@@ -20,9 +21,11 @@ import { Tooltip } from "react-tooltip";
 import {
 	deleteAutoExecuteFile,
 	getAutoExecuteFiles,
+	isAutoExecuteEnabled,
 	openAutoExecuteDirectory,
 	renameAutoExecuteFile,
 	saveAutoExecuteFile,
+	toggleAutoExecute,
 } from "../../services/autoExecuteService";
 import type { AutoExecuteFile } from "../../types/autoExecute";
 import { Button } from "../ui/button";
@@ -49,6 +52,8 @@ export const AutoExecute: React.FC = () => {
 	const [fileToDelete, setFileToDelete] = useState<AutoExecuteFile | null>(
 		null,
 	);
+	const [isEnabled, setIsEnabled] = useState(false);
+	const [isToggling, setIsToggling] = useState(false);
 
 	const loadFiles = useCallback(async () => {
 		try {
@@ -91,6 +96,18 @@ export const AutoExecute: React.FC = () => {
 	useEffect(() => {
 		loadFiles();
 	}, [loadFiles]);
+
+	useEffect(() => {
+		const init = async () => {
+			try {
+				const enabled = await isAutoExecuteEnabled();
+				setIsEnabled(enabled);
+			} catch (error) {
+				console.error("Failed to check auto-execute state:", error);
+			}
+		};
+		init();
+	}, []);
 
 	const handleFileSelect = (file: AutoExecuteFile) => {
 		if (isRenaming) return;
@@ -197,6 +214,22 @@ export const AutoExecute: React.FC = () => {
 		}
 	};
 
+	const handleToggleAutoExecute = async () => {
+		if (isToggling) return;
+		setIsToggling(true);
+		try {
+			const newState = await toggleAutoExecute();
+			setIsEnabled(newState);
+			await loadFiles();
+			toast.success(`Auto-execute ${newState ? "enabled" : "disabled"}`);
+		} catch (error) {
+			console.error("Failed to toggle auto-execute:", error);
+			toast.error("Failed to toggle auto-execute");
+		} finally {
+			setIsToggling(false);
+		}
+	};
+
 	return (
 		<div className="flex h-full flex-col bg-ctp-base">
 			<Header
@@ -204,15 +237,35 @@ export const AutoExecute: React.FC = () => {
 				icon={<Syringe size={16} className="text-accent" />}
 				description="Manage Hydrogen auto-execute scripts"
 				actions={
-					<Button
-						onClick={handleOpenDirectory}
-						size="sm"
-						data-tooltip-id="autoexecute-tooltip"
-						data-tooltip-content="Open Directory"
-						className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
-					>
-						<FolderOpen size={14} className="stroke-[2.5]" />
-					</Button>
+					<div className="flex items-center gap-2">
+						<Button
+							onClick={handleToggleAutoExecute}
+							size="sm"
+							data-tooltip-id="autoexecute-tooltip"
+							data-tooltip-content={`${isEnabled ? "Disable" : "Enable"} Auto Execute`}
+							className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 ${
+								isEnabled
+									? "bg-accent text-white hover:bg-accent/90"
+									: "bg-ctp-surface1 text-accent hover:bg-white/10"
+							} transition-colors`}
+							disabled={isToggling}
+						>
+							{isToggling ? (
+								<Loader2 size={14} className="animate-spin stroke-[2.5]" />
+							) : (
+								<Power size={14} className="stroke-[2.5]" />
+							)}
+						</Button>
+						<Button
+							onClick={handleOpenDirectory}
+							size="sm"
+							data-tooltip-id="autoexecute-tooltip"
+							data-tooltip-content="Open Directory"
+							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
+						>
+							<FolderOpen size={14} className="stroke-[2.5]" />
+						</Button>
+					</div>
 				}
 			/>
 

@@ -918,6 +918,8 @@ fn main() {
             auto_execute::delete_auto_execute_file,
             auto_execute::rename_auto_execute_file,
             auto_execute::open_auto_execute_directory,
+            auto_execute::is_auto_execute_enabled,
+            auto_execute::toggle_auto_execute,
             open_roblox,
             load_fast_flags_profiles,
             save_fast_flags_profile,
