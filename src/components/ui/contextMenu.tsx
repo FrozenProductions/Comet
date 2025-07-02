@@ -71,9 +71,7 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 								}`}
 							>
 								{item.icon && (
-									<span className="h-4 w-4 text-accent">
-										{item.icon}
-									</span>
+									<span className="h-4 w-4 text-accent">{item.icon}</span>
 								)}
 								<span className="flex-1">{item.label}</span>
 							</button>
@@ -129,13 +127,14 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 								}`}
 							>
 								{item.icon && (
-									<span className="h-4 w-4 text-accent">
-										{item.icon}
-									</span>
+									<span className="h-4 w-4 text-accent">{item.icon}</span>
 								)}
 								<span className="flex-1">{item.label}</span>
 								{item.submenu && (
-									<ChevronRight size={12} className="stroke-[2.5] text-accent opacity-75" />
+									<ChevronRight
+										size={12}
+										className="stroke-[2.5] text-accent opacity-75"
+									/>
 								)}
 								{item.submenu && renderSubmenu(item.submenu, index)}
 							</button>

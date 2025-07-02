@@ -107,30 +107,30 @@ const App: FC = () => {
 	}
 
 	return (
-			<ExecuteProvider>
-				<SettingsProvider>
-					<WorkspaceProvider>
-						<ExecutionHistoryProvider>
-							<EditorProvider>
-								<ConsoleProvider>
-									<FastFlagsProvider>
-										<KeybindsProvider>
-											<SidebarProvider>
-												<AppContent />
-												<MessageModal
-													currentVersion={APP_CONSTANTS.currentVersion}
-												/>
-												<UpdateChecker />
-												<Toaster />
-											</SidebarProvider>
-										</KeybindsProvider>
-									</FastFlagsProvider>
-								</ConsoleProvider>
-							</EditorProvider>
-						</ExecutionHistoryProvider>
-					</WorkspaceProvider>
-				</SettingsProvider>
-			</ExecuteProvider>
+		<ExecuteProvider>
+			<SettingsProvider>
+				<WorkspaceProvider>
+					<ExecutionHistoryProvider>
+						<EditorProvider>
+							<ConsoleProvider>
+								<FastFlagsProvider>
+									<KeybindsProvider>
+										<SidebarProvider>
+											<AppContent />
+											<MessageModal
+												currentVersion={APP_CONSTANTS.currentVersion}
+											/>
+											<UpdateChecker />
+											<Toaster />
+										</SidebarProvider>
+									</KeybindsProvider>
+								</FastFlagsProvider>
+							</ConsoleProvider>
+						</EditorProvider>
+					</ExecutionHistoryProvider>
+				</WorkspaceProvider>
+			</SettingsProvider>
+		</ExecuteProvider>
 	);
 };
 

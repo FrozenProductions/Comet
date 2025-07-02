@@ -42,4 +42,4 @@ export class UncService {
 			throw error;
 		}
 	}
-} 
+}

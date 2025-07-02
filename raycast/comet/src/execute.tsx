@@ -38,7 +38,8 @@ export default function Command() {
 
 	async function loadRecentScripts() {
 		try {
-			const storedScripts = await LocalStorage.getItem<string>(RECENT_SCRIPTS_KEY);
+			const storedScripts =
+				await LocalStorage.getItem<string>(RECENT_SCRIPTS_KEY);
 			if (storedScripts) {
 				setRecentScripts(JSON.parse(storedScripts));
 			}

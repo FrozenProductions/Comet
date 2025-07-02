@@ -155,22 +155,22 @@ export const Tabbar: FC<TabbarProps> = ({
 		: null;
 
 	const handleDragStart = (e: React.DragEvent, tabId: string) => {
-		e.dataTransfer.effectAllowed = 'move';
-		e.dataTransfer.setData('application/x-comet-tab', tabId);
+		e.dataTransfer.effectAllowed = "move";
+		e.dataTransfer.setData("application/x-comet-tab", tabId);
 		setDraggedTab(tabId);
 	};
 
 	const handleDragOver = (e: React.DragEvent, tabId: string) => {
 		e.preventDefault();
-		if (!e.dataTransfer.types.includes('application/x-comet-tab')) return;
+		if (!e.dataTransfer.types.includes("application/x-comet-tab")) return;
 		if (draggedTab === tabId) return;
 		setDragOverTab(tabId);
 	};
 
 	const handleDragEnd = () => {
 		if (draggedTab && dragOverTab) {
-			const fromIndex = tabs.findIndex(tab => tab.id === draggedTab);
-			const toIndex = tabs.findIndex(tab => tab.id === dragOverTab);
+			const fromIndex = tabs.findIndex((tab) => tab.id === draggedTab);
+			const toIndex = tabs.findIndex((tab) => tab.id === dragOverTab);
 			if (fromIndex !== -1 && toIndex !== -1) {
 				onTabReorder(fromIndex, toIndex);
 			}
@@ -275,7 +275,10 @@ export const Tabbar: FC<TabbarProps> = ({
 										}
 									>
 										<div className="flex items-center gap-2 flex-1">
-											<FileCode size={14} className="flex-shrink-0 opacity-75" />
+											<FileCode
+												size={14}
+												className="flex-shrink-0 opacity-75"
+											/>
 											{editingTab === tab.id ? (
 												<input
 													ref={inputRef}

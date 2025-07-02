@@ -41,19 +41,31 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			if (!scriptContent) {
 				if (!tabs.length || !activeTab) {
 					showToast && toast.error(SCRIPT_MESSAGES.NO_SCRIPT);
-					return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT, content: "" };
+					return {
+						success: false,
+						error: SCRIPT_MESSAGES.NO_SCRIPT,
+						content: "",
+					};
 				}
 				const tab = tabs.find((t) => t.id === activeTab);
 				if (!tab) {
 					showToast && toast.error(SCRIPT_MESSAGES.NO_SCRIPT);
-					return { success: false, error: SCRIPT_MESSAGES.NO_SCRIPT, content: "" };
+					return {
+						success: false,
+						error: SCRIPT_MESSAGES.NO_SCRIPT,
+						content: "",
+					};
 				}
 				scriptContent = tab.content;
 			}
 
 			if (!scriptContent.trim()) {
 				showToast && toast.error(SCRIPT_MESSAGES.EMPTY_SCRIPT);
-				return { success: false, error: SCRIPT_MESSAGES.EMPTY_SCRIPT, content: "" };
+				return {
+					success: false,
+					error: SCRIPT_MESSAGES.EMPTY_SCRIPT,
+					content: "",
+				};
 			}
 
 			const result = await executeScript(scriptContent);

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { X, AlertTriangle } from "lucide-react";
-import type { MessageModalProps, VersionMessage } from "../../types/versionMessages";
+import type {
+	MessageModalProps,
+	VersionMessage,
+} from "../../types/versionMessages";
 import { fetchVersionMessage } from "../../services/versionMessagesService";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -48,17 +51,17 @@ export const BaseMessageModal = ({
 					>
 						<div className="flex items-center justify-between border-b border-ctp-surface2 p-4">
 							<div className="flex items-center gap-2">
-								<h2 className="text-sm font-medium text-ctp-text">
-									{title}
-								</h2>
+								<h2 className="text-sm font-medium text-ctp-text">{title}</h2>
 								{icon && (
-									<div className={`flex items-center gap-1.5 rounded-lg border ${
-										variant === "destructive"
-											? "border-red-500/30 bg-red-500/10"
-											: variant === "warning"
-											? "border-yellow-500/30 bg-yellow-500/10"
-											: "border-accent/30 bg-accent/10"
-									} px-2 py-1`}>
+									<div
+										className={`flex items-center gap-1.5 rounded-lg border ${
+											variant === "destructive"
+												? "border-red-500/30 bg-red-500/10"
+												: variant === "warning"
+													? "border-yellow-500/30 bg-yellow-500/10"
+													: "border-accent/30 bg-accent/10"
+										} px-2 py-1`}
+									>
 										{icon}
 										{variant === "destructive" && (
 											<span className="text-xs font-medium text-ctp-red">
@@ -78,9 +81,7 @@ export const BaseMessageModal = ({
 							)}
 						</div>
 						<div className="p-4">
-							<p className="text-sm text-ctp-subtext0">
-								{message}
-							</p>
+							<p className="text-sm text-ctp-subtext0">{message}</p>
 							{children}
 						</div>
 						<div className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4">
@@ -99,8 +100,8 @@ export const BaseMessageModal = ({
 										variant === "destructive"
 											? "border border-red-500/30 bg-red-500/10 text-ctp-red hover:bg-red-500/20"
 											: variant === "warning"
-											? "border border-yellow-500/30 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20"
-											: "border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20"
+												? "border border-yellow-500/30 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20"
+												: "border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20"
 									}`}
 								>
 									<span>{primaryAction.label}</span>
@@ -147,7 +148,9 @@ export const MessageModal = ({ currentVersion }: MessageModalProps) => {
 			onClose={handleClose}
 			title={`Version ${currentVersion}`}
 			message={versionData.message}
-			icon={versionData.nfu && <AlertTriangle size={14} className="text-ctp-red" />}
+			icon={
+				versionData.nfu && <AlertTriangle size={14} className="text-ctp-red" />
+			}
 			variant={versionData.nfu ? "destructive" : "info"}
 		/>
 	);

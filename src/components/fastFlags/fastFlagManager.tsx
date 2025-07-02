@@ -116,8 +116,8 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 	const handlePasteJson = async () => {
 		try {
 			const parsedJson = JSON.parse(jsonInput);
-			if (typeof parsedJson !== 'object' || parsedJson === null) {
-				throw new Error('Invalid JSON format');
+			if (typeof parsedJson !== "object" || parsedJson === null) {
+				throw new Error("Invalid JSON format");
 			}
 
 			await onUpdateFlag(parsedJson);
@@ -125,7 +125,9 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 			setJsonInput("");
 			toast.success("Flags added successfully");
 		} catch (error) {
-			toast.error(error instanceof Error ? error.message : "Invalid JSON format");
+			toast.error(
+				error instanceof Error ? error.message : "Invalid JSON format",
+			);
 		}
 	};
 

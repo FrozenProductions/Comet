@@ -38,7 +38,9 @@ export const Modal = ({
 							<div className="flex-1">
 								<h3 className="text-sm font-medium text-ctp-text">{title}</h3>
 								{description && (
-									<p className="mt-1 text-sm text-ctp-subtext0">{description}</p>
+									<p className="mt-1 text-sm text-ctp-subtext0">
+										{description}
+									</p>
 								)}
 							</div>
 						</div>

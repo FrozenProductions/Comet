@@ -38,7 +38,7 @@ async function mainMenu(): Promise<void> {
 			console.clear();
 			await handleMenuAction(action as MainMenuOption);
 		},
-		() => isMenuActive
+		() => isMenuActive,
 	);
 
 	try {

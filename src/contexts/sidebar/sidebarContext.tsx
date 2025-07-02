@@ -20,8 +20,6 @@ export const SidebarProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	};
 
 	return (
-		<SidebarContext.Provider value={value}>
-			{children}
-		</SidebarContext.Provider>
+		<SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>
 	);
-}; 
+};

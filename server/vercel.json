@@ -1,16 +1,16 @@
 {
-    "version": 2,
-    "functions": {
-        "api/index.ts": {
-            "runtime": "@vercel/node@3.0.0"
-        }
-    },
-    "routes": [
-        {
-            "src": "/api/v1/(.*)",
-            "dest": "/api"
-        }
-    ],
-    "buildCommand": "npm run build",
-    "outputDirectory": "dist"
+	"version": 2,
+	"functions": {
+		"api/index.ts": {
+			"runtime": "@vercel/node@3.0.0"
+		}
+	},
+	"routes": [
+		{
+			"src": "/api/v1/(.*)",
+			"dest": "/api"
+		}
+	],
+	"buildCommand": "npm run build",
+	"outputDirectory": "dist"
 }

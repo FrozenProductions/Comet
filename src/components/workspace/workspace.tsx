@@ -78,7 +78,9 @@ export const Workspace: FC = () => {
 									<FileCode size={40} className="text-ctp-base" />
 								</div>
 								<div className="flex animate-fade-in flex-col gap-2">
-									<h2 className="bg-accent-gradient-r bg-clip-text text-2xl font-semibold text-transparent">No tabs open</h2>
+									<h2 className="bg-accent-gradient-r bg-clip-text text-2xl font-semibold text-transparent">
+										No tabs open
+									</h2>
 									<p className="max-w-[300px] text-sm leading-relaxed text-ctp-subtext0">
 										Create a new tab by clicking the{" "}
 										<span className="inline-flex items-center gap-1 rounded bg-ctp-surface0 px-1.5 py-0.5 text-accent transition-colors hover:bg-ctp-surface1">

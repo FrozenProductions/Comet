@@ -11,12 +11,16 @@ let currentPrompt: any = null;
 let currentViewType: ViewType = "all";
 let currentKeyword: string | null = null;
 
-function filterEntriesByViewType(entries: LogEntry[], viewType: ViewType, keyword: string | null = null): LogEntry[] {
+function filterEntriesByViewType(
+	entries: LogEntry[],
+	viewType: ViewType,
+	keyword: string | null = null,
+): LogEntry[] {
 	let filtered = [...entries];
-	
+
 	if (keyword) {
 		filtered = filtered.filter((entry) =>
-			entry.raw.toLowerCase().includes(keyword.toLowerCase())
+			entry.raw.toLowerCase().includes(keyword.toLowerCase()),
 		);
 	}
 
@@ -25,7 +29,7 @@ function filterEntriesByViewType(entries: LogEntry[], viewType: ViewType, keywor
 			return filtered.filter((entry) => entry.level === "ERROR");
 		case "warnings":
 			return filtered.filter(
-				(entry) => entry.level === "ERROR" || entry.level === "WARNING"
+				(entry) => entry.level === "ERROR" || entry.level === "WARNING",
 			);
 		default:
 			return filtered;
@@ -45,7 +49,7 @@ async function showLogs(
 	title: string,
 	returnToLogOptions: () => Promise<void>,
 	viewType: ViewType = "all",
-	keyword: string | null = null
+	keyword: string | null = null,
 ): Promise<void> {
 	currentViewType = viewType;
 	currentKeyword = keyword;
@@ -61,7 +65,9 @@ async function showLogs(
 			currentPage = totalPages - 1;
 		}
 
-		console.log(chalk.blue.bold(`${title} (Page ${currentPage + 1}/${totalPages})`));
+		console.log(
+			chalk.blue.bold(`${title} (Page ${currentPage + 1}/${totalPages})`),
+		);
 		console.log(chalk.dim("----------------------------------------"));
 
 		const pageEntries = latestEntries.slice(
@@ -163,10 +169,7 @@ async function filterLogs(
 
 	if (filtered.length === 0) {
 		console.log(chalk.yellow(`\nNo logs found containing "${keyword}".`));
-		await showLogsOptions(
-			entries,
-			returnToMenu,
-		);
+		await showLogsOptions(entries, returnToMenu);
 	} else {
 		console.log(
 			chalk.green(`\nFound ${filtered.length} logs containing "${keyword}".`),
@@ -176,7 +179,7 @@ async function filterLogs(
 			`Logs containing "${keyword}"`,
 			() => showLogsOptions(entries, returnToMenu),
 			currentViewType,
-			currentKeyword
+			currentKeyword,
 		);
 	}
 }
@@ -206,7 +209,7 @@ async function showLogsOptions(
 			await handleLogAction(action as LogAction, entries, returnToMenu);
 		},
 		() => isOptionsActive,
-		true
+		true,
 	);
 
 	try {
@@ -308,8 +311,12 @@ async function handleLogAction(
 	entries: LogEntry[],
 	returnToMenu: () => Promise<void>,
 ): Promise<void> {
-	const filtered = filterEntriesByViewType(entries, currentViewType, currentKeyword);
-	
+	const filtered = filterEntriesByViewType(
+		entries,
+		currentViewType,
+		currentKeyword,
+	);
+
 	switch (action) {
 		case "all":
 			currentViewType = "all";
@@ -318,7 +325,7 @@ async function handleLogAction(
 				entries,
 				"All Logs",
 				() => showLogsOptions(entries, returnToMenu),
-				"all"
+				"all",
 			);
 			break;
 		case "errors":
@@ -328,7 +335,7 @@ async function handleLogAction(
 				"Error Logs",
 				() => showLogsOptions(entries, returnToMenu),
 				"errors",
-				currentKeyword
+				currentKeyword,
 			);
 			break;
 		case "warnings":
@@ -338,7 +345,7 @@ async function handleLogAction(
 				"Warnings & Errors",
 				() => showLogsOptions(entries, returnToMenu),
 				"warnings",
-				currentKeyword
+				currentKeyword,
 			);
 			break;
 		case "filter":

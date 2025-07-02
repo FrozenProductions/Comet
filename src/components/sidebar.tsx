@@ -31,8 +31,9 @@ export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
 							}}
 							style={{
 								top:
-									MAIN_SCREENS.findIndex((screen) => screen.id === activeScreen) *
-									BUTTON_SPACING,
+									MAIN_SCREENS.findIndex(
+										(screen) => screen.id === activeScreen,
+									) * BUTTON_SPACING,
 							}}
 						/>
 						{MAIN_SCREENS.map(({ id, icon: Icon, label }) => (

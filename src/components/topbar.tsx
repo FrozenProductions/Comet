@@ -20,7 +20,10 @@ export const Topbar: FC = () => {
 						isVisible ? "text-accent" : "text-ctp-subtext0"
 					}`}
 				>
-					<PanelLeft size={17} className="transition-transform duration-200 group-hover:scale-110" />
+					<PanelLeft
+						size={17}
+						className="transition-transform duration-200 group-hover:scale-110"
+					/>
 				</button>
 				<Tooltip
 					id="topbar-tooltip"

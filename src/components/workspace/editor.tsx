@@ -18,10 +18,13 @@ import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
 import { suggestionService } from "../../services/suggestionService";
 
 const modelsMap = new Map<string, monaco.editor.ITextModel>();
-const editorStatesMap = new Map<string, {
-	viewState: monaco.editor.ICodeEditorViewState | null;
-	position: monaco.Position | null;
-}>();
+const editorStatesMap = new Map<
+	string,
+	{
+		viewState: monaco.editor.ICodeEditorViewState | null;
+		position: monaco.Position | null;
+	}
+>();
 
 export const CodeEditor: FC<CodeEditorProps> = ({
 	content,
@@ -54,10 +57,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 	const saveEditorState = useCallback(() => {
 		if (!editorRef.current || !activeTab) return;
-		
+
 		const viewState = editorRef.current.saveViewState();
 		const position = editorRef.current.getPosition();
-		
+
 		editorStatesMap.set(activeTab, {
 			viewState,
 			position,
@@ -66,7 +69,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 	const restoreEditorState = useCallback(() => {
 		if (!editorRef.current || !activeTab) return;
-		
+
 		const savedState = editorStatesMap.get(activeTab);
 		if (savedState) {
 			if (savedState.viewState) {
@@ -110,8 +113,12 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		monaco.editor.setTheme("Comet");
 
 		const keybindingRules = [
-			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyG },
-			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyK },
+			{
+				key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyG,
+			},
+			{
+				key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyK,
+			},
 			{ key: monaco.KeyCode.F1 },
 			{ key: monaco.KeyCode.F3 },
 			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyI },
@@ -119,8 +126,12 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyG },
 			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter },
 			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL },
-			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyE },
-			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyL },
+			{
+				key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyE,
+			},
+			{
+				key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyL,
+			},
 		];
 
 		keybindingRules.forEach(({ key }) => {
@@ -298,7 +309,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		editor.onDidPaste(() => {
 			const model = editor.getModel();
 			if (!model) return;
-			
+
 			const currentValue = model.getValue();
 			debouncedSave(currentValue);
 		});
@@ -308,8 +319,15 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			saveEditorState();
 			editor.dispose();
 		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeTab, language, settings, keybinds, saveEditorState, restoreEditorState]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [
+		activeTab,
+		language,
+		settings,
+		keybinds,
+		saveEditorState,
+		restoreEditorState,
+	]);
 
 	useEffect(() => {
 		return () => {

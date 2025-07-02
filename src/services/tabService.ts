@@ -8,27 +8,30 @@ import type { Tab } from "../types/workspace";
  * @param workspaceId ID of the workspace containing the tab
  * @returns Promise resolving to true if export succeeded, false otherwise
  */
-export async function exportTab(tab: Tab, workspaceId: string): Promise<boolean> {
-    try {
-        const filePath = await save({
-            defaultPath: tab.title,
-            filters: [{ name: "Lua Files", extensions: ["lua"] }],
-        });
+export async function exportTab(
+	tab: Tab,
+	workspaceId: string,
+): Promise<boolean> {
+	try {
+		const filePath = await save({
+			defaultPath: tab.title,
+			filters: [{ name: "Lua Files", extensions: ["lua"] }],
+		});
 
-        if (!filePath) {
-            return false;
-        }
+		if (!filePath) {
+			return false;
+		}
 
-        await invoke("export_tab", {
-            workspaceId,
-            title: tab.title,
-            content: tab.content,
-            targetPath: filePath,
-        });
+		await invoke("export_tab", {
+			workspaceId,
+			title: tab.title,
+			content: tab.content,
+			targetPath: filePath,
+		});
 
-        return true;
-    } catch (error) {
-        console.error("Failed to export tab:", error);
-        return false;
-    }
+		return true;
+	} catch (error) {
+		console.error("Failed to export tab:", error);
+		return false;
+	}
 }

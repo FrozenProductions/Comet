@@ -5,4 +5,4 @@ export interface SidebarState {
 	toggleSidebar: () => void;
 }
 
-export const SidebarContext = React.createContext<SidebarState | null>(null); 
+export const SidebarContext = React.createContext<SidebarState | null>(null);

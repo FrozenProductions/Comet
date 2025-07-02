@@ -18,7 +18,7 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
+			if (e.dataTransfer?.types.includes("application/x-comet-tab")) return;
 
 			dragCounter.current++;
 
@@ -33,7 +33,7 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
+			if (e.dataTransfer?.types.includes("application/x-comet-tab")) return;
 
 			dragCounter.current--;
 			if (dragCounter.current === 0) {
@@ -45,7 +45,7 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
+			if (e.dataTransfer?.types.includes("application/x-comet-tab")) return;
 
 			if (e.dataTransfer) {
 				e.dataTransfer.dropEffect = "copy";
@@ -56,7 +56,7 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			if (e.dataTransfer?.types.includes('application/x-comet-tab')) return;
+			if (e.dataTransfer?.types.includes("application/x-comet-tab")) return;
 
 			dragCounter.current = 0;
 			setIsDragging(false);
@@ -91,7 +91,7 @@ export const DropZone: FC<DropZoneProps> = ({ className }) => {
 						content,
 						fileName.endsWith(".luau") ? "luau" : "lua",
 					);
-					
+
 					if (id) {
 						importSuccess = true;
 					}
