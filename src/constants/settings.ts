@@ -59,6 +59,9 @@ export const DEFAULT_EDITOR_SETTINGS = {
 			enabled: true,
 			maxItems: 5,
 		},
+		executionHistory: {
+			maxItems: 100,
+		},
 	},
 	app: {
 		nightlyReleases: false,

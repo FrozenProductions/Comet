@@ -63,7 +63,7 @@ pub async fn load_execution_history(app_handle: tauri::AppHandle) -> Result<Vec<
 }
 
 #[tauri::command]
-pub async fn save_execution_record(app_handle: tauri::AppHandle, record: ExecutionRecord) -> Result<(), String> {
+pub async fn save_execution_record(app_handle: tauri::AppHandle, record: ExecutionRecord, max_items: usize) -> Result<(), String> {
     let history_file = get_execution_history_file();
     let mut history = if history_file.exists() {
         let content = fs::read_to_string(&history_file).map_err(|e| e.to_string())?;
@@ -79,7 +79,8 @@ pub async fn save_execution_record(app_handle: tauri::AppHandle, record: Executi
         details: Some(serde_json::json!({
             "record_id": record.id,
             "success": record.success,
-            "timestamp": record.timestamp
+            "timestamp": record.timestamp,
+            "max_items": max_items
         })),
     };
 
@@ -91,8 +92,8 @@ pub async fn save_execution_record(app_handle: tauri::AppHandle, record: Executi
 
     history.insert(0, record);
 
-    if history.len() > 100 {
-        history.truncate(100);
+    if history.len() > max_items {
+        history.truncate(max_items);
     }
 
     let content = serde_json::to_string_pretty(&history).map_err(|e| e.to_string())?;

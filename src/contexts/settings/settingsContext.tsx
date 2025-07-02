@@ -47,6 +47,11 @@ const validateSettings = (settings: EditorSettings): boolean => {
 			return false;
 		if (!settings.interface || typeof settings.interface.zenMode !== "boolean")
 			return false;
+		if (
+			!settings.interface.executionHistory ||
+			typeof settings.interface.executionHistory.maxItems !== "number"
+		)
+			return false;
 
 		return true;
 	} catch {
@@ -166,6 +171,14 @@ export const SettingsProvider = ({
 					interface: {
 						...prev.interface,
 						...(newSettings.interface || {}),
+						recentSearches: {
+							...prev.interface.recentSearches,
+							...(newSettings.interface?.recentSearches || {}),
+						},
+						executionHistory: {
+							...prev.interface.executionHistory,
+							...(newSettings.interface?.executionHistory || {}),
+						},
 					},
 				};
 

@@ -17,10 +17,11 @@ export const loadExecutionHistory = async (): Promise<ExecutionRecord[]> => {
 /**
  * Saves a single execution record to storage
  * @param record The execution record to save
+ * @param maxItems The maximum number of records to keep
  */
-export const saveExecutionRecord = async (record: ExecutionRecord): Promise<void> => {
+export const saveExecutionRecord = async (record: ExecutionRecord, maxItems: number): Promise<void> => {
     try {
-        await invoke("save_execution_record", { record });
+        await invoke("save_execution_record", { record, maxItems });
     } catch (error) {
         console.error("Failed to save execution record:", error);
     }

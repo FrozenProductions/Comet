@@ -44,6 +44,9 @@ export interface EditorSettings {
 			enabled: boolean;
 			maxItems: number;
 		};
+		executionHistory: {
+			maxItems: number;
+		};
 	};
 	app: {
 		nightlyReleases: boolean;

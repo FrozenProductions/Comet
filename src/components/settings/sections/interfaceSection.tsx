@@ -145,6 +145,32 @@ export const InterfaceSection: FC = () => {
 						description="Number of recent searches to remember"
 					/>
 				</SettingGroup>
+
+				<SettingGroup
+					title="Execution History"
+					description="Configure execution history settings"
+					icon={<History size={14} className="text-accent" />}
+				>
+					<Slider
+						value={settings.interface.executionHistory?.maxItems ?? 100}
+						onChange={(value) => {
+							updateSettings({
+								interface: {
+									...settings.interface,
+									executionHistory: {
+										...settings.interface.executionHistory,
+										maxItems: value,
+									},
+								},
+							});
+						}}
+						min={10}
+						max={500}
+						step={10}
+						label="Maximum History Items"
+						description="Number of execution records to keep in history"
+					/>
+				</SettingGroup>
 			</div>
 
 			<Modal
