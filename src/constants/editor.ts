@@ -1,5 +1,4 @@
-import type { editor } from "monaco-editor";
-import type { languages } from "monaco-editor";
+import type { editor, languages } from "monaco-editor";
 
 export const luaLanguageConfig: languages.LanguageConfiguration = {
 	comments: {

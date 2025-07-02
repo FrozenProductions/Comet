@@ -1,6 +1,9 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { FastFlagsProfile, LoadProfilesResponse } from "../types/fastFlags";
 import { v4 as uuidv4 } from "uuid";
+import type {
+	FastFlagsProfile,
+	LoadProfilesResponse,
+} from "../types/fastFlags";
 
 /**
  * Loads all fast flags profiles and the active profile

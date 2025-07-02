@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { invoke } from "@tauri-apps/api/tauri";
+import React, { useCallback, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { DEFAULT_KEYBINDS } from "../../constants/keybinds";
+import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
 import { useEditor } from "../../hooks/useEditor";
-import { useSettings } from "../../hooks/useSettings";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
-import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
-import { toast } from "react-hot-toast";
-import type { Screen, Keybind, KeybindAction } from "../../types/keybinds";
-import { DEFAULT_KEYBINDS } from "../../constants/keybinds";
+import { useSettings } from "../../hooks/useSettings";
+import type { Keybind, KeybindAction, Screen } from "../../types/keybinds";
 import { KeybindsContext } from "./keybindsContextType";
-import { invoke } from "@tauri-apps/api/tauri";
 
 export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
@@ -108,19 +108,18 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 			}
 		},
 		[
-			createTab,
-			closeTab,
-			activeTab,
-			tabs,
-			setActiveTab,
-			settings,
-			updateSettings,
-			executeScript,
-			openRoblox,
-			toggleCommandPalette,
-			handleScreenChange,
-			setIsConsoleOpen,
-			toggleConsoleVisibility,
+			createTab, 
+			closeTab, 
+			activeTab, 
+			tabs, 
+			setActiveTab, 
+			settings, 
+			updateSettings, 
+			executeScript, 
+			openRoblox, 
+			toggleCommandPalette, 
+			handleScreenChange, 
+			toggleConsoleVisibility
 		],
 	);
 
@@ -130,7 +129,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 
 			if (e.metaKey && !e.shiftKey && !e.altKey && !e.ctrlKey) {
 				const num = parseInt(e.key);
-				if (!isNaN(num)) {
+				if (!Number.isNaN(num)) {
 					e.preventDefault();
 
 					if (bufferTimeout.current) {
@@ -183,19 +182,11 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 			}
 		};
 	}, [
-		createTab,
-		closeTab,
-		activeTab,
-		keybinds,
-		tabs,
-		setActiveTab,
-		settings,
-		updateSettings,
-		executeScript,
-		openRoblox,
-		isConsoleOpen,
-		isKeybindEditorOpen,
-		handleKeybindAction,
+		keybinds, 
+		tabs, 
+		setActiveTab, 
+		isKeybindEditorOpen, 
+		handleKeybindAction
 	]);
 
 	const updateKeybind = (

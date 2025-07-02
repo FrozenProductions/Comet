@@ -1,25 +1,25 @@
-import type React from "react";
-import { useState, useEffect } from "react";
-import { Slider } from "../ui/slider";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-	User,
-	Zap,
 	Cpu,
-	Radio,
-	Volume2,
 	Loader2,
-	Sun,
 	type LucideIcon,
+	Radio,
+	Sun,
+	User,
+	Volume2,
+	Zap,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
-import type {
-	FastFlagManagerProps,
-	FastFlagDefinition,
-	FastFlagCategory,
-} from "../../types/fastFlags";
 import { getFastFlagCategories } from "../../services/fastFlagsService";
+import type {
+	FastFlagCategory,
+	FastFlagDefinition,
+	FastFlagManagerProps,
+} from "../../types/fastFlags";
+import { Slider } from "../ui/slider";
 
 type CategoryConfig = {
 	icon: LucideIcon;
@@ -139,6 +139,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 				<div className="text-center">
 					<p className="text-sm text-red-500">{error}</p>
 					<button
+						type="button"
 						onClick={() => window.location.reload()}
 						className="mt-4 rounded-md bg-accent px-4 py-2 text-sm text-white hover:bg-accent/90"
 					>

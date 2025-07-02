@@ -1,20 +1,20 @@
-import { type FC, useState, useRef, useEffect } from "react";
 import {
-	FileCode,
-	X,
-	Edit2,
-	Plus,
 	ChevronDown,
 	Copy,
 	Download,
+	Edit2,
+	FileCode,
+	Plus,
+	X,
 } from "lucide-react";
-import { ContextMenu } from "../ui/contextMenu";
-import { useSettings } from "../../hooks/useSettings";
+import { type FC, useEffect, useRef, useState } from "react";
 import { useEditor } from "../../hooks/useEditor";
+import { useSettings } from "../../hooks/useSettings";
 import { useWorkspace } from "../../hooks/useWorkspace";
-import type { TabbarProps } from "../../types/workspace";
-import { WorkspaceSelector } from "./workspaceSelector";
 import { exportTab } from "../../services/tabService";
+import type { TabbarProps } from "../../types/workspace";
+import { ContextMenu } from "../ui/contextMenu";
+import { WorkspaceSelector } from "./workspaceSelector";
 
 export const Tabbar: FC<TabbarProps> = ({
 	tabs,
@@ -314,6 +314,7 @@ export const Tabbar: FC<TabbarProps> = ({
 										</div>
 										{activeTab !== tab.id && (
 											<button
+												type="button"
 												onClick={(e) => {
 													e.stopPropagation();
 													onTabClose(tab.id);
@@ -423,6 +424,7 @@ export const Tabbar: FC<TabbarProps> = ({
 										)}
 										<div className="overflow-hidden transition-[width,margin] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group-hover:ml-1 group-hover:w-5 w-0">
 											<button
+												type="button"
 												onClick={(e) => {
 													e.stopPropagation();
 													onTabClose(tab.id);
@@ -442,6 +444,7 @@ export const Tabbar: FC<TabbarProps> = ({
 
 			<div className="flex h-full w-10 flex-shrink-0 items-center justify-center border-l border-white/5">
 				<button
+					type="button"
 					onClick={onNewTab}
 					className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-ctp-surface0"
 				>

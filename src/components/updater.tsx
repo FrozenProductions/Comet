@@ -1,9 +1,9 @@
-import { type FC, useEffect } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { useSettings } from "../hooks/useSettings";
+import { type FC, useEffect } from "react";
 import toast from "react-hot-toast";
-import type { UpdateProgress } from "../types/updater";
+import { useSettings } from "../hooks/useSettings";
 import { checkForUpdates } from "../services/updateService";
+import type { UpdateProgress } from "../types/updater";
 
 export const UpdateChecker: FC = () => {
 	const { settings } = useSettings();

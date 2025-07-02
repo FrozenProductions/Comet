@@ -1,6 +1,6 @@
-import { invoke } from "@tauri-apps/api/tauri";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
-import type { LogLine, LogLevel } from "../types/robloxConsole";
+import { invoke } from "@tauri-apps/api/tauri";
+import type { LogLevel, LogLine } from "../types/robloxConsole";
 
 const listeners = new Set<(log: LogLine) => void>();
 let unlistenCallback: UnlistenFn | undefined;

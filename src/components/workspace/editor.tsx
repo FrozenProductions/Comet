@@ -1,22 +1,22 @@
-import { type FC, useEffect, useState, useRef, useCallback } from "react";
-import * as monaco from "monaco-editor";
 import debounce from "lodash/debounce";
+import * as monaco from "monaco-editor";
+import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import {
-	monacoTheme,
 	luaLanguage,
 	luaLanguageConfig,
+	monacoTheme,
 } from "../../constants/editor";
 import { EDITOR_DEFAULT_OPTIONS } from "../../constants/workspace";
-import { useEditor } from "../../hooks/useEditor";
-import { useSettings } from "../../hooks/useSettings";
-import { useKeybinds } from "../../hooks/useKeybinds";
 import { useConsole } from "../../hooks/useConsole";
-import { IntelliSense } from "./intelliSense";
-import { EditorSearch } from "./editorSearch";
+import { useEditor } from "../../hooks/useEditor";
+import { useKeybinds } from "../../hooks/useKeybinds";
+import { useSettings } from "../../hooks/useSettings";
+import { suggestionService } from "../../services/suggestionService";
+import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
 import { getSuggestions } from "../../utils/suggestions";
 import { Actions } from "../ui/editorActions";
-import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
-import { suggestionService } from "../../services/suggestionService";
+import { EditorSearch } from "./editorSearch";
+import { IntelliSense } from "./intelliSense";
 
 const modelsMap = new Map<string, monaco.editor.ITextModel>();
 const editorStatesMap = new Map<

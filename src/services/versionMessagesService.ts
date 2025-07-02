@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { VersionMessages, VersionMessage } from "../types/versionMessages";
+import type { VersionMessage, VersionMessages } from "../types/versionMessages";
 
 /**
  * Fetches version message for the current application version

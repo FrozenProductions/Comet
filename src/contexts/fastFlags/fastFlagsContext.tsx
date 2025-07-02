@@ -1,16 +1,16 @@
 import type React from "react";
-import { useEffect, useState } from "react";
-import type { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
-import {
-	loadProfiles as loadProfilesService,
-	saveProfile as saveProfileService,
-	deleteProfile as deleteProfileService,
-	activateProfile as activateProfileService,
-	deactivateProfile as deactivateProfileService,
-	renameProfile as renameProfileService,
-	createNewProfile as createNewProfileService,
-} from "../../services/fastFlagsProfileService";
+import { useCallback, useEffect, useState } from "react";
 import { INITIAL_FAST_FLAGS_STATE } from "../../constants/fastFlags";
+import {
+	activateProfile as activateProfileService,
+	createNewProfile as createNewProfileService,
+	deactivateProfile as deactivateProfileService,
+	deleteProfile as deleteProfileService,
+	loadProfiles as loadProfilesService,
+	renameProfile as renameProfileService,
+	saveProfile as saveProfileService,
+} from "../../services/fastFlagsProfileService";
+import type { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
 import { FastFlagsContext } from "./fastFlagsContextType";
 
 export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -18,7 +18,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
 	const [state, setState] = useState<FastFlagsState>(INITIAL_FAST_FLAGS_STATE);
 
-	const loadProfiles = async () => {
+	const loadProfiles = useCallback(async () => {
 		try {
 			const { profiles, activeProfileId } = await loadProfilesService();
 			setState((prev) => ({
@@ -34,11 +34,11 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
 				isLoading: false,
 			}));
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		loadProfiles();
-	}, []);
+	}, [loadProfiles]);
 
 	const createProfile = async (name: string) => {
 		const newProfile = createNewProfileService(name);

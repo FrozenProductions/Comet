@@ -1,32 +1,31 @@
-import { useState, useEffect, useCallback } from "react";
-import type { Script } from "../../types/scriptBlox";
-import { useScriptSearch } from "../../hooks/useScriptSearch";
-import { ScriptCard } from "./scriptCard";
-import { motion, AnimatePresence } from "framer-motion";
-import { useEditor } from "../../hooks/useEditor";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-	Search,
-	SlidersHorizontal,
-	X,
-	Clock,
-	Calendar,
-	Eye,
+	AlertTriangle,
 	ArrowDown,
 	ArrowUp,
-	Shield,
-	Globe,
-	AlertTriangle,
-	Key,
-	WifiOff,
-	RefreshCw,
+	Calendar,
 	ChevronLeft,
 	ChevronRight,
+	Clock,
+	Eye,
+	Globe,
+	Key,
+	RefreshCw,
+	Search,
+	Shield,
+	SlidersHorizontal,
+	WifiOff,
+	X,
 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useEditor } from "../../hooks/useEditor";
 import { useRecentSearches } from "../../hooks/useRecentSearches";
-import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
-import type { FilterOption } from "../../types/scriptBlox";
+import { useScriptSearch } from "../../hooks/useScriptSearch";
 import { getScriptContent } from "../../services/scriptBloxService";
+import type { FilterOption, Script } from "../../types/scriptBlox";
+import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
+import { ScriptCard } from "./scriptCard";
 
 const sortOptions: FilterOption[] = [
 	{
@@ -219,7 +218,7 @@ export const ScriptLibrary = () => {
 				<div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
 					{Array.from({ length: 6 }).map((_, index) => (
 						<motion.div
-							key={index}
+							key={`skeleton-${Date.now()}-${index}`}
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: index * 0.1 }}
@@ -353,6 +352,7 @@ export const ScriptLibrary = () => {
 		for (let i = startPage; i <= endPage; i++) {
 			pages.push(
 				<button
+					type="button"
 					key={i}
 					onClick={() => handlePageChange(i)}
 					className={`h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 px-2 text-xs font-medium transition-colors ${
@@ -369,6 +369,7 @@ export const ScriptLibrary = () => {
 		return (
 			<div className="flex items-center gap-2">
 				<button
+					type="button"
 					onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
 					disabled={currentPage === 1}
 					className="flex h-8 w-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
@@ -378,6 +379,7 @@ export const ScriptLibrary = () => {
 				{startPage > 1 && (
 					<>
 						<button
+							type="button"
 							onClick={() => handlePageChange(1)}
 							className="h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-2 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 						>
@@ -393,6 +395,7 @@ export const ScriptLibrary = () => {
 							<span className="text-ctp-subtext0">...</span>
 						)}
 						<button
+							type="button"
 							onClick={() => handlePageChange(totalPages)}
 							className="h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-2 text-xs font-medium text-accent transition-colors hover:bg-white/10"
 						>
@@ -401,6 +404,7 @@ export const ScriptLibrary = () => {
 					</>
 				)}
 				<button
+					type="button"
 					onClick={() =>
 						handlePageChange(Math.min(totalPages, currentPage + 1))
 					}
@@ -452,6 +456,7 @@ export const ScriptLibrary = () => {
 							/>
 							{searchQuery && (
 								<button
+									type="button"
 									onClick={() => {
 										setSearchQuery("");
 										setCurrentPage(1);
@@ -485,6 +490,7 @@ export const ScriptLibrary = () => {
 						</div>
 
 						<button
+							type="button"
 							onClick={() => setShowFilters(!showFilters)}
 							className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 transition-colors ${
 								showFilters
@@ -512,6 +518,7 @@ export const ScriptLibrary = () => {
 										<div className="flex flex-wrap gap-2">
 											{sortOptions.map((option) => (
 												<button
+													type="button"
 													key={option.value}
 													onClick={() => {
 														if (selectedSortBy === option.value) {
@@ -551,6 +558,7 @@ export const ScriptLibrary = () => {
 										<div className="flex flex-wrap gap-2">
 											{filterOptions.map((option) => (
 												<button
+													type="button"
 													key={option.value}
 													onClick={() =>
 														setFilters((prev) => ({

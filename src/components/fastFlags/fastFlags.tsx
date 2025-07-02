@@ -1,39 +1,39 @@
-import type React from "react";
-import { useState, useEffect, useCallback } from "react";
-import { useFastFlags } from "../../hooks/useFastFlags";
-import { validateFlags } from "../../services/flagValidationService";
+import { motion } from "framer-motion";
 import {
-	Flag,
-	Plus,
-	Trash2,
-	Check,
 	AlertCircle,
+	Check,
+	Download,
+	Edit2,
+	Flag,
+	FolderOpen,
 	Loader2,
+	Plus,
+	Settings,
+	Trash2,
+	Upload,
 	User,
 	Users,
-	FolderOpen,
-	Settings,
-	Edit2,
-	Download,
-	Upload,
 } from "lucide-react";
-import { Header } from "../ui/header";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { motion } from "framer-motion";
-import { FastFlagManager } from "./fastFlagManager";
-import { EasyMode } from "./easyMode";
 import { Tooltip } from "react-tooltip";
-import { BaseMessageModal } from "../ui/messageModal";
+import { useFastFlags } from "../../hooks/useFastFlags";
 import {
-	importFromFile,
 	exportToFile,
+	importFromFile,
 } from "../../services/fastFlagsProfileService";
 import {
 	cleanupFastFlags,
 	openFastFlagsDirectory,
 } from "../../services/fastFlagsService";
+import { validateFlags } from "../../services/flagValidationService";
+import { Button } from "../ui/button";
+import { Header } from "../ui/header";
+import { Input } from "../ui/input";
+import { BaseMessageModal } from "../ui/messageModal";
+import { EasyMode } from "./easyMode";
+import { FastFlagManager } from "./fastFlagManager";
 
 export const FastFlags: React.FC = () => {
 	const {
@@ -537,7 +537,7 @@ export const FastFlags: React.FC = () => {
 				icon={<AlertCircle size={14} className="text-ctp-red" />}
 				primaryAction={{
 					label: "Delete",
-					onClick: () => handleDeleteProfile(profileToDelete!.id),
+					onClick: () => profileToDelete && handleDeleteProfile(profileToDelete.id),
 				}}
 			/>
 

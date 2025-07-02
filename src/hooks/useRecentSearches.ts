@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSettings } from "./useSettings";
 
 const RECENT_SEARCHES_KEY = "comet-recent-searches" as const;

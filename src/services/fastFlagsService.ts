@@ -1,9 +1,8 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { FastFlagsResponse } from "../types/fastFlags";
-import type { FastFlagCategory } from "../types/fastFlags";
+import type { FastFlagCategory, FastFlagsResponse } from "../types/fastFlags";
 
 const serializeValue = (value: string): any => {
-	if (!isNaN(Number(value))) {
+	if (!Number.isNaN(Number(value))) {
 		return Number(value);
 	}
 

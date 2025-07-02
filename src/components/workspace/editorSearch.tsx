@@ -1,6 +1,6 @@
-import { type FC, useEffect, useState, useCallback, useRef } from "react";
+import { CaseSensitive, ChevronDown, ChevronUp, Regex, X } from "lucide-react";
 import * as monaco from "monaco-editor";
-import { X, ChevronUp, ChevronDown, CaseSensitive, Regex } from "lucide-react";
+import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import type { EditorSearchProps } from "../../types/workspace";
 
 export const EditorSearch: FC<EditorSearchProps> = ({
@@ -55,9 +55,10 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 
 			const matches: monaco.Range[] = [];
 			const text = model.getValue();
-			let match;
+			let match: RegExpExecArray | null;
 
-			while ((match = searchRegex.exec(text)) !== null) {
+			match = searchRegex.exec(text);
+			while (match !== null) {
 				const startPos = model.getPositionAt(match.index);
 				const endPos = model.getPositionAt(match.index + match[0].length);
 				matches.push(
@@ -68,6 +69,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 						endPos.column,
 					),
 				);
+				match = searchRegex.exec(text);
 			}
 
 			decorationsRef.current = editor.deltaDecorations(
@@ -138,10 +140,11 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 					);
 
 			const text = model.getValue();
-			let match;
+			let match: RegExpExecArray | null;
 			let currentIndex = 0;
 
-			while ((match = searchRegex.exec(text)) !== null) {
+			match = searchRegex.exec(text);
+			while (match !== null) {
 				currentIndex++;
 				if (currentIndex === nextMatch) {
 					const startPos = model.getPositionAt(match.index);
@@ -157,6 +160,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 					editor.revealRangeInCenter(range);
 					break;
 				}
+				match = searchRegex.exec(text);
 			}
 			updateSearch();
 		} catch (error) {
@@ -189,10 +193,11 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 					);
 
 			const text = model.getValue();
-			let match;
+			let match: RegExpExecArray | null;
 			let currentIndex = 0;
 
-			while ((match = searchRegex.exec(text)) !== null) {
+			match = searchRegex.exec(text);
+			while (match !== null) {
 				currentIndex++;
 				if (currentIndex === prevMatch) {
 					const startPos = model.getPositionAt(match.index);
@@ -208,6 +213,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 					editor.revealRangeInCenter(range);
 					break;
 				}
+				match = searchRegex.exec(text);
 			}
 			updateSearch();
 		} catch (error) {
@@ -276,6 +282,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 					</div>
 				</div>
 				<button
+					type="button"
 					onClick={handleClose}
 					className="rounded-lg p-1.5 transition-colors hover:bg-ctp-surface0"
 					title="Close search (Esc)"
@@ -326,6 +333,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 				</div>
 				<div className="flex items-center gap-1">
 					<button
+						type="button"
 						onClick={handlePrevious}
 						disabled={matchCount === 0}
 						className="rounded-lg p-1.5 transition-colors hover:bg-ctp-surface0 disabled:cursor-not-allowed disabled:opacity-50"
@@ -334,6 +342,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 						<ChevronUp size={14} className="stroke-[2.5]" />
 					</button>
 					<button
+						type="button"
 						onClick={handleNext}
 						disabled={matchCount === 0}
 						className="rounded-lg p-1.5 transition-colors hover:bg-ctp-surface0 disabled:cursor-not-allowed disabled:opacity-50"

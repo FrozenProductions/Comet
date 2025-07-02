@@ -1,6 +1,9 @@
-import { useState, useCallback, useRef, useEffect } from "react";
-import type { ScriptSearchParams, ScriptSearchState } from "../types/scriptBlox";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { searchScripts as searchScriptsService } from "../services/scriptBloxService";
+import type {
+	ScriptSearchParams,
+	ScriptSearchState,
+} from "../types/scriptBlox";
 
 /**
  * Hook for managing script search functionality with debounced API calls.
@@ -24,7 +27,7 @@ export const useScriptSearch = (debounceMs = 300) => {
 	const searchTimeoutRef = useRef<NodeJS.Timeout>();
 	const abortControllerRef = useRef<AbortController>();
 
-	const isApiError = (error: unknown): boolean => {
+	const isApiError = useCallback((error: unknown): boolean => {
 		if (error instanceof Error) {
 			const message = error.message.toLowerCase();
 			return (
@@ -36,7 +39,7 @@ export const useScriptSearch = (debounceMs = 300) => {
 			);
 		}
 		return false;
-	};
+	}, []);
 
 	const searchScripts = useCallback(
 		async (params: ScriptSearchParams) => {
@@ -91,7 +94,7 @@ export const useScriptSearch = (debounceMs = 300) => {
 				}
 			}, debounceMs);
 		},
-		[debounceMs],
+		[debounceMs, isApiError],
 	);
 
 	useEffect(() => {

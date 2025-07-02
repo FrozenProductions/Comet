@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import { Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { Check } from "lucide-react";
+import type { FC } from "react";
 import type { CheckboxProps } from "../../types/ui";
 
 export const Checkbox: FC<CheckboxProps> = ({

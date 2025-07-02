@@ -1,35 +1,35 @@
-import type React from "react";
-import { useEffect, useState, useCallback } from "react";
-import type { AutoExecuteFile } from "../../types/autoExecute";
-import {
-	getAutoExecuteFiles,
-	saveAutoExecuteFile,
-	deleteAutoExecuteFile,
-	renameAutoExecuteFile,
-	openAutoExecuteDirectory,
-} from "../../services/autoExecuteService";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import {
-	Plus,
-	Trash2,
-	Pencil,
-	Check,
-	X,
-	FileCode,
-	AlertCircle,
-	Loader2,
-	Code2,
-	FolderOpen,
-	Syringe,
-} from "lucide-react";
-import { toast } from "react-hot-toast";
-import { CodeEditor } from "../workspace/editor";
 import { motion } from "framer-motion";
-import { Header } from "../ui/header";
-import { Tooltip } from "react-tooltip";
 import debounce from "lodash/debounce";
+import {
+	AlertCircle,
+	Check,
+	Code2,
+	FileCode,
+	FolderOpen,
+	Loader2,
+	Pencil,
+	Plus,
+	Syringe,
+	Trash2,
+	X,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { Tooltip } from "react-tooltip";
+import {
+	deleteAutoExecuteFile,
+	getAutoExecuteFiles,
+	openAutoExecuteDirectory,
+	renameAutoExecuteFile,
+	saveAutoExecuteFile,
+} from "../../services/autoExecuteService";
+import type { AutoExecuteFile } from "../../types/autoExecute";
+import { Button } from "../ui/button";
+import { Header } from "../ui/header";
+import { Input } from "../ui/input";
 import { Modal } from "../ui/modal";
+import { CodeEditor } from "../workspace/editor";
 
 const removeExtension = (filename: string) => {
 	return filename.replace(/\.lua$/, "");
@@ -167,7 +167,7 @@ export const AutoExecute: React.FC = () => {
 	};
 
 	const handleCreateNew = async () => {
-		const timestamp = new Date().getTime();
+		const timestamp = Date.now();
 		const newFileName = `script_${timestamp}`;
 		try {
 			await saveAutoExecuteFile(newFileName, "");

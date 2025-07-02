@@ -1,14 +1,14 @@
-import { type FC, useEffect, useRef, useState, useCallback } from "react";
+import { AlertTriangle } from "lucide-react";
+import { type FC, useCallback, useEffect, useRef, useState } from "react";
+import { INVALID_KEYS } from "../../constants/keybinds";
+import { useKeybinds } from "../../hooks/useKeybinds";
 import type {
 	Keybind,
 	KeybindEditorProps,
 	ValidationError,
 } from "../../types/keybinds";
-import { INVALID_KEYS } from "../../constants/keybinds";
-import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
-import { AlertTriangle } from "lucide-react";
-import { useKeybinds } from "../../hooks/useKeybinds";
+import { Modal } from "../ui/modal";
 
 export const KeybindEditor: FC<KeybindEditorProps> = ({
 	isOpen,
@@ -48,7 +48,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
 				!modifiers.ctrl
 			) {
 				const num = parseInt(key);
-				if (!isNaN(num) && num >= 1 && num <= 9) {
+				if (!Number.isNaN(num) && num >= 1 && num <= 9) {
 					return {
 						type: "reserved",
 						message: "Tab switching keybinds (⌘1-9) cannot be reassigned",
@@ -166,6 +166,7 @@ export const KeybindEditor: FC<KeybindEditorProps> = ({
 						{keybind.description}
 					</div>
 					<button
+						type="button"
 						onClick={() => setRecording(true)}
 						className={`w-full rounded px-3 py-2 text-center text-sm transition-colors ${
 							recording

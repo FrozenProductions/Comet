@@ -1,6 +1,6 @@
-import { type FC, type ReactNode, useState, useEffect } from "react";
-import { SidebarContext } from "./sidebarContextType";
+import { type FC, type ReactNode, useEffect, useState } from "react";
 import { SIDEBAR_STORAGE_KEY } from "../../constants/sidebar";
+import { SidebarContext } from "./sidebarContextType";
 
 export const SidebarProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [isVisible, setIsVisible] = useState(() => {

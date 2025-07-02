@@ -1,7 +1,6 @@
-import type { Tab } from "../../types/editor";
-import type { EditorPosition } from "../../types/editor";
-import type { ScriptExecutionOptions } from "../../types/script";
 import React from "react";
+import type { EditorPosition, Tab } from "../../types/editor";
+import type { ScriptExecutionOptions } from "../../types/script";
 
 export interface EditorState {
 	currentPosition: EditorPosition;

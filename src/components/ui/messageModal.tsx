@@ -1,11 +1,11 @@
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertTriangle, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { X, AlertTriangle } from "lucide-react";
+import { fetchVersionMessage } from "../../services/versionMessagesService";
 import type {
 	MessageModalProps,
 	VersionMessage,
 } from "../../types/versionMessages";
-import { fetchVersionMessage } from "../../services/versionMessagesService";
-import { motion, AnimatePresence } from "framer-motion";
 
 type GenericMessageModalProps = {
 	isOpen: boolean;
@@ -73,6 +73,7 @@ export const BaseMessageModal = ({
 							</div>
 							{(!variant || variant === "info") && (
 								<button
+									type="button"
 									onClick={onClose}
 									className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-ctp-surface2"
 								>
@@ -87,6 +88,7 @@ export const BaseMessageModal = ({
 						<div className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4">
 							{(variant === "destructive" || variant === "warning") && (
 								<button
+									type="button"
 									onClick={onClose}
 									className="flex h-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-ctp-surface2"
 								>
@@ -95,6 +97,7 @@ export const BaseMessageModal = ({
 							)}
 							{primaryAction && (
 								<button
+									type="button"
 									onClick={primaryAction.onClick}
 									className={`flex h-8 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors ${
 										variant === "destructive"

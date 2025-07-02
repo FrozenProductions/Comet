@@ -1,25 +1,25 @@
-import { type FC, useState, useRef, useEffect, memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
-	Play,
-	Square,
-	Trash2,
 	ChevronDown,
 	ChevronUp,
 	Maximize2,
 	Minimize2,
+	Play,
+	Square,
 	Terminal,
+	Trash2,
 } from "lucide-react";
-import type {
-	RobloxConsoleProps,
-	LogLine,
-	ConsolePosition,
-} from "../types/robloxConsole";
+import { type FC, memo, useCallback, useEffect, useRef, useState } from "react";
+import { CONSOLE_STORAGE_KEY } from "../constants/console";
 import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
 import { useConsole } from "../hooks/useConsole";
 import { useSettings } from "../hooks/useSettings";
-import { CONSOLE_STORAGE_KEY } from "../constants/console";
 import type { ConsoleSize } from "../types/console";
+import type {
+	ConsolePosition,
+	LogLine,
+	RobloxConsoleProps,
+} from "../types/robloxConsole";
 
 const ConsoleHeader = memo(
 	({
@@ -47,6 +47,7 @@ const ConsoleHeader = memo(
 		>
 			<div className="flex items-center gap-2">
 				<button
+					type="button"
 					onClick={onToggle}
 					className="cursor-pointer rounded p-1 hover:bg-white/5"
 				>
@@ -56,6 +57,7 @@ const ConsoleHeader = memo(
 			</div>
 			<div className="flex items-center gap-2">
 				<button
+					type="button"
 					onClick={onClear}
 					className="cursor-pointer rounded p-1 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
 					title="Clear console"
@@ -63,6 +65,7 @@ const ConsoleHeader = memo(
 					<Trash2 size={16} />
 				</button>
 				<button
+					type="button"
 					onClick={onToggleWatch}
 					className={`cursor-pointer rounded p-1 hover:bg-white/5 ${
 						isWatching ? "text-red-400" : "text-green-400"
@@ -72,6 +75,7 @@ const ConsoleHeader = memo(
 					{isWatching ? <Square size={16} /> : <Play size={16} />}
 				</button>
 				<button
+					type="button"
 					onClick={onFloatToggle}
 					className="cursor-pointer rounded p-1 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
 					title={isFloating ? "Dock console" : "Float console"}
@@ -190,7 +194,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 		if (logsEndRef.current) {
 			logsEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
-	}, [logs.length]);
+	}, []);
 
 	useEffect(() => {
 		setIsFloating(isFloating);
@@ -385,7 +389,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 					) : (
 						<>
 							{logs.map((log, index) => (
-								<ConsoleLog key={index} log={log} isResizing={isResizing} />
+								<ConsoleLog key={`${log.timestamp}-${index}`} log={log} isResizing={isResizing} />
 							))}
 							<div ref={logsEndRef} />
 						</>

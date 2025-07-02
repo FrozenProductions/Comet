@@ -1,4 +1,4 @@
-import { Code, Settings, Library, Flag, Syringe } from "lucide-react";
+import { Code, Flag, Library, Settings, Syringe } from "lucide-react";
 import type { SidebarItem } from "../types/sidebar";
 
 export const MAIN_SCREENS: SidebarItem[] = [

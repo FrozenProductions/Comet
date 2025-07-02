@@ -1,13 +1,19 @@
-import { type FC, type ReactNode, useCallback, useState, useEffect } from "react";
 import { nanoid } from "nanoid";
-import type { ExecutionRecord } from "../../types/executionHistory";
 import {
+	type FC,
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
+import { useSettings } from "../../hooks/useSettings";
+import {
+	clearExecutionHistory,
 	loadExecutionHistory,
 	saveExecutionRecord,
-	clearExecutionHistory,
 } from "../../services/executionHistoryService";
+import type { ExecutionRecord } from "../../types/executionHistory";
 import { ExecutionHistoryContext } from "./executionHistoryContextType";
-import { useSettings } from "../../hooks/useSettings";
 
 export const ExecutionHistoryProvider: FC<{ children: ReactNode }> = ({
 	children,

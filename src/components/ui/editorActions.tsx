@@ -1,20 +1,20 @@
 import { motion } from "framer-motion";
 import {
-	Play,
-	ExternalLink,
-	Loader2,
 	ChevronRight,
-	Terminal,
+	ExternalLink,
 	History,
+	Loader2,
+	Play,
+	Terminal,
 } from "lucide-react";
+import { type FC, useState } from "react";
+import { Tooltip } from "react-tooltip";
+import { useConsole } from "../../hooks/useConsole";
 import { useExecute } from "../../hooks/useExecute";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
-import { Tooltip } from "react-tooltip";
-import type { ActionMenuProps } from "../../types/workspace";
-import { useConsole } from "../../hooks/useConsole";
 import { useSettings } from "../../hooks/useSettings";
-import { type FC, useState } from "react";
+import type { ActionMenuProps } from "../../types/workspace";
 import { ExecutionHistory } from "./executionHistory";
 
 export const Actions: FC<

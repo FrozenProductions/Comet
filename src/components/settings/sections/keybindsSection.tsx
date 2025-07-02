@@ -1,15 +1,16 @@
-import { type FC, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { Keyboard } from "lucide-react";
-import { useKeybinds } from "../../../hooks/useKeybinds";
-import { KeybindEditor } from "../keybindEditor";
-import type { Keybind, KeybindAction } from "../../../types/keybinds";
+import { type FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import {
 	KEYBIND_CATEGORIES,
 	KEYBIND_CATEGORY_MAPPING,
 } from "../../../constants/keybinds";
-import { AnimatePresence } from "framer-motion";
+import { useKeybinds } from "../../../hooks/useKeybinds";
+import type { Keybind, KeybindAction } from "../../../types/keybinds";
 import type { KeybindSectionProps } from "../../../types/settings";
+import { KeybindEditor } from "../keybindEditor";
+
 const getKeybindTitle = (action: KeybindAction): string => {
 	switch (action) {
 		case "newTab":
@@ -83,6 +84,7 @@ const KeybindSection: FC<KeybindSectionProps> = ({
 						</div>
 					</div>
 					<button
+						type="button"
 						className="rounded bg-ctp-surface0 px-2 py-1 text-xs font-medium text-ctp-subtext0 transition-colors hover:bg-ctp-surface1"
 						onClick={() => onEditKeybind(keybind)}
 					>

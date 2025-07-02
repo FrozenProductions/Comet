@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { History, X } from "lucide-react";
+import type { FC } from "react";
 import type { RecentSearchesDropdownProps } from "../../types/ui";
 
 export const RecentSearchesDropdown: FC<RecentSearchesDropdownProps> = ({
@@ -25,6 +25,7 @@ export const RecentSearchesDropdown: FC<RecentSearchesDropdownProps> = ({
 						Recent Searches
 					</div>
 					<button
+						type="button"
 						onClick={onClear}
 						className="flex items-center gap-1 rounded px-1.5 py-0.5 text-xs text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
 					>

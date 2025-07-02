@@ -1,23 +1,23 @@
 import { motion } from "framer-motion";
-import { Trash2, X, ChevronDown, ChevronRight } from "lucide-react";
-import { useExecutionHistory } from "../../hooks/useExecutionHistory";
-import { useEditor } from "../../hooks/useEditor";
+import { ChevronDown, ChevronRight, Trash2, X } from "lucide-react";
 import {
-	useState,
+	type KeyboardEvent,
+	type MouseEvent,
+	useCallback,
 	useEffect,
 	useRef,
-	type KeyboardEvent,
-	useCallback,
-	type MouseEvent,
+	useState,
 } from "react";
+import {
+	DEFAULT_EXECUTION_HISTORY_STATE,
+	EXECUTION_HISTORY_STORAGE_KEY,
+} from "../../constants/executionHistory";
+import { useEditor } from "../../hooks/useEditor";
+import { useExecutionHistory } from "../../hooks/useExecutionHistory";
 import type {
 	ExecutionHistoryProps,
 	ExecutionHistoryState,
 } from "../../types/executionHistory";
-import {
-	EXECUTION_HISTORY_STORAGE_KEY,
-	DEFAULT_EXECUTION_HISTORY_STATE,
-} from "../../constants/executionHistory";
 
 export const ExecutionHistory = ({
 	isVisible,

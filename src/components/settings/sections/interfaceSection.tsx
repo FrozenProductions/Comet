@@ -1,16 +1,16 @@
-import { type FC, useState } from "react";
 import {
-	Settings as SettingsIcon,
+	History,
 	LayoutGrid,
 	Palette,
-	History,
+	Settings as SettingsIcon,
 } from "lucide-react";
-import { Checkbox } from "../../ui/checkbox";
-import { useSettings } from "../../../hooks/useSettings";
-import { SettingGroup } from "../settingGroup";
-import { Modal } from "../../ui/modal";
+import { type FC, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useSettings } from "../../../hooks/useSettings";
+import { Checkbox } from "../../ui/checkbox";
+import { Modal } from "../../ui/modal";
 import { Slider } from "../../ui/slider";
+import { SettingGroup } from "../settingGroup";
 
 export const InterfaceSection: FC = () => {
 	const { settings, updateSettings } = useSettings();

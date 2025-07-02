@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import {
 	DEFAULT_EDITOR_SETTINGS,
 	SETTINGS_STORAGE_KEY,
 } from "../../constants/settings";
 import type { EditorSettings } from "../../types/settings";
 import { SettingsContext } from "./settingsContextType";
-import { toast } from "react-hot-toast";
 
 const mergeWithDefaults = (
 	savedSettings: Partial<EditorSettings>,

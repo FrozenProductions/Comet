@@ -1,12 +1,18 @@
-import { type FC, type ReactNode, useState, useCallback, useEffect } from "react";
-import type { ConsoleState } from "../../types/console";
+import {
+	type FC,
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
 import { CONSOLE_STORAGE_KEY } from "../../constants/console";
-import type { LogLine } from "../../types/robloxConsole";
 import {
 	startWatching as startWatchingService,
 	stopWatching as stopWatchingService,
 	subscribe as subscribeService,
 } from "../../services/robloxLogService";
+import type { ConsoleState } from "../../types/console";
+import type { LogLine } from "../../types/robloxConsole";
 import { ConsoleContext } from "./consoleContextType";
 
 export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {

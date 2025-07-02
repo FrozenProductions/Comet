@@ -1,12 +1,12 @@
-import { type FC, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, Search, Settings as SettingsIcon } from "lucide-react";
+import { type FC, useState } from "react";
 import { SETTINGS_SECTIONS } from "../../constants/settings";
 import { Header } from "../ui/header";
+import { ApplicationSection } from "./sections/applicationSection";
 import { EditorSection } from "./sections/editorSection";
 import { InterfaceSection } from "./sections/interfaceSection";
 import { KeybindsSection } from "./sections/keybindsSection";
-import { ApplicationSection } from "./sections/applicationSection";
 
 export const Settings: FC = () => {
 	const [activeSection, setActiveSection] = useState("editor");

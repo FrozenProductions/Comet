@@ -1,24 +1,24 @@
+import { AnimatePresence, motion } from "framer-motion";
+import {
+	AlertTriangle,
+	ClipboardPaste,
+	Edit2,
+	Plus,
+	RefreshCw,
+	Save,
+	Trash2,
+	User,
+	X,
+} from "lucide-react";
 import type React from "react";
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
+import { toast } from "react-hot-toast";
+import { refreshFlagValidationCache } from "../../services/flagValidationService";
 import type { FastFlagManagerProps } from "../../types/fastFlags";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import {
-	Plus,
-	Edit2,
-	Save,
-	X,
-	Trash2,
-	AlertTriangle,
-	User,
-	RefreshCw,
-	ClipboardPaste,
-} from "lucide-react";
-import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
 import { Modal } from "../ui/modal";
-import { refreshFlagValidationCache } from "../../services/flagValidationService";
+import { Textarea } from "../ui/textarea";
 
 export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 	profile,
@@ -336,7 +336,7 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 				onClose={() => setFlagToDelete(null)}
 				title="Delete Flag"
 				description={`Are you sure you want to delete "${flagToDelete}"? This action cannot be undone.`}
-				onConfirm={() => handleDeleteFlag(flagToDelete!)}
+				onConfirm={() => flagToDelete && handleDeleteFlag(flagToDelete)}
 				confirmText="Delete"
 				confirmVariant="destructive"
 			/>

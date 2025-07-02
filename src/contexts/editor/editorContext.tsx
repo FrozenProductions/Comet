@@ -1,22 +1,28 @@
-import { type FC, type ReactNode, useState, useCallback, useEffect } from "react";
 import { nanoid } from "nanoid";
-import type { EditorPosition, Tab } from "../../types/editor";
-import type { ScriptExecutionOptions } from "../../types/script";
 import {
+	type FC,
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
+import { toast } from "react-hot-toast";
+import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../../constants/script";
+import { useExecutionHistory } from "../../hooks/useExecutionHistory";
+import { useWorkspace } from "../../hooks/useWorkspace";
+import {
+	createTab as createTabService,
+	deleteTab,
 	executeScript,
+	getTabState,
+	loadTabs as loadTabsFromService,
+	renameTab,
 	saveTab,
 	saveTabState,
-	loadTabs as loadTabsFromService,
-	getTabState,
-	deleteTab,
-	renameTab,
-	createTab as createTabService,
 } from "../../services/scriptService";
-import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../../constants/script";
-import { toast } from "react-hot-toast";
-import { useWorkspace } from "../../hooks/useWorkspace";
+import type { EditorPosition, Tab } from "../../types/editor";
+import type { ScriptExecutionOptions } from "../../types/script";
 import { EditorContext } from "./editorContextType";
-import { useExecutionHistory } from "../../hooks/useExecutionHistory";
 
 export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const { activeWorkspace } = useWorkspace();

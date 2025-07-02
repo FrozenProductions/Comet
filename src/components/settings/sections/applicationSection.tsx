@@ -1,35 +1,35 @@
-import { type FC, useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/tauri";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-	Settings2,
+	AlertTriangle,
+	Book,
 	Box,
+	Download,
+	Folder,
 	Github,
 	Globe,
-	Book,
-	RefreshCw,
-	AlertTriangle,
-	Download,
-	RotateCcw,
-	Folder,
-	Wrench,
 	Layers,
+	RefreshCw,
+	RotateCcw,
+	Settings2,
 	Users,
+	Wrench,
 } from "lucide-react";
-import { useSettings } from "../../../hooks/useSettings";
-import { SettingGroup } from "../settingGroup";
-import { Modal } from "../../ui/modal";
+import { type FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
-import { Checkbox } from "../../ui/checkbox";
-import { TechStackItem } from "../techStackItem";
+import { useSettings } from "../../../hooks/useSettings";
+import {
+	checkForUpdates,
+	downloadAndInstallUpdate,
+} from "../../../services/updateService";
 import {
 	openCometFolder,
 	openHydrogenFolder,
 } from "../../../services/windowService";
-import {
-	downloadAndInstallUpdate,
-	checkForUpdates,
-} from "../../../services/updateService";
-import { invoke } from "@tauri-apps/api/tauri";
+import { Checkbox } from "../../ui/checkbox";
+import { Modal } from "../../ui/modal";
+import { SettingGroup } from "../settingGroup";
+import { TechStackItem } from "../techStackItem";
 
 export const ApplicationSection: FC = () => {
 	const { settings, updateSettings } = useSettings();
@@ -140,6 +140,7 @@ export const ApplicationSection: FC = () => {
 									</div>
 								</div>
 								<button
+									type="button"
 									onClick={async () => {
 										if (!isOfficialApp) {
 											toast.error("Updates are disabled for unofficial builds");
@@ -296,6 +297,7 @@ export const ApplicationSection: FC = () => {
 														}}
 													>
 														<button
+															type="button"
 															onClick={async () => {
 																try {
 																	await downloadAndInstallUpdate(
@@ -367,6 +369,7 @@ export const ApplicationSection: FC = () => {
 								</div>
 							</div>
 							<button
+								type="button"
 								onClick={() => setShowResetConfirm(true)}
 								className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-ctp-red transition-colors hover:bg-white/10"
 							>
@@ -388,6 +391,7 @@ export const ApplicationSection: FC = () => {
 							</div>
 							<div className="flex items-center gap-2">
 								<button
+									type="button"
 									onClick={async () => {
 										try {
 											await openCometFolder();
@@ -402,6 +406,7 @@ export const ApplicationSection: FC = () => {
 									App Directory
 								</button>
 								<button
+									type="button"
 									onClick={async () => {
 										try {
 											await openHydrogenFolder();

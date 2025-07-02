@@ -1,10 +1,10 @@
 import type { FC } from "react";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
-import type { SidebarProps } from "../types/sidebar";
-import { MAIN_SCREENS, BUTTON_SPACING } from "../constants/sidebar";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { BUTTON_SPACING, MAIN_SCREENS } from "../constants/sidebar";
 import { useSidebar } from "../hooks/useSidebar";
+import type { SidebarProps } from "../types/sidebar";
 
 export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
 	const { isVisible } = useSidebar();
@@ -39,6 +39,7 @@ export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
 						{MAIN_SCREENS.map(({ id, icon: Icon, label }) => (
 							<button
 								key={id}
+								type="button"
 								data-tooltip-id="sidebar-tooltip"
 								data-tooltip-content={label}
 								data-tooltip-place="right"

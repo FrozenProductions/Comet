@@ -50,6 +50,7 @@ export const Modal = ({
 						{(footer || onConfirm) && (
 							<div className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4">
 								<button
+									type="button"
 									onClick={onClose}
 									className="flex h-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-ctp-surface2"
 								>
@@ -57,6 +58,7 @@ export const Modal = ({
 								</button>
 								{onConfirm && (
 									<button
+										type="button"
 										onClick={onConfirm}
 										className={`flex h-8 items-center justify-center rounded-lg px-3 text-xs font-medium transition-colors ${
 											confirmVariant === "destructive"

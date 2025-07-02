@@ -1,8 +1,8 @@
-import type { FC } from "react";
-import { TrafficLights } from "./trafficLights";
 import { PanelLeft } from "lucide-react";
-import { useSidebar } from "../hooks/useSidebar";
+import type { FC } from "react";
 import { Tooltip } from "react-tooltip";
+import { useSidebar } from "../hooks/useSidebar";
+import { TrafficLights } from "./trafficLights";
 
 export const Topbar: FC = () => {
 	const { isVisible, toggleSidebar } = useSidebar();
@@ -13,6 +13,7 @@ export const Topbar: FC = () => {
 			<div className="absolute bottom-0 left-0 top-0 flex items-center">
 				<TrafficLights />
 				<button
+					type="button"
 					onClick={toggleSidebar}
 					data-tooltip-id="topbar-tooltip"
 					data-tooltip-content={isVisible ? "Hide sidebar" : "Show sidebar"}

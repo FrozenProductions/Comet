@@ -1,10 +1,10 @@
+import { Code2, Monitor, MousePointer2, Sparkles, Type } from "lucide-react";
 import type { FC } from "react";
-import { Code2, Monitor, Type, MousePointer2, Sparkles } from "lucide-react";
-import { Checkbox } from "../../ui/checkbox";
-import { Slider } from "../../ui/slider";
-import { RadioGroup } from "../../ui/radioGroup";
 import { useSettings } from "../../../hooks/useSettings";
 import type { SettingsKey } from "../../../types/settings";
+import { Checkbox } from "../../ui/checkbox";
+import { RadioGroup } from "../../ui/radioGroup";
+import { Slider } from "../../ui/slider";
 import { SettingGroup } from "../settingGroup";
 
 export const EditorSection: FC = () => {

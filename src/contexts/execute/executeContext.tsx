@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { toast } from "react-hot-toast";
-import { ExecuteContext } from "./executeContextType";
-import { executeScript } from "../../services/scriptService";
 import { invoke } from "@tauri-apps/api/tauri";
+import { useCallback, useState } from "react";
+import { toast } from "react-hot-toast";
+import { executeScript } from "../../services/scriptService";
+import { ExecuteContext } from "./executeContextType";
 
 export const ExecuteProvider = ({
 	children,

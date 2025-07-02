@@ -1,13 +1,13 @@
+import { FileCode, Plus } from "lucide-react";
 import type { FC } from "react";
-import { CodeEditor } from "./editor";
-import { Tabbar } from "./tabBar";
+import { useConsole } from "../../hooks/useConsole";
+import { useEditor } from "../../hooks/useEditor";
+import { useKeybinds } from "../../hooks/useKeybinds";
 import { useSettings } from "../../hooks/useSettings";
 import { RobloxConsole } from "../robloxConsole";
-import { useConsole } from "../../hooks/useConsole";
-import { useKeybinds } from "../../hooks/useKeybinds";
-import { useEditor } from "../../hooks/useEditor";
 import { DropZone } from "./dropZone";
-import { FileCode, Plus } from "lucide-react";
+import { CodeEditor } from "./editor";
+import { Tabbar } from "./tabBar";
 
 export const Workspace: FC = () => {
 	const {

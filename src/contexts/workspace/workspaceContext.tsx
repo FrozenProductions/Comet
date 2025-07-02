@@ -1,13 +1,13 @@
-import { type FC, type ReactNode, useState, useEffect } from "react";
+import { type FC, type ReactNode, useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { WorkspaceContext, type Workspace } from "./workspaceContextType";
 import {
-	loadWorkspaces as loadWorkspacesService,
 	createWorkspace as createWorkspaceService,
 	deleteWorkspace as deleteWorkspaceService,
-	setActiveWorkspace as setActiveWorkspaceService,
+	loadWorkspaces as loadWorkspacesService,
 	renameWorkspace as renameWorkspaceService,
+	setActiveWorkspace as setActiveWorkspaceService,
 } from "../../services/workspaceService";
+import { type Workspace, WorkspaceContext } from "./workspaceContextType";
 
 export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 	children,
@@ -16,7 +16,7 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 	const [activeWorkspace, setActiveWorkspace] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
-	const loadWorkspaces = async () => {
+	const loadWorkspaces = useCallback(async () => {
 		try {
 			const state = await loadWorkspacesService();
 			setWorkspaces(state.workspaces);
@@ -27,11 +27,11 @@ export const WorkspaceProvider: FC<{ children: ReactNode }> = ({
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		loadWorkspaces();
-	}, []);
+	}, [loadWorkspaces]);
 
 	const createWorkspace = async (name: string) => {
 		try {

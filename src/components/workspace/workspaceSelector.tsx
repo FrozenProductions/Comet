@@ -1,19 +1,19 @@
-import { type FC, useState, useRef, useEffect, useMemo, memo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlignLeft,
-	FolderPlus,
-	Trash2,
 	ChevronDown,
 	Edit2,
+	FolderPlus,
+	Trash2,
 } from "lucide-react";
+import { type FC, memo, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Modal } from "../ui/modal";
 import type {
-	WorkspaceProps,
-	WorkspaceDropdownPortalProps,
 	DeleteWorkspaceState,
+	WorkspaceDropdownPortalProps,
+	WorkspaceProps,
 } from "../../types/workspace";
+import { Modal } from "../ui/modal";
 
 const WorkspaceInput = memo(
 	({ onSubmit }: { onSubmit: (name: string) => void }) => {
@@ -31,7 +31,7 @@ const WorkspaceInput = memo(
 			<div className="p-3">
 				<div className="space-y-1.5">
 					<div className="flex items-center justify-between">
-						<label className="text-[11px] font-medium text-ctp-subtext1">
+						<label htmlFor="workspace-name-input" className="text-[11px] font-medium text-ctp-subtext1">
 							New Workspace Name
 						</label>
 						<span className="text-[10px] text-ctp-subtext0">
@@ -39,6 +39,7 @@ const WorkspaceInput = memo(
 						</span>
 					</div>
 					<input
+						id="workspace-name-input"
 						type="text"
 						value={inputValue}
 						onChange={(e) => {
@@ -57,7 +58,6 @@ const WorkspaceInput = memo(
 								setInputValue("");
 							}
 						}}
-						autoFocus
 					/>
 				</div>
 			</div>
@@ -211,6 +211,7 @@ const WorkspaceList = memo(
 							{workspaces.length > 1 && activeWorkspace !== workspace.id && (
 								<div className="flex items-center gap-1">
 									<button
+										type="button"
 										onClick={(e) => {
 											e.stopPropagation();
 											startRenaming(workspace.id, workspace.name);
@@ -220,6 +221,7 @@ const WorkspaceList = memo(
 										<Edit2 size={12} className="stroke-[2.5]" />
 									</button>
 									<button
+										type="button"
 										onClick={(e) => {
 											e.stopPropagation();
 											handleDelete(workspace.id, workspace.name);
@@ -327,6 +329,7 @@ const WorkspaceDropdownPortal = memo(
 						<WorkspaceInput onSubmit={onCreateWorkspace} />
 					) : (
 						<button
+							type="button"
 							onClick={onCreateClick}
 							className="flex w-full items-center gap-2.5 px-4 py-2.5 text-xs text-ctp-subtext0 transition-colors hover:bg-ctp-surface0/50 hover:text-ctp-text"
 						>

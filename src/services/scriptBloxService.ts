@@ -1,9 +1,9 @@
+import { invoke } from "@tauri-apps/api/tauri";
 import type {
+	ScriptDetailResponse,
 	ScriptSearchParams,
 	ScriptSearchResponse,
-	ScriptDetailResponse,
 } from "../types/scriptBlox";
-import { invoke } from "@tauri-apps/api/tauri";
 
 /**
  * Searches for scripts on ScriptBlox
