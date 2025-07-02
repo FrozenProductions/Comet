@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { type FC, useState, useEffect } from "react";
 import {
 	AlertTriangle,
 	Copy,
@@ -9,7 +9,7 @@ import {
 import { motion } from "framer-motion";
 import { listen } from "@tauri-apps/api/event";
 import toast from "react-hot-toast";
-import { InstallProgress } from "../../types/ui";
+import type { InstallProgress } from "../../types/ui";
 import { installHydrogen } from "../../services/hydrogenService";
 
 const LoadingDots = () => {
@@ -129,21 +129,16 @@ export const HydrogenNotFound: FC = () => {
 
 				<div className="flex flex-col items-center gap-6">
 					<div className="flex flex-col items-center gap-2">
-						<motion.button
-							whileHover={{ scale: 1.02 }}
-							whileTap={{ scale: 0.98 }}
+						<button
+							type="button"
 							onClick={handleInstall}
 							disabled={isInstalling}
-							className={`flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-medium transition-colors ${
-								isInstalling
-									? "cursor-not-allowed bg-ctp-surface1"
-									: "cursor-pointer bg-white/10 hover:bg-white/20"
-							} `}
+							className={`flex h-7 items-center gap-2 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-4 text-sm font-medium text-accent transition-all hover:bg-ctp-surface2 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50`}
 						>
 							{isInstalling ? (
-								<Loader2 size={16} className="animate-spin" />
+								<Loader2 size={14} className="animate-spin stroke-[2.5]" />
 							) : (
-								<Download size={16} className="stroke-[2.5]" />
+								<Download size={14} className="stroke-[2.5]" />
 							)}
 							<span className="flex items-center gap-1.5">
 								{isInstalling ? (
@@ -155,7 +150,7 @@ export const HydrogenNotFound: FC = () => {
 									"Install Hydrogen"
 								)}
 							</span>
-						</motion.button>
+						</button>
 						{isInstalling && (
 							<motion.p
 								initial={{ opacity: 0 }}
@@ -175,7 +170,7 @@ export const HydrogenNotFound: FC = () => {
 						>
 							<div className="relative h-20 w-20">
 								<motion.div
-									className="absolute inset-0 rounded-lg bg-white/5"
+									className="absolute inset-0 rounded-lg bg-ctp-surface0"
 									animate={{
 										opacity: [0.05, 0.1, 0.05],
 									}}
@@ -196,7 +191,7 @@ export const HydrogenNotFound: FC = () => {
 										ease: "linear",
 									}}
 								>
-									<div className="absolute top-1 h-1.5 w-1.5 rounded-full bg-white/20" />
+									<div className="absolute top-1 h-1.5 w-1.5 rounded-full bg-ctp-surface2" />
 								</motion.div>
 								<div className="absolute inset-0 flex items-center justify-center">
 									<motion.div
@@ -211,7 +206,7 @@ export const HydrogenNotFound: FC = () => {
 									>
 										<Download
 											size={24}
-											className="stroke-[1.5] text-white/60"
+											className="stroke-[1.5] text-ctp-subtext0"
 										/>
 									</motion.div>
 								</div>
@@ -238,10 +233,10 @@ export const HydrogenNotFound: FC = () => {
 						<div className="text-xs text-ctp-subtext0">
 							Or copy the command to install manually:
 						</div>
-						<motion.div
-							whileHover={{ scale: 1.01 }}
+						<button
+							type="button"
 							onClick={handleCopy}
-							className="group flex cursor-pointer items-center gap-3 rounded-lg bg-ctp-mantle p-3 transition-colors hover:bg-ctp-surface0"
+							className="group flex cursor-pointer items-center gap-3 rounded-lg border border-ctp-surface2 bg-ctp-surface1 p-3 text-left transition-all hover:bg-ctp-surface2 active:scale-95"
 						>
 							<code className="font-mono text-sm">
 								<span className="text-ctp-mauve">bash</span>
@@ -254,21 +249,17 @@ export const HydrogenNotFound: FC = () => {
 								</span>
 								<span className="text-ctp-green">)"</span>
 							</code>
-							<motion.div
-								whileHover={{ scale: 1.1 }}
-								whileTap={{ scale: 0.9 }}
-								className="rounded-md bg-ctp-surface0 p-1.5 transition-colors group-hover:bg-ctp-surface1"
-							>
+							<div className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-all hover:bg-ctp-surface2 active:scale-95">
 								{copied ? (
 									<CheckCircle2
-										size={16}
+										size={14}
 										className="stroke-[2.5] text-ctp-green"
 									/>
 								) : (
-									<Copy size={16} className="stroke-[2.5] text-ctp-subtext0" />
+									<Copy size={14} className="stroke-[2.5] text-accent" />
 								)}
-							</motion.div>
-						</motion.div>
+							</div>
+						</button>
 					</div>
 				</div>
 			</motion.div>
