@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { type FC, useState, useEffect } from "react";
 import { Workspace } from "./components/workspace/workspace";
 import { Settings } from "./components/settings/settings";
 import { EditorProvider } from "./contexts/editor/editorContext";
