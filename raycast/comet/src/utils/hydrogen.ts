@@ -20,8 +20,7 @@ export async function findHydrogenServer(): Promise<number | null> {
 			if (res.ok && (await res.text()) === "0xdeadbeef") {
 				return port;
 			}
-		} catch (error) {
-		}
+		} catch (_error) {}
 	}
 
 	return null;

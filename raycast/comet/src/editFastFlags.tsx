@@ -1,17 +1,17 @@
+import fs from "node:fs";
+import path from "node:path";
 import {
-	ActionPanel,
 	Action,
+	ActionPanel,
+	Color,
 	Form,
-	Toast,
-	showToast,
 	Icon,
 	List,
+	showToast,
+	Toast,
 	useNavigation,
-	Color,
 } from "@raycast/api";
-import { useState, useEffect } from "react";
-import fs from "fs";
-import path from "path";
+import { useEffect, useState } from "react";
 
 const FAST_FLAGS_PATH =
 	"/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json";
@@ -286,7 +286,7 @@ function AddFlagScreen({ onFlagAdded }: { onFlagAdded: () => void }) {
 			errors.flagName = "Flag name is required";
 		}
 
-		if (values.flagType === "number" && isNaN(Number(values.flagValue))) {
+		if (values.flagType === "number" && Number.isNaN(Number(values.flagValue))) {
 			errors.flagValue = "Must be a valid number";
 		}
 
@@ -409,7 +409,7 @@ function EditFlagScreen({
 	) {
 		const errors: { [key: string]: string } = {};
 
-		if (flag.type === "number" && isNaN(Number(values.value))) {
+		if (flag.type === "number" && Number.isNaN(Number(values.value))) {
 			errors.value = "Must be a valid number";
 			setErrorMessages(errors);
 			return;

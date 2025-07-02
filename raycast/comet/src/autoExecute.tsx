@@ -1,20 +1,25 @@
 import {
-	List,
-	ActionPanel,
+	readdir,
+	readFile,
+	rename,
+	stat,
+	unlink,
+	writeFile,
+} from "node:fs/promises";
+import { homedir } from "node:os";
+import { join } from "node:path";
+import {
 	Action,
-	Icon,
-	Color,
+	ActionPanel,
+	confirmAlert,
 	Form,
+	Icon,
+	List,
+	popToRoot,
 	showToast,
 	Toast,
-	confirmAlert,
-	popToRoot,
 } from "@raycast/api";
-import { useState, useEffect } from "react";
-import { homedir } from "os";
-import { join } from "path";
-import { readdir, readFile, writeFile, unlink, rename } from "fs/promises";
-import { stat } from "fs/promises";
+import { useEffect, useState } from "react";
 
 interface Script {
 	name: string;

@@ -1,18 +1,15 @@
 import {
-	ActionPanel,
 	Action,
+	ActionPanel,
+	Color,
+	Icon,
 	List,
+	LocalStorage,
 	showToast,
 	Toast,
-	Icon,
-	Color,
-	LocalStorage,
 } from "@raycast/api";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useHydrogen } from "./hooks/useHydrogen";
-
-const START_PORT = 6969;
-const END_PORT = 7069;
 
 interface Script {
 	title: string;
@@ -192,8 +189,8 @@ export default function Command() {
 					value={selectedGame || ""}
 				>
 					<List.Dropdown.Item title="All Games" value="" />
-					{Array.from(games).map((game, index) => (
-						<List.Dropdown.Item key={index} title={game} value={game} />
+					{Array.from(games).map((game) => (
+						<List.Dropdown.Item key={game} title={game} value={game} />
 					))}
 				</List.Dropdown>
 			}
@@ -252,9 +249,9 @@ export default function Command() {
 						icon={showFavorites ? Icon.Star : Icon.MagnifyingGlass}
 					/>
 				) : (
-					displayScripts.map((script, index) => (
+					displayScripts.map((script) => (
 						<List.Item
-							key={index}
+							key={script.id}
 							title={script.title}
 							subtitle={script.game.name}
 							icon={script.game.imageUrl}

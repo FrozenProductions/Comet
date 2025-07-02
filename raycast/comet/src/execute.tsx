@@ -1,13 +1,13 @@
 import {
-	Form,
-	ActionPanel,
 	Action,
-	showToast,
-	Icon,
+	ActionPanel,
 	Color,
-	Toast,
-	LocalStorage,
+	Form,
+	Icon,
 	List,
+	LocalStorage,
+	showToast,
+	Toast,
 } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { useHydrogen } from "./hooks/useHydrogen";
@@ -99,7 +99,7 @@ export default function Command() {
 		try {
 			await execute(scriptToExecute);
 			await saveRecentScript(scriptToExecute, true);
-		} catch (error) {
+		} catch (_error) {
 			await saveRecentScript(scriptToExecute, false);
 		}
 	}
@@ -157,9 +157,9 @@ export default function Command() {
 						icon={Icon.Document}
 					/>
 				) : (
-					recentScripts.map((script, index) => (
+					recentScripts.map((script) => (
 						<List.Item
-							key={index}
+							key={script.timestamp}
 							title={truncateScript(script.content)}
 							subtitle={formatTimestamp(script.timestamp)}
 							icon={{
@@ -180,7 +180,7 @@ export default function Command() {
 											try {
 												await execute(script.content);
 												await saveRecentScript(script.content, true);
-											} catch (error) {
+											} catch (_error) {
 												await saveRecentScript(script.content, false);
 											}
 										}}

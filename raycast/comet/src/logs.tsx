@@ -1,9 +1,9 @@
-import { List, ActionPanel, Action, Icon, Color, Detail } from "@raycast/api";
-import { useState, useEffect, useMemo } from "react";
+import { Action, ActionPanel, Color, Detail, Icon, List } from "@raycast/api";
+import { createReadStream } from "fs";
+import { readdir, stat } from "fs/promises";
 import { homedir } from "os";
 import { join } from "path";
-import { readdir, stat } from "fs/promises";
-import { createReadStream } from "fs";
+import { useEffect, useMemo, useState } from "react";
 import { createInterface } from "readline";
 
 interface LogEntry {
@@ -256,9 +256,9 @@ export default function Command() {
 				</ActionPanel>
 			}
 		>
-			{filteredLogs.map((log, index) => (
+			{filteredLogs.map((log) => (
 				<List.Item
-					key={index}
+					key={log.timestamp.getTime()}
 					title={log.content}
 					icon={getLogIcon(log.type)}
 					detail={
