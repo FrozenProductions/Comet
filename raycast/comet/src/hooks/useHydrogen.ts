@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import { showToast, Toast } from "@raycast/api";
+import { useEffect, useState } from "react";
 import {
-	findHydrogenServer,
 	executeScript,
+	findHydrogenServer,
 	type HydrogenState,
 } from "../utils/hydrogen";
 
