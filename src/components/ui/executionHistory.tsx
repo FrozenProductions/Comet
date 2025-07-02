@@ -2,7 +2,14 @@ import { motion } from "framer-motion";
 import { Trash2, X, ChevronDown, ChevronRight } from "lucide-react";
 import { useExecutionHistory } from "../../hooks/useExecutionHistory";
 import { useEditor } from "../../hooks/useEditor";
-import { useState, useEffect, useRef, type KeyboardEvent, useCallback, type MouseEvent } from "react";
+import {
+	useState,
+	useEffect,
+	useRef,
+	type KeyboardEvent,
+	useCallback,
+	type MouseEvent,
+} from "react";
 import type {
 	ExecutionHistoryProps,
 	ExecutionHistoryState,
@@ -124,7 +131,7 @@ export const ExecutionHistory = ({
 	}, [isDragging, isResizing, handleDragEnd]);
 
 	const toggleErrorExpand = (id: string) => {
-		setExpandedErrors(prev => {
+		setExpandedErrors((prev) => {
 			const newSet = new Set(prev);
 			if (newSet.has(id)) {
 				newSet.delete(id);
@@ -135,20 +142,23 @@ export const ExecutionHistory = ({
 		});
 	};
 
-	const handleErrorKeyPress = (e: KeyboardEvent<HTMLButtonElement>, id: string) => {
-		if (e.key === 'Enter' || e.key === ' ') {
+	const handleErrorKeyPress = (
+		e: KeyboardEvent<HTMLButtonElement>,
+		id: string,
+	) => {
+		if (e.key === "Enter" || e.key === " ") {
 			e.preventDefault();
 			toggleErrorExpand(id);
 		}
 	};
 
 	const needsTruncation = (error: string) => {
-		const lines = error.split('\n');
+		const lines = error.split("\n");
 		return lines.length > 1 || lines[0].length > 85;
 	};
 
 	const truncateError = (error: string) => {
-		const firstLine = error.split('\n')[0];
+		const firstLine = error.split("\n")[0];
 		if (firstLine.length > 85) {
 			return `${firstLine.slice(0, 82)}...`;
 		}
@@ -156,7 +166,7 @@ export const ExecutionHistory = ({
 	};
 
 	const getFirstLine = (error: string) => {
-		return error.split('\n')[0];
+		return error.split("\n")[0];
 	};
 
 	return (
@@ -245,9 +255,7 @@ export const ExecutionHistory = ({
 										</pre>
 									</div>
 									{record.error && (
-										<div 
-											className="rounded bg-ctp-red/10 p-2 text-xs text-ctp-red"
-										>
+										<div className="rounded bg-ctp-red/10 p-2 text-xs text-ctp-red">
 											{needsTruncation(record.error) ? (
 												<button
 													type="button"
@@ -255,7 +263,11 @@ export const ExecutionHistory = ({
 													onClick={() => toggleErrorExpand(record.id)}
 													onKeyDown={(e) => handleErrorKeyPress(e, record.id)}
 													aria-expanded={expandedErrors.has(record.id)}
-													aria-label={expandedErrors.has(record.id) ? "Collapse error" : "Expand error"}
+													aria-label={
+														expandedErrors.has(record.id)
+															? "Collapse error"
+															: "Expand error"
+													}
 												>
 													{expandedErrors.has(record.id) ? (
 														<ChevronDown size={14} className="flex-shrink-0" />
@@ -263,8 +275,8 @@ export const ExecutionHistory = ({
 														<ChevronRight size={14} className="flex-shrink-0" />
 													)}
 													<span className="whitespace-pre-wrap">
-														{expandedErrors.has(record.id) 
-															? record.error 
+														{expandedErrors.has(record.id)
+															? record.error
 															: truncateError(record.error)}
 													</span>
 												</button>

@@ -1,4 +1,4 @@
-import { KeybindMap } from "../types/keybinds.js";
+import type { KeybindMap } from "../types/keybinds.js";
 
 export const MAIN_KEYBINDS: KeybindMap = {
 	l: {

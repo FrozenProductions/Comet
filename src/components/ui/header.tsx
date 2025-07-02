@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { HeaderProps } from "../../types/ui";
+import type { FC } from "react";
+import type { HeaderProps } from "../../types/ui";
 
 export const Header: FC<HeaderProps> = ({
 	title,

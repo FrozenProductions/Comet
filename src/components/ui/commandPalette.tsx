@@ -1,26 +1,29 @@
-import { FC, useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-	Command,
-	Plus,
-	Layout,
-	FileCode,
-	Play,
-	ExternalLink,
-	Flag,
-	Terminal,
-	Maximize2,
 	AlignLeft,
+	Command,
+	ExternalLink,
+	FileCode,
+	Flag,
+	Layout,
+	Maximize2,
+	Play,
+	Plus,
+	Terminal,
 } from "lucide-react";
-import { useEditor } from "../../hooks/useEditor";
-import { useSettings } from "../../hooks/useSettings";
-import { useRoblox } from "../../hooks/useRoblox";
-import { useScript } from "../../hooks/useScript";
-import { useFastFlags } from "../../hooks/useFastFlags";
-import { CommandItem, CommandPaletteProps } from "../../types/commandPalette";
+import { type FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
+import { useEditor } from "../../hooks/useEditor";
+import { useFastFlags } from "../../hooks/useFastFlags";
+import { useRoblox } from "../../hooks/useRoblox";
+import { useScript } from "../../hooks/useScript";
+import { useSettings } from "../../hooks/useSettings";
 import { useWorkspace } from "../../hooks/useWorkspace";
+import type {
+	CommandItem,
+	CommandPaletteProps,
+} from "../../types/commandPalette";
 
 export const CommandPalette: FC<CommandPaletteProps> = ({
 	isOpen,
@@ -373,7 +376,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 
 	useEffect(() => {
 		setSelectedIndex(0);
-	}, [searchQuery]);
+	}, []);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {

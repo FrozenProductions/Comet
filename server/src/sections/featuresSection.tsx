@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { motion } from "framer-motion";
 import { Terminal, Brush, Settings } from "lucide-react";
 import { LANDING_CONTENT } from "../constants/landingContent";

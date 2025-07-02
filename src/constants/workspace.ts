@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor";
+import type * as monaco from "monaco-editor";
 
 export const EDITOR_DEFAULT_OPTIONS: monaco.editor.IStandaloneEditorConstructionOptions =
 	{

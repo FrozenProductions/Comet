@@ -1,16 +1,16 @@
-import { type FC, useState, useEffect } from "react";
+import { listen } from "@tauri-apps/api/event";
+import { motion } from "framer-motion";
 import {
 	AlertTriangle,
-	Copy,
 	CheckCircle2,
+	Copy,
 	Download,
 	Loader2,
 } from "lucide-react";
-import { motion } from "framer-motion";
-import { listen } from "@tauri-apps/api/event";
+import { type FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import type { InstallProgress } from "../../types/ui";
 import { installHydrogen } from "../../services/hydrogenService";
+import type { InstallProgress } from "../../types/ui";
 
 const LoadingDots = () => {
 	return (

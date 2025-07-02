@@ -1,4 +1,4 @@
-import { Suggestion } from "../types/editor";
+import type { Suggestion } from "../types/editor";
 import { invoke } from "@tauri-apps/api/tauri";
 
 class SuggestionService {

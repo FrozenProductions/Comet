@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import type { SidebarProps } from "../types/sidebar";

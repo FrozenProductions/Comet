@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { Slider } from "../ui/slider";
 import {
 	User,
@@ -8,12 +9,12 @@ import {
 	Volume2,
 	Loader2,
 	Sun,
-	LucideIcon,
+	type LucideIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
-import {
+import type {
 	FastFlagManagerProps,
 	FastFlagDefinition,
 	FastFlagCategory,

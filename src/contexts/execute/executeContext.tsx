@@ -27,10 +27,10 @@ export const ExecuteProvider = ({
 		try {
 			setIsExecuting(true);
 			const result = await executeScript(script);
-			
-			localStorage.setItem('lastExecutedScript', script);
+
+			localStorage.setItem("lastExecutedScript", script);
 			try {
-				await invoke('save_last_script', { script });
+				await invoke("save_last_script", { script });
 			} catch (error) {
 				console.error("Failed to save last script:", error);
 			}

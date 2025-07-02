@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect, useMemo, memo } from "react";
+import { type FC, useState, useRef, useEffect, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
 	AlignLeft,
@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { Modal } from "../ui/modal";
-import {
+import type {
 	WorkspaceProps,
 	WorkspaceDropdownPortalProps,
 	DeleteWorkspaceState,

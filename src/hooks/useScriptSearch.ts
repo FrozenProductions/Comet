@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { ScriptSearchParams, ScriptSearchState } from "../types/scriptBlox";
+import type { ScriptSearchParams, ScriptSearchState } from "../types/scriptBlox";
 import { searchScripts as searchScriptsService } from "../services/scriptBloxService";
 
 /**

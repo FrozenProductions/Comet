@@ -1,6 +1,6 @@
-import { Code2 } from "lucide-react";
-import { ReactNode } from "react";
-import { Keybind } from "./keybinds";
+import type { Code2 } from "lucide-react";
+import type { ReactNode } from "react";
+import type { Keybind } from "./keybinds";
 
 export type SettingsSection = {
 	id: string;

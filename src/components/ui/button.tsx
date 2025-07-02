@@ -1,6 +1,6 @@
-import React from "react";
+import type React from "react";
 import { mergeClasses } from "../../utils/clsx";
-import { ButtonProps } from "../../types/ui";
+import type { ButtonProps } from "../../types/ui";
 
 export const Button: React.FC<ButtonProps> = ({
 	children,

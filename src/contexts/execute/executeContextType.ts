@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { ExecuteContextType } from "../../types/script";
+import type { ExecuteContextType } from "../../types/script";
 
 export const ExecuteContext = createContext<ExecuteContextType | undefined>(
 	undefined,

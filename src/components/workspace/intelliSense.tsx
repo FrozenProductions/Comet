@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { type FC, useEffect, useRef, useState } from "react";
 import type { IntelliSenseProps } from "../../types/workspace";
 import {
 	FileCode,
@@ -9,7 +9,7 @@ import {
 	Hash,
 } from "lucide-react";
 import { useSettings } from "../../hooks/useSettings";
-import { Suggestion } from "../../types/editor";
+import type { Suggestion } from "../../types/editor";
 
 const getIconForType = (type: Suggestion["type"]) => {
 	switch (type) {

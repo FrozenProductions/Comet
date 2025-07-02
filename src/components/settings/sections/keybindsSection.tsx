@@ -1,15 +1,15 @@
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 import { Keyboard } from "lucide-react";
 import { useKeybinds } from "../../../hooks/useKeybinds";
 import { KeybindEditor } from "../keybindEditor";
-import { Keybind, KeybindAction } from "../../../types/keybinds";
+import type { Keybind, KeybindAction } from "../../../types/keybinds";
 import { toast } from "react-hot-toast";
 import {
 	KEYBIND_CATEGORIES,
 	KEYBIND_CATEGORY_MAPPING,
 } from "../../../constants/keybinds";
 import { AnimatePresence } from "framer-motion";
-import { KeybindSectionProps } from "../../../types/settings";
+import type { KeybindSectionProps } from "../../../types/settings";
 const getKeybindTitle = (action: KeybindAction): string => {
 	switch (action) {
 		case "newTab":

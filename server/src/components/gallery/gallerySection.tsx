@@ -1,6 +1,6 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { type FC, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { GallerySectionProps } from "../../types/gallery";
+import type { GallerySectionProps } from "../../types/gallery";
 
 const GallerySection: FC<GallerySectionProps> = ({ images }) => {
 	const [currentIndex, setCurrentIndex] = useState(0);

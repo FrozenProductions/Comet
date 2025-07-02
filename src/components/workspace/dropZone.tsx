@@ -1,8 +1,8 @@
-import { FC, useState, useEffect, useRef } from "react";
+import { type FC, useState, useEffect, useRef } from "react";
 import { useEditor } from "../../hooks/useEditor";
 import { toast } from "react-hot-toast";
 import { FileDown } from "lucide-react";
-import { DropZoneProps } from "../../types/workspace";
+import type { DropZoneProps } from "../../types/workspace";
 
 export const DropZone: FC<DropZoneProps> = ({ className }) => {
 	const [isDragging, setIsDragging] = useState(false);

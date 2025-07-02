@@ -1,4 +1,4 @@
-import { ScriptCardProps } from "../../types/scriptBlox";
+import type { ScriptCardProps } from "../../types/scriptBlox";
 import { motion } from "framer-motion";
 import { Eye, Shield, Globe, AlertTriangle, Key, Code } from "lucide-react";
 

@@ -1,5 +1,5 @@
+import type { StatusInfo } from "../types/status.js";
 import { SupabaseService } from "./supabaseService.js";
-import { StatusInfo } from "../types/status.js";
 
 export class StatusService {
 	private supabase: SupabaseService;

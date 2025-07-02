@@ -1,7 +1,8 @@
-import { FC, useEffect, useRef, useState } from "react";
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <> */
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { ContextMenuItem, ContextMenuProps } from "../../types/ui";
+import { type FC, useEffect, useRef, useState } from "react";
+import type { ContextMenuItem, ContextMenuProps } from "../../types/ui";
 
 export const ContextMenu: FC<ContextMenuProps> = ({
 	items,
@@ -56,6 +57,7 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 
 						return (
 							<button
+								type="button"
 								key={idx}
 								onClick={() => {
 									item.onClick?.();
@@ -107,6 +109,7 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 
 						return (
 							<button
+								type="button"
 								key={index}
 								onClick={() => {
 									if (!item.submenu && item.onClick) {

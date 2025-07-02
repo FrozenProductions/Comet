@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
-import { LogEntry, LogScanResult } from "../types/logs.js";
+import type { LogEntry, LogScanResult } from "../types/logs.js";
 
 /**
  * Locates the most recent Roblox log file in the user's logs directory
@@ -74,7 +74,7 @@ function parseLogLine(line: string): LogEntry | null {
 		);
 		message = afterTimestamp.trim();
 
-		message = message.replace(/^,[\d\.]+,[a-f0-9]+,\d+\s*/, "");
+		message = message.replace(/^,[\d.]+,[a-f0-9]+,\d+\s*/, "");
 		message = message.replace(/^\s*\[\w+::\w+\]/, "");
 		message = message.replace(/^\s*\[\w+\]/, "");
 		message = message.replace(/^,.*?\s/, "");

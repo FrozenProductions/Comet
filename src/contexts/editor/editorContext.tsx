@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState, useCallback, useEffect } from "react";
+import { type FC, type ReactNode, useState, useCallback, useEffect } from "react";
 import { nanoid } from "nanoid";
 import type { EditorPosition, Tab } from "../../types/editor";
 import type { ScriptExecutionOptions } from "../../types/script";

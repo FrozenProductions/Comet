@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { CodeEditor } from "./editor";
 import { Tabbar } from "./tabBar";
 import { useSettings } from "../../hooks/useSettings";

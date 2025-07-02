@@ -1,4 +1,4 @@
-import { GalleryImageProps } from "../types/gallery";
+import type { GalleryImageProps } from "../types/gallery";
 
 export const LANDING_CONTENT = {
 	TITLE: "Modern Executor Interface",

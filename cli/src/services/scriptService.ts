@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import { Script, ExecutionResponse } from "../types/script.js";
+import type { Script, ExecutionResponse } from "../types/script.js";
 import { START_PORT, END_PORT } from "../constants/ports.js";
 import { SCRIPTS_DIR } from "../constants/paths.js";
 import { ensureScriptsDirExists } from "../utils/file.js";
@@ -34,7 +34,7 @@ export async function executeScript(
 	scriptContent: string,
 ): Promise<ExecutionResponse> {
 	try {
-		let serverPort = await findServerPort();
+		const serverPort = await findServerPort();
 
 		if (!serverPort) {
 			return {

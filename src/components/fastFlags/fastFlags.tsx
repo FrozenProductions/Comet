@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import type React from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useFastFlags } from "../../hooks/useFastFlags";
 import { validateFlags } from "../../services/flagValidationService";
 import {

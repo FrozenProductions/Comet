@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { TrafficLights } from "./trafficLights";
 import { PanelLeft } from "lucide-react";
 import { useSidebar } from "../hooks/useSidebar";

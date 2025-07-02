@@ -1,6 +1,6 @@
-import { FC, ReactNode, useState, useEffect } from "react";
+import { type FC, type ReactNode, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { WorkspaceContext, Workspace } from "./workspaceContextType";
+import { WorkspaceContext, type Workspace } from "./workspaceContextType";
 import {
 	loadWorkspaces as loadWorkspacesService,
 	createWorkspace as createWorkspaceService,

@@ -5,7 +5,7 @@ import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
 import { useConsoleVisibility } from "../../hooks/useConsoleVisibility";
 import { toast } from "react-hot-toast";
-import { Screen, Keybind, KeybindAction } from "../../types/keybinds";
+import type { Screen, Keybind, KeybindAction } from "../../types/keybinds";
 import { DEFAULT_KEYBINDS } from "../../constants/keybinds";
 import { KeybindsContext } from "./keybindsContextType";
 import { invoke } from "@tauri-apps/api/tauri";
@@ -52,12 +52,13 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 						closeTab(activeTab);
 					}
 					break;
-				case "switchTab":
+				case "switchTab": {
 					const targetIndex = keybind.data?.index;
 					if (typeof targetIndex === "number" && tabs[targetIndex]) {
 						setActiveTab(tabs[targetIndex].id);
 					}
 					break;
+				}
 				case "toggleZenMode":
 					updateSettings({
 						interface: {

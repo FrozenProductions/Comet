@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { saveScript } from "../services/scriptService.js";
-import { Script } from "../types/script.js";
+import type { Script } from "../types/script.js";
 import fs from "fs/promises";
 import path from "path";
 

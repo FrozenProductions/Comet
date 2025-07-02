@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
-import { MainMenuOption } from "../types/menu.js";
+import type { MainMenuOption } from "../types/menu.js";
 import { promptContinue } from "../utils/prompt.js";
 import { listScripts } from "./listScripts.js";
 import { createScript } from "./createScript.js";

@@ -1,4 +1,4 @@
-import { FastFlagsState } from "../types/fastFlags";
+import type { FastFlagsState } from "../types/fastFlags";
 
 export const INITIAL_FAST_FLAGS_STATE: FastFlagsState = {
 	profiles: [],

@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect, memo, useCallback } from "react";
+import { type FC, useState, useRef, useEffect, memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
 	Play,
@@ -10,7 +10,7 @@ import {
 	Minimize2,
 	Terminal,
 } from "lucide-react";
-import {
+import type {
 	RobloxConsoleProps,
 	LogLine,
 	ConsolePosition,
@@ -19,7 +19,7 @@ import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
 import { useConsole } from "../hooks/useConsole";
 import { useSettings } from "../hooks/useSettings";
 import { CONSOLE_STORAGE_KEY } from "../constants/console";
-import { ConsoleSize } from "../types/console";
+import type { ConsoleSize } from "../types/console";
 
 const ConsoleHeader = memo(
 	({

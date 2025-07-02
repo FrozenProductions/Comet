@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useCallback, useRef } from "react";
+import { type FC, useEffect, useState, useCallback, useRef } from "react";
 import * as monaco from "monaco-editor";
 import { X, ChevronUp, ChevronDown, CaseSensitive, Regex } from "lucide-react";
 import type { EditorSearchProps } from "../../types/workspace";
@@ -48,7 +48,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 				searchRegex = new RegExp(searchTerm, matchCase ? "g" : "gi");
 			} else {
 				searchRegex = new RegExp(
-					searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
+					searchTerm.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"),
 					matchCase ? "g" : "gi",
 				);
 			}
@@ -133,7 +133,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 			const searchRegex = useRegex
 				? new RegExp(searchTerm, matchCase ? "g" : "gi")
 				: new RegExp(
-						searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
+						searchTerm.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"),
 						matchCase ? "g" : "gi",
 					);
 
@@ -184,7 +184,7 @@ export const EditorSearch: FC<EditorSearchProps> = ({
 			const searchRegex = useRegex
 				? new RegExp(searchTerm, matchCase ? "g" : "gi")
 				: new RegExp(
-						searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
+						searchTerm.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"),
 						matchCase ? "g" : "gi",
 					);
 

@@ -1,9 +1,9 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { scanRobloxLogs } from "../services/logService.js";
-import { LogEntry, ViewType } from "../types/logs.js";
+import type { LogEntry, ViewType } from "../types/logs.js";
 import { setupKeyboardListener } from "../services/keyboardService.js";
-import { LogAction } from "../types/keybinds.js";
+import type { LogAction } from "../types/keybinds.js";
 
 let isOptionsActive = false;
 let currentPrompt: any = null;
@@ -55,7 +55,7 @@ async function showLogs(
 	currentKeyword = keyword;
 	const PAGE_SIZE = 10;
 	let currentPage = 0;
-	let latestEntries = [...entries];
+	const latestEntries = [...entries];
 
 	const renderPage = () => {
 		console.clear();
@@ -302,7 +302,7 @@ export async function logsViewer(
 		return;
 	}
 
-	let allEntries = [...result.entries];
+	const allEntries = [...result.entries];
 	await showLogsOptions(allEntries, returnToMenu);
 }
 

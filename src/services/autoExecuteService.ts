@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { AutoExecuteFile } from "../types/autoExecute";
+import type { AutoExecuteFile } from "../types/autoExecute";
 
 /**
  * Retrieves all auto-execute files

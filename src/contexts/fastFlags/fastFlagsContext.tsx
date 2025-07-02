@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
 import {
 	loadProfiles as loadProfilesService,
 	saveProfile as saveProfileService,
@@ -78,7 +79,7 @@ export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({
 		const profile = state.profiles.find((p) => p.id === profileId);
 		if (!profile) return;
 
-		let updatedFlags = { ...profile.flags };
+		const updatedFlags = { ...profile.flags };
 
 		if (typeof key === "object") {
 			Object.entries(key).forEach(([flagKey, flagValue]) => {

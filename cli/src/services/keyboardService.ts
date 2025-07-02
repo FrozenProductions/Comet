@@ -1,6 +1,6 @@
 import readline from "readline";
 import { MAIN_KEYBINDS, LOG_KEYBINDS } from "../constants/keybinds.js";
-import { KeybindAction } from "../types/keybinds.js";
+import type { KeybindAction } from "../types/keybinds.js";
 
 export function setupKeyboardListener(
 	onAction: (action: KeybindAction) => void,

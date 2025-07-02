@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadScripts, deleteScript } from "../services/scriptService.js";
-import { ScriptChoice } from "../types/menu.js";
+import type { ScriptChoice } from "../types/menu.js";
 
 /**
  * Displays the delete script menu and handles script deletion

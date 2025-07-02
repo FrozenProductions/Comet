@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Search, Settings as SettingsIcon } from "lucide-react";
 import { SETTINGS_SECTIONS } from "../../constants/settings";

@@ -17,10 +17,9 @@ import { useSettings } from "../../hooks/useSettings";
 import { type FC, useState } from "react";
 import { ExecutionHistory } from "./executionHistory";
 
-export const Actions: FC<Pick<ActionMenuProps, "getEditorContent"> & { onArrowHover?: () => void }> = ({
-	getEditorContent,
-	onArrowHover,
-}) => {
+export const Actions: FC<
+	Pick<ActionMenuProps, "getEditorContent"> & { onArrowHover?: () => void }
+> = ({ getEditorContent, onArrowHover }) => {
 	const { isExecuting } = useExecute();
 	const { openRoblox } = useRoblox();
 	const { executeScript } = useScript();

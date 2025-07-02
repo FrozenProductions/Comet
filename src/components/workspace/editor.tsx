@@ -352,7 +352,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	}, []);
 
 	useEffect(() => {
-		const hasVisited = localStorage.getItem('hasVisitedBefore');
+		const hasVisited = localStorage.getItem("hasVisitedBefore");
 		if (!hasVisited) {
 			setShowFirstTimeTooltip(true);
 		}
@@ -361,7 +361,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	const handleArrowHover = () => {
 		if (showFirstTimeTooltip) {
 			setShowFirstTimeTooltip(false);
-			localStorage.setItem('hasVisitedBefore', 'true');
+			localStorage.setItem("hasVisitedBefore", "true");
 		}
 	};
 
@@ -422,12 +422,17 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			{showActions && (
 				<>
 					{showFirstTimeTooltip && (
-						<div className={`absolute right-4 ${settings.interface.zenMode || isFloating || !settings.interface.showConsole ? "bottom-16" : "bottom-24"} z-50 rounded-lg border border-ctp-surface2 bg-ctp-mantle px-3 py-2 text-sm font-medium text-ctp-text shadow-lg`}>
+						<div
+							className={`absolute right-4 ${settings.interface.zenMode || isFloating || !settings.interface.showConsole ? "bottom-16" : "bottom-24"} z-50 rounded-lg border border-ctp-surface2 bg-ctp-mantle px-3 py-2 text-sm font-medium text-ctp-text shadow-lg`}
+						>
 							Hover here to see available actions!
 							<div className="absolute -bottom-2 right-4 h-3 w-3 rotate-45 border-b border-r border-ctp-surface2 bg-ctp-mantle"></div>
 						</div>
 					)}
-					<Actions getEditorContent={getEditorContent} onArrowHover={handleArrowHover} />
+					<Actions
+						getEditorContent={getEditorContent}
+						onArrowHover={handleArrowHover}
+					/>
 				</>
 			)}
 		</div>

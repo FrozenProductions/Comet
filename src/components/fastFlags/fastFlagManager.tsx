@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
-import { FastFlagManagerProps } from "../../types/fastFlags";
+import type React from "react";
+import { useState, useRef } from "react";
+import type { FastFlagManagerProps } from "../../types/fastFlags";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";

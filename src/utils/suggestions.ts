@@ -1,6 +1,6 @@
-import * as monaco from "monaco-editor";
-import { Suggestion } from "../types/editor";
+import type * as monaco from "monaco-editor";
 import { suggestionService } from "../services/suggestionService";
+import type { Suggestion } from "../types/editor";
 
 const localPattern = /local\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
 const functionPattern = /function\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;

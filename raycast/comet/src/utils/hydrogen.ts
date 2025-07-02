@@ -21,7 +21,6 @@ export async function findHydrogenServer(): Promise<number | null> {
 				return port;
 			}
 		} catch (error) {
-			continue;
 		}
 	}
 

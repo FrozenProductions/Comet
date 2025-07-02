@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Script } from "../../types/scriptBlox";
+import type { Script } from "../../types/scriptBlox";
 import { useScriptSearch } from "../../hooks/useScriptSearch";
 import { ScriptCard } from "./scriptCard";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,7 +25,7 @@ import {
 import { toast } from "react-hot-toast";
 import { useRecentSearches } from "../../hooks/useRecentSearches";
 import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
-import { FilterOption } from "../../types/scriptBlox";
+import type { FilterOption } from "../../types/scriptBlox";
 import { getScriptContent } from "../../services/scriptBloxService";
 
 const sortOptions: FilterOption[] = [
@@ -344,7 +344,7 @@ export const ScriptLibrary = () => {
 
 		const pages = [];
 		let startPage = Math.max(1, currentPage - 2);
-		let endPage = Math.min(totalPages, startPage + 4);
+		const endPage = Math.min(totalPages, startPage + 4);
 
 		if (endPage - startPage < 4) {
 			startPage = Math.max(1, endPage - 4);

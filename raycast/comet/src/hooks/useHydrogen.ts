@@ -3,7 +3,7 @@ import { showToast, Toast } from "@raycast/api";
 import {
 	findHydrogenServer,
 	executeScript,
-	HydrogenState,
+	type HydrogenState,
 } from "../utils/hydrogen";
 
 export function useHydrogen() {

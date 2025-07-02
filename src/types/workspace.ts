@@ -1,5 +1,5 @@
-import * as monaco from "monaco-editor";
-import { Suggestion } from "./editor";
+import type * as monaco from "monaco-editor";
+import type { Suggestion } from "./editor";
 
 export interface Tab {
 	id: string;

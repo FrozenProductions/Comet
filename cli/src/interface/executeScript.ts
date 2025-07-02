@@ -1,8 +1,8 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadScripts, executeScript } from "../services/scriptService.js";
-import { Script } from "../types/script.js";
-import { ScriptChoice } from "../types/menu.js";
+import type { Script } from "../types/script.js";
+import type { ScriptChoice } from "../types/menu.js";
 
 /**
  * Displays the execute script menu and handles script execution

@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Github, ExternalLink, Zap } from "lucide-react";
-import { FooterProps } from "../types/footer";
+import type { FooterProps } from "../types/footer";
 
 const Footer: FC<FooterProps> = ({
 	onGithubClick,

@@ -1,6 +1,6 @@
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 import { motion } from "framer-motion";
-import { SliderProps } from "../../types/ui";
+import type { SliderProps } from "../../types/ui";
 
 export const Slider: FC<SliderProps> = ({
 	value,

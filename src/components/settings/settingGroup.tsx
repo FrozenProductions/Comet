@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { SettingGroupProps } from "../../types/settings";
+import type { FC } from "react";
+import type { SettingGroupProps } from "../../types/settings";
 
 export const SettingGroup: FC<SettingGroupProps> = ({
 	title,

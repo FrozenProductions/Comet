@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
+import type { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
 
 export interface FastFlagsContextType {
 	state: FastFlagsState;

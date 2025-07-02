@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { RadioGroupProps } from "../../types/ui";
+import type { RadioGroupProps } from "../../types/ui";
 
 export const RadioGroup = <T extends string>({
 	value,

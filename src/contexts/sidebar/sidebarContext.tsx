@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState, useEffect } from "react";
+import { type FC, type ReactNode, useState, useEffect } from "react";
 import { SidebarContext } from "./sidebarContextType";
 import { SIDEBAR_STORAGE_KEY } from "../../constants/sidebar";
 

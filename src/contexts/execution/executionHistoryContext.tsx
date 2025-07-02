@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback, useState, useEffect } from "react";
+import { type FC, type ReactNode, useCallback, useState, useEffect } from "react";
 import { nanoid } from "nanoid";
 import type { ExecutionRecord } from "../../types/executionHistory";
 import {

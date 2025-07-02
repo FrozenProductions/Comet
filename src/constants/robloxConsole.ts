@@ -1,4 +1,4 @@
-import { LogLevel } from "../types/robloxConsole";
+import type { LogLevel } from "../types/robloxConsole";
 
 export const CONSOLE_COLORS: Record<LogLevel, string> = {
 	ERROR: "text-red-200",

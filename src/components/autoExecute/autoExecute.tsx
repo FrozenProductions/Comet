@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { AutoExecuteFile } from "../../types/autoExecute";
+import type React from "react";
+import { useEffect, useState, useCallback } from "react";
+import type { AutoExecuteFile } from "../../types/autoExecute";
 import {
 	getAutoExecuteFiles,
 	saveAutoExecuteFile,

@@ -1,7 +1,7 @@
-import { FC, ReactNode, useState, useCallback, useEffect } from "react";
-import { ConsoleState } from "../../types/console";
+import { type FC, type ReactNode, useState, useCallback, useEffect } from "react";
+import type { ConsoleState } from "../../types/console";
 import { CONSOLE_STORAGE_KEY } from "../../constants/console";
-import { LogLine } from "../../types/robloxConsole";
+import type { LogLine } from "../../types/robloxConsole";
 import {
 	startWatching as startWatchingService,
 	stopWatching as stopWatchingService,

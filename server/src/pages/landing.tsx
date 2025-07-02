@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { type FC, useState, useEffect } from "react";
 import HeroSection from "../sections/heroSection";
 import FeaturesSection from "../sections/featuresSection";
 import TechStackSection from "../sections/techStackSection";

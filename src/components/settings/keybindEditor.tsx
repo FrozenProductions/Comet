@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState, useCallback } from "react";
+import { type FC, useEffect, useRef, useState, useCallback } from "react";
 import type {
 	Keybind,
 	KeybindEditorProps,

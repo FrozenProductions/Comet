@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { motion } from "framer-motion";
 import { Github, ExternalLink, Code, Zap } from "lucide-react";
 import ActionButton from "../components/buttons/actionButton";
