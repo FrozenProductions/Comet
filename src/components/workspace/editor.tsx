@@ -11,6 +11,7 @@ import { useConsole } from "../../hooks/useConsole";
 import { useEditor } from "../../hooks/useEditor";
 import { useKeybinds } from "../../hooks/useKeybinds";
 import { useSettings } from "../../hooks/useSettings";
+import { luaMarkerProvider } from "../../services/diagnosticsService";
 import { suggestionService } from "../../services/suggestionService";
 import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
 import { getSuggestions } from "../../utils/suggestions";
@@ -277,6 +278,12 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			const word = model.getWordUntilPosition(position);
 			const currentWord = word.word;
 
+			if (language === "lua") {
+				const currentValue = model.getValue();
+				debouncedSave(currentValue);
+				luaMarkerProvider.provideMarkerData(model);
+			}
+
 			if (!settings.intellisense.enabled) {
 				setIntellisenseState((prev) => ({ ...prev, isVisible: false }));
 				return;
@@ -318,12 +325,67 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			debouncedSave(currentValue);
 		});
 
+		monaco.languages.registerHoverProvider("lua", {
+			provideHover: (model, position) => {
+				const markers = monaco.editor
+					.getModelMarkers({
+						resource: model.uri,
+					})
+					.filter((m) => m.owner === "luaparse");
+
+				const marker = markers.find(
+					(m) =>
+						position.lineNumber >= m.startLineNumber &&
+						position.lineNumber <= m.endLineNumber &&
+						position.column >= m.startColumn &&
+						position.column <= m.endColumn,
+				);
+
+				if (marker) {
+					return {
+						contents: [
+							{
+								value: `$(error) ${marker.message}`,
+								isTrusted: true,
+								supportThemeIcons: true,
+							},
+						],
+						range: {
+							startLineNumber: marker.startLineNumber,
+							startColumn: marker.startColumn,
+							endLineNumber: marker.endLineNumber,
+							endColumn: marker.endColumn,
+						},
+					};
+				}
+
+				return null;
+			},
+		});
+
+		editor.updateOptions({
+			hover: {
+				enabled: true,
+				delay: 100,
+				sticky: true,
+			},
+			mouseWheelZoom: false,
+		});
+
+		if (language === "lua") {
+			luaMarkerProvider.provideMarkerData(model);
+		}
+
 		return () => {
 			debouncedSave.cancel();
 			saveEditorState();
+
+			if (model) {
+				monaco.editor.setModelMarkers(model, "lua-diagnostics", []);
+			}
+
 			editor.dispose();
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		activeTab,
 		language,
