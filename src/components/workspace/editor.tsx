@@ -5,12 +5,12 @@ import {
 	luaLanguage,
 	luaLanguageConfig,
 	monacoTheme,
-} from "../../constants/editor";
-import { EDITOR_DEFAULT_OPTIONS } from "../../constants/workspace";
-import { useConsole } from "../../hooks/useConsole";
-import { useEditor } from "../../hooks/useEditor";
-import { useKeybinds } from "../../hooks/useKeybinds";
-import { useSettings } from "../../hooks/useSettings";
+} from "../../constants/core/editor";
+import { EDITOR_DEFAULT_OPTIONS } from "../../constants/core/workspace";
+import { useEditor } from "../../hooks/core/useEditor";
+import { useKeybinds } from "../../hooks/core/useKeybinds";
+import { useSettings } from "../../hooks/core/useSettings";
+import { useConsole } from "../../hooks/ui/useConsole";
 import { luaMarkerProvider } from "../../services/features/diagnosticsService";
 import { suggestionService } from "../../services/features/suggestionService";
 import type {

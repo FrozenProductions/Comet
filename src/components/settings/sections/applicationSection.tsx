@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { type FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useSettings } from "../../../hooks/useSettings";
+import { useSettings } from "../../../hooks/core/useSettings";
 import {
 	openCometFolder,
 	openHydrogenFolder,

@@ -19,9 +19,9 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useEditor } from "../../hooks/core/useEditor";
 import { useRecentSearches } from "../../hooks/search/useRecentSearches";
 import { useScriptSearch } from "../../hooks/search/useScriptSearch";
-import { useEditor } from "../../hooks/useEditor";
 import { getScriptContent } from "../../services/core/scriptBloxService";
 import type { FilterOption, Script } from "../../types/core/scriptBlox";
 import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";

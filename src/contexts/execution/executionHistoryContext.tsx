@@ -6,7 +6,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { useSettings } from "../../hooks/useSettings";
+import { useSettings } from "../../hooks/core/useSettings";
 import {
 	clearExecutionHistory,
 	loadExecutionHistory,

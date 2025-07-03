@@ -12,19 +12,19 @@ import { ExecuteProvider } from "./contexts/execute/executeContext";
 import { FastFlagsProvider } from "./contexts/fastFlags/fastFlagsContext";
 import { KeybindsProvider } from "./contexts/keybinds/keybindsContext";
 import { SettingsProvider } from "./contexts/settings/settingsContext";
-import { useSettings } from "./hooks/useSettings";
+import { useSettings } from "./hooks/core/useSettings";
 import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
 import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
 import { MessageModal } from "./components/ui/messageModal";
 import { UpdateChecker } from "./components/updater";
-import { APP_CONSTANTS } from "./constants/app";
+import { APP_CONSTANTS } from "./constants/core/app";
 import { ConsoleProvider } from "./contexts/console/consoleContext";
 import { ExecutionHistoryProvider } from "./contexts/execution/executionHistoryContext";
 import { SidebarProvider } from "./contexts/sidebar/sidebarContext";
 import { WorkspaceProvider } from "./contexts/workspace/workspaceContext";
-import { useConsole } from "./hooks/useConsole";
-import { useKeybinds } from "./hooks/useKeybinds";
+import { useKeybinds } from "./hooks/core/useKeybinds";
+import { useConsole } from "./hooks/ui/useConsole";
 import { checkHydrogenInstallation } from "./services/features/hydrogenService";
 
 const AppContent: FC = () => {

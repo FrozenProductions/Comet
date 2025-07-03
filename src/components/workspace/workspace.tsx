@@ -1,9 +1,9 @@
 import { FileCode, Plus } from "lucide-react";
 import type { FC } from "react";
-import { useConsole } from "../../hooks/useConsole";
-import { useEditor } from "../../hooks/useEditor";
-import { useKeybinds } from "../../hooks/useKeybinds";
-import { useSettings } from "../../hooks/useSettings";
+import { useEditor } from "../../hooks/core/useEditor";
+import { useKeybinds } from "../../hooks/core/useKeybinds";
+import { useSettings } from "../../hooks/core/useSettings";
+import { useConsole } from "../../hooks/ui/useConsole";
 import { RobloxConsole } from "../robloxConsole";
 import { DropZone } from "./dropZone";
 import { CodeEditor } from "./editor";

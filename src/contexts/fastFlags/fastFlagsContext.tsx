@@ -1,6 +1,6 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { INITIAL_FAST_FLAGS_STATE } from "../../constants/fastFlags";
+import { INITIAL_FAST_FLAGS_STATE } from "../../constants/roblox/fastFlags";
 import {
 	activateProfile as activateProfileService,
 	createNewProfile as createNewProfileService,

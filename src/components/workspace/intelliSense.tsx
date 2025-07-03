@@ -7,7 +7,7 @@ import {
 	Variable as VariableIcon,
 } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
-import { useSettings } from "../../hooks/useSettings";
+import { useSettings } from "../../hooks/core/useSettings";
 import type { Suggestion } from "../../types/core/editor";
 import type { IntelliSenseProps } from "../../types/core/workspace";
 

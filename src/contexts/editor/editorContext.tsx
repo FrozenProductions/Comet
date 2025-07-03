@@ -7,9 +7,12 @@ import {
 	useState,
 } from "react";
 import { toast } from "react-hot-toast";
-import { SCRIPT_MESSAGES, SCRIPT_TOAST_IDS } from "../../constants/script";
-import { useExecutionHistory } from "../../hooks/useExecutionHistory";
-import { useWorkspace } from "../../hooks/useWorkspace";
+import {
+	SCRIPT_MESSAGES,
+	SCRIPT_TOAST_IDS,
+} from "../../constants/execution/script";
+import { useWorkspace } from "../../hooks/core/useWorkspace";
+import { useExecutionHistory } from "../../hooks/execution/useExecutionHistory";
 import {
 	createTab as createTabService,
 	deleteTab,

@@ -18,7 +18,7 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
-import { useFastFlags } from "../../hooks/useFastFlags";
+import { useFastFlags } from "../../hooks/roblox/useFastFlags";
 import {
 	exportToFile,
 	importFromFile,

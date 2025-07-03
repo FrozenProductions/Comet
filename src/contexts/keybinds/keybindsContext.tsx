@@ -1,12 +1,12 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { DEFAULT_KEYBINDS } from "../../constants/keybinds";
+import { DEFAULT_KEYBINDS } from "../../constants/core/keybinds";
+import { useEditor } from "../../hooks/core/useEditor";
+import { useSettings } from "../../hooks/core/useSettings";
 import { useScript } from "../../hooks/execution/useScript";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsoleVisibility } from "../../hooks/ui/useConsoleVisibility";
-import { useEditor } from "../../hooks/useEditor";
-import { useSettings } from "../../hooks/useSettings";
 import type { Keybind, KeybindAction, Screen } from "../../types/core/keybinds";
 import { KeybindsContext } from "./keybindsContextType";
 

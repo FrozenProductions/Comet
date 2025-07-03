@@ -1,7 +1,7 @@
 import { PanelLeft } from "lucide-react";
 import type { FC } from "react";
 import { Tooltip } from "react-tooltip";
-import { useSidebar } from "../hooks/useSidebar";
+import { useSidebar } from "../hooks/ui/useSidebar";
 import { TrafficLights } from "./trafficLights";
 
 export const Topbar: FC = () => {

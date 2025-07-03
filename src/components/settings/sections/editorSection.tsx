@@ -1,6 +1,6 @@
 import { Code2, Monitor, MousePointer2, Sparkles, Type } from "lucide-react";
 import type { FC } from "react";
-import { useSettings } from "../../../hooks/useSettings";
+import { useSettings } from "../../../hooks/core/useSettings";
 import type { SettingsKey } from "../../../types/core/settings";
 import { Checkbox } from "../../ui/checkbox";
 import { RadioGroup } from "../../ui/radioGroup";

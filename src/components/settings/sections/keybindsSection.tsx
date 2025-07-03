@@ -5,8 +5,8 @@ import { toast } from "react-hot-toast";
 import {
 	KEYBIND_CATEGORIES,
 	KEYBIND_CATEGORY_MAPPING,
-} from "../../../constants/keybinds";
-import { useKeybinds } from "../../../hooks/useKeybinds";
+} from "../../../constants/core/keybinds";
+import { useKeybinds } from "../../../hooks/core/useKeybinds";
 import type { Keybind, KeybindAction } from "../../../types/core/keybinds";
 import type { KeybindSectionProps } from "../../../types/core/settings";
 import { KeybindEditor } from "../keybindEditor";

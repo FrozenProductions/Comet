@@ -1,7 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
-import { INVALID_KEYS } from "../../constants/keybinds";
-import { useKeybinds } from "../../hooks/useKeybinds";
+import { INVALID_KEYS } from "../../constants/core/keybinds";
+import { useKeybinds } from "../../hooks/core/useKeybinds";
 import type {
 	Keybind,
 	KeybindEditorProps,

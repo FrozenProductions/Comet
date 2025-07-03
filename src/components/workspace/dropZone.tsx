@@ -1,7 +1,7 @@
 import { FileDown } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useEditor } from "../../hooks/useEditor";
+import { useEditor } from "../../hooks/core/useEditor";
 import type { DropZoneProps } from "../../types/core/workspace";
 
 export const DropZone: FC<DropZoneProps> = ({ className }) => {

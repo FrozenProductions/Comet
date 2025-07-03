@@ -15,8 +15,8 @@ import {
 	CONSOLE_CONFIG,
 } from "../constants/roblox/robloxConsole";
 import { CONSOLE_STORAGE_KEY } from "../constants/ui/console";
-import { useConsole } from "../hooks/useConsole";
-import { useSettings } from "../hooks/useSettings";
+import { useSettings } from "../hooks/core/useSettings";
+import { useConsole } from "../hooks/ui/useConsole";
 import type {
 	ConsolePosition,
 	LogLine,

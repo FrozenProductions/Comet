@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useEditor } from "../../hooks/core/useEditor";
+import { useSettings } from "../../hooks/core/useSettings";
+import { useWorkspace } from "../../hooks/core/useWorkspace";
 import { useScript } from "../../hooks/execution/useScript";
+import { useFastFlags } from "../../hooks/roblox/useFastFlags";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsoleVisibility } from "../../hooks/ui/useConsoleVisibility";
-import { useEditor } from "../../hooks/useEditor";
-import { useFastFlags } from "../../hooks/useFastFlags";
-import { useSettings } from "../../hooks/useSettings";
-import { useWorkspace } from "../../hooks/useWorkspace";
 import type {
 	CommandItem,
 	CommandPaletteProps,

@@ -8,9 +8,9 @@ import {
 	X,
 } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
-import { useEditor } from "../../hooks/useEditor";
-import { useSettings } from "../../hooks/useSettings";
-import { useWorkspace } from "../../hooks/useWorkspace";
+import { useEditor } from "../../hooks/core/useEditor";
+import { useSettings } from "../../hooks/core/useSettings";
+import { useWorkspace } from "../../hooks/core/useWorkspace";
 import { exportTab } from "../../services/core/tabService";
 import type { TabbarProps } from "../../types/core/workspace";
 import { ContextMenu } from "../ui/contextMenu";

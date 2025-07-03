@@ -11,9 +11,9 @@ import {
 import {
 	DEFAULT_EXECUTION_HISTORY_STATE,
 	EXECUTION_HISTORY_STORAGE_KEY,
-} from "../../constants/executionHistory";
-import { useEditor } from "../../hooks/useEditor";
-import { useExecutionHistory } from "../../hooks/useExecutionHistory";
+} from "../../constants/execution/executionHistory";
+import { useEditor } from "../../hooks/core/useEditor";
+import { useExecutionHistory } from "../../hooks/execution/useExecutionHistory";
 import type {
 	ExecutionHistoryProps,
 	ExecutionHistoryState,
