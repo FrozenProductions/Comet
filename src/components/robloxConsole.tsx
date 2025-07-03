@@ -14,12 +14,12 @@ import { CONSOLE_STORAGE_KEY } from "../constants/console";
 import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
 import { useConsole } from "../hooks/useConsole";
 import { useSettings } from "../hooks/useSettings";
-import type { ConsoleSize } from "../types/console";
 import type {
 	ConsolePosition,
 	LogLine,
 	RobloxConsoleProps,
-} from "../types/robloxConsole";
+} from "../types/roblox/robloxConsole";
+import type { ConsoleSize } from "../types/ui/console";
 
 const ConsoleHeader = memo(
 	({
@@ -389,7 +389,11 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 					) : (
 						<>
 							{logs.map((log, index) => (
-								<ConsoleLog key={`${log.timestamp}-${index}`} log={log} isResizing={isResizing} />
+								<ConsoleLog
+									key={`${log.timestamp}-${index}`}
+									log={log}
+									isResizing={isResizing}
+								/>
 							))}
 							<div ref={logsEndRef} />
 						</>

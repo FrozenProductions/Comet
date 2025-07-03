@@ -8,8 +8,8 @@ import {
 } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { useSettings } from "../../hooks/useSettings";
-import type { Suggestion } from "../../types/editor";
-import type { IntelliSenseProps } from "../../types/workspace";
+import type { Suggestion } from "../../types/core/editor";
+import type { IntelliSenseProps } from "../../types/core/workspace";
 
 const getIconForType = (type: Suggestion["type"]) => {
 	switch (type) {
@@ -139,7 +139,7 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
 						const isSelected = index === selectedIndex;
 
 						return (
-                            <div
+							<div
 								key={suggestion.label}
 								className={`flex cursor-pointer flex-col text-[11px] ${
 									isSelected

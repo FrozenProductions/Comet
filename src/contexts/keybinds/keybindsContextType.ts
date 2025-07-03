@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { DEFAULT_KEYBINDS } from "../../constants/keybinds";
-import type { KeybindsContextType } from "../../types/keybinds";
+import type { KeybindsContextType } from "../../types/core/keybinds";
 
 export const KeybindsContext = createContext<KeybindsContextType>({
 	keybinds: DEFAULT_KEYBINDS,

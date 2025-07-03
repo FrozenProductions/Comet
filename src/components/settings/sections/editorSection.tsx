@@ -1,7 +1,7 @@
 import { Code2, Monitor, MousePointer2, Sparkles, Type } from "lucide-react";
 import type { FC } from "react";
 import { useSettings } from "../../../hooks/useSettings";
-import type { SettingsKey } from "../../../types/settings";
+import type { SettingsKey } from "../../../types/core/settings";
 import { Checkbox } from "../../ui/checkbox";
 import { RadioGroup } from "../../ui/radioGroup";
 import { Slider } from "../../ui/slider";

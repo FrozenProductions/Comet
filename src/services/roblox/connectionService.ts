@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { ConnectionStatus } from "../types/connection";
+import type { ConnectionStatus } from "../../types/system/connection";
 
 /**
  * Gets the current connection status

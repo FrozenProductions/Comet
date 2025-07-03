@@ -7,7 +7,7 @@ import { useEditor } from "../../hooks/useEditor";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
 import { useSettings } from "../../hooks/useSettings";
-import type { Keybind, KeybindAction, Screen } from "../../types/keybinds";
+import type { Keybind, KeybindAction, Screen } from "../../types/core/keybinds";
 import { KeybindsContext } from "./keybindsContextType";
 
 export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -108,18 +108,18 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 			}
 		},
 		[
-			createTab, 
-			closeTab, 
-			activeTab, 
-			tabs, 
-			setActiveTab, 
-			settings, 
-			updateSettings, 
-			executeScript, 
-			openRoblox, 
-			toggleCommandPalette, 
-			handleScreenChange, 
-			toggleConsoleVisibility
+			createTab,
+			closeTab,
+			activeTab,
+			tabs,
+			setActiveTab,
+			settings,
+			updateSettings,
+			executeScript,
+			openRoblox,
+			toggleCommandPalette,
+			handleScreenChange,
+			toggleConsoleVisibility,
 		],
 	);
 
@@ -181,13 +181,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 				window.clearTimeout(bufferTimeout.current);
 			}
 		};
-	}, [
-		keybinds, 
-		tabs, 
-		setActiveTab, 
-		isKeybindEditorOpen, 
-		handleKeybindAction
-	]);
+	}, [keybinds, tabs, setActiveTab, isKeybindEditorOpen, handleKeybindAction]);
 
 	const updateKeybind = (
 		action: KeybindAction,

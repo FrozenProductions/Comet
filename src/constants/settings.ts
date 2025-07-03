@@ -1,5 +1,5 @@
 import { Code2, Keyboard, Settings2, SettingsIcon } from "lucide-react";
-import type { SettingsSection } from "../types/settings";
+import type { SettingsSection } from "../types/core/settings";
 
 export const SETTINGS_STORAGE_KEY = "comet-settings";
 

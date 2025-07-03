@@ -25,7 +25,7 @@ import { SidebarProvider } from "./contexts/sidebar/sidebarContext";
 import { WorkspaceProvider } from "./contexts/workspace/workspaceContext";
 import { useConsole } from "./hooks/useConsole";
 import { useKeybinds } from "./hooks/useKeybinds";
-import { checkHydrogenInstallation } from "./services/hydrogenService";
+import { checkHydrogenInstallation } from "./services/features/hydrogenService";
 
 const AppContent: FC = () => {
 	const { settings } = useSettings();

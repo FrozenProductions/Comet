@@ -6,7 +6,7 @@ import type {
 	Keybind,
 	KeybindEditorProps,
 	ValidationError,
-} from "../../types/keybinds";
+} from "../../types/core/keybinds";
 import { Button } from "../ui/button";
 import { Modal } from "../ui/modal";
 

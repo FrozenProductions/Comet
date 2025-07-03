@@ -3,7 +3,7 @@ import {
 	closeWindow,
 	minimizeWindow,
 	toggleMaximizeWindow,
-} from "../services/windowService";
+} from "../services/core/windowService";
 
 export const TrafficLights: FC = () => {
 	return (

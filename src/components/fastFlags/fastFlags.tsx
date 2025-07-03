@@ -22,12 +22,12 @@ import { useFastFlags } from "../../hooks/useFastFlags";
 import {
 	exportToFile,
 	importFromFile,
-} from "../../services/fastFlagsProfileService";
+} from "../../services/roblox/fastFlagsProfileService";
 import {
 	cleanupFastFlags,
 	openFastFlagsDirectory,
-} from "../../services/fastFlagsService";
-import { validateFlags } from "../../services/flagValidationService";
+} from "../../services/roblox/fastFlagsService";
+import { validateFlags } from "../../services/roblox/flagValidationService";
 import { Button } from "../ui/button";
 import { Header } from "../ui/header";
 import { Input } from "../ui/input";
@@ -537,7 +537,8 @@ export const FastFlags: React.FC = () => {
 				icon={<AlertCircle size={14} className="text-ctp-red" />}
 				primaryAction={{
 					label: "Delete",
-					onClick: () => profileToDelete && handleDeleteProfile(profileToDelete.id),
+					onClick: () =>
+						profileToDelete && handleDeleteProfile(profileToDelete.id),
 				}}
 			/>
 

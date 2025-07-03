@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { Workspace } from "../types/workspace";
+import type { Workspace } from "../../types/core/workspace";
 
 /**
  * Loads all workspaces and the active workspace

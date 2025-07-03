@@ -1,5 +1,8 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { FastFlagCategory, FastFlagsResponse } from "../types/fastFlags";
+import type {
+	FastFlagCategory,
+	FastFlagsResponse,
+} from "../../types/roblox/fastFlags";
 
 const serializeValue = (value: string): any => {
 	if (!Number.isNaN(Number(value))) {

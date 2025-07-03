@@ -17,7 +17,7 @@ import { useExecutionHistory } from "../../hooks/useExecutionHistory";
 import type {
 	ExecutionHistoryProps,
 	ExecutionHistoryState,
-} from "../../types/executionHistory";
+} from "../../types/execution/executionHistory";
 
 export const ExecutionHistory = ({
 	isVisible,

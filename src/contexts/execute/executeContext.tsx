@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
-import { executeScript } from "../../services/scriptService";
+import { executeScript } from "../../services/execution/scriptService";
 import { ExecuteContext } from "./executeContextType";
 
 export const ExecuteProvider = ({

@@ -1,5 +1,8 @@
 import { createContext } from "react";
-import type { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
+import type {
+	FastFlagsProfile,
+	FastFlagsState,
+} from "../../types/roblox/fastFlags";
 
 export interface FastFlagsContextType {
 	state: FastFlagsState;

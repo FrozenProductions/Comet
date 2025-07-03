@@ -10,33 +10,6 @@ export interface LuaDiagnostic {
 	endColumn: number;
 }
 
-function formatErrorMessage(error: luaparse.LuaParseError): string {
-	return error.message.replace(/^\[\d+:\d+\]\s*/, "").trim();
-}
-
-function findErrorRange(
-	code: string,
-	line: number,
-	column: number,
-): { endLine: number; endColumn: number } {
-	const lines = code.split("\n");
-	const errorLine = lines[line - 1] || "";
-
-	let endColumn = column;
-	while (endColumn < errorLine.length && /[\w$]/.test(errorLine[endColumn])) {
-		endColumn++;
-	}
-
-	if (endColumn === column) {
-		endColumn = column + 1;
-	}
-
-	return {
-		endLine: line,
-		endColumn: endColumn,
-	};
-}
-
 class LuaMarkerDataProvider {
 	private owner = "lua-diagnostics";
 	private diagnosticsMap = new Map<string, monaco.editor.IMarkerData[]>();
@@ -61,18 +34,6 @@ class LuaMarkerDataProvider {
 				onCreateNode: () => {},
 				onCreateScope: () => {},
 				onDestroyScope: () => {},
-				onError: (error: luaparse.LuaParseError) => {
-					const range = findErrorRange(code, error.line, error.column);
-					diagnostics.push({
-						severity: monaco.MarkerSeverity.Error,
-						message: formatErrorMessage(error),
-						startLineNumber: error.line,
-						startColumn: error.column,
-						endLineNumber: range.endLine,
-						endColumn: range.endColumn,
-						source: "Lua",
-					});
-				},
 			});
 		} catch (error) {
 			if (error instanceof Error) {

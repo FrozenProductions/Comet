@@ -23,7 +23,7 @@ import { useWorkspace } from "../../hooks/useWorkspace";
 import type {
 	CommandItem,
 	CommandPaletteProps,
-} from "../../types/commandPalette";
+} from "../../types/ui/commandPalette";
 
 export const CommandPalette: FC<CommandPaletteProps> = ({
 	isOpen,

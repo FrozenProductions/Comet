@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { Tab } from "../types/editor";
-import type { ScriptExecutionResult } from "../types/script";
+import type { Tab } from "../../types/core/editor";
+import type { ScriptExecutionResult } from "../../types/execution/script";
 
 /**
  * Executes a Lua script through the Hydrogen API

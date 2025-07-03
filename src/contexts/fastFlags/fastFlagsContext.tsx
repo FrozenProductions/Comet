@@ -9,8 +9,11 @@ import {
 	loadProfiles as loadProfilesService,
 	renameProfile as renameProfileService,
 	saveProfile as saveProfileService,
-} from "../../services/fastFlagsProfileService";
-import type { FastFlagsProfile, FastFlagsState } from "../../types/fastFlags";
+} from "../../services/roblox/fastFlagsProfileService";
+import type {
+	FastFlagsProfile,
+	FastFlagsState,
+} from "../../types/roblox/fastFlags";
 import { FastFlagsContext } from "./fastFlagsContextType";
 
 export const FastFlagsProvider: React.FC<{ children: React.ReactNode }> = ({

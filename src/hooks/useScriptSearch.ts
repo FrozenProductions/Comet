@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { searchScripts as searchScriptsService } from "../services/scriptBloxService";
+import { searchScripts as searchScriptsService } from "../services/core/scriptBloxService";
 import type {
 	ScriptSearchParams,
 	ScriptSearchState,
-} from "../types/scriptBlox";
+} from "../types/core/scriptBlox";
 
 /**
  * Hook for managing script search functionality with debounced API calls.

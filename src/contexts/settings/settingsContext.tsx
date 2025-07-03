@@ -4,7 +4,7 @@ import {
 	DEFAULT_EDITOR_SETTINGS,
 	SETTINGS_STORAGE_KEY,
 } from "../../constants/settings";
-import type { EditorSettings } from "../../types/settings";
+import type { EditorSettings } from "../../types/core/settings";
 import { SettingsContext } from "./settingsContextType";
 
 const mergeWithDefaults = (

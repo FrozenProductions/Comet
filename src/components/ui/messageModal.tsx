@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { fetchVersionMessage } from "../../services/versionMessagesService";
+import { fetchVersionMessage } from "../../services/system/versionMessagesService";
 import type {
 	MessageModalProps,
 	VersionMessage,
-} from "../../types/versionMessages";
+} from "../../types/system/versionMessages";
 
 type GenericMessageModalProps = {
 	isOpen: boolean;

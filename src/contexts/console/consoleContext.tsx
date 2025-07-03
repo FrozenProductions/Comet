@@ -10,9 +10,9 @@ import {
 	startWatching as startWatchingService,
 	stopWatching as stopWatchingService,
 	subscribe as subscribeService,
-} from "../../services/robloxLogService";
-import type { ConsoleState } from "../../types/console";
-import type { LogLine } from "../../types/robloxConsole";
+} from "../../services/roblox/robloxLogService";
+import type { LogLine } from "../../types/roblox/robloxConsole";
+import type { ConsoleState } from "../../types/ui/console";
 import { ConsoleContext } from "./consoleContextType";
 
 export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {

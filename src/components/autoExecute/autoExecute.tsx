@@ -26,8 +26,8 @@ import {
 	renameAutoExecuteFile,
 	saveAutoExecuteFile,
 	toggleAutoExecute,
-} from "../../services/autoExecuteService";
-import type { AutoExecuteFile } from "../../types/autoExecute";
+} from "../../services/execution/autoExecuteService";
+import type { AutoExecuteFile } from "../../types/execution/autoExecute";
 import { Button } from "../ui/button";
 import { Header } from "../ui/header";
 import { Input } from "../ui/input";

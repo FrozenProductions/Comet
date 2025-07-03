@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { History, X } from "lucide-react";
 import type { FC } from "react";
-import type { RecentSearchesDropdownProps } from "../../types/ui";
+import type { RecentSearchesDropdownProps } from "../../types/ui/ui";
 
 export const RecentSearchesDropdown: FC<RecentSearchesDropdownProps> = ({
 	recentSearches,

@@ -1,4 +1,7 @@
-import type { ScriptExecutionOptions, ScriptExecutionResult } from "./script";
+import type {
+	ScriptExecutionOptions,
+	ScriptExecutionResult,
+} from "../execution/script";
 
 export interface EditorPosition {
 	lineNumber: number;

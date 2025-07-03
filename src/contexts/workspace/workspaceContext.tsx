@@ -1,4 +1,10 @@
-import { type FC, type ReactNode, useCallback, useEffect, useState } from "react";
+import {
+	type FC,
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
 import { toast } from "react-hot-toast";
 import {
 	createWorkspace as createWorkspaceService,
@@ -6,7 +12,7 @@ import {
 	loadWorkspaces as loadWorkspacesService,
 	renameWorkspace as renameWorkspaceService,
 	setActiveWorkspace as setActiveWorkspaceService,
-} from "../../services/workspaceService";
+} from "../../services/core/workspaceService";
 import { type Workspace, WorkspaceContext } from "./workspaceContextType";
 
 export const WorkspaceProvider: FC<{ children: ReactNode }> = ({

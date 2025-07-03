@@ -11,9 +11,12 @@ import { useConsole } from "../../hooks/useConsole";
 import { useEditor } from "../../hooks/useEditor";
 import { useKeybinds } from "../../hooks/useKeybinds";
 import { useSettings } from "../../hooks/useSettings";
-import { luaMarkerProvider } from "../../services/diagnosticsService";
-import { suggestionService } from "../../services/suggestionService";
-import type { CodeEditorProps, IntellisenseState } from "../../types/workspace";
+import { luaMarkerProvider } from "../../services/features/diagnosticsService";
+import { suggestionService } from "../../services/features/suggestionService";
+import type {
+	CodeEditorProps,
+	IntellisenseState,
+} from "../../types/core/workspace";
 import { getSuggestions } from "../../utils/suggestions";
 import { Actions } from "../ui/editorActions";
 import { EditorSearch } from "./editorSearch";

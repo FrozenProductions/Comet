@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { Suggestion } from "../types/editor";
+import type { Suggestion } from "../../types/core/editor";
 
 class SuggestionService {
 	private static instance: SuggestionService;

@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import { type FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { installHydrogen } from "../../services/hydrogenService";
-import type { InstallProgress } from "../../types/ui";
+import { installHydrogen } from "../../services/features/hydrogenService";
+import type { InstallProgress } from "../../types/ui/ui";
 
 const LoadingDots = () => {
 	return (

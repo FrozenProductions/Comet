@@ -1,4 +1,4 @@
-import type { LogLine } from "./robloxConsole";
+import type { LogLine } from "../roblox/robloxConsole";
 
 export interface ConsoleContextType {
 	isFloating: boolean;

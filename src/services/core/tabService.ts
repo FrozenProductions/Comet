@@ -1,6 +1,6 @@
 import { save } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api/tauri";
-import type { Tab } from "../types/workspace";
+import type { Tab } from "../../types/core/workspace";
 
 /**
  * Exports a tab's content to a file on disk

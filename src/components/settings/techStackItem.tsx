@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { TechStackItemProps } from "../../types/settings";
+import type { TechStackItemProps } from "../../types/core/settings";
 
 export const TechStackItem: FC<TechStackItemProps> = ({
 	name,

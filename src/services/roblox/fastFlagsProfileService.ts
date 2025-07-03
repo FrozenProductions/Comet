@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import type {
 	FastFlagsProfile,
 	LoadProfilesResponse,
-} from "../types/fastFlags";
+} from "../../types/roblox/fastFlags";
 
 /**
  * Loads all fast flags profiles and the active profile

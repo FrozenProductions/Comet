@@ -12,7 +12,7 @@ import type {
 	DeleteWorkspaceState,
 	WorkspaceDropdownPortalProps,
 	WorkspaceProps,
-} from "../../types/workspace";
+} from "../../types/core/workspace";
 import { Modal } from "../ui/modal";
 
 const WorkspaceInput = memo(
@@ -31,7 +31,10 @@ const WorkspaceInput = memo(
 			<div className="p-3">
 				<div className="space-y-1.5">
 					<div className="flex items-center justify-between">
-						<label htmlFor="workspace-name-input" className="text-[11px] font-medium text-ctp-subtext1">
+						<label
+							htmlFor="workspace-name-input"
+							className="text-[11px] font-medium text-ctp-subtext1"
+						>
 							New Workspace Name
 						</label>
 						<span className="text-[10px] text-ctp-subtext0">

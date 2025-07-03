@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { AlertTriangle, Code, Eye, Globe, Key, Shield } from "lucide-react";
-import type { ScriptCardProps } from "../../types/scriptBlox";
+import type { ScriptCardProps } from "../../types/core/scriptBlox";
 
 export const ScriptCard = ({ script, onSelect }: ScriptCardProps) => {
 	const formatNumber = (num: number | undefined) => {

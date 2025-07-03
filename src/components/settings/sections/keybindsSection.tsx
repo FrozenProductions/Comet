@@ -7,8 +7,8 @@ import {
 	KEYBIND_CATEGORY_MAPPING,
 } from "../../../constants/keybinds";
 import { useKeybinds } from "../../../hooks/useKeybinds";
-import type { Keybind, KeybindAction } from "../../../types/keybinds";
-import type { KeybindSectionProps } from "../../../types/settings";
+import type { Keybind, KeybindAction } from "../../../types/core/keybinds";
+import type { KeybindSectionProps } from "../../../types/core/settings";
 import { KeybindEditor } from "../keybindEditor";
 
 const getKeybindTitle = (action: KeybindAction): string => {

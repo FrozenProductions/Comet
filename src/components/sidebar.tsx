@@ -4,7 +4,7 @@ import "react-tooltip/dist/react-tooltip.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { BUTTON_SPACING, MAIN_SCREENS } from "../constants/sidebar";
 import { useSidebar } from "../hooks/useSidebar";
-import type { SidebarProps } from "../types/sidebar";
+import type { SidebarProps } from "../types/ui/sidebar";
 
 export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
 	const { isVisible } = useSidebar();

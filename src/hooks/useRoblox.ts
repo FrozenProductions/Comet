@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { toast } from "react-hot-toast";
-import { openRoblox as openRobloxService } from "../services/robloxService";
+import { openRoblox as openRobloxService } from "../services/roblox/robloxService";
 
 export const useRoblox = () => {
 	const openRoblox = useCallback(async () => {

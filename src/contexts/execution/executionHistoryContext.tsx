@@ -11,8 +11,8 @@ import {
 	clearExecutionHistory,
 	loadExecutionHistory,
 	saveExecutionRecord,
-} from "../../services/executionHistoryService";
-import type { ExecutionRecord } from "../../types/executionHistory";
+} from "../../services/execution/executionHistoryService";
+import type { ExecutionRecord } from "../../types/execution/executionHistory";
 import { ExecutionHistoryContext } from "./executionHistoryContextType";
 
 export const ExecutionHistoryProvider: FC<{ children: ReactNode }> = ({

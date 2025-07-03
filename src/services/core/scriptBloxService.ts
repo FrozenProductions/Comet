@@ -3,7 +3,7 @@ import type {
 	ScriptDetailResponse,
 	ScriptSearchParams,
 	ScriptSearchResponse,
-} from "../types/scriptBlox";
+} from "../../types/core/scriptBlox";
 
 /**
  * Searches for scripts on ScriptBlox

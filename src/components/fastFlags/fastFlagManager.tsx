@@ -13,8 +13,8 @@ import {
 import type React from "react";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { refreshFlagValidationCache } from "../../services/flagValidationService";
-import type { FastFlagManagerProps } from "../../types/fastFlags";
+import { refreshFlagValidationCache } from "../../services/roblox/flagValidationService";
+import type { FastFlagManagerProps } from "../../types/roblox/fastFlags";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Modal } from "../ui/modal";

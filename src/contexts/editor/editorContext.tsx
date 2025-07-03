@@ -19,9 +19,9 @@ import {
 	renameTab,
 	saveTab,
 	saveTabState,
-} from "../../services/scriptService";
-import type { EditorPosition, Tab } from "../../types/editor";
-import type { ScriptExecutionOptions } from "../../types/script";
+} from "../../services/execution/scriptService";
+import type { EditorPosition, Tab } from "../../types/core/editor";
+import type { ScriptExecutionOptions } from "../../types/execution/script";
 import { EditorContext } from "./editorContextType";
 
 export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {

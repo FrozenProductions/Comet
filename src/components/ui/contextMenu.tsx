@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
-import type { ContextMenuItem, ContextMenuProps } from "../../types/ui";
+import type { ContextMenuItem, ContextMenuProps } from "../../types/ui/ui";
 
 export const ContextMenu: FC<ContextMenuProps> = ({
 	items,
@@ -50,12 +50,15 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 			>
 				<div className="w-48 overflow-hidden rounded-lg border border-ctp-surface2 bg-ctp-surface0 shadow-lg">
 					{submenuItems.map((item, idx) => {
-						const itemKey = item.type === "separator" 
-							? `submenu-separator-${idx}`
-							: `submenu-item-${item.label}-${idx}`;
+						const itemKey =
+							item.type === "separator"
+								? `submenu-separator-${idx}`
+								: `submenu-item-${item.label}-${idx}`;
 
 						if (item.type === "separator") {
-							return <div key={itemKey} className="my-1 h-px bg-ctp-surface2" />;
+							return (
+								<div key={itemKey} className="my-1 h-px bg-ctp-surface2" />
+							);
 						}
 
 						return (
@@ -106,12 +109,15 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 					className="w-32 overflow-hidden rounded-lg border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
 				>
 					{items.map((item, index) => {
-						const itemKey = item.type === "separator"
-							? `menu-separator-${index}`
-							: `menu-item-${item.label}-${index}`;
+						const itemKey =
+							item.type === "separator"
+								? `menu-separator-${index}`
+								: `menu-item-${item.label}-${index}`;
 
 						if (item.type === "separator") {
-							return <div key={itemKey} className="my-1 h-px bg-ctp-surface2" />;
+							return (
+								<div key={itemKey} className="my-1 h-px bg-ctp-surface2" />
+							);
 						}
 
 						return (

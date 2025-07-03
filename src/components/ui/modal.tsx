@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import type { ModalProps } from "../../types/ui";
+import type { ModalProps } from "../../types/ui/ui";
 
 export const Modal = ({
 	isOpen,

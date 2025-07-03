@@ -14,7 +14,7 @@ import { useExecute } from "../../hooks/useExecute";
 import { useRoblox } from "../../hooks/useRoblox";
 import { useScript } from "../../hooks/useScript";
 import { useSettings } from "../../hooks/useSettings";
-import type { ActionMenuProps } from "../../types/workspace";
+import type { ActionMenuProps } from "../../types/core/workspace";
 import { ExecutionHistory } from "./executionHistory";
 
 export const Actions: FC<

@@ -11,8 +11,8 @@ import { type FC, useEffect, useRef, useState } from "react";
 import { useEditor } from "../../hooks/useEditor";
 import { useSettings } from "../../hooks/useSettings";
 import { useWorkspace } from "../../hooks/useWorkspace";
-import { exportTab } from "../../services/tabService";
-import type { TabbarProps } from "../../types/workspace";
+import { exportTab } from "../../services/core/tabService";
+import type { TabbarProps } from "../../types/core/workspace";
 import { ContextMenu } from "../ui/contextMenu";
 import { WorkspaceSelector } from "./workspaceSelector";
 

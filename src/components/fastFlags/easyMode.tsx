@@ -13,12 +13,12 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
-import { getFastFlagCategories } from "../../services/fastFlagsService";
+import { getFastFlagCategories } from "../../services/roblox/fastFlagsService";
 import type {
 	FastFlagCategory,
 	FastFlagDefinition,
 	FastFlagManagerProps,
-} from "../../types/fastFlags";
+} from "../../types/roblox/fastFlags";
 import { Slider } from "../ui/slider";
 
 type CategoryConfig = {

@@ -19,13 +19,13 @@ import { type FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSettings } from "../../../hooks/useSettings";
 import {
-	checkForUpdates,
-	downloadAndInstallUpdate,
-} from "../../../services/updateService";
-import {
 	openCometFolder,
 	openHydrogenFolder,
-} from "../../../services/windowService";
+} from "../../../services/core/windowService";
+import {
+	checkForUpdates,
+	downloadAndInstallUpdate,
+} from "../../../services/system/updateService";
 import { Checkbox } from "../../ui/checkbox";
 import { Modal } from "../../ui/modal";
 import { SettingGroup } from "../settingGroup";

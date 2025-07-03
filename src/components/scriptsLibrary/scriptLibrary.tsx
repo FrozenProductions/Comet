@@ -22,8 +22,8 @@ import { toast } from "react-hot-toast";
 import { useEditor } from "../../hooks/useEditor";
 import { useRecentSearches } from "../../hooks/useRecentSearches";
 import { useScriptSearch } from "../../hooks/useScriptSearch";
-import { getScriptContent } from "../../services/scriptBloxService";
-import type { FilterOption, Script } from "../../types/scriptBlox";
+import { getScriptContent } from "../../services/core/scriptBloxService";
+import type { FilterOption, Script } from "../../types/core/scriptBlox";
 import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
 import { ScriptCard } from "./scriptCard";
 
