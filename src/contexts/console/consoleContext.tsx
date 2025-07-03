@@ -5,7 +5,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { CONSOLE_STORAGE_KEY } from "../../constants/console";
+import { CONSOLE_STORAGE_KEY } from "../../constants/ui/console";
 import {
 	startWatching as startWatchingService,
 	stopWatching as stopWatchingService,

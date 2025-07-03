@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, Search, Settings as SettingsIcon } from "lucide-react";
 import { type FC, useState } from "react";
-import { SETTINGS_SECTIONS } from "../../constants/settings";
+import { SETTINGS_SECTIONS } from "../../constants/core/settings";
 import { Header } from "../ui/header";
 import { ApplicationSection } from "./sections/applicationSection";
 import { EditorSection } from "./sections/editorSection";

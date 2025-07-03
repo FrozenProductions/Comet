@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ConsoleContext } from "../contexts/console/consoleContextType";
+import { ConsoleContext } from "../../contexts/console/consoleContextType";
 
 export const useConsole = () => {
 	const context = useContext(ConsoleContext);

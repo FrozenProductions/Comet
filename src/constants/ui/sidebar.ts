@@ -1,5 +1,5 @@
 import { Code, Flag, Library, Settings, Syringe } from "lucide-react";
-import type { SidebarItem } from "../types/ui/sidebar";
+import type { SidebarItem } from "../../types/ui/sidebar";
 
 export const MAIN_SCREENS: SidebarItem[] = [
 	{ id: "Editor", icon: Code, label: "Code Editor" },

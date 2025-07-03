@@ -10,8 +10,11 @@ import {
 	Trash2,
 } from "lucide-react";
 import { type FC, memo, useCallback, useEffect, useRef, useState } from "react";
-import { CONSOLE_STORAGE_KEY } from "../constants/console";
-import { CONSOLE_COLORS, CONSOLE_CONFIG } from "../constants/robloxConsole";
+import {
+	CONSOLE_COLORS,
+	CONSOLE_CONFIG,
+} from "../constants/roblox/robloxConsole";
+import { CONSOLE_STORAGE_KEY } from "../constants/ui/console";
 import { useConsole } from "../hooks/useConsole";
 import { useSettings } from "../hooks/useSettings";
 import type {

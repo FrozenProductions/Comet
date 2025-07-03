@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { FastFlagsContext } from "../contexts/fastFlags/fastFlagsContextType";
+import { FastFlagsContext } from "../../contexts/fastFlags/fastFlagsContextType";
 
 export const useFastFlags = () => {
 	const context = useContext(FastFlagsContext);

@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import {
 	DEFAULT_EDITOR_SETTINGS,
 	SETTINGS_STORAGE_KEY,
-} from "../../constants/settings";
+} from "../../constants/core/settings";
 import type { EditorSettings } from "../../types/core/settings";
 import { SettingsContext } from "./settingsContextType";
 

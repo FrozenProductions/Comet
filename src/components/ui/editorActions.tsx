@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import { type FC, useState } from "react";
 import { Tooltip } from "react-tooltip";
+import { useScript } from "../../hooks/execution/useScript";
+import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsole } from "../../hooks/useConsole";
 import { useExecute } from "../../hooks/useExecute";
-import { useRoblox } from "../../hooks/useRoblox";
-import { useScript } from "../../hooks/useScript";
 import { useSettings } from "../../hooks/useSettings";
 import type { ActionMenuProps } from "../../types/core/workspace";
 import { ExecutionHistory } from "./executionHistory";
