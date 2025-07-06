@@ -87,3 +87,18 @@ export interface SliderProps {
 	description?: string;
 	unit?: string;
 }
+
+export interface GenericMessageModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	title: string;
+	message: string;
+	icon?: React.ReactNode;
+	variant?: "info" | "warning" | "destructive";
+	primaryAction?: {
+		label: string;
+		onClick: () => void;
+		icon?: React.ReactNode;
+	};
+	children?: React.ReactNode;
+}

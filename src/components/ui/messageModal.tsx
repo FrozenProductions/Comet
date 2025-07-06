@@ -7,6 +7,7 @@ import type {
 	MessageModalProps,
 	VersionMessage,
 } from "../../types/system/versionMessages";
+import type { GenericMessageModalProps } from "../../types/ui/ui";
 
 const getScaleValue = (modalScale: "small" | "default" | "large"): number => {
 	switch (modalScale) {
@@ -17,21 +18,6 @@ const getScaleValue = (modalScale: "small" | "default" | "large"): number => {
 		default:
 			return 1;
 	}
-};
-
-type GenericMessageModalProps = {
-	isOpen: boolean;
-	onClose: () => void;
-	title: string;
-	message: string;
-	icon?: React.ReactNode;
-	variant?: "info" | "warning" | "destructive";
-	primaryAction?: {
-		label: string;
-		onClick: () => void;
-		icon?: React.ReactNode;
-	};
-	children?: React.ReactNode;
 };
 
 export const BaseMessageModal = ({
@@ -170,7 +156,7 @@ export const MessageModal = ({ currentVersion }: MessageModalProps) => {
 		<BaseMessageModal
 			isOpen={isVisible}
 			onClose={handleClose}
-			title={`Version ${currentVersion}`}
+			title="Message"
 			message={versionData.message}
 			icon={
 				versionData.nfu && <AlertTriangle size={14} className="text-ctp-red" />
