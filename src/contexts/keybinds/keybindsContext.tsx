@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { DEFAULT_KEYBINDS } from "../../constants/core/keybinds";
 import { useEditor } from "../../hooks/core/useEditor";
+import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import { useSettings } from "../../hooks/core/useSettings";
 import { useScript } from "../../hooks/execution/useScript";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
@@ -19,10 +20,10 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 	const { executeScript } = useScript();
 	const { toggleConsoleVisibility } = useConsoleVisibility();
 	const [activeScreen, setActiveScreen] = useState<Screen>("Editor");
-	const [keybinds, setKeybinds] = useState<Keybind[]>(() => {
-		const saved = localStorage.getItem("keybinds");
-		return saved ? JSON.parse(saved) : DEFAULT_KEYBINDS;
-	});
+	const [keybinds, setKeybinds] = useLocalStorage<Keybind[]>(
+		"keybinds",
+		DEFAULT_KEYBINDS,
+	);
 	const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 	const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 	const [isKeybindEditorOpen, setIsKeybindEditorOpen] = useState(false);
@@ -183,27 +184,25 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 		};
 	}, [keybinds, tabs, setActiveTab, isKeybindEditorOpen, handleKeybindAction]);
 
-	const updateKeybind = (
-		action: KeybindAction,
-		newKeybind: Partial<Keybind>,
-	) => {
-		setKeybinds((prev) => {
-			const updated = prev.map((kb) =>
-				kb.action === action
-					? {
-							...kb,
-							key: newKeybind.key || kb.key,
-							modifiers: {
-								...kb.modifiers,
-								...newKeybind.modifiers,
-							},
-						}
-					: kb,
+	const updateKeybind = useCallback(
+		(action: KeybindAction, newKeybind: Partial<Keybind>) => {
+			setKeybinds((prev) =>
+				prev.map((kb) =>
+					kb.action === action
+						? {
+								...kb,
+								key: newKeybind.key || kb.key,
+								modifiers: {
+									...kb.modifiers,
+									...newKeybind.modifiers,
+								},
+							}
+						: kb,
+				),
 			);
-			localStorage.setItem("keybinds", JSON.stringify(updated));
-			return updated;
-		});
-	};
+		},
+		[setKeybinds],
+	);
 
 	return (
 		<KeybindsContext.Provider

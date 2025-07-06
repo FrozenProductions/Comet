@@ -13,6 +13,7 @@ import {
 	EXECUTION_HISTORY_STORAGE_KEY,
 } from "../../constants/execution/executionHistory";
 import { useEditor } from "../../hooks/core/useEditor";
+import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import { useExecutionHistory } from "../../hooks/execution/useExecutionHistory";
 import type {
 	ExecutionHistoryProps,
@@ -26,17 +27,10 @@ export const ExecutionHistory = ({
 	const { history, clearHistory } = useExecutionHistory();
 	const { createTabWithContent } = useEditor();
 	const [expandedErrors, setExpandedErrors] = useState<Set<string>>(new Set());
-	const [state, setState] = useState<ExecutionHistoryState>(() => {
-		const saved = localStorage.getItem(EXECUTION_HISTORY_STORAGE_KEY);
-		if (saved) {
-			try {
-				return JSON.parse(saved);
-			} catch {
-				return DEFAULT_EXECUTION_HISTORY_STATE;
-			}
-		}
-		return DEFAULT_EXECUTION_HISTORY_STATE;
-	});
+	const [state, setState] = useLocalStorage<ExecutionHistoryState>(
+		EXECUTION_HISTORY_STORAGE_KEY,
+		DEFAULT_EXECUTION_HISTORY_STATE,
+	);
 
 	const [isDragging, setIsDragging] = useState(false);
 	const [isResizing, setIsResizing] = useState(false);
@@ -46,10 +40,6 @@ export const ExecutionHistory = ({
 	const handleOpenInEditor = async (content: string) => {
 		await createTabWithContent("history.lua", content);
 	};
-
-	useEffect(() => {
-		localStorage.setItem(EXECUTION_HISTORY_STORAGE_KEY, JSON.stringify(state));
-	}, [state]);
 
 	const containerVariants = {
 		hidden: { opacity: 0, scale: 0.95, display: "none" },
@@ -128,7 +118,7 @@ export const ExecutionHistory = ({
 				window.removeEventListener("mouseup", handleDragEnd);
 			};
 		}
-	}, [isDragging, isResizing, handleDragEnd]);
+	}, [isDragging, isResizing, handleDragEnd, setState]);
 
 	const toggleErrorExpand = (id: string) => {
 		setExpandedErrors((prev) => {

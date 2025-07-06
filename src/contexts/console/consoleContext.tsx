@@ -6,6 +6,7 @@ import {
 	useState,
 } from "react";
 import { CONSOLE_STORAGE_KEY } from "../../constants/ui/console";
+import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import {
 	startWatching as startWatchingService,
 	stopWatching as stopWatchingService,
@@ -16,36 +17,29 @@ import type { ConsoleState } from "../../types/ui/console";
 import { ConsoleContext } from "./consoleContextType";
 
 export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
-	const [isFloating, setIsFloating] = useState(() => {
-		const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
-		if (savedState) {
-			try {
-				const state = JSON.parse(savedState) as ConsoleState;
-				return state.isFloating;
-			} catch {
-				return false;
-			}
-		}
-		return false;
-	});
+	const [consoleState, setConsoleState] = useLocalStorage<ConsoleState>(
+		CONSOLE_STORAGE_KEY,
+		{
+			isFloating: false,
+			position: {
+				x: window.innerWidth / 2 - 400,
+				y: window.innerHeight / 2 - 200,
+			},
+			size: {
+				width: 800,
+				height: 300,
+			},
+		},
+	);
 
 	const [logs, setLogs] = useState<LogLine[]>([]);
 	const [isWatching, setIsWatching] = useState(false);
 
 	const handleSetIsFloating = (value: boolean) => {
-		setIsFloating(value);
-		const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
-		let state: ConsoleState = { isFloating: value };
-
-		if (savedState) {
-			try {
-				state = { ...JSON.parse(savedState), isFloating: value };
-			} catch {
-				console.error("Failed to parse console state:", savedState);
-			}
-		}
-
-		localStorage.setItem(CONSOLE_STORAGE_KEY, JSON.stringify(state));
+		setConsoleState((prev) => ({
+			...prev,
+			isFloating: value,
+		}));
 	};
 
 	const addLog = useCallback((log: LogLine) => {
@@ -94,7 +88,7 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	return (
 		<ConsoleContext.Provider
 			value={{
-				isFloating,
+				isFloating: consoleState.isFloating,
 				setIsFloating: handleSetIsFloating,
 				logs,
 				isWatching,

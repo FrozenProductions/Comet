@@ -4,6 +4,7 @@ import {
 	DEFAULT_EDITOR_SETTINGS,
 	SETTINGS_STORAGE_KEY,
 } from "../../constants/core/settings";
+import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import type { EditorSettings } from "../../types/core/settings";
 import { SettingsContext } from "./settingsContextType";
 
@@ -59,91 +60,41 @@ const validateSettings = (settings: EditorSettings): boolean => {
 	}
 };
 
-const safeLocalStorageGet = (key: string): string | null => {
-	try {
-		return localStorage.getItem(key);
-	} catch (error) {
-		console.error("Failed to access localStorage:", error);
-		return null;
-	}
-};
-
-const safeLocalStorageSet = (key: string, value: string): boolean => {
-	try {
-		localStorage.setItem(key, value);
-		return true;
-	} catch (error) {
-		console.error("Failed to write to localStorage:", error);
-		return false;
-	}
-};
-
 export const SettingsProvider = ({
 	children,
 }: {
 	children: React.ReactNode;
 }) => {
-	const [settings, setSettings] = useState<EditorSettings>(
+	const [settings, setSettings] = useLocalStorage<EditorSettings>(
+		SETTINGS_STORAGE_KEY,
 		DEFAULT_EDITOR_SETTINGS,
 	);
 	const [isInitialized, setIsInitialized] = useState(false);
-	const [hasLocalStorageError, setHasLocalStorageError] = useState(false);
+	const [hasLocalStorageError] = useState(false);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
 	useEffect(() => {
-		const initializeSettings = () => {
-			try {
-				const savedSettings = safeLocalStorageGet(SETTINGS_STORAGE_KEY);
-				let parsedSettings: Partial<EditorSettings> = {};
+		try {
+			const savedValue = localStorage.getItem(SETTINGS_STORAGE_KEY);
+			if (!savedValue) return;
 
-				if (savedSettings) {
-					try {
-						parsedSettings = JSON.parse(savedSettings);
-					} catch (error) {
-						console.error("Failed to parse saved settings:", error);
-						toast.error("Failed to load saved settings. Restoring defaults.");
-					}
-				}
+			const parsed = JSON.parse(savedValue);
+			const merged = mergeWithDefaults(parsed, DEFAULT_EDITOR_SETTINGS);
 
-				const mergedSettings = mergeWithDefaults(
-					parsedSettings,
-					DEFAULT_EDITOR_SETTINGS,
-				);
-
-				if (!validateSettings(mergedSettings)) {
-					throw new Error("Invalid settings structure");
-				}
-
-				setSettings(mergedSettings);
-
-				const saveSuccess = safeLocalStorageSet(
-					SETTINGS_STORAGE_KEY,
-					JSON.stringify(mergedSettings),
-				);
-
-				if (!saveSuccess) {
-					setHasLocalStorageError(true);
-					toast.error("Unable to save settings to local storage");
-				}
-			} catch (error) {
-				console.error("Settings initialization error:", error);
-				setSettings(DEFAULT_EDITOR_SETTINGS);
-
-				const saveSuccess = safeLocalStorageSet(
-					SETTINGS_STORAGE_KEY,
-					JSON.stringify(DEFAULT_EDITOR_SETTINGS),
-				);
-
-				if (!saveSuccess) {
-					setHasLocalStorageError(true);
-				}
-
+			if (!validateSettings(merged)) {
 				toast.error("Settings were corrupted. Restored to defaults.");
-			} finally {
-				setIsInitialized(true);
+				setSettings(DEFAULT_EDITOR_SETTINGS);
+				return;
 			}
-		};
 
-		initializeSettings();
+			setSettings(merged);
+		} catch (error) {
+			console.error("Failed to parse saved settings:", error);
+			toast.error("Failed to load saved settings. Restoring defaults.");
+			setSettings(DEFAULT_EDITOR_SETTINGS);
+		} finally {
+			setIsInitialized(true);
+		}
 	}, []);
 
 	const updateSettings = (newSettings: Partial<EditorSettings>) => {
@@ -184,18 +135,6 @@ export const SettingsProvider = ({
 
 				if (!validateSettings(updated)) {
 					throw new Error("Invalid settings update");
-				}
-
-				if (!hasLocalStorageError) {
-					const saveSuccess = safeLocalStorageSet(
-						SETTINGS_STORAGE_KEY,
-						JSON.stringify(updated),
-					);
-
-					if (!saveSuccess) {
-						setHasLocalStorageError(true);
-						toast.error("Unable to save settings to local storage");
-					}
 				}
 
 				return updated;

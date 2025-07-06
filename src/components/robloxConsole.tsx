@@ -15,14 +15,14 @@ import {
 	CONSOLE_CONFIG,
 } from "../constants/roblox/robloxConsole";
 import { CONSOLE_STORAGE_KEY } from "../constants/ui/console";
+import { useLocalStorage } from "../hooks/core/useLocalStorage";
 import { useSettings } from "../hooks/core/useSettings";
 import { useConsole } from "../hooks/ui/useConsole";
 import type {
-	ConsolePosition,
 	LogLine,
 	RobloxConsoleProps,
 } from "../types/roblox/robloxConsole";
-import type { ConsoleSize } from "../types/ui/console";
+import type { ConsoleState } from "../types/ui/console";
 
 const ConsoleHeader = memo(
 	({
@@ -133,37 +133,29 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 	const { logs, isWatching, startWatching, stopWatching, clearLogs } =
 		useConsole();
 	const { setIsFloating } = useConsole();
-	const [position, setPosition] = useState<ConsolePosition>(() => {
-		const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
-		if (savedState) {
-			try {
-				const state = JSON.parse(savedState);
-				if (state.position) {
-					return state.position;
-				}
-			} catch {}
-		}
-		return {
+
+	const [consoleState, setConsoleState] = useLocalStorage<ConsoleState>(
+		CONSOLE_STORAGE_KEY,
+		{
+			isFloating: false,
+			position: {
+				x: window.innerWidth / 2 - 400,
+				y: window.innerHeight / 2 - 200,
+			},
+			size: {
+				width: 800,
+				height: 300,
+			},
+		},
+	);
+
+	const {
+		position = {
 			x: window.innerWidth / 2 - 400,
 			y: window.innerHeight / 2 - 200,
-		};
-	});
-
-	const [size, setSize] = useState<ConsoleSize>(() => {
-		const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
-		if (savedState) {
-			try {
-				const state = JSON.parse(savedState);
-				if (state.size) {
-					return state.size;
-				}
-			} catch {}
-		}
-		return {
-			width: 800,
-			height: 300,
-		};
-	});
+		},
+		size = { width: 800, height: 300 },
+	} = consoleState;
 
 	const [isDragging, setIsDragging] = useState(false);
 	const [isResizing, setIsResizing] = useState(false);
@@ -181,19 +173,6 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 	const logsEndRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (isFloating) {
-			const savedState = localStorage.getItem(CONSOLE_STORAGE_KEY);
-			let state = { isFloating, position, size };
-			if (savedState) {
-				try {
-					state = { ...JSON.parse(savedState), position, size };
-				} catch {}
-			}
-			localStorage.setItem(CONSOLE_STORAGE_KEY, JSON.stringify(state));
-		}
-	}, [isFloating, position, size]);
-
-	useEffect(() => {
 		if (logsEndRef.current) {
 			logsEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
@@ -201,7 +180,8 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 
 	useEffect(() => {
 		setIsFloating(isFloating);
-	}, [isFloating, setIsFloating]);
+		setConsoleState((prev) => ({ ...prev, isFloating }));
+	}, [isFloating, setIsFloating, setConsoleState]);
 
 	const handleDrag = useCallback(
 		(e: MouseEvent) => {
@@ -222,9 +202,12 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 				),
 			);
 
-			setPosition({ x: newX, y: newY });
+			setConsoleState((prev) => ({
+				...prev,
+				position: { x: newX, y: newY },
+			}));
 		},
-		[isDragging, size.width, size.height],
+		[isDragging, size.width, size.height, setConsoleState],
 	);
 
 	const handleDragEnd = useCallback(() => {
@@ -256,9 +239,12 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 				);
 			}
 
-			setSize(newSize);
+			setConsoleState((prev) => ({
+				...prev,
+				size: newSize,
+			}));
 		},
-		[isResizing, resizeType, position.x, position.y, size],
+		[isResizing, resizeType, position.x, position.y, size, setConsoleState],
 	);
 
 	const handleResizeEnd = useCallback(() => {
@@ -391,7 +377,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 						<EmptyState />
 					) : (
 						<>
-							{logs.map((log, index) => (
+							{logs.map((log: LogLine, index: number) => (
 								<ConsoleLog
 									key={`${log.timestamp}-${index}`}
 									log={log}

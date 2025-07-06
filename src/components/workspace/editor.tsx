@@ -9,6 +9,7 @@ import {
 import { EDITOR_DEFAULT_OPTIONS } from "../../constants/core/workspace";
 import { useEditor } from "../../hooks/core/useEditor";
 import { useKeybinds } from "../../hooks/core/useKeybinds";
+import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import { useSettings } from "../../hooks/core/useSettings";
 import { useConsole } from "../../hooks/ui/useConsole";
 import { luaMarkerProvider } from "../../services/features/diagnosticsService";
@@ -45,7 +46,11 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	const containerRef = useRef<HTMLDivElement>(null);
 	const modelRef = useRef<monaco.editor.ITextModel | null>(null);
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
-	const [showFirstTimeTooltip, setShowFirstTimeTooltip] = useState(false);
+	const [hasVisited, setHasVisited] = useLocalStorage(
+		"hasVisitedBefore",
+		false,
+	);
+	const [showFirstTimeTooltip, setShowFirstTimeTooltip] = useState(!hasVisited);
 	const [intellisenseState, setIntellisenseState] = useState<IntellisenseState>(
 		{
 			isVisible: false,
@@ -416,17 +421,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		suggestionService.loadSuggestions();
 	}, []);
 
-	useEffect(() => {
-		const hasVisited = localStorage.getItem("hasVisitedBefore");
-		if (!hasVisited) {
-			setShowFirstTimeTooltip(true);
-		}
-	}, []);
-
 	const handleArrowHover = () => {
 		if (showFirstTimeTooltip) {
 			setShowFirstTimeTooltip(false);
-			localStorage.setItem("hasVisitedBefore", "true");
+			setHasVisited(true);
 		}
 	};
 

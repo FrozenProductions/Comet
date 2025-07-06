@@ -15,6 +15,11 @@ export interface Tab {
 	language: string;
 }
 
+export type EditorActionsState = {
+	isExpanded: boolean;
+	isPinned: boolean;
+};
+
 export interface EditorState {
 	currentPosition: EditorPosition;
 	currentFile: string | null;

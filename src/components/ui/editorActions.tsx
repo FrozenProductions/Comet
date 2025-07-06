@@ -7,16 +7,19 @@ import {
 	Play,
 	Terminal,
 } from "lucide-react";
-import { type FC, useEffect, useState } from "react";
+import { type FC, useState } from "react";
 import { Tooltip } from "react-tooltip";
-import { EDITOR_ACTIONS_STORAGE_KEY } from "../../constants/core/workspace";
+import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import { useSettings } from "../../hooks/core/useSettings";
 import { useExecute } from "../../hooks/execution/useExecute";
 import { useScript } from "../../hooks/execution/useScript";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsole } from "../../hooks/ui/useConsole";
+import type { EditorActionsState } from "../../types/core/editor";
 import type { ActionMenuProps } from "../../types/core/workspace";
 import { ExecutionHistory } from "./executionHistory";
+
+const EDITOR_ACTIONS_STORAGE_KEY = "comet-editor-actions";
 
 export const Actions: FC<
 	Pick<ActionMenuProps, "getEditorContent"> & { onArrowHover?: () => void }
@@ -26,41 +29,12 @@ export const Actions: FC<
 	const { executeScript } = useScript();
 	const { isFloating } = useConsole();
 	const { settings, updateSettings } = useSettings();
-	const [isExpanded, setIsExpanded] = useState(() => {
-		const saved = localStorage.getItem(EDITOR_ACTIONS_STORAGE_KEY);
-		if (saved) {
-			try {
-				const state = JSON.parse(saved);
-				return state.isExpanded || false;
-			} catch {
-				return false;
-			}
-		}
-		return false;
-	});
-	const [isPinned, setIsPinned] = useState(() => {
-		const saved = localStorage.getItem(EDITOR_ACTIONS_STORAGE_KEY);
-		if (saved) {
-			try {
-				const state = JSON.parse(saved);
-				return state.isPinned || false;
-			} catch {
-				return false;
-			}
-		}
-		return false;
-	});
+	const [{ isExpanded, isPinned }, setActionsState] =
+		useLocalStorage<EditorActionsState>(EDITOR_ACTIONS_STORAGE_KEY, {
+			isExpanded: false,
+			isPinned: false,
+		});
 	const [showHistory, setShowHistory] = useState(false);
-
-	useEffect(() => {
-		localStorage.setItem(
-			EDITOR_ACTIONS_STORAGE_KEY,
-			JSON.stringify({
-				isExpanded,
-				isPinned,
-			}),
-		);
-	}, [isExpanded, isPinned]);
 
 	const containerVariants = {
 		collapsed: {
@@ -112,20 +86,29 @@ export const Actions: FC<
 	};
 
 	const togglePinned = () => {
-		setIsPinned(!isPinned);
-		setIsExpanded(true);
+		setActionsState((prev) => ({
+			...prev,
+			isPinned: !prev.isPinned,
+			isExpanded: true,
+		}));
 	};
 
 	const handleHoverStart = () => {
 		if (!isPinned) {
-			setIsExpanded(true);
+			setActionsState((prev) => ({
+				...prev,
+				isExpanded: true,
+			}));
 		}
 		onArrowHover?.();
 	};
 
 	const handleHoverEnd = () => {
 		if (!isPinned) {
-			setIsExpanded(false);
+			setActionsState((prev) => ({
+				...prev,
+				isExpanded: false,
+			}));
 		}
 	};
 
