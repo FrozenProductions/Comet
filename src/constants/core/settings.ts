@@ -55,6 +55,7 @@ export const DEFAULT_EDITOR_SETTINGS = {
 		zenMode: false,
 		showTabBar: false,
 		showConsole: true,
+		modalScale: "default" as const,
 		recentSearches: {
 			enabled: true,
 			maxItems: 5,

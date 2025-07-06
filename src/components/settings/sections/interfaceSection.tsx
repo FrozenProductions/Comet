@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { useSettings } from "../../../hooks/core/useSettings";
 import { Checkbox } from "../../ui/checkbox";
 import { Modal } from "../../ui/modal";
+import { RadioGroup } from "../../ui/radioGroup";
 import { Slider } from "../../ui/slider";
 import { SettingGroup } from "../settingGroup";
 
@@ -101,6 +102,24 @@ export const InterfaceSection: FC = () => {
 						}}
 						label="Compact Tab Bar"
 						description="Show only the current file name in a compact view"
+					/>
+					<RadioGroup
+						value={settings.interface.modalScale}
+						onChange={(value) => {
+							updateSettings({
+								interface: {
+									...settings.interface,
+									modalScale: value,
+								},
+							});
+						}}
+						options={[
+							{ value: "small", label: "Small" },
+							{ value: "default", label: "Default" },
+							{ value: "large", label: "Large" },
+						]}
+						label="Modal Size"
+						description="Adjust the size of modal windows and their content"
 					/>
 				</SettingGroup>
 

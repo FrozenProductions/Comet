@@ -1,11 +1,23 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSettings } from "../../hooks/core/useSettings";
 import { fetchVersionMessage } from "../../services/system/versionMessagesService";
 import type {
 	MessageModalProps,
 	VersionMessage,
 } from "../../types/system/versionMessages";
+
+const getScaleValue = (modalScale: "small" | "default" | "large"): number => {
+	switch (modalScale) {
+		case "small":
+			return 0.8;
+		case "large":
+			return 1.2;
+		default:
+			return 1;
+	}
+};
 
 type GenericMessageModalProps = {
 	isOpen: boolean;
@@ -32,6 +44,9 @@ export const BaseMessageModal = ({
 	primaryAction,
 	children,
 }: GenericMessageModalProps) => {
+	const { settings } = useSettings();
+	const scale = getScaleValue(settings.interface.modalScale);
+
 	return (
 		<AnimatePresence>
 			{isOpen && (
@@ -43,13 +58,16 @@ export const BaseMessageModal = ({
 					className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50"
 				>
 					<motion.div
-						initial={{ scale: 0.95, y: 20 }}
-						animate={{ scale: 1, y: 0 }}
-						exit={{ scale: 0.95, y: 20 }}
+						initial={{ scale: 0.95 * scale, y: 20 }}
+						animate={{ scale: scale, y: 0 }}
+						exit={{ scale: 0.95 * scale, y: 20 }}
 						transition={{ duration: 0.2 }}
 						className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
 					>
-						<div className="flex items-center justify-between border-b border-ctp-surface2 p-4">
+						<div
+							className="flex items-center justify-between border-b border-ctp-surface2 p-4"
+							style={{ fontSize: `${scale}em` }}
+						>
 							<div className="flex items-center gap-2">
 								<h2 className="text-sm font-medium text-ctp-text">{title}</h2>
 								{icon && (
@@ -81,11 +99,14 @@ export const BaseMessageModal = ({
 								</button>
 							)}
 						</div>
-						<div className="p-4">
+						<div className="p-4" style={{ fontSize: `${scale}em` }}>
 							<p className="text-sm text-ctp-subtext0">{message}</p>
 							{children}
 						</div>
-						<div className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4">
+						<div
+							className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4"
+							style={{ fontSize: `${scale}em` }}
+						>
 							{(variant === "destructive" || variant === "warning") && (
 								<button
 									type="button"

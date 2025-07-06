@@ -40,6 +40,7 @@ export interface EditorSettings {
 		zenMode: boolean;
 		showTabBar: boolean;
 		showConsole: boolean;
+		modalScale: "small" | "default" | "large";
 		recentSearches: {
 			enabled: boolean;
 			maxItems: number;

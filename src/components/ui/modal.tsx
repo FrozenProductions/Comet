@@ -1,5 +1,17 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useSettings } from "../../hooks/core/useSettings";
 import type { ModalProps } from "../../types/ui/ui";
+
+const getScaleValue = (modalScale: "small" | "default" | "large"): number => {
+	switch (modalScale) {
+		case "small":
+			return 0.8;
+		case "large":
+			return 1.2;
+		default:
+			return 1;
+	}
+};
 
 export const Modal = ({
 	isOpen,
@@ -12,6 +24,9 @@ export const Modal = ({
 	confirmText = "Confirm",
 	confirmVariant = "primary",
 }: ModalProps) => {
+	const { settings } = useSettings();
+	const scale = getScaleValue(settings.interface.modalScale);
+
 	return (
 		<AnimatePresence>
 			{isOpen && (
@@ -28,13 +43,16 @@ export const Modal = ({
 					}}
 				>
 					<motion.div
-						initial={{ scale: 0.95, y: 20 }}
-						animate={{ scale: 1, y: 0 }}
-						exit={{ scale: 0.95, y: 20 }}
+						initial={{ scale: 0.95 * scale, y: 20 }}
+						animate={{ scale: scale, y: 0 }}
+						exit={{ scale: 0.95 * scale, y: 20 }}
 						transition={{ duration: 0.2 }}
 						className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
 					>
-						<div className="flex items-center justify-between border-b border-ctp-surface2 p-4">
+						<div
+							className="flex items-center justify-between border-b border-ctp-surface2 p-4"
+							style={{ fontSize: `${scale}em` }}
+						>
 							<div className="flex-1">
 								<h3 className="text-sm font-medium text-ctp-text">{title}</h3>
 								{description && (
@@ -45,10 +63,17 @@ export const Modal = ({
 							</div>
 						</div>
 
-						{children && <div className="p-4">{children}</div>}
+						{children && (
+							<div className="p-4" style={{ fontSize: `${scale}em` }}>
+								{children}
+							</div>
+						)}
 
 						{(footer || onConfirm) && (
-							<div className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4">
+							<div
+								className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4"
+								style={{ fontSize: `${scale}em` }}
+							>
 								<button
 									type="button"
 									onClick={onClose}
