@@ -7,8 +7,9 @@ import {
 	Play,
 	Terminal,
 } from "lucide-react";
-import { type FC, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
+import { EDITOR_ACTIONS_STORAGE_KEY } from "../../constants/core/workspace";
 import { useSettings } from "../../hooks/core/useSettings";
 import { useExecute } from "../../hooks/execution/useExecute";
 import { useScript } from "../../hooks/execution/useScript";
@@ -25,9 +26,41 @@ export const Actions: FC<
 	const { executeScript } = useScript();
 	const { isFloating } = useConsole();
 	const { settings, updateSettings } = useSettings();
-	const [isExpanded, setIsExpanded] = useState(false);
-	const [isPinned, setIsPinned] = useState(false);
+	const [isExpanded, setIsExpanded] = useState(() => {
+		const saved = localStorage.getItem(EDITOR_ACTIONS_STORAGE_KEY);
+		if (saved) {
+			try {
+				const state = JSON.parse(saved);
+				return state.isExpanded || false;
+			} catch {
+				return false;
+			}
+		}
+		return false;
+	});
+	const [isPinned, setIsPinned] = useState(() => {
+		const saved = localStorage.getItem(EDITOR_ACTIONS_STORAGE_KEY);
+		if (saved) {
+			try {
+				const state = JSON.parse(saved);
+				return state.isPinned || false;
+			} catch {
+				return false;
+			}
+		}
+		return false;
+	});
 	const [showHistory, setShowHistory] = useState(false);
+
+	useEffect(() => {
+		localStorage.setItem(
+			EDITOR_ACTIONS_STORAGE_KEY,
+			JSON.stringify({
+				isExpanded,
+				isPinned,
+			}),
+		);
+	}, [isExpanded, isPinned]);
 
 	const containerVariants = {
 		collapsed: {
@@ -117,7 +150,7 @@ export const Actions: FC<
 				>
 					<div className="absolute inset-0 flex items-center">
 						<motion.div
-							className="ml-3 mr-14 flex items-center gap-3"
+							className="ml-3 mr-3 flex items-center gap-2"
 							variants={buttonsVariants}
 							initial="hidden"
 							animate={isExpanded ? "visible" : "hidden"}

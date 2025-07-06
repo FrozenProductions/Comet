@@ -1,5 +1,7 @@
 import type * as monaco from "monaco-editor";
 
+export const EDITOR_ACTIONS_STORAGE_KEY = "comet-editor-actions";
+
 export const EDITOR_DEFAULT_OPTIONS: monaco.editor.IStandaloneEditorConstructionOptions =
 	{
 		fontFamily: "JetBrains Mono, Consolas, monospace",
