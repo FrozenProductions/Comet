@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "motion/react";
 import { BUTTON_SPACING, MAIN_SCREENS } from "../constants/ui/sidebar";
 import { useSidebar } from "../hooks/ui/useSidebar";
 import type { SidebarProps } from "../types/ui/sidebar";
@@ -10,26 +10,18 @@ export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
 	const { isVisible } = useSidebar();
 
 	return (
-		<AnimatePresence>
+		<>
 			{isVisible && (
 				<motion.div
 					initial={{ width: 0, opacity: 0 }}
 					animate={{ width: 72, opacity: 1 }}
 					exit={{ width: 0, opacity: 0 }}
-					transition={{ type: "spring", stiffness: 400, damping: 30 }}
 					className="flex h-full w-[72px] flex-shrink-0 select-none flex-col items-center border-r border-white/5 bg-ctp-mantle py-3 overflow-hidden"
 				>
 					<div className="relative flex flex-1 flex-col items-center gap-[10px]">
 						<motion.div
 							className="absolute h-10 w-10 rounded-xl bg-accent-gradient shadow-lg shadow-white/20"
-							layoutId="sidebar-focus"
-							transition={{
-								type: "spring",
-								stiffness: 400,
-								damping: 30,
-								mass: 0.8,
-							}}
-							style={{
+							animate={{
 								top:
 									MAIN_SCREENS.findIndex(
 										(screen) => screen.id === activeScreen,
@@ -67,6 +59,6 @@ export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
 					/>
 				</motion.div>
 			)}
-		</AnimatePresence>
+		</>
 	);
 };

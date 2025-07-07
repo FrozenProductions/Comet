@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { type FC, useState } from "react";
 import type { SliderProps } from "../../types/ui/ui";
 
@@ -38,6 +38,7 @@ export const Slider: FC<SliderProps> = ({
 				</div>
 				<motion.div
 					className="text-sm font-medium tabular-nums"
+					initial={false}
 					animate={
 						isDragging
 							? {
@@ -52,6 +53,7 @@ export const Slider: FC<SliderProps> = ({
 									color: "#cdd6f4",
 								}
 					}
+					transition={{ type: "spring", stiffness: 400, damping: 25 }}
 					style={
 						{
 							"--tw-gradient-accent":
@@ -68,6 +70,7 @@ export const Slider: FC<SliderProps> = ({
 				<motion.div
 					className="absolute left-0 h-1 rounded-full bg-accent-gradient-r"
 					style={{ width: `${percentage}%` }}
+					initial={false}
 					animate={isDragging ? { height: "6px" } : { height: "4px" }}
 					transition={{ type: "spring", stiffness: 300, damping: 30 }}
 				/>

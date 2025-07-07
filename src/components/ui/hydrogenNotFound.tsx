@@ -1,5 +1,4 @@
 import { listen } from "@tauri-apps/api/event";
-import { motion } from "framer-motion";
 import {
 	AlertTriangle,
 	CheckCircle2,
@@ -7,6 +6,7 @@ import {
 	Download,
 	Loader2,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { installHydrogen } from "../../services/features/hydrogenService";
@@ -105,12 +105,18 @@ export const HydrogenNotFound: FC = () => {
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
+				transition={{ type: "spring", stiffness: 300, damping: 30 }}
 				className="w-full max-w-2xl space-y-8 px-6 py-8"
 			>
 				<motion.div
 					initial={{ scale: 0.9, opacity: 0 }}
 					animate={{ scale: 1, opacity: 1 }}
-					transition={{ delay: 0.2 }}
+					transition={{
+						type: "spring",
+						stiffness: 300,
+						damping: 30,
+						delay: 0.2,
+					}}
 					className="flex flex-col items-center gap-4"
 				>
 					<div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ctp-mantle">
@@ -155,6 +161,7 @@ export const HydrogenNotFound: FC = () => {
 							<motion.p
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
+								transition={{ duration: 0.2 }}
 								className="text-xs text-ctp-subtext0"
 							>
 								This might take a while, please be patient
@@ -166,6 +173,7 @@ export const HydrogenNotFound: FC = () => {
 						<motion.div
 							initial={{ opacity: 0, y: 10 }}
 							animate={{ opacity: 1, y: 0 }}
+							transition={{ type: "spring", stiffness: 300, damping: 30 }}
 							className="flex flex-col items-center gap-3"
 						>
 							<div className="relative h-20 w-20">

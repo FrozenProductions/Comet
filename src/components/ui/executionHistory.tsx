@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { ChevronDown, ChevronRight, Trash2, X } from "lucide-react";
+import { motion } from "motion/react";
 import {
 	type KeyboardEvent,
 	type MouseEvent,
@@ -39,16 +39,6 @@ export const ExecutionHistory = ({
 
 	const handleOpenInEditor = async (content: string) => {
 		await createTabWithContent("history.lua", content);
-	};
-
-	const containerVariants = {
-		hidden: { opacity: 0, scale: 0.95, display: "none" },
-		visible: {
-			opacity: 1,
-			scale: 1,
-			display: "flex",
-			transition: { duration: 0.2 },
-		},
 	};
 
 	const handleDragEnd = useCallback(() => {
@@ -159,23 +149,29 @@ export const ExecutionHistory = ({
 		return error.split("\n")[0];
 	};
 
+	if (!isVisible) return null;
+
 	return (
 		<motion.div
 			className="fixed z-50"
 			initial={{ opacity: 0 }}
-			animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
-			exit={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: 0.2 }}
 			style={{
-				pointerEvents: isVisible ? "auto" : "none",
 				left: state.position.x,
 				top: state.position.y,
 			}}
 		>
 			<motion.div
 				className="flex flex-col overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
-				variants={containerVariants}
-				initial="hidden"
-				animate={isVisible ? "visible" : "hidden"}
+				initial={{ opacity: 0, scale: 0.95 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{
+					duration: 0.2,
+					type: "spring",
+					stiffness: 300,
+					damping: 30,
+				}}
 				style={{
 					width: state.size.width,
 					height: state.size.height,

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { AlertTriangle, Code, Eye, Globe, Key, Shield } from "lucide-react";
+import { motion } from "motion/react";
 import type { ScriptCardProps } from "../../types/core/scriptBlox";
 
 export const ScriptCard = ({ script, onSelect }: ScriptCardProps) => {
@@ -21,6 +21,7 @@ export const ScriptCard = ({ script, onSelect }: ScriptCardProps) => {
 
 	return (
 		<motion.div
+			initial={{ scale: 1 }}
 			whileHover={{ scale: 1.02 }}
 			whileTap={{ scale: 0.98 }}
 			onClick={() => onSelect(script)}

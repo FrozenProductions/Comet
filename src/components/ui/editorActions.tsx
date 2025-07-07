@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
 	ChevronRight,
 	ExternalLink,
@@ -7,6 +6,7 @@ import {
 	Play,
 	Terminal,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { useLocalStorage } from "../../hooks/core/useLocalStorage";
@@ -56,10 +56,6 @@ export const Actions: FC<
 			opacity: 1,
 			x: 0,
 			display: "flex",
-			transition: {
-				delay: 0.1,
-				staggerChildren: 0.1,
-			},
 		},
 	};
 
@@ -129,7 +125,11 @@ export const Actions: FC<
 					variants={containerVariants}
 					initial="collapsed"
 					animate={isExpanded ? "expanded" : "collapsed"}
-					transition={{ duration: 0.3 }}
+					transition={{
+						type: "spring",
+						stiffness: 300,
+						damping: 30,
+					}}
 				>
 					<div className="absolute inset-0 flex items-center">
 						<motion.div
@@ -137,6 +137,12 @@ export const Actions: FC<
 							variants={buttonsVariants}
 							initial="hidden"
 							animate={isExpanded ? "visible" : "hidden"}
+							transition={{
+								type: "spring",
+								stiffness: 300,
+								damping: 30,
+								delay: 0.1,
+							}}
 						>
 							<button
 								type="button"
@@ -194,7 +200,11 @@ export const Actions: FC<
 						variants={iconVariants}
 						initial="collapsed"
 						animate={isExpanded ? "expanded" : "collapsed"}
-						transition={{ duration: 0.3 }}
+						transition={{
+							type: "spring",
+							stiffness: 300,
+							damping: 30,
+						}}
 						className={`absolute right-0 flex h-10 w-10 cursor-pointer items-center justify-center text-accent ${
 							isPinned ? "bg-ctp-surface1" : ""
 						}`}

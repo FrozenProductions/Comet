@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { motion } from "motion/react";
 import type { FC } from "react";
 import type { CheckboxProps } from "../../types/ui/ui";
 
@@ -12,6 +12,7 @@ export const Checkbox: FC<CheckboxProps> = ({
 	<motion.div
 		className="group -mx-1 flex cursor-pointer gap-3 rounded-lg px-1 py-2 transition-colors duration-200 hover:bg-white/5"
 		onClick={onChange}
+		initial={false}
 		whileHover={{ scale: 1.01 }}
 		whileTap={{ scale: 0.99 }}
 	>
@@ -27,7 +28,7 @@ export const Checkbox: FC<CheckboxProps> = ({
 					<motion.div
 						initial={{ scale: 0 }}
 						animate={{ scale: 1 }}
-						exit={{ scale: 0 }}
+						transition={{ type: "spring", stiffness: 400, damping: 25 }}
 					>
 						<Check size={14} className="text-ctp-base" />
 					</motion.div>

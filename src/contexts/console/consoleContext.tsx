@@ -35,12 +35,15 @@ export const ConsoleProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [logs, setLogs] = useState<LogLine[]>([]);
 	const [isWatching, setIsWatching] = useState(false);
 
-	const handleSetIsFloating = (value: boolean) => {
-		setConsoleState((prev) => ({
-			...prev,
-			isFloating: value,
-		}));
-	};
+	const handleSetIsFloating = useCallback(
+		(value: boolean) => {
+			setConsoleState((prev) => ({
+				...prev,
+				isFloating: value,
+			}));
+		},
+		[setConsoleState],
+	);
 
 	const addLog = useCallback((log: LogLine) => {
 		setLogs((prev) => [...prev, log]);

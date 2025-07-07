@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlertTriangle,
 	ClipboardPaste,
@@ -10,6 +9,7 @@ import {
 	User,
 	X,
 } from "lucide-react";
+import { motion } from "motion/react";
 import type React from "react";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -230,76 +230,55 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 												</div>
 											)}
 										</div>
-										<AnimatePresence mode="wait">
-											{editingFlagId === key ? (
-												<motion.div
-													initial={{
-														opacity: 0,
-														y: -10,
-													}}
-													animate={{
-														opacity: 1,
-														y: 0,
-													}}
-													exit={{
-														opacity: 0,
-														y: -10,
-													}}
-													className="mt-2 flex items-center gap-1"
-												>
-													<Input
-														value={editValue}
-														onChange={(e) => setEditValue(e.target.value)}
-														onKeyDown={(e) => {
-															if (e.key === "Enter") {
-																handleUpdateFlagValue(key, editValue);
-															} else if (e.key === "Escape") {
-																setEditingFlagId(null);
-															}
-														}}
-														className="h-7 border-white/5 bg-ctp-surface0 text-xs focus:border-accent focus:ring-accent"
-														autoFocus
-													/>
-													<Button
-														size="sm"
-														onClick={() => setEditingFlagId(null)}
-														data-tooltip-id="fastflags-tooltip"
-														data-tooltip-content="Cancel"
-														className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
-													>
-														<X size={14} className="stroke-[2.5]" />
-													</Button>
-													<Button
-														size="sm"
-														onClick={() =>
-															handleUpdateFlagValue(key, editValue)
+										{editingFlagId === key ? (
+											<motion.div
+												initial={{ opacity: 0, y: -10 }}
+												animate={{ opacity: 1, y: 0 }}
+												className="mt-2 flex items-center gap-1"
+											>
+												<Input
+													value={editValue}
+													onChange={(e) => setEditValue(e.target.value)}
+													onKeyDown={(e) => {
+														if (e.key === "Enter") {
+															handleUpdateFlagValue(key, editValue);
+														} else if (e.key === "Escape") {
+															setEditingFlagId(null);
 														}
-														data-tooltip-id="fastflags-tooltip"
-														data-tooltip-content="Save"
-														className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-accent text-white transition-colors hover:bg-accent/90"
-													>
-														<Save size={14} className="stroke-[2.5]" />
-													</Button>
-												</motion.div>
-											) : (
-												<motion.div
-													initial={{
-														opacity: 0,
-														y: 10,
 													}}
-													animate={{
-														opacity: 1,
-														y: 0,
-													}}
-													exit={{ opacity: 0, y: 10 }}
-													className="mt-0.5 truncate text-xs text-ctp-subtext0"
+													className="h-7 border-white/5 bg-ctp-surface0 text-xs focus:border-accent focus:ring-accent"
+													autoFocus
+												/>
+												<Button
+													size="sm"
+													onClick={() => setEditingFlagId(null)}
+													data-tooltip-id="fastflags-tooltip"
+													data-tooltip-content="Cancel"
+													className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10"
 												>
-													{typeof value === "string"
-														? `"${value}"`
-														: String(value)}
-												</motion.div>
-											)}
-										</AnimatePresence>
+													<X size={14} className="stroke-[2.5]" />
+												</Button>
+												<Button
+													size="sm"
+													onClick={() => handleUpdateFlagValue(key, editValue)}
+													data-tooltip-id="fastflags-tooltip"
+													data-tooltip-content="Save"
+													className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-accent text-white transition-colors hover:bg-accent/90"
+												>
+													<Save size={14} className="stroke-[2.5]" />
+												</Button>
+											</motion.div>
+										) : (
+											<motion.div
+												initial={{ opacity: 0, y: 10 }}
+												animate={{ opacity: 1, y: 0 }}
+												className="mt-0.5 truncate text-xs text-ctp-subtext0"
+											>
+												{typeof value === "string"
+													? `"${value}"`
+													: String(value)}
+											</motion.div>
+										)}
 									</div>
 									{editingFlagId !== key && (
 										<div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">

@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, Search, Settings as SettingsIcon } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, useState } from "react";
 import { SETTINGS_SECTIONS } from "../../constants/core/settings";
 import { Header } from "../ui/header";
@@ -62,6 +62,13 @@ export const Settings: FC = () => {
 								key={section.id}
 								onClick={() => setActiveSection(section.id)}
 								className={`group relative w-full px-4 py-3 text-left transition-colors hover:bg-ctp-surface0 ${activeSection === section.id ? "bg-ctp-surface0" : ""} `}
+								initial={false}
+								animate={{
+									backgroundColor:
+										activeSection === section.id
+											? "var(--ctp-surface0)"
+											: "transparent",
+								}}
 								transition={{
 									type: "spring",
 									stiffness: 500,
@@ -107,17 +114,19 @@ export const Settings: FC = () => {
 
 				<div className="flex-1 overflow-y-auto">
 					<div className="mx-auto max-w-3xl space-y-8 p-8">
-						<AnimatePresence mode="wait">
-							<motion.div
-								key={activeSection}
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								exit={{ opacity: 0, y: -20 }}
-								transition={{ duration: 0.2 }}
-							>
-								{renderSectionContent()}
-							</motion.div>
-						</AnimatePresence>
+						<motion.div
+							key={activeSection}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{
+								duration: 0.2,
+								type: "spring",
+								stiffness: 300,
+								damping: 30,
+							}}
+						>
+							{renderSectionContent()}
+						</motion.div>
 					</div>
 				</div>
 			</div>

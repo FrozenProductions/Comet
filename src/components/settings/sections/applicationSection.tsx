@@ -1,5 +1,4 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlertTriangle,
 	Book,
@@ -15,6 +14,7 @@ import {
 	Users,
 	Wrench,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSettings } from "../../../hooks/core/useSettings";
@@ -197,141 +197,119 @@ export const ApplicationSection: FC = () => {
 								</button>
 							</div>
 
-							<AnimatePresence mode="wait">
-								{updateCheck.hasChecked && !updateCheck.loading && (
-									<motion.div
-										initial={{
-											opacity: 0,
-											y: -10,
-										}}
-										animate={{
-											opacity: 1,
-											y: 0,
-										}}
-										exit={{
-											opacity: 0,
-											y: 10,
-										}}
-										transition={{
-											duration: 0.2,
-										}}
-										className={`relative overflow-hidden rounded-md border px-4 py-3 ${
-											updateCheck.version
-												? updateCheck.isNightly
-													? "border-ctp-red/20 bg-gradient-to-r from-ctp-red/5 to-transparent"
-													: "border-accent/20 bg-gradient-to-r from-accent/5 to-transparent"
-												: "border-ctp-green/20 bg-gradient-to-r from-ctp-green/5 to-transparent"
-										}`}
-									>
-										<div className="flex items-start gap-3">
-											<div
-												className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-													updateCheck.version
-														? updateCheck.isNightly
-															? "bg-ctp-red/10"
-															: "bg-accent/10"
-														: "bg-ctp-green/10"
-												}`}
-											>
-												{updateCheck.version ? (
-													updateCheck.isNightly ? (
-														<AlertTriangle size={12} className="text-ctp-red" />
-													) : (
-														<Download size={12} className="text-accent" />
-													)
+							{updateCheck.hasChecked && !updateCheck.loading && (
+								<motion.div
+									initial={{ opacity: 0, y: -10 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.2 }}
+									className={`relative overflow-hidden rounded-md border px-4 py-3 ${
+										updateCheck.version
+											? updateCheck.isNightly
+												? "border-ctp-red/20 bg-gradient-to-r from-ctp-red/5 to-transparent"
+												: "border-accent/20 bg-gradient-to-r from-accent/5 to-transparent"
+											: "border-ctp-green/20 bg-gradient-to-r from-ctp-green/5 to-transparent"
+									}`}
+								>
+									<div className="flex items-start gap-3">
+										<div
+											className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+												updateCheck.version
+													? updateCheck.isNightly
+														? "bg-ctp-red/10"
+														: "bg-accent/10"
+													: "bg-ctp-green/10"
+											}`}
+										>
+											{updateCheck.version ? (
+												updateCheck.isNightly ? (
+													<AlertTriangle size={12} className="text-ctp-red" />
 												) : (
-													<div className="h-2 w-2 rounded-full bg-ctp-green" />
-												)}
-											</div>
-											<div className="space-y-1">
-												<div className="flex items-center gap-2">
-													<div
-														className={`font-medium ${
-															updateCheck.version
-																? updateCheck.isNightly
-																	? "text-ctp-red"
-																	: "text-accent"
-																: ""
-														}`}
-													>
-														{updateCheck.version ? (
-															<>
-																{updateCheck.isNightly ? "Preview" : "Update"}{" "}
-																{updateCheck.version} available
-															</>
-														) : (
-															"You're up to date!"
-														)}
-													</div>
-													{updateCheck.version && (
-														<div
-															className={`inline-flex h-4 items-center rounded-full px-1.5 text-[10px] font-medium uppercase leading-none tracking-wide ${
-																updateCheck.isNightly
-																	? "bg-ctp-red/10 text-ctp-red"
-																	: "bg-accent/10 text-accent"
-															}`}
-														>
-															{updateCheck.isNightly ? "Preview" : "Stable"}
-														</div>
+													<Download size={12} className="text-accent" />
+												)
+											) : (
+												<div className="h-2 w-2 rounded-full bg-ctp-green" />
+											)}
+										</div>
+										<div className="space-y-1">
+											<div className="flex items-center gap-2">
+												<div
+													className={`font-medium ${
+														updateCheck.version
+															? updateCheck.isNightly
+																? "text-ctp-red"
+																: "text-accent"
+															: ""
+													}`}
+												>
+													{updateCheck.version ? (
+														<>
+															{updateCheck.isNightly ? "Preview" : "Update"}{" "}
+															{updateCheck.version} available
+														</>
+													) : (
+														"You're up to date!"
 													)}
 												</div>
-												<div className="text-xs text-ctp-subtext0">
-													{updateCheck.version
-														? updateCheck.isNightly
-															? "Development preview build • May contain bugs"
-															: "Stable public release • Recommended update"
-														: "Comet is running the latest version"}
-												</div>
 												{updateCheck.version && (
-													<motion.div
-														initial={{
-															opacity: 0,
-															y: -10,
-														}}
-														animate={{
-															opacity: 1,
-															y: 0,
-														}}
-														transition={{
-															delay: 0.1,
-														}}
+													<div
+														className={`inline-flex h-4 items-center rounded-full px-1.5 text-[10px] font-medium uppercase leading-none tracking-wide ${
+															updateCheck.isNightly
+																? "bg-ctp-red/10 text-ctp-red"
+																: "bg-accent/10 text-accent"
+														}`}
 													>
-														<button
-															type="button"
-															onClick={async () => {
-																try {
-																	await downloadAndInstallUpdate(
-																		settings.app.nightlyReleases,
-																	);
-																} catch (error) {
-																	toast.error("Failed to update Comet");
-																	console.error("Failed to update:", error);
-																}
-															}}
-															className={`mt-2 flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
-																updateCheck.isNightly
-																	? "bg-ctp-surface1 text-ctp-red hover:bg-white/10"
-																	: "bg-ctp-surface1 text-accent hover:bg-white/10"
-															}`}
-														>
-															<div
-																className={`flex h-[18px] w-[18px] items-center justify-center rounded ${
-																	updateCheck.isNightly
-																		? "bg-ctp-red/10"
-																		: "bg-accent/10"
-																}`}
-															>
-																<Download size={12} className="stroke-[2.5]" />
-															</div>
-															Install Update
-														</button>
-													</motion.div>
+														{updateCheck.isNightly ? "Preview" : "Stable"}
+													</div>
 												)}
 											</div>
+											<div className="text-xs text-ctp-subtext0">
+												{updateCheck.version
+													? updateCheck.isNightly
+														? "Development preview build • May contain bugs"
+														: "Stable public release • Recommended update"
+													: "Comet is running the latest version"}
+											</div>
+											{updateCheck.version && (
+												<motion.div
+													initial={{ opacity: 0, y: -10 }}
+													animate={{ opacity: 1, y: 0 }}
+													transition={{ delay: 0.1 }}
+												>
+													<button
+														type="button"
+														onClick={async () => {
+															try {
+																await downloadAndInstallUpdate(
+																	settings.app.nightlyReleases,
+																);
+															} catch (error) {
+																toast.error("Failed to update Comet");
+																console.error("Failed to update:", error);
+															}
+														}}
+														className={`mt-2 flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
+															updateCheck.isNightly
+																? "bg-ctp-surface1 text-ctp-red hover:bg-white/10"
+																: "bg-ctp-surface1 text-accent hover:bg-white/10"
+														}`}
+													>
+														<div
+															className={`flex h-[18px] w-[18px] items-center justify-center rounded ${
+																updateCheck.isNightly
+																	? "bg-ctp-red/10"
+																	: "bg-accent/10"
+															}`}
+														>
+															<Download size={12} className="stroke-[2.5]" />
+														</div>
+														Install Update
+													</button>
+												</motion.div>
+											)}
 										</div>
-									</motion.div>
-								)}
-							</AnimatePresence>
+									</div>
+								</motion.div>
+							)}
 						</div>
 					</div>
 					{isOfficialApp && (

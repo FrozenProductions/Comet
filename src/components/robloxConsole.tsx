@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
 	ChevronDown,
 	ChevronUp,
@@ -9,6 +8,7 @@ import {
 	Terminal,
 	Trash2,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, memo, useCallback, useEffect, useRef, useState } from "react";
 import {
 	CONSOLE_COLORS,
@@ -123,21 +123,21 @@ const EmptyState = () => (
 	</div>
 );
 
-export const RobloxConsole: FC<RobloxConsoleProps> = ({
-	isOpen,
-	onToggle,
-	isFloating,
-	onFloatToggle,
-}) => {
+export const RobloxConsole: FC<RobloxConsoleProps> = ({ isOpen, onToggle }) => {
 	const { settings } = useSettings();
-	const { logs, isWatching, startWatching, stopWatching, clearLogs } =
-		useConsole();
-	const { setIsFloating } = useConsole();
+	const {
+		logs,
+		isWatching,
+		startWatching,
+		stopWatching,
+		clearLogs,
+		isFloating,
+		setIsFloating,
+	} = useConsole();
 
 	const [consoleState, setConsoleState] = useLocalStorage<ConsoleState>(
 		CONSOLE_STORAGE_KEY,
 		{
-			isFloating: false,
 			position: {
 				x: window.innerWidth / 2 - 400,
 				y: window.innerHeight / 2 - 200,
@@ -146,6 +146,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 				width: 800,
 				height: 300,
 			},
+			isFloating: false,
 		},
 	);
 
@@ -177,11 +178,6 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 			logsEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
 	}, []);
-
-	useEffect(() => {
-		setIsFloating(isFloating);
-		setConsoleState((prev) => ({ ...prev, isFloating }));
-	}, [isFloating, setIsFloating, setConsoleState]);
 
 	const handleDrag = useCallback(
 		(e: MouseEvent) => {
@@ -344,7 +340,12 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 						: CONSOLE_CONFIG.DEFAULT_HEIGHT
 					: CONSOLE_CONFIG.COLLAPSED_HEIGHT,
 			}}
-			transition={CONSOLE_CONFIG.ANIMATION_CONFIG}
+			transition={{
+				type: "spring",
+				stiffness: 300,
+				damping: 30,
+				mass: 0.8,
+			}}
 			className={`relative overflow-hidden bg-ctp-mantle shadow-2xl ${
 				isFloating ? "rounded-lg" : "w-full"
 			} ${isResizing ? "select-none" : ""}`}
@@ -361,12 +362,15 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 				onClear={clearLogs}
 				onToggleWatch={handleToggleWatch}
 				isFloating={isFloating}
-				onFloatToggle={onFloatToggle}
+				onFloatToggle={() => setIsFloating(!isFloating)}
 				onDragStart={handleDragStart}
 			/>
 			{isOpen && (
-				<div
+				<motion.div
 					ref={consoleRef}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 0.2 }}
 					className="h-[calc(100%-2.5rem)] overflow-y-auto bg-ctp-mantle font-mono text-sm"
 					style={{
 						userSelect: isResizing ? "none" : "text",
@@ -387,7 +391,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({
 							<div ref={logsEndRef} />
 						</>
 					)}
-				</div>
+				</motion.div>
 			)}
 			{isFloating && isOpen && (
 				<>

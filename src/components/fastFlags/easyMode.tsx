@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import {
 	Cpu,
 	Loader2,
@@ -9,6 +8,7 @@ import {
 	Volume2,
 	Zap,
 } from "lucide-react";
+import { motion } from "motion/react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -167,18 +167,16 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 
 	const renderFlag = (flag: FastFlagDefinition) => (
 		<div key={flag.key} className="relative">
-			<AnimatePresence>
-				{isUpdating === flag.key && (
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
-					>
-						<div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-					</motion.div>
-				)}
-			</AnimatePresence>
+			{isUpdating === flag.key && (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-ctp-mantle/50"
+				>
+					<div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+				</motion.div>
+			)}
 			{flag.type === "slider" ? (
 				<Slider
 					value={Number(getCurrentValue(flag)) || flag.defaultValue}
@@ -212,6 +210,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
 							>
 								<motion.button
 									onClick={() => handleFlagChange(flag, option.value)}
+									initial={{ scale: 1 }}
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
 									className={`w-full rounded-xl border px-4 py-3 transition-all duration-200 ${

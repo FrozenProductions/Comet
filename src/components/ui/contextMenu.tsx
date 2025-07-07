@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, useEffect, useRef, useState } from "react";
 import type { ContextMenuItem, ContextMenuProps } from "../../types/ui/ui";
 
@@ -44,7 +44,6 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 			<motion.div
 				initial={{ opacity: 0, x: -10 }}
 				animate={{ opacity: 1, x: 0 }}
-				exit={{ opacity: 0, x: -10 }}
 				transition={{ duration: 0.15 }}
 				className="absolute left-full top-0 ml-0.5"
 			>
@@ -91,73 +90,66 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 	};
 
 	return (
-		<AnimatePresence>
-			<div
-				ref={menuRef}
-				style={{
-					position: "fixed",
-					left: position.x,
-					top: position.y,
-					zIndex: 100,
-				}}
+		<div
+			ref={menuRef}
+			style={{
+				position: "fixed",
+				left: position.x,
+				top: position.y,
+				zIndex: 100,
+			}}
+		>
+			<motion.div
+				initial={{ opacity: 0, scale: 0.95 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 0.15 }}
+				className="w-32 overflow-hidden rounded-lg border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
 			>
-				<motion.div
-					initial={{ opacity: 0, scale: 0.95 }}
-					animate={{ opacity: 1, scale: 1 }}
-					exit={{ opacity: 0, scale: 0.95 }}
-					transition={{ duration: 0.15 }}
-					className="w-32 overflow-hidden rounded-lg border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
-				>
-					{items.map((item, index) => {
-						const itemKey =
-							item.type === "separator"
-								? `menu-separator-${index}`
-								: `menu-item-${item.label}-${index}`;
+				{items.map((item, index) => {
+					const itemKey =
+						item.type === "separator"
+							? `menu-separator-${index}`
+							: `menu-item-${item.label}-${index}`;
 
-						if (item.type === "separator") {
-							return (
-								<div key={itemKey} className="my-1 h-px bg-ctp-surface2" />
-							);
-						}
+					if (item.type === "separator") {
+						return <div key={itemKey} className="my-1 h-px bg-ctp-surface2" />;
+					}
 
-						return (
-							<button
-								type="button"
-								key={itemKey}
-								onClick={() => {
-									if (!item.submenu && item.onClick) {
-										item.onClick();
-										onClose();
-									}
-								}}
-								onMouseEnter={() =>
-									setActiveSubmenu(item.submenu ? index : null)
+					return (
+						<button
+							type="button"
+							key={itemKey}
+							onClick={() => {
+								if (!item.submenu && item.onClick) {
+									item.onClick();
+									onClose();
 								}
-								disabled={item.disabled}
-								className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${
-									item.disabled
-										? "cursor-not-allowed opacity-50"
-										: item.danger
-											? "text-ctp-red hover:bg-red-500/10"
-											: "text-ctp-text hover:bg-ctp-surface1"
-								}`}
-							>
-								{item.icon && (
-									<span className="h-4 w-4 text-accent">{item.icon}</span>
-								)}
-								<span className="flex-1">{item.label}</span>
-								{item.submenu && (
-									<ChevronRight
-										size={12}
-										className="stroke-[2.5] text-accent opacity-75"
-									/>
-								)}
-								{item.submenu && renderSubmenu(item.submenu, index)}
-							</button>
-						);
-					})}
-				</motion.div>
-			</div>
-		</AnimatePresence>
+							}}
+							onMouseEnter={() => setActiveSubmenu(item.submenu ? index : null)}
+							disabled={item.disabled}
+							className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors ${
+								item.disabled
+									? "cursor-not-allowed opacity-50"
+									: item.danger
+										? "text-ctp-red hover:bg-red-500/10"
+										: "text-ctp-text hover:bg-ctp-surface1"
+							}`}
+						>
+							{item.icon && (
+								<span className="h-4 w-4 text-accent">{item.icon}</span>
+							)}
+							<span className="flex-1">{item.label}</span>
+							{item.submenu && (
+								<ChevronRight
+									size={12}
+									className="stroke-[2.5] text-accent opacity-75"
+								/>
+							)}
+							{item.submenu && renderSubmenu(item.submenu, index)}
+						</button>
+					);
+				})}
+			</motion.div>
+		</div>
 	);
 };

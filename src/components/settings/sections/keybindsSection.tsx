@@ -1,4 +1,3 @@
-import { AnimatePresence } from "framer-motion";
 import { Keyboard } from "lucide-react";
 import { type FC, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -145,20 +144,18 @@ export const KeybindsSection: FC = () => {
 				)}
 			</div>
 
-			<AnimatePresence>
-				{editingKeybind && (
-					<KeybindEditor
-						keybind={editingKeybind}
-						isOpen={true}
-						onClose={() => setEditingKeybind(null)}
-						onSave={(action, updates) => {
-							updateKeybind(action, updates);
-							setEditingKeybind(null);
-							toast.success("Keybind updated successfully");
-						}}
-					/>
-				)}
-			</AnimatePresence>
+			{editingKeybind && (
+				<KeybindEditor
+					keybind={editingKeybind}
+					isOpen={true}
+					onClose={() => setEditingKeybind(null)}
+					onSave={(action, updates) => {
+						updateKeybind(action, updates);
+						setEditingKeybind(null);
+						toast.success("Keybind updated successfully");
+					}}
+				/>
+			)}
 		</>
 	);
 };

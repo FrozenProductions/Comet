@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import type { RadioGroupProps } from "../../types/ui/ui";
 
 export const RadioGroup = <T extends string>({
@@ -19,6 +19,7 @@ export const RadioGroup = <T extends string>({
 					<motion.button
 						key={option.value}
 						onClick={() => onChange(option.value)}
+						initial={false}
 						whileHover={{ scale: 1.02 }}
 						whileTap={{ scale: 0.98 }}
 						className={`flex-1 rounded-xl border px-4 py-3 transition-all duration-200 ${
@@ -39,6 +40,7 @@ export const RadioGroup = <T extends string>({
 									<motion.div
 										initial={{ scale: 0 }}
 										animate={{ scale: 1 }}
+										transition={{ type: "spring", stiffness: 400, damping: 25 }}
 										className="h-2 w-2 rounded-full bg-ctp-base"
 									/>
 								)}

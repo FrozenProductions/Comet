@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlertTriangle,
 	ArrowDown,
@@ -17,6 +16,7 @@ import {
 	WifiOff,
 	X,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useEditor } from "../../hooks/core/useEditor";
@@ -258,6 +258,7 @@ export const ScriptLibrary = () => {
 						later.
 					</motion.div>
 					<motion.button
+						initial={{ scale: 1 }}
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
 						onClick={handleRetry}
@@ -306,6 +307,7 @@ export const ScriptLibrary = () => {
 					</motion.div>
 					{error && (
 						<motion.button
+							initial={{ scale: 1 }}
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 							onClick={handleRetry}
@@ -321,19 +323,16 @@ export const ScriptLibrary = () => {
 
 		return (
 			<div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-				<AnimatePresence mode="popLayout">
-					{scripts.map((script) => (
-						<motion.div
-							key={script._id}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: -20 }}
-							layout
-						>
-							<ScriptCard script={script} onSelect={handleScriptSelect} />
-						</motion.div>
-					))}
-				</AnimatePresence>
+				{scripts.map((script) => (
+					<motion.div
+						key={script._id}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						layout
+					>
+						<ScriptCard script={script} onSelect={handleScriptSelect} />
+					</motion.div>
+				))}
 			</div>
 		);
 	};
@@ -502,87 +501,84 @@ export const ScriptLibrary = () => {
 						</button>
 					</div>
 
-					<AnimatePresence>
+					<motion.div
+						initial={{ height: 0, opacity: 0 }}
+						animate={{ height: "auto", opacity: 1 }}
+						className="overflow-hidden"
+					>
 						{showFilters && (
-							<motion.div
-								initial={{ height: 0, opacity: 0 }}
-								animate={{ height: "auto", opacity: 1 }}
-								exit={{ height: 0, opacity: 0 }}
-								className="overflow-hidden"
-							>
-								<div className="mt-4 flex flex-wrap gap-4">
-									<div className="min-w-[200px] flex-1">
-										<div className="mb-2 text-xs font-medium text-ctp-subtext0">
-											Sort by
-										</div>
-										<div className="flex flex-wrap gap-2">
-											{sortOptions.map((option) => (
-												<button
-													type="button"
-													key={option.value}
-													onClick={() => {
-														if (selectedSortBy === option.value) {
-															setSelectedOrder((prev) =>
-																prev === "asc" ? "desc" : "asc",
-															);
-														} else {
-															setSelectedSortBy(
-																option.value as typeof selectedSortBy,
-															);
-															setSelectedOrder("desc");
-														}
-													}}
-													className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
-														selectedSortBy === option.value
-															? "bg-accent text-white hover:bg-accent/90"
-															: "bg-ctp-surface1 text-accent hover:bg-white/10"
-													}`}
-												>
-													{option.icon}
-													<span>{option.label}</span>
-													{selectedSortBy === option.value &&
-														(selectedOrder === "asc" ? (
-															<ArrowUp size={12} className="stroke-[2.5]" />
-														) : (
-															<ArrowDown size={12} className="stroke-[2.5]" />
-														))}
-												</button>
-											))}
-										</div>
+							<div className="mt-4 flex flex-wrap gap-4">
+								<div className="min-w-[200px] flex-1">
+									<div className="mb-2 text-xs font-medium text-ctp-subtext0">
+										Sort by
 									</div>
-
-									<div className="min-w-[200px] flex-1">
-										<div className="mb-2 text-xs font-medium text-ctp-subtext0">
-											Filter by
-										</div>
-										<div className="flex flex-wrap gap-2">
-											{filterOptions.map((option) => (
-												<button
-													type="button"
-													key={option.value}
-													onClick={() =>
-														setFilters((prev) => ({
-															...prev,
-															[option.value]:
-																!prev[option.value as keyof typeof prev],
-														}))
+									<div className="flex flex-wrap gap-2">
+										{sortOptions.map((option) => (
+											<button
+												type="button"
+												key={option.value}
+												onClick={() => {
+													if (selectedSortBy === option.value) {
+														setSelectedOrder((prev) =>
+															prev === "asc" ? "desc" : "asc",
+														);
+													} else {
+														setSelectedSortBy(
+															option.value as typeof selectedSortBy,
+														);
+														setSelectedOrder("desc");
 													}
-													className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
-														filters[option.value as keyof typeof filters]
-															? "bg-accent text-white hover:bg-accent/90"
-															: "bg-ctp-surface1 text-accent hover:bg-white/10"
-													}`}
-												>
-													{option.icon}
-													<span>{option.label}</span>
-												</button>
-											))}
-										</div>
+												}}
+												className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
+													selectedSortBy === option.value
+														? "bg-accent text-white hover:bg-accent/90"
+														: "bg-ctp-surface1 text-accent hover:bg-white/10"
+												}`}
+											>
+												{option.icon}
+												<span>{option.label}</span>
+												{selectedSortBy === option.value &&
+													(selectedOrder === "asc" ? (
+														<ArrowUp size={12} className="stroke-[2.5]" />
+													) : (
+														<ArrowDown size={12} className="stroke-[2.5]" />
+													))}
+											</button>
+										))}
 									</div>
 								</div>
-							</motion.div>
+
+								<div className="min-w-[200px] flex-1">
+									<div className="mb-2 text-xs font-medium text-ctp-subtext0">
+										Filter by
+									</div>
+									<div className="flex flex-wrap gap-2">
+										{filterOptions.map((option) => (
+											<button
+												type="button"
+												key={option.value}
+												onClick={() =>
+													setFilters((prev) => ({
+														...prev,
+														[option.value]:
+															!prev[option.value as keyof typeof prev],
+													}))
+												}
+												className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
+													filters[option.value as keyof typeof filters]
+														? "bg-accent text-white hover:bg-accent/90"
+														: "bg-ctp-surface1 text-accent hover:bg-white/10"
+												}`}
+											>
+												{option.icon}
+												<span>{option.label}</span>
+											</button>
+										))}
+									</div>
+								</div>
+							</div>
 						)}
-					</AnimatePresence>
+					</motion.div>
 				</div>
 			</div>
 

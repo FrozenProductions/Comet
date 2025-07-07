@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
 	AlertCircle,
 	Check,
@@ -14,6 +13,7 @@ import {
 	User,
 	Users,
 } from "lucide-react";
+import { motion } from "motion/react";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -360,11 +360,9 @@ export const FastFlags: React.FC = () => {
 									{activeProfileId === profile.id && (
 										<motion.div
 											layoutId="activeProfileIndicator"
-											className="absolute left-0 h-4 w-0.5 rounded-full bg-accent"
 											initial={{ opacity: 0 }}
 											animate={{ opacity: 1 }}
-											exit={{ opacity: 0 }}
-											transition={{ duration: 0.2 }}
+											className="absolute left-0 h-4 w-0.5 rounded-full bg-accent"
 										/>
 									)}
 									<User

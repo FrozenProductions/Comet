@@ -58,6 +58,7 @@ const AppContent: FC = () => {
 		}
 	};
 
+	// maybe make a better handler for that?
 	if (!settings) {
 		return null;
 	}

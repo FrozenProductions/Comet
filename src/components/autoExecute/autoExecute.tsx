@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import debounce from "lodash/debounce";
 import {
 	AlertCircle,
@@ -14,6 +13,7 @@ import {
 	Trash2,
 	X,
 } from "lucide-react";
+import { motion } from "motion/react";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -305,6 +305,8 @@ export const AutoExecute: React.FC = () => {
 								<motion.button
 									key={file.path}
 									onClick={() => handleFileSelect(file)}
+									initial={{ x: 0 }}
+									animate={{ x: 0 }}
 									whileHover={{ x: 4 }}
 									className={`group flex w-full cursor-pointer items-center gap-1.5 rounded-lg p-1.5 text-left transition-colors ${
 										selectedFile?.path === file.path
@@ -426,7 +428,6 @@ export const AutoExecute: React.FC = () => {
 							<motion.div
 								initial={{ y: 10, opacity: 0 }}
 								animate={{ y: 0, opacity: 1 }}
-								transition={{ delay: 0.1 }}
 								className="text-sm font-medium text-ctp-text"
 							>
 								No script selected
@@ -434,7 +435,6 @@ export const AutoExecute: React.FC = () => {
 							<motion.div
 								initial={{ y: 10, opacity: 0 }}
 								animate={{ y: 0, opacity: 1 }}
-								transition={{ delay: 0.2 }}
 								className="mt-1 text-xs text-ctp-subtext0"
 							>
 								Select a script from the sidebar to edit

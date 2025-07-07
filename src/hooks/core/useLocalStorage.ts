@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 type SetValue<T> = T | ((prevValue: T) => T);
 
@@ -9,7 +9,8 @@ type SetValue<T> = T | ((prevValue: T) => T);
  * @returns [storedValue, setValue] tuple similar to useState
  */
 export const useLocalStorage = <T>(key: string, initialValue: T) => {
-	const readValue = useCallback((): T => {
+	// Initialize state with value from localStorage or initial value
+	const [storedValue, setStoredValue] = useState<T>(() => {
 		if (typeof window === "undefined") {
 			return initialValue;
 		}
@@ -21,9 +22,7 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
 			console.warn(`Error reading localStorage key "${key}":`, error);
 			return initialValue;
 		}
-	}, [initialValue, key]);
-
-	const [storedValue, setStoredValue] = useState<T>(readValue);
+	});
 
 	const setValue = useCallback(
 		(value: SetValue<T>) => {
@@ -42,10 +41,6 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
 		},
 		[key, storedValue],
 	);
-
-	useEffect(() => {
-		setStoredValue(readValue());
-	}, [readValue]);
 
 	return [storedValue, setValue] as const;
 };

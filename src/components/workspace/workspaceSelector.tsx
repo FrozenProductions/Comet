@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlignLeft,
 	ChevronDown,
@@ -6,6 +5,7 @@ import {
 	FolderPlus,
 	Trash2,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, memo, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type {
@@ -302,8 +302,11 @@ const WorkspaceDropdownPortal = memo(
 				ref={dropdownRef}
 				initial={{ opacity: 0, y: -5 }}
 				animate={{ opacity: 1, y: 0 }}
-				exit={{ opacity: 0, y: -5 }}
-				transition={{ duration: 0.15 }}
+				transition={{
+					type: "spring",
+					stiffness: 300,
+					damping: 30,
+				}}
 				style={{
 					position: "fixed",
 					top: dropdownPosition.top,
@@ -445,34 +448,32 @@ const WorkspaceSelector: FC<WorkspaceProps> = ({
 				/>
 			</motion.div>
 			{createPortal(
-				<AnimatePresence>
-					{showDropdown && (
-						<WorkspaceDropdownPortal
-							show={showDropdown}
-							anchorRef={selectorRef}
-							dropdownRef={dropdownRef}
-							workspaces={workspaces}
-							activeWorkspace={activeWorkspace}
-							isCreatingWorkspace={isCreatingWorkspace}
-							onWorkspaceChange={async (id) => {
-								try {
-									await onWorkspaceChange(id);
-									setShowDropdown(false);
-								} catch (error) {
-									console.error("Failed to change workspace:", error);
-								}
-							}}
-							onWorkspaceDelete={onWorkspaceDelete}
-							onRenameWorkspace={onRenameWorkspace}
-							onCreateWorkspace={handleCreateWorkspace}
-							onCreateClick={(e) => {
-								e?.preventDefault();
-								e?.stopPropagation();
-								setIsCreatingWorkspace(true);
-							}}
-						/>
-					)}
-				</AnimatePresence>,
+				showDropdown && (
+					<WorkspaceDropdownPortal
+						show={showDropdown}
+						anchorRef={selectorRef}
+						dropdownRef={dropdownRef}
+						workspaces={workspaces}
+						activeWorkspace={activeWorkspace}
+						isCreatingWorkspace={isCreatingWorkspace}
+						onWorkspaceChange={async (id) => {
+							try {
+								await onWorkspaceChange(id);
+								setShowDropdown(false);
+							} catch (error) {
+								console.error("Failed to change workspace:", error);
+							}
+						}}
+						onWorkspaceDelete={onWorkspaceDelete}
+						onRenameWorkspace={onRenameWorkspace}
+						onCreateWorkspace={handleCreateWorkspace}
+						onCreateClick={(e) => {
+							e?.preventDefault();
+							e?.stopPropagation();
+							setIsCreatingWorkspace(true);
+						}}
+					/>
+				),
 				document.body,
 			)}
 		</div>
