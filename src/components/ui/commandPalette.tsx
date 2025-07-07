@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlignLeft,
+	ArrowDown,
 	Command,
 	ExternalLink,
 	FileCode,
@@ -11,6 +12,7 @@ import {
 	Plus,
 	Terminal,
 } from "lucide-react";
+import * as monaco from "monaco-editor";
 import { type FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useEditor } from "../../hooks/core/useEditor";
@@ -90,6 +92,20 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 	};
 
 	const commands: CommandItem[] = [
+		{
+			id: "goto",
+			title: "Go to Line",
+			description: "Jump to a specific line in the editor",
+			icon: <ArrowDown size={16} className="stroke-[2.5]" />,
+			action: () => {
+				setSearchQuery(">goto ");
+				if (inputRef.current) {
+					const len = inputRef.current.value.length;
+					inputRef.current.focus();
+					inputRef.current.setSelectionRange(len, len);
+				}
+			},
+		},
 		{
 			id: "new-tab",
 			title: "New Tab",
@@ -230,6 +246,42 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 		const parts = query.split(" ");
 		const command = parts[0];
 		const param = parts.slice(1).join(" ");
+
+		if (command === "goto" || command === "g") {
+			const lineNumber = parseInt(param);
+			if (!Number.isNaN(lineNumber) && lineNumber > 0) {
+				return [
+					{
+						id: "goto-line",
+						title: `Go to Line ${lineNumber}`,
+						description: "Jump to the specified line in the editor",
+						icon: <ArrowDown size={16} className="stroke-[2.5]" />,
+						action: executeCommand(() => {
+							const editor = monaco.editor.getEditors()[0];
+							if (editor) {
+								const position = {
+									lineNumber,
+									column: 1,
+								};
+								editor.setPosition(position);
+								editor.revealLineInCenter(lineNumber);
+								editor.focus();
+							}
+						}),
+					},
+				];
+			}
+
+			return [
+				{
+					id: "goto-prompt",
+					title: "Go to Line",
+					description: "Enter a line number to jump to",
+					icon: <ArrowDown size={16} className="stroke-[2.5]" />,
+					action: () => {},
+				},
+			];
+		}
 
 		if (command === "flags" || command === "f") {
 			if (!param) {
