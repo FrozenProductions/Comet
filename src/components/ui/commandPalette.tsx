@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlignLeft,
 	ArrowDown,
@@ -13,6 +12,7 @@ import {
 	Terminal,
 } from "lucide-react";
 import * as monaco from "monaco-editor";
+import { motion } from "motion/react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useEditor } from "../../hooks/core/useEditor";
@@ -512,7 +512,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 	}, [isOpen, onClose, filteredItems, selectedIndex]);
 
 	return (
-		<AnimatePresence>
+		<>
 			{isOpen && (
 				<>
 					<motion.div
@@ -526,11 +526,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 						initial={{ opacity: 0, scale: 0.95, y: -20 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.95, y: -20 }}
-						transition={{
-							type: "spring",
-							stiffness: 300,
-							damping: 30,
-						}}
 						className="fixed inset-x-0 top-[20%] z-50 flex items-start justify-center"
 					>
 						<div className="mx-auto w-full max-w-xl px-4">
@@ -578,18 +573,10 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 												{filteredItems.map((item, index) => (
 													<motion.button
 														key={item.id}
-														initial={{
-															opacity: 0,
-															y: 10,
-														}}
-														animate={{
-															opacity: 1,
-															y: 0,
-														}}
-														transition={{
-															delay: index * 0.03,
-														}}
-														className={`flex w-full select-none items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors ${
+														initial={{ opacity: 0, y: 10 }}
+														animate={{ opacity: 1, y: 0 }}
+														transition={{ delay: index * 0.1 }}
+														className={`flex w-full select-none items-center gap-3 rounded-lg px-2 py-2 text-left ${
 															selectedIndex === index
 																? "bg-ctp-surface1 text-ctp-text"
 																: "text-ctp-subtext0 hover:bg-ctp-surface1/50 hover:text-ctp-text"
@@ -640,6 +627,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 					</motion.div>
 				</>
 			)}
-		</AnimatePresence>
+		</>
 	);
 };
