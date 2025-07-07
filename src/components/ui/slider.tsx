@@ -45,8 +45,6 @@ export const Slider: FC<SliderProps> = ({
 									scale: 1.1,
 									background: "var(--tw-gradient-accent)",
 									backgroundClip: "text",
-									WebkitBackgroundClip: "text",
-									WebkitTextFillColor: "transparent",
 								}
 							: {
 									scale: 1,

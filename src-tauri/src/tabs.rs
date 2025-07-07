@@ -28,6 +28,16 @@ pub struct TabState {
     pub tab_metadata: Vec<TabMetadata>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchResult {
+    pub tab_id: String,
+    pub title: String,
+    pub line_number: usize,
+    pub line_content: String,
+    pub column_start: usize,
+    pub column_end: usize,
+}
+
 fn get_state_file(workspace_id: &str) -> PathBuf {
     let mut path = get_workspace_tabs_dir(workspace_id);
     path.push("state.json");
@@ -313,4 +323,33 @@ pub async fn export_tab(app_handle: tauri::AppHandle, workspace_id: String, titl
 
     fs::write(target_path, content).map_err(|e| e.to_string())?;
     Ok(())
+}
+
+#[tauri::command]
+pub async fn search_tabs(workspace_id: String, query: String) -> Result<Vec<SearchResult>, String> {
+    if query.trim().is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let tabs = load_tabs(workspace_id).await?;
+    let mut results = Vec::new();
+    let query = query.to_lowercase();
+
+    for tab in tabs {
+        for (line_idx, line) in tab.content.lines().enumerate() {
+            let line_lower = line.to_lowercase();
+            if let Some(column_start) = line_lower.find(&query) {
+                results.push(SearchResult {
+                    tab_id: tab.id.clone(),
+                    title: tab.title.clone(),
+                    line_number: line_idx + 1,
+                    line_content: line.to_string(),
+                    column_start,
+                    column_end: column_start + query.len(),
+                });
+            }
+        }
+    }
+
+    Ok(results)
 } 

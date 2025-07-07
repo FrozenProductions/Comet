@@ -1,17 +1,10 @@
+import { PanelLeft, Search } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { type FC, useEffect, useRef, useState } from "react";
 import { useEditor } from "../hooks/core/useEditor";
-
-interface EditorPosition {
-	lineNumber: number;
-	column: number;
-}
-
-interface ErrorDropdownProps {
-	diagnostics: monaco.editor.IMarker[];
-	onClose: () => void;
-	buttonRef: React.RefObject<HTMLButtonElement>;
-}
+import { useSidebar } from "../hooks/ui/useSidebar";
+import type { EditorPosition, ErrorDropdownProps } from "../types/ui/statusBar";
+import { WorkspaceSearch } from "./WorkspaceSearch";
 
 const ErrorDropdown: FC<ErrorDropdownProps> = ({
 	diagnostics,
@@ -161,7 +154,9 @@ export const StatusBar: FC = () => {
 	});
 	const [totalLines, setTotalLines] = useState(1);
 	const [showDiagnostics, setShowDiagnostics] = useState(false);
+	const [showSearch, setShowSearch] = useState(false);
 	const { activeTab } = useEditor();
+	const { isVisible, toggleSidebar } = useSidebar();
 	const previousTabRef = useRef(activeTab);
 	const diagnosticsButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -219,7 +214,25 @@ export const StatusBar: FC = () => {
 	};
 
 	return (
-		<div className="relative flex h-6 items-center justify-end border-t border-white/5 bg-ctp-mantle px-4 text-xs text-ctp-subtext0">
+		<div className="relative flex h-6 items-center justify-between border-t border-white/5 bg-ctp-mantle px-2 text-xs text-ctp-subtext0">
+			<div className="flex items-center gap-0.5">
+				<button
+					type="button"
+					onClick={toggleSidebar}
+					className={`flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0 ${
+						isVisible ? "text-accent" : ""
+					}`}
+				>
+					<PanelLeft size={13} />
+				</button>
+				<button
+					type="button"
+					onClick={() => setShowSearch(true)}
+					className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
+				>
+					<Search size={13} />
+				</button>
+			</div>
 			<div className="flex items-center gap-4">
 				{(errors > 0 || warnings > 0) && (
 					<div className="relative">
@@ -262,6 +275,10 @@ export const StatusBar: FC = () => {
 					</span>
 				</div>
 			</div>
+			<WorkspaceSearch
+				isOpen={showSearch}
+				onClose={() => setShowSearch(false)}
+			/>
 		</div>
 	);
 };
