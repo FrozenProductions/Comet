@@ -56,6 +56,7 @@ export const DEFAULT_EDITOR_SETTINGS = {
 		showTabBar: false,
 		showConsole: true,
 		modalScale: "default" as const,
+		middleClickTabClose: true,
 		recentSearches: {
 			enabled: true,
 			maxItems: 5,

@@ -41,6 +41,7 @@ export interface EditorSettings {
 		showTabBar: boolean;
 		showConsole: boolean;
 		modalScale: "small" | "default" | "large";
+		middleClickTabClose: boolean;
 		recentSearches: {
 			enabled: boolean;
 			maxItems: number;

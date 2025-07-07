@@ -103,6 +103,19 @@ export const InterfaceSection: FC = () => {
 						label="Compact Tab Bar"
 						description="Show only the current file name in a compact view"
 					/>
+					<Checkbox
+						checked={settings.interface.middleClickTabClose}
+						onChange={() => {
+							updateSettings({
+								interface: {
+									...settings.interface,
+									middleClickTabClose: !settings.interface.middleClickTabClose,
+								},
+							});
+						}}
+						label="Middle-Click Tab Close"
+						description="Allow closing tabs by clicking the middle mouse button"
+					/>
 					<RadioGroup
 						value={settings.interface.modalScale}
 						onChange={(value) => {

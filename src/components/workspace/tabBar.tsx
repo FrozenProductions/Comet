@@ -183,6 +183,13 @@ export const Tabbar: FC<TabbarProps> = ({
 		setDragOverTab(null);
 	};
 
+	const handleMouseDown = (e: React.MouseEvent, tabId: string) => {
+		if (e.button === 1 && settings.interface.middleClickTabClose) {
+			e.preventDefault();
+			onTabClose(tabId);
+		}
+	};
+
 	if (settings.interface.showTabBar) {
 		return (
 			<div className="flex h-full items-stretch">
@@ -204,6 +211,7 @@ export const Tabbar: FC<TabbarProps> = ({
 							handleContextMenu(e, activeTab);
 						}
 					}}
+					onMouseDown={(e) => activeTab && handleMouseDown(e, activeTab)}
 				>
 					<div
 						className="flex items-center gap-2 overflow-hidden"
@@ -378,6 +386,7 @@ export const Tabbar: FC<TabbarProps> = ({
 									onDragOver={(e) => handleDragOver(e, tab.id)}
 									onDragEnd={handleDragEnd}
 									onDragLeave={handleDragLeave}
+									onMouseDown={(e) => handleMouseDown(e, tab.id)}
 									className={`group flex h-7 flex-shrink-0 cursor-pointer select-none items-center whitespace-nowrap rounded-lg border transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
 										activeTab === tab.id
 											? "border-accent/50 bg-ctp-surface1 text-accent"
