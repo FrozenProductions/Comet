@@ -25,21 +25,6 @@ export default defineConfig({
 		target: ["es2021", "chrome100", "safari13"],
 		minify: !process.env.TAURI_DEBUG ? "esbuild" : false,
 		sourcemap: !!process.env.TAURI_DEBUG,
-		rollupOptions: {
-			output: {
-				manualChunks: {
-					"monaco-editor": ["monaco-editor"],
-					"react-vendor": [
-						"react",
-						"react-dom",
-						"framer-motion",
-						"react-hot-toast",
-						"@tauri-apps/api",
-					],
-					"ui-vendor": ["lucide-react", "tailwindcss"],
-				},
-			},
-		},
 		chunkSizeWarningLimit: 1000,
 	},
 
