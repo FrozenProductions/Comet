@@ -9,6 +9,7 @@ export const luaLanguageConfig: languages.LanguageConfiguration = {
 		["{", "}"],
 		["[", "]"],
 		["(", ")"],
+		["then", "end"],
 	],
 	autoClosingPairs: [
 		{ open: "{", close: "}" },

@@ -3,6 +3,7 @@ import { FastFlags } from "./components/fastFlags/fastFlags";
 import { Library } from "./components/library";
 import { Settings } from "./components/settings/settings";
 import { Sidebar } from "./components/sidebar";
+import { StatusBar } from "./components/statusBar";
 import { Topbar } from "./components/topbar";
 import { CommandPalette } from "./components/ui/commandPalette";
 import { Toaster } from "./components/ui/toast";
@@ -75,6 +76,7 @@ const AppContent: FC = () => {
 				)}
 				<main className="relative flex-1">{renderScreen()}</main>
 			</div>
+			<StatusBar />
 			<CommandPalette
 				isOpen={isCommandPaletteOpen}
 				onClose={toggleCommandPalette}

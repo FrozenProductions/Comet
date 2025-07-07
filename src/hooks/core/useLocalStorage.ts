@@ -9,7 +9,6 @@ type SetValue<T> = T | ((prevValue: T) => T);
  * @returns [storedValue, setValue] tuple similar to useState
  */
 export const useLocalStorage = <T>(key: string, initialValue: T) => {
-	// Initialize state with value from localStorage or initial value
 	const [storedValue, setStoredValue] = useState<T>(() => {
 		if (typeof window === "undefined") {
 			return initialValue;
