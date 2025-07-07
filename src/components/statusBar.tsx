@@ -4,7 +4,7 @@ import { type FC, useEffect, useRef, useState } from "react";
 import { useEditor } from "../hooks/core/useEditor";
 import { useSidebar } from "../hooks/ui/useSidebar";
 import type { EditorPosition, ErrorDropdownProps } from "../types/ui/statusBar";
-import { WorkspaceSearch } from "./WorkspaceSearch";
+import { WorkspaceSearch } from "./workspaceSearch";
 
 const ErrorDropdown: FC<ErrorDropdownProps> = ({
 	diagnostics,
