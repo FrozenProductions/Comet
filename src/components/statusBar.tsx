@@ -228,7 +228,9 @@ export const StatusBar: FC = () => {
 				<button
 					type="button"
 					onClick={() => setShowSearch(true)}
-					className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
+					className={`flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0 ${
+						showSearch ? "text-accent" : ""
+					}`}
 				>
 					<Search size={13} />
 				</button>
