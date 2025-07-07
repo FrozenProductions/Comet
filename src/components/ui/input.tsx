@@ -1,5 +1,5 @@
 import type React from "react";
-import { mergeClasses } from "../../utils/clsx";
+import { mergeClasses } from "../../utils/cn";
 
 export const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
 	className,

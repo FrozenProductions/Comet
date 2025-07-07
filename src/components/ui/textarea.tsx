@@ -1,5 +1,5 @@
 import React from "react";
-import { mergeClasses } from "../../utils/clsx";
+import { mergeClasses } from "../../utils/cn";
 
 export interface TextareaProps
 	extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
