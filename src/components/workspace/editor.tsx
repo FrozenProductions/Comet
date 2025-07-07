@@ -1,6 +1,13 @@
 import debounce from "lodash/debounce";
 import * as monaco from "monaco-editor";
-import { type FC, useCallback, useEffect, useRef, useState } from "react";
+import {
+	type FC,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import {
 	luaLanguage,
 	luaLanguageConfig,
@@ -59,6 +66,32 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			isTyping: false,
 			lastWord: "",
 		},
+	);
+
+	const editorOptions = useMemo(
+		() => ({
+			...EDITOR_DEFAULT_OPTIONS,
+			fontSize: settings.text.fontSize,
+			lineNumbers: settings.display.showLineNumbers
+				? ("on" as const)
+				: ("off" as const),
+			wordWrap: settings.display.wordWrap ? ("on" as const) : ("off" as const),
+			tabSize: settings.text.tabSize,
+			lineDecorationsWidth: Math.floor(settings.text.fontSize * 0.75),
+			cursorBlinking: settings.cursor.blinking,
+			cursorStyle: settings.cursor.style,
+			cursorSmoothCaretAnimation: settings.cursor.smoothCaret ? "on" : "off",
+			cursorWidth: settings.cursor.style === "line" ? 2 : 0,
+		}),
+		[
+			settings.text.fontSize,
+			settings.display.showLineNumbers,
+			settings.display.wordWrap,
+			settings.text.tabSize,
+			settings.cursor.blinking,
+			settings.cursor.style,
+			settings.cursor.smoothCaret,
+		],
 	);
 
 	const debouncedSave = useCallback(() => {
@@ -163,20 +196,12 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		}
 		modelRef.current = model;
 
+		//@ts-expect-error
 		const editor = monaco.editor.create(containerRef.current, {
 			model,
 			theme: "Comet",
 			automaticLayout: true,
-			...EDITOR_DEFAULT_OPTIONS,
-			fontSize: settings.text.fontSize,
-			lineNumbers: settings.display.showLineNumbers ? "on" : "off",
-			wordWrap: settings.display.wordWrap ? "on" : "off",
-			tabSize: settings.text.tabSize,
-			lineDecorationsWidth: Math.floor(settings.text.fontSize * 0.75),
-			cursorBlinking: settings.cursor.blinking,
-			cursorStyle: settings.cursor.style,
-			cursorSmoothCaretAnimation: settings.cursor.smoothCaret ? "on" : "off",
-			cursorWidth: settings.cursor.style === "line" ? 2 : 0,
+			...editorOptions,
 		});
 
 		editorRef.current = editor;
@@ -397,7 +422,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	}, [
 		activeTab,
 		language,
-		settings,
+		editorOptions,
 		keybinds,
 		saveEditorState,
 		restoreEditorState,
