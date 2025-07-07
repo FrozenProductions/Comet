@@ -103,7 +103,9 @@ const ConsoleLog = memo<{ log: LogLine; isResizing: boolean }>(
 				{new Date(log.timestamp).toLocaleTimeString()}
 			</span>
 			<span className="select-none font-medium">[{log.level}]</span>{" "}
-			<span className={isResizing ? "select-none" : "select-text"}>
+			<span
+				className={`${isResizing ? "select-none" : "select-text"} break-all`}
+			>
 				{log.message}
 			</span>
 		</div>
@@ -371,7 +373,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({ isOpen, onToggle }) => {
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					transition={{ duration: 0.2 }}
-					className="h-[calc(100%-2.5rem)] overflow-y-auto bg-ctp-mantle font-mono text-sm"
+					className="h-[calc(100%-2.5rem)] overflow-y-auto overflow-x-hidden bg-ctp-mantle font-mono text-sm"
 					style={{
 						userSelect: isResizing ? "none" : "text",
 						WebkitUserSelect: isResizing ? "none" : "text",
