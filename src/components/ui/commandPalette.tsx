@@ -500,7 +500,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 										spellCheck="false"
 									/>
 									<div className="flex select-none items-center gap-1">
-										<kbd className="rounded bg-ctp-surface1 px-2 py-1 text-xs font-medium text-ctp-subtext0">
+										<kbd className="rounded bg-ctp-surface2 px-2 py-1 text-xs font-medium text-ctp-subtext0">
 											esc
 										</kbd>
 										<span className="text-xs text-ctp-subtext0">to close</span>
@@ -560,7 +560,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 														</div>
 														{selectedIndex === index && (
 															<div className="flex select-none items-center gap-1 text-xs">
-																<kbd className="rounded bg-ctp-surface1 px-2 py-1 text-ctp-subtext0">
+																<kbd className="rounded bg-ctp-surface2 px-2 py-1 text-ctp-subtext0">
 																	{!searchQuery.startsWith(">") &&
 																	!searchQuery.startsWith("/") &&
 																	isCmdPressed
