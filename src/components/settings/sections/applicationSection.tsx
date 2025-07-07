@@ -1,4 +1,3 @@
-import { invoke } from "@tauri-apps/api/tauri";
 import {
 	AlertTriangle,
 	Book,
@@ -22,6 +21,7 @@ import {
 	openCometFolder,
 	openHydrogenFolder,
 } from "../../../services/core/windowService";
+import { checkIsOfficialApp } from "../../../services/system/applicationService";
 import {
 	checkForUpdates,
 	downloadAndInstallUpdate,
@@ -50,7 +50,7 @@ export const ApplicationSection: FC = () => {
 	useEffect(() => {
 		const checkAppOfficial = async () => {
 			try {
-				const isOfficial = await invoke<boolean>("is_official_app");
+				const isOfficial = await checkIsOfficialApp();
 				setIsOfficialApp(isOfficial);
 			} catch (error) {
 				console.error("Failed to check if app is official:", error);

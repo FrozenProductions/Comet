@@ -1,10 +1,10 @@
-import { invoke } from "@tauri-apps/api/tauri";
 import { Search } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { motion } from "motion/react";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import { useEditor } from "../hooks/core/useEditor";
 import { useWorkspace } from "../hooks/core/useWorkspace";
+import { getResultsWithContext } from "../services/core/workspaceSearchService";
 import type {
 	SearchResult,
 	WorkspaceSearchProps,
@@ -122,41 +122,11 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 
 			setIsSearching(true);
 			try {
-				const searchResults = await invoke<SearchResult[]>("search_tabs", {
-					workspaceId: activeWorkspace,
-					query: searchQuery,
-				});
-
-				const resultsWithContext = await Promise.all(
-					searchResults.map(async (result) => {
-						const tab = await invoke<{ content: string }>("get_tab_content", {
-							workspaceId: activeWorkspace,
-							tabId: result.tab_id,
-						}).catch(() => ({ content: "" }));
-
-						if (!tab.content) return result;
-
-						const lines = tab.content.split("\n");
-						const contextBefore = lines.slice(
-							Math.max(0, result.line_number - 3),
-							result.line_number - 1,
-						);
-						const contextAfter = lines.slice(
-							result.line_number,
-							result.line_number + 2,
-						);
-
-						return {
-							...result,
-							context: {
-								before: contextBefore,
-								after: contextAfter,
-							},
-						};
-					}),
+				const searchResults = await getResultsWithContext(
+					activeWorkspace,
+					searchQuery,
 				);
-
-				setResults(resultsWithContext);
+				setResults(searchResults);
 			} catch (error) {
 				console.error("Search failed:", error);
 				setResults([]);
