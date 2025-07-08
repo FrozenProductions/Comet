@@ -116,6 +116,7 @@ export const WorkspaceSearch: FC = () => {
 	}, []);
 
 	useEffect(() => {
+		// biome-ignore lint/style/useConst: <>
 		let timeoutId: NodeJS.Timeout;
 
 		const performSearch = async () => {
