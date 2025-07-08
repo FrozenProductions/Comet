@@ -2,6 +2,7 @@ import { PanelLeft, Search } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { type FC, useEffect, useRef, useState } from "react";
 import { useEditor } from "../hooks/core/useEditor";
+import { useKeybinds } from "../hooks/core/useKeybinds";
 import { useSidebar } from "../hooks/ui/useSidebar";
 import type { EditorPosition, ErrorDropdownProps } from "../types/ui/statusBar";
 import { WorkspaceSearch } from "./workspaceSearch";
@@ -154,9 +155,9 @@ export const StatusBar: FC = () => {
 	});
 	const [totalLines, setTotalLines] = useState(1);
 	const [showDiagnostics, setShowDiagnostics] = useState(false);
-	const [showSearch, setShowSearch] = useState(false);
 	const { activeTab } = useEditor();
 	const { isVisible, toggleSidebar } = useSidebar();
+	const { setIsWorkspaceSearchOpen } = useKeybinds();
 	const previousTabRef = useRef(activeTab);
 	const diagnosticsButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -227,10 +228,8 @@ export const StatusBar: FC = () => {
 				</button>
 				<button
 					type="button"
-					onClick={() => setShowSearch(true)}
-					className={`flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0 ${
-						showSearch ? "text-accent" : ""
-					}`}
+					onClick={() => setIsWorkspaceSearchOpen(true)}
+					className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
 				>
 					<Search size={13} />
 				</button>
@@ -277,10 +276,7 @@ export const StatusBar: FC = () => {
 					</span>
 				</div>
 			</div>
-			<WorkspaceSearch
-				isOpen={showSearch}
-				onClose={() => setShowSearch(false)}
-			/>
+			<WorkspaceSearch />
 		</div>
 	);
 };

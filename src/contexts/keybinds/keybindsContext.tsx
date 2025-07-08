@@ -8,6 +8,7 @@ import { useSettings } from "../../hooks/core/useSettings";
 import { useScript } from "../../hooks/execution/useScript";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsoleVisibility } from "../../hooks/ui/useConsoleVisibility";
+import { useSidebar } from "../../hooks/ui/useSidebar";
 import type { Keybind, KeybindAction, Screen } from "../../types/core/keybinds";
 import { KeybindsContext } from "./keybindsContextType";
 
@@ -19,6 +20,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 	const { openRoblox } = useRoblox();
 	const { executeScript } = useScript();
 	const { toggleConsoleVisibility } = useConsoleVisibility();
+	const { toggleSidebar } = useSidebar();
 	const [activeScreen, setActiveScreen] = useState<Screen>("Editor");
 	const [keybinds, setKeybinds] = useLocalStorage<Keybind[]>(
 		"keybinds",
@@ -27,6 +29,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 	const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 	const [isKeybindEditorOpen, setIsKeybindEditorOpen] = useState(false);
+	const [isWorkspaceSearchOpen, setIsWorkspaceSearchOpen] = useState(false);
 
 	const numberBuffer = React.useRef("");
 	const bufferTimeout = React.useRef<number>();
@@ -79,6 +82,12 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 				case "toggleCommandPalette":
 					toggleCommandPalette();
 					break;
+				case "toggleWorkspaceSearch":
+					setIsWorkspaceSearchOpen((prev) => !prev);
+					break;
+				case "toggleSidebar":
+					toggleSidebar();
+					break;
 				case "executeScript":
 					executeScript();
 					break;
@@ -121,6 +130,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 			toggleCommandPalette,
 			handleScreenChange,
 			toggleConsoleVisibility,
+			toggleSidebar,
 		],
 	);
 
@@ -217,6 +227,8 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 				setIsConsoleOpen,
 				isKeybindEditorOpen,
 				setIsKeybindEditorOpen,
+				isWorkspaceSearchOpen,
+				setIsWorkspaceSearchOpen,
 			}}
 		>
 			{children}

@@ -22,7 +22,9 @@ export type KeybindAction =
 	| "openLibrary"
 	| "openAutoExecution"
 	| "collapseConsole"
-	| "toggleConsole";
+	| "toggleConsole"
+	| "toggleWorkspaceSearch"
+	| "toggleSidebar";
 
 export interface Keybind {
 	key: string;
@@ -50,6 +52,10 @@ export interface KeybindsContextType {
 	setIsConsoleOpen: (isOpen: boolean | ((prev: boolean) => boolean)) => void;
 	isKeybindEditorOpen: boolean;
 	setIsKeybindEditorOpen: (isOpen: boolean) => void;
+	isWorkspaceSearchOpen: boolean;
+	setIsWorkspaceSearchOpen: (
+		isOpen: boolean | ((prev: boolean) => boolean),
+	) => void;
 }
 
 export interface KeybindEditorProps {

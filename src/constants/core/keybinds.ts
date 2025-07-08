@@ -20,6 +20,8 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
 	switchTab: "NAVIGATION",
 	toggleZenMode: "APPLICATION",
 	toggleCommandPalette: "APPLICATION",
+	toggleWorkspaceSearch: "APPLICATION",
+	toggleSidebar: "APPLICATION",
 	openRoblox: "APPLICATION",
 	openSettings: "SCREENS",
 	collapseConsole: "APPLICATION",
@@ -60,6 +62,18 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
 		modifiers: { cmd: true },
 		action: "toggleCommandPalette",
 		description: "Toggle command palette",
+	},
+	{
+		key: "p",
+		modifiers: { cmd: true, shift: true },
+		action: "toggleWorkspaceSearch",
+		description: "Toggle workspace search",
+	},
+	{
+		key: "b",
+		modifiers: { cmd: true },
+		action: "toggleSidebar",
+		description: "Toggle sidebar",
 	},
 	{
 		key: "enter",

@@ -158,7 +158,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		monaco.editor.defineTheme("Comet", monacoTheme);
 		monaco.editor.setTheme("Comet");
 
-		const keybindingRules = [
+		const KEYBINDING_RULES = [
 			{
 				key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyG,
 			},
@@ -173,6 +173,9 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter },
 			{ key: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL },
 			{
+				key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP,
+			},
+			{
 				key: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyE,
 			},
 			{
@@ -180,7 +183,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			},
 		];
 
-		keybindingRules.forEach(({ key }) => {
+		KEYBINDING_RULES.forEach(({ key }) => {
 			monaco.editor.addKeybindingRule({
 				keybinding: key,
 				command: null,

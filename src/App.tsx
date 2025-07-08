@@ -117,16 +117,16 @@ const App: FC = () => {
 						<EditorProvider>
 							<ConsoleProvider>
 								<FastFlagsProvider>
-									<KeybindsProvider>
-										<SidebarProvider>
+									<SidebarProvider>
+										<KeybindsProvider>
 											<AppContent />
 											<MessageModal
 												currentVersion={APP_CONSTANTS.currentVersion}
 											/>
 											<UpdateChecker />
 											<Toaster />
-										</SidebarProvider>
-									</KeybindsProvider>
+										</KeybindsProvider>
+									</SidebarProvider>
 								</FastFlagsProvider>
 							</ConsoleProvider>
 						</EditorProvider>

@@ -3,17 +3,12 @@ import * as monaco from "monaco-editor";
 import { motion } from "motion/react";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import { useEditor } from "../hooks/core/useEditor";
+import { useKeybinds } from "../hooks/core/useKeybinds";
 import { useWorkspace } from "../hooks/core/useWorkspace";
 import { getResultsWithContext } from "../services/core/workspaceSearchService";
-import type {
-	SearchResult,
-	WorkspaceSearchProps,
-} from "../types/ui/workspaceSearch";
+import type { SearchResult } from "../types/ui/workspaceSearch";
 
-export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
-	isOpen,
-	onClose,
-}) => {
+export const WorkspaceSearch: FC = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [results, setResults] = useState<SearchResult[]>([]);
 	const [selectedIndex, setSelectedIndex] = useState(0);
@@ -21,6 +16,7 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 	const [hasSearched, setHasSearched] = useState(false);
 	const { setActiveTab } = useEditor();
 	const { activeWorkspace } = useWorkspace();
+	const { isWorkspaceSearchOpen, setIsWorkspaceSearchOpen } = useKeybinds();
 	const resultsContainerRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -50,15 +46,15 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 				}
 			}, 50);
 
-			onClose();
+			setIsWorkspaceSearchOpen(false);
 		},
-		[setActiveTab, onClose],
+		[setActiveTab, setIsWorkspaceSearchOpen],
 	);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
-				onClose();
+				setIsWorkspaceSearchOpen(false);
 			} else if (e.key === "ArrowDown") {
 				e.preventDefault();
 				setSelectedIndex((prev) => {
@@ -99,7 +95,7 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 			}
 		};
 
-		if (isOpen) {
+		if (isWorkspaceSearchOpen) {
 			window.addEventListener("keydown", handleKeyDown);
 			inputRef.current?.focus();
 		}
@@ -107,14 +103,19 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 		return () => {
 			window.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [isOpen, onClose, results, selectedIndex, handleResultClick]);
+	}, [
+		isWorkspaceSearchOpen,
+		results,
+		selectedIndex,
+		handleResultClick,
+		setIsWorkspaceSearchOpen,
+	]);
 
 	useEffect(() => {
 		setSelectedIndex(0);
 	}, []);
 
 	useEffect(() => {
-		// biome-ignore lint/style/useConst: <>
 		let timeoutId: NodeJS.Timeout;
 
 		const performSearch = async () => {
@@ -146,7 +147,7 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 		return () => clearTimeout(timeoutId);
 	}, [searchQuery, activeWorkspace]);
 
-	if (!isOpen) return null;
+	if (!isWorkspaceSearchOpen) return null;
 
 	return (
 		<motion.div
@@ -154,7 +155,7 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			className="fixed inset-0 z-50 flex items-center justify-center bg-black/20"
-			onClick={onClose}
+			onClick={() => setIsWorkspaceSearchOpen(false)}
 		>
 			<motion.div
 				initial={{ opacity: 0, scale: 0.95, y: -20 }}

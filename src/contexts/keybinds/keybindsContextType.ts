@@ -13,4 +13,6 @@ export const KeybindsContext = createContext<KeybindsContextType>({
 	setIsConsoleOpen: () => {},
 	isKeybindEditorOpen: false,
 	setIsKeybindEditorOpen: () => {},
+	isWorkspaceSearchOpen: false,
+	setIsWorkspaceSearchOpen: () => {},
 });

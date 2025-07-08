@@ -12,6 +12,8 @@ import { KeybindEditor } from "../keybindEditor";
 
 const getKeybindTitle = (action: KeybindAction): string => {
 	switch (action) {
+		case "hideWindow":
+			return "Hide Window";
 		case "newTab":
 			return "New Tab";
 		case "closeTab":
@@ -22,6 +24,10 @@ const getKeybindTitle = (action: KeybindAction): string => {
 			return "Toggle Zen Mode";
 		case "toggleCommandPalette":
 			return "Command Palette";
+		case "toggleWorkspaceSearch":
+			return "Workspace Search";
+		case "toggleSidebar":
+			return "Toggle Sidebar";
 		case "openRoblox":
 			return "Open Roblox";
 		case "openSettings":
