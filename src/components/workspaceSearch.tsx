@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Command } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { motion } from "motion/react";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
@@ -18,9 +18,11 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 	const [results, setResults] = useState<SearchResult[]>([]);
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [isSearching, setIsSearching] = useState(false);
+	const [hasSearched, setHasSearched] = useState(false);
 	const { setActiveTab } = useEditor();
 	const { activeWorkspace } = useWorkspace();
 	const resultsContainerRef = useRef<HTMLDivElement>(null);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleResultClick = useCallback(
 		(result: SearchResult) => {
@@ -99,6 +101,7 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 
 		if (isOpen) {
 			window.addEventListener("keydown", handleKeyDown);
+			inputRef.current?.focus();
 		}
 
 		return () => {
@@ -117,6 +120,7 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 		const performSearch = async () => {
 			if (!searchQuery.trim() || !activeWorkspace) {
 				setResults([]);
+				setHasSearched(false);
 				return;
 			}
 
@@ -127,9 +131,11 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 					searchQuery,
 				);
 				setResults(searchResults);
+				setHasSearched(true);
 			} catch (error) {
 				console.error("Search failed:", error);
 				setResults([]);
+				setHasSearched(true);
 			} finally {
 				setIsSearching(false);
 			}
@@ -158,8 +164,9 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="flex items-center gap-3 border-b border-ctp-surface2 p-4">
-					<Search size={16} className="text-ctp-subtext0" />
+					<Command size={16} className="text-ctp-subtext0" />
 					<input
+						ref={inputRef}
 						type="text"
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
@@ -173,51 +180,66 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 					className="h-[600px] overflow-y-auto scroll-smooth"
 					ref={resultsContainerRef}
 				>
-					<div className="flex h-full flex-col p-2 pb-[300px]">
+					<div className="flex h-full flex-col p-2">
 						{isSearching ? (
-							<div className="flex flex-1 select-none flex-col items-center justify-center gap-4 rounded-lg p-8 text-center">
-								<div className="text-sm text-ctp-subtext0">Searching...</div>
+							<div className="flex flex-1 select-none items-center justify-center rounded-lg p-8 text-center">
+								<div className="flex flex-col items-center text-sm text-ctp-subtext0">
+									<motion.div
+										animate={{ rotate: 360 }}
+										transition={{
+											duration: 1,
+											repeat: Infinity,
+											ease: "linear",
+										}}
+										className="mb-3"
+									>
+										<Command size={24} className="text-ctp-subtext0/50" />
+									</motion.div>
+									<span>Searching workspace...</span>
+								</div>
 							</div>
 						) : searchQuery.trim() === "" ? (
-							<div className="flex flex-1 select-none flex-col items-center justify-center gap-4 rounded-lg p-8 text-center">
-								<Search size={32} className="text-ctp-subtext0/50" />
-								<div>
+							<div className="flex flex-1 select-none items-center justify-center rounded-lg p-8 text-center">
+								<div className="flex flex-col items-center">
+									<Command size={32} className="mb-4 text-ctp-subtext0/50" />
 									<div className="mb-3 text-sm font-medium text-ctp-text">
-										Start searching
+										Search workspace
 									</div>
-									<div className="flex items-center justify-center gap-3 text-xs text-ctp-subtext0">
+									<div className="flex flex-wrap items-center justify-center gap-3 text-xs text-ctp-subtext0">
 										<div className="flex items-center gap-2">
 											<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium">
 												Enter
 											</kbd>
-											<span>to search</span>
+											<span>select</span>
 										</div>
 										<span className="text-ctp-surface2">•</span>
 										<div className="flex items-center gap-2">
 											<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium">
 												↑↓
 											</kbd>
-											<span>to navigate</span>
+											<span>navigate</span>
 										</div>
 										<span className="text-ctp-surface2">•</span>
 										<div className="flex items-center gap-2">
 											<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium">
 												Esc
 											</kbd>
-											<span>to close</span>
+											<span>close</span>
 										</div>
 									</div>
 								</div>
 							</div>
-						) : results.length === 0 ? (
-							<div className="flex flex-1 select-none flex-col items-center justify-center gap-4 rounded-lg p-8 text-center">
-								<Search size={32} className="text-ctp-subtext0/50" />
-								<div className="text-sm text-ctp-subtext0">
-									No results found
+						) : hasSearched && results.length === 0 ? (
+							<div className="flex flex-1 select-none items-center justify-center rounded-lg p-8 text-center">
+								<div className="flex flex-col items-center">
+									<Command size={32} className="mb-4 text-ctp-subtext0/50" />
+									<div className="text-sm text-ctp-subtext0">
+										No results found for "{searchQuery}"
+									</div>
 								</div>
 							</div>
 						) : (
-							<div className="space-y-4 pt-2">
+							<div className="space-y-2 pt-2 pb-[300px]">
 								{results.map((result, index) => (
 									<motion.button
 										key={`${result.tab_id}-${result.line_number}-${result.column_start}`}
@@ -227,17 +249,26 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 												: "border-transparent bg-transparent hover:border-ctp-surface2 hover:bg-ctp-surface1/50"
 										}`}
 										onClick={() => handleResultClick(result)}
+										initial={{ opacity: 0, y: 10 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: index * 0.05 }}
 									>
 										<div className="flex items-center justify-between border-b border-ctp-surface2 px-3 py-2">
-											<span className="font-medium text-ctp-text">
-												{result.title}
-											</span>
-											<span className="text-xs text-ctp-subtext0">
-												Line {result.line_number}
-											</span>
+											<div className="flex items-center gap-2">
+												<span className="font-medium text-ctp-text">
+													{result.title}
+												</span>
+												<span className="rounded bg-ctp-surface2/30 px-1.5 py-0.5 text-[10px] text-ctp-subtext0">
+													Line {result.line_number}
+												</span>
+											</div>
+											{selectedIndex === index && (
+												<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium text-ctp-subtext0">
+													Enter
+												</kbd>
+											)}
 										</div>
 										<div className="overflow-x-auto p-3 text-left font-mono">
-											{/* Context before */}
 											{result.context?.before.map((line, lineIdx) => (
 												<div
 													key={`${result.tab_id}-${result.line_number}-before-${result.line_number - ((result.context?.before.length ?? 0) - lineIdx)}`}
@@ -247,7 +278,6 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 												</div>
 											))}
 
-											{/* Matching line */}
 											<div className="relative rounded bg-ctp-surface2/30 px-2 text-xs leading-5">
 												<div className="absolute -left-0.5 top-0 h-full w-0.5 bg-ctp-yellow/50" />
 												{result.line_content.slice(0, result.column_start)}
@@ -260,7 +290,6 @@ export const WorkspaceSearch: FC<WorkspaceSearchProps> = ({
 												{result.line_content.slice(result.column_end)}
 											</div>
 
-											{/* Context after */}
 											{result.context?.after.map((line, lineIdx) => (
 												<div
 													key={`${result.tab_id}-${result.line_number}-after-${result.line_number + 1 + lineIdx}`}
