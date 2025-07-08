@@ -30,8 +30,8 @@ import { Actions } from "../ui/editorActions";
 import { EditorSearch } from "./editorSearch";
 import { IntelliSense } from "./intelliSense";
 
-const modelsMap = new Map<string, monaco.editor.ITextModel>();
-const editorStatesMap = new Map<
+const MODELS_MAP = new Map<string, monaco.editor.ITextModel>();
+const EDITOR_STATES_MAP = new Map<
 	string,
 	{
 		viewState: monaco.editor.ICodeEditorViewState | null;
@@ -106,7 +106,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		const viewState = editorRef.current.saveViewState();
 		const position = editorRef.current.getPosition();
 
-		editorStatesMap.set(activeTab, {
+		EDITOR_STATES_MAP.set(activeTab, {
 			viewState,
 			position,
 		});
@@ -115,7 +115,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	const restoreEditorState = useCallback(() => {
 		if (!editorRef.current || !activeTab) return;
 
-		const savedState = editorStatesMap.get(activeTab);
+		const savedState = EDITOR_STATES_MAP.get(activeTab);
 		if (savedState) {
 			if (savedState.viewState) {
 				editorRef.current.restoreViewState(savedState.viewState);
@@ -187,10 +187,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			});
 		});
 
-		let model = modelsMap.get(activeTab);
+		let model = MODELS_MAP.get(activeTab);
 		if (!model) {
 			model = monaco.editor.createModel(content, language);
-			modelsMap.set(activeTab, model);
+			MODELS_MAP.set(activeTab, model);
 		} else if (model.getValue() !== content) {
 			model.setValue(content);
 		}
@@ -426,13 +426,14 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		keybinds,
 		saveEditorState,
 		restoreEditorState,
+		suggestionService.getSuggestions().length,
 	]);
 
 	useEffect(() => {
 		return () => {
-			modelsMap.forEach((model) => model.dispose());
-			modelsMap.clear();
-			editorStatesMap.clear();
+			MODELS_MAP.forEach((model) => model.dispose());
+			MODELS_MAP.clear();
+			EDITOR_STATES_MAP.clear();
 		};
 	}, []);
 

@@ -2,9 +2,18 @@ import type * as monaco from "monaco-editor";
 import { suggestionService } from "../services/features/suggestionService";
 import type { Suggestion } from "../types/core/editor";
 
-const localPattern = /local\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
-const functionPattern = /function\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
-const methodPattern = /([a-zA-Z_][a-zA-Z0-9_]*):([a-zA-Z_][a-zA-Z0-9_]*)/g;
+const LOCAL_PATTERN = /local\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
+const FUNCTION_PATTERN = /function\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
+const METHOD_PATTERN = /([a-zA-Z_][a-zA-Z0-9_]*):([a-zA-Z_][a-zA-Z0-9_]*)/g;
+
+/**
+ * Extracts builtin function, method, and library names from the suggestions service
+ * @returns An array of strings containing the labels of all function, method, and library suggestions
+ */
+export const getBuiltinsFromSuggestions = (): string[] => {
+	const suggestions = suggestionService.getSuggestions();
+	return suggestions.filter((s) => s.type === "function").map((s) => s.label);
+};
 
 export const getSuggestions = (
 	model: monaco.editor.ITextModel,
@@ -53,7 +62,7 @@ export const getSuggestions = (
 	const text = model.getValue();
 	let match: RegExpExecArray | null;
 
-	match = localPattern.exec(text);
+	match = LOCAL_PATTERN.exec(text);
 	while (match !== null) {
 		const varName = match[1];
 		if (varName.toLowerCase().includes(wordText)) {
@@ -64,10 +73,10 @@ export const getSuggestions = (
 				documentation: "Local variable declared in the current file",
 			});
 		}
-		match = localPattern.exec(text);
+		match = LOCAL_PATTERN.exec(text);
 	}
 
-	match = functionPattern.exec(text);
+	match = FUNCTION_PATTERN.exec(text);
 	while (match !== null) {
 		const funcName = match[1];
 		if (funcName.toLowerCase().includes(wordText)) {
@@ -78,10 +87,10 @@ export const getSuggestions = (
 				documentation: "Function declared in the current file",
 			});
 		}
-		match = functionPattern.exec(text);
+		match = FUNCTION_PATTERN.exec(text);
 	}
 
-	match = methodPattern.exec(text);
+	match = METHOD_PATTERN.exec(text);
 	while (match !== null) {
 		const methodName = match[2];
 		if (methodName.toLowerCase().includes(wordText)) {
@@ -92,7 +101,7 @@ export const getSuggestions = (
 				documentation: "Method called in the current file",
 			});
 		}
-		match = methodPattern.exec(text);
+		match = METHOD_PATTERN.exec(text);
 	}
 
 	const maxSuggestions = settings?.maxSuggestions || 10;
