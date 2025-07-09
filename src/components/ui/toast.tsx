@@ -1,7 +1,7 @@
 import { Toaster as HotToaster } from "react-hot-toast";
 
-const baseToastStyle =
-	"!bg-ctp-mantle !text-ctp-text !border !border-white/5 !shadow-xl !rounded-xl !py-3 !px-4 !whitespace-normal !w-auto !min-w-[240px] !max-w-[420px] !break-words";
+const BASE_TOAST_STYLE =
+	"!bg-ctp-mantle !text-ctp-text !border !border-white/5 !shadow-xl !rounded-xl !py-2.5 !px-3 !flex !items-center !gap-2 !text-sm !leading-5";
 
 export const Toaster = () => {
 	return (
@@ -15,14 +15,14 @@ export const Toaster = () => {
 				maxWidth: "calc(100% - 32px)",
 			}}
 			toastOptions={{
-				className: baseToastStyle,
+				className: BASE_TOAST_STYLE,
 				duration: 4000,
 				style: {
 					width: "fit-content",
-					display: "flex",
-					alignItems: "center",
-					gap: "8px",
-					paddingRight: "12px",
+					minWidth: "auto",
+					maxWidth: "420px",
+					whiteSpace: "pre-wrap",
+					wordBreak: "break-word",
 				},
 				loading: {
 					iconTheme: {
@@ -35,14 +35,14 @@ export const Toaster = () => {
 						primary: "rgb(166, 227, 161)",
 						secondary: "rgb(30, 30, 46)",
 					},
-					className: baseToastStyle,
+					className: BASE_TOAST_STYLE,
 				},
 				error: {
 					iconTheme: {
 						primary: "rgb(243, 139, 168)",
 						secondary: "rgb(30, 30, 46)",
 					},
-					className: baseToastStyle,
+					className: BASE_TOAST_STYLE,
 				},
 			}}
 		/>
