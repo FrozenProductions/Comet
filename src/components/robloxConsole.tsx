@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { type FC, memo, useCallback, useEffect, useRef, useState } from "react";
+import { Tooltip } from "react-tooltip";
 import {
 	CONSOLE_COLORS,
 	CONSOLE_CONFIG,
@@ -52,6 +53,8 @@ const ConsoleHeader = memo(
 				<button
 					type="button"
 					onClick={onToggle}
+					data-tooltip-id="console-tooltip"
+					data-tooltip-content={isOpen ? "Collapse console" : "Expand console"}
 					className="cursor-pointer rounded p-1 hover:bg-white/5"
 				>
 					{isOpen ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
@@ -62,26 +65,29 @@ const ConsoleHeader = memo(
 				<button
 					type="button"
 					onClick={onClear}
+					data-tooltip-id="console-tooltip"
+					data-tooltip-content="Clear console"
 					className="cursor-pointer rounded p-1 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
-					title="Clear console"
 				>
 					<Trash2 size={16} />
 				</button>
 				<button
 					type="button"
 					onClick={onToggleWatch}
+					data-tooltip-id="console-tooltip"
+					data-tooltip-content={isWatching ? "Stop watching" : "Start watching"}
 					className={`cursor-pointer rounded p-1 hover:bg-white/5 ${
 						isWatching ? "text-red-400" : "text-green-400"
 					}`}
-					title={isWatching ? "Stop watching" : "Start watching"}
 				>
 					{isWatching ? <Square size={16} /> : <Play size={16} />}
 				</button>
 				<button
 					type="button"
 					onClick={onFloatToggle}
+					data-tooltip-id="console-tooltip"
+					data-tooltip-content={isFloating ? "Dock console" : "Float console"}
 					className="cursor-pointer rounded p-1 text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
-					title={isFloating ? "Dock console" : "Float console"}
 				>
 					{isFloating ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
 				</button>
@@ -400,17 +406,30 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({ isOpen, onToggle }) => {
 					<div
 						className="absolute right-0 top-[40px] h-[calc(100%-40px)] w-1 cursor-ew-resize select-none hover:bg-white/5"
 						onMouseDown={(e) => handleResizeStart(e, "right")}
+						data-tooltip-id="console-tooltip"
+						data-tooltip-content="Resize width"
 					/>
 					<div
 						className="absolute bottom-0 left-0 h-1 w-full cursor-ns-resize select-none hover:bg-white/5"
 						onMouseDown={(e) => handleResizeStart(e, "bottom")}
+						data-tooltip-id="console-tooltip"
+						data-tooltip-content="Resize height"
 					/>
 					<div
 						className="absolute bottom-0 right-0 h-4 w-4 cursor-nwse-resize select-none hover:bg-white/5"
 						onMouseDown={(e) => handleResizeStart(e, "corner")}
+						data-tooltip-id="console-tooltip"
+						data-tooltip-content="Resize"
 					/>
 				</>
 			)}
+			<Tooltip
+				id="console-tooltip"
+				className="!z-50 !rounded-lg !border !border-white/5 !bg-ctp-mantle !px-2.5 !py-1.5 !text-xs !font-medium !shadow-lg"
+				classNameArrow="!hidden"
+				delayShow={50}
+				delayHide={0}
+			/>
 		</motion.div>
 	);
 };
