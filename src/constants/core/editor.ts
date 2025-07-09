@@ -1,5 +1,5 @@
 import type { editor, languages } from "monaco-editor";
-import { getBuiltinsFromSuggestions } from "../../utils/suggestions";
+import { suggestionService } from "../../services/features/suggestionService";
 
 export const luaLanguageConfig: languages.LanguageConfiguration = {
 	comments: {
@@ -71,7 +71,7 @@ export const luaLanguage: languages.IMonarchLanguage = {
 		"Drawing",
 	],
 
-	builtins: getBuiltinsFromSuggestions(),
+	builtins: [],
 
 	operators: [
 		"+",
@@ -246,6 +246,15 @@ export const luaLanguage: languages.IMonarchLanguage = {
 		],
 	},
 } as const;
+
+suggestionService.loadSuggestions().then(() => {
+	const builtins = suggestionService
+		.getSuggestions()
+		.filter((s) => s.type === "function" || s.type === "method")
+		.map((s) => s.label);
+
+	luaLanguage.builtins = builtins;
+});
 
 export const monacoTheme: editor.IStandaloneThemeData = {
 	base: "vs-dark",

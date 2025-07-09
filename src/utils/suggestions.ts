@@ -6,17 +6,6 @@ const LOCAL_PATTERN = /local\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
 const FUNCTION_PATTERN = /function\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
 const METHOD_PATTERN = /([a-zA-Z_][a-zA-Z0-9_]*):([a-zA-Z_][a-zA-Z0-9_]*)/g;
 
-/**
- * Extracts builtin function, method, and library names from the suggestions service
- * @returns An array of strings containing the labels of all function, method, and library suggestions
- */
-export const getBuiltinsFromSuggestions = (): string[] => {
-	const suggestions = suggestionService.getSuggestions();
-	return suggestions
-		.filter((s) => s.type === "function" || s.type === "method")
-		.map((s) => s.label);
-};
-
 export const getSuggestions = (
 	model: monaco.editor.ITextModel,
 	position: monaco.Position,
