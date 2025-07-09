@@ -163,7 +163,7 @@ export const WorkspaceSearch: FC = () => {
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.95, y: -20 }}
 				className="w-[800px] overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
-				onClick={(e) => e.stopPropagation()}
+				onClick={(e: any) => e.stopPropagation()}
 			>
 				<div className="flex items-center gap-3 border-b border-ctp-surface2 p-4">
 					<Command size={16} className="text-ctp-subtext0" />
