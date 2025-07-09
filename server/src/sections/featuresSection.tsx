@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { Brush, Settings, Terminal } from "lucide-react";
+import { motion } from "motion/react";
 import type { FC } from "react";
 import { LANDING_CONTENT } from "../constants/landingContent";
 
@@ -10,9 +10,8 @@ const FeaturesSection: FC = () => {
 				<motion.div
 					className="mb-8 text-center sm:mb-12"
 					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
+					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5 }}
-					viewport={{ once: true }}
 				>
 					<h2 className="text-theme-bright mb-2 text-xl font-semibold sm:mb-3 sm:text-2xl lg:text-3xl">
 						Key Features
@@ -28,12 +27,11 @@ const FeaturesSection: FC = () => {
 							key={feature.title}
 							className="bg-theme-surface/50 hover:bg-theme-surface/60 rounded-lg p-4 transition-colors duration-200 sm:p-5 lg:p-6"
 							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
+							animate={{ opacity: 1, y: 0 }}
 							transition={{
 								duration: 0.5,
 								delay: index * 0.1,
 							}}
-							viewport={{ once: true }}
 						>
 							<div className="mb-2.5 flex items-center gap-2.5 sm:mb-3 sm:gap-3">
 								<div className="bg-theme-accent/10 rounded-md p-1.5 sm:p-2">

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { Check, Copy, FileCode } from "lucide-react";
+import { motion } from "motion/react";
 import { type FC, useState } from "react";
 import { LANDING_CONTENT } from "../constants/landingContent";
 

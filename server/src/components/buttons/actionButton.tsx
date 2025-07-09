@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import type { FC } from "react";
 import type { ActionButtonProps } from "../../types/landing";
 
@@ -16,7 +16,7 @@ const ActionButton: FC<ActionButtonProps> = ({
 			"bg-theme-accent text-theme-base hover:opacity-90 hover:shadow-button-glow",
 		secondary:
 			"bg-theme-surface/50 text-theme-text hover:bg-theme-surface/80 hover:shadow-inner-border",
-	};
+	} as const;
 
 	return (
 		<motion.button
@@ -26,11 +26,7 @@ const ActionButton: FC<ActionButtonProps> = ({
 			whileTap={{ scale: 0.98 }}
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
-			transition={{
-				type: "spring",
-				stiffness: 400,
-				damping: 20,
-			}}
+			transition={{ duration: 0.2 }}
 		>
 			<span className="relative z-10 text-[15px]">{label}</span>
 			<span className="relative z-10 opacity-80">{icon}</span>
