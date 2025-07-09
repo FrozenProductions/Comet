@@ -316,124 +316,6 @@ async fn execute_script(script: String) -> Result<String, String> {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ScriptSearchParams {
-    q: String,
-    page: Option<u32>,
-    max: Option<u32>,
-    mode: Option<String>,
-    patched: Option<u8>,
-    key: Option<u8>,
-    universal: Option<u8>,
-    verified: Option<u8>,
-    #[serde(rename = "sortBy")]
-    sort_by: Option<String>,
-    order: Option<String>,
-    strict: Option<bool>,
-}
-
-#[tauri::command]
-async fn search_scripts(params: ScriptSearchParams) -> Result<String, String> {
-    let client = reqwest::Client::new();
-    let mut url = reqwest::Url::parse("https://scriptblox.com/api/script/search").map_err(|e| {
-        e.to_string()
-    })?;
-
-    url.query_pairs_mut().append_pair("q", &params.q);
-
-    if let Some(page) = params.page {
-        url.query_pairs_mut().append_pair("page", &page.to_string());
-    }
-    if let Some(max) = params.max {
-        url.query_pairs_mut().append_pair("max", &max.to_string());
-    }
-    if let Some(mode) = params.mode {
-        url.query_pairs_mut().append_pair("mode", &mode);
-    }
-    if let Some(patched) = params.patched {
-        url.query_pairs_mut().append_pair("patched", &patched.to_string());
-    }
-    if let Some(key) = params.key {
-        url.query_pairs_mut().append_pair("key", &key.to_string());
-    }
-    if let Some(universal) = params.universal {
-        url.query_pairs_mut().append_pair("universal", &universal.to_string());
-    }
-    if let Some(verified) = params.verified {
-        url.query_pairs_mut().append_pair("verified", &verified.to_string());
-    }
-    if let Some(sort_by) = params.sort_by {
-        url.query_pairs_mut().append_pair("sortBy", &sort_by);
-    }
-    if let Some(order) = params.order {
-        url.query_pairs_mut().append_pair("order", &order);
-    }
-    if let Some(strict) = params.strict {
-        url.query_pairs_mut().append_pair("strict", &strict.to_string());
-    }
-
-    let response = match client
-        .get(url)
-        .header("Accept", "application/json")
-        .header("User-Agent", "Tauri App")
-        .send()
-        .await
-    {
-        Ok(resp) => resp,
-        Err(e) => {
-            if e.is_timeout() {
-                return Err("Request timed out".to_string());
-            }
-            if e.is_connect() {
-                return Err("Connection failed".to_string());
-            }
-            if let Some(status) = e.status() {
-                return Err(format!("HTTP error: {}", status));
-            }
-            return Err(format!("Network error: {}", e));
-        }
-    };
-
-    let status = response.status();
-    let response_text = response.text().await.map_err(|e| {
-        format!("Failed to read response: {}", e)
-    })?;
-
-    if !status.is_success() {
-        return Err(format!("API error: {} - {}", status, response_text));
-    }
-    Ok(response_text)
-}
-
-#[tauri::command]
-async fn get_script_content(slug: String) -> Result<String, String> {
-    let client = reqwest::Client::new();
-    let url = format!("https://scriptblox.com/api/script/{}", slug);
-
-    let response = match client
-        .get(&url)
-        .header("Accept", "application/json")
-        .header("User-Agent", "Tauri App")
-        .send()
-        .await
-    {
-        Ok(resp) => resp,
-        Err(e) => {
-            return Err(format!("Network error: {}", e));
-        }
-    };
-
-    let status = response.status();
-    let response_text = response.text().await.map_err(|e| {
-        format!("Failed to read response: {}", e)
-    })?;
-
-    if !status.is_success() {
-        return Err(format!("API error: {} - {}", status, response_text));
-    }
-    
-    Ok(response_text)
-}
 
 mod auto_execute;
 mod tabs;
@@ -444,13 +326,12 @@ mod roblox_logs;
 mod hydrogen;
 mod workspace;
 mod updater;
-mod logging;
 mod execution_history;
 mod suggestions;
+mod rscripts;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use flag_validator::FlagValidator;
-use logging::{Logger, write_log_entry, get_logs, clear_logs};
 use suggestions::fetch_suggestions;
 
 #[tauri::command]
@@ -857,9 +738,6 @@ fn main() {
             }
         })
         .setup(|app| {
-            let logger = Logger::new(&app.handle())?;
-            app.manage(Mutex::new(logger));
-
             let window = app.get_window("main").unwrap();
             let state = app.state::<AppState>();
             
@@ -911,8 +789,6 @@ fn main() {
             execute_script,
             execute_last_script,
             save_last_script,
-            search_scripts,
-            get_script_content,
             auto_execute::get_auto_execute_files,
             auto_execute::save_auto_execute_file,
             auto_execute::delete_auto_execute_file,
@@ -950,14 +826,13 @@ fn main() {
             fast_flags::get_fast_flag_categories,
             fetch_version_messages,
             fetch_suggestions,
-            write_log_entry,
-            get_logs,
-            clear_logs,
             execution_history::load_execution_history,
             execution_history::save_execution_record,
             execution_history::clear_execution_history,
             tabs::export_tab,
             tabs::search_tabs,
+            rscripts::search_rscripts,
+            rscripts::get_rscript_content
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

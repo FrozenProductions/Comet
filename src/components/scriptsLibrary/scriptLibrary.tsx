@@ -1,18 +1,18 @@
 import {
-	AlertTriangle,
-	ArrowDown,
-	ArrowUp,
-	Calendar,
 	ChevronLeft,
 	ChevronRight,
 	Clock,
 	Eye,
-	Globe,
-	Key,
+	Heart,
+	Lock,
 	RefreshCw,
 	Search,
 	Shield,
 	SlidersHorizontal,
+	Smartphone,
+	ThumbsDown,
+	ThumbsUp,
+	Unplug,
 	WifiOff,
 	X,
 } from "lucide-react";
@@ -22,51 +22,63 @@ import { toast } from "react-hot-toast";
 import { useEditor } from "../../hooks/core/useEditor";
 import { useRecentSearches } from "../../hooks/search/useRecentSearches";
 import { useScriptSearch } from "../../hooks/search/useScriptSearch";
-import { getScriptContent } from "../../services/core/scriptBloxService";
-import type { FilterOption, Script } from "../../types/core/scriptBlox";
+import { getScriptContent } from "../../services/core/rScriptsService";
+import type { FilterOption, RScript } from "../../types/core/rScripts";
 import { RecentSearchesDropdown } from "../ui/recentSearchesDropdown";
 import { ScriptCard } from "./scriptCard";
 
 const sortOptions: FilterOption[] = [
 	{
 		label: "Latest Updated",
-		value: "updatedAt",
+		value: "date",
 		icon: <Clock size={14} className="stroke-[2.5]" />,
-	},
-	{
-		label: "Latest Created",
-		value: "createdAt",
-		icon: <Calendar size={14} className="stroke-[2.5]" />,
 	},
 	{
 		label: "Most Viewed",
 		value: "views",
 		icon: <Eye size={14} className="stroke-[2.5]" />,
 	},
+	{
+		label: "Most Liked",
+		value: "likes",
+		icon: <ThumbsUp size={14} className="stroke-[2.5]" />,
+	},
+	{
+		label: "Most Disliked",
+		value: "dislikes",
+		icon: <ThumbsDown size={14} className="stroke-[2.5]" />,
+	},
 ];
 
 const filterOptions = [
 	{
-		label: "Verified",
-		value: "verified",
+		label: "No Key System",
+		key: "noKeySystem",
+		icon: <Lock size={14} className="stroke-[2.5]" />,
+	},
+	{
+		label: "Mobile Ready",
+		key: "mobileOnly",
+		icon: <Smartphone size={14} className="stroke-[2.5]" />,
+	},
+	{
+		label: "Free Only",
+		key: "notPaid",
+		icon: <Heart size={14} className="stroke-[2.5]" />,
+	},
+	{
+		label: "Verified Only",
+		key: "verifiedOnly",
 		icon: <Shield size={14} className="stroke-[2.5]" />,
 	},
 	{
-		label: "Universal",
-		value: "universal",
-		icon: <Globe size={14} className="stroke-[2.5]" />,
+		label: "Unpatched Only",
+		key: "unpatched",
+		icon: <Unplug size={14} className="stroke-[2.5]" />,
 	},
-	{
-		label: "Not Patched",
-		value: "patched",
-		icon: <AlertTriangle size={14} className="stroke-[2.5]" />,
-	},
-	{
-		label: "No Key Required",
-		value: "key",
-		icon: <Key size={14} className="stroke-[2.5]" />,
-	},
-];
+] as const;
+
+type FilterKeys = (typeof filterOptions)[number]["key"];
 
 const SkeletonCard = () => (
 	<div className="overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle p-4">
@@ -98,46 +110,52 @@ export const ScriptLibrary = () => {
 	const { recentSearches, addRecentSearch, clearRecentSearches } =
 		useRecentSearches();
 	const [selectedSortBy, setSelectedSortBy] = useState<
-		"updatedAt" | "views" | "createdAt"
-	>("updatedAt");
+		"date" | "views" | "likes" | "dislikes"
+	>("date");
 	const [selectedOrder, setSelectedOrder] = useState<"asc" | "desc">("desc");
 	const [currentPage, setCurrentPage] = useState(1);
-	const [filters, setFilters] = useState({
-		verified: false,
-		universal: false,
-		patched: false,
-		key: false,
+	const [activeFilters, setActiveFilters] = useState<
+		Record<FilterKeys, boolean>
+	>({
+		noKeySystem: false,
+		mobileOnly: false,
+		notPaid: false,
+		verifiedOnly: false,
+		unpatched: false,
 	});
 
 	const { scripts, isLoading, error, isApiDown, totalPages, searchScripts } =
-		useScriptSearch(300);
+		useScriptSearch();
 
 	const handleSearch = useCallback(
 		(page = 1) => {
 			if (searchQuery.trim()) {
 				addRecentSearch(searchQuery);
 				setCurrentPage(page);
-				searchScripts({
+
+				const searchParams: Record<string, any> = {
 					q: searchQuery,
-					sortBy: selectedSortBy,
-					order: selectedOrder,
 					page,
-					max: 20,
-					strict: true,
-					verified: filters.verified ? 1 : undefined,
-					universal: filters.universal ? 1 : undefined,
-					patched: filters.patched ? 0 : undefined,
-					key: filters.key ? 0 : undefined,
+					orderBy: selectedSortBy,
+					sort: selectedOrder,
+				};
+
+				Object.entries(activeFilters).forEach(([key, value]) => {
+					if (value) {
+						searchParams[key] = true;
+					}
 				});
+
+				searchScripts(searchParams);
 			}
 		},
 		[
 			searchQuery,
-			selectedSortBy,
-			selectedOrder,
-			filters,
 			searchScripts,
 			addRecentSearch,
+			selectedSortBy,
+			selectedOrder,
+			activeFilters,
 		],
 	);
 
@@ -173,12 +191,12 @@ export const ScriptLibrary = () => {
 		handleSearch(currentPage);
 	};
 
-	const handleScriptSelect = async (script: Script) => {
+	const handleScriptSelect = async (script: RScript) => {
 		try {
 			const loadingToast = toast.loading("Loading script content...");
-			const scriptDetail = await getScriptContent(script.slug);
+			const scriptDetail = await getScriptContent(script._id);
 
-			if (!scriptDetail.script || !scriptDetail.script.script) {
+			if (!scriptDetail.script?.[0]?.rawScript) {
 				toast.error("Script content not available", {
 					id: loadingToast,
 				});
@@ -192,7 +210,7 @@ export const ScriptLibrary = () => {
 
 			const newTabId = await createTabWithContent(
 				tabTitle,
-				scriptDetail.script.script,
+				scriptDetail.script[0].rawScript,
 				"lua",
 			);
 
@@ -212,11 +230,21 @@ export const ScriptLibrary = () => {
 		}
 	};
 
+	const handleFilterToggle = (key: FilterKeys) => {
+		setActiveFilters((prev) => {
+			const newFilters = {
+				...prev,
+				[key]: !prev[key],
+			};
+			return newFilters;
+		});
+	};
+
 	const renderContent = () => {
 		if (isLoading) {
 			return (
-				<div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-					{Array.from({ length: 6 }).map((_, index) => (
+				<div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					{Array.from({ length: 8 }).map((_, index) => (
 						<motion.div
 							key={`skeleton-${Date.now()}-${index}`}
 							initial={{ opacity: 0, y: 20 }}
@@ -246,7 +274,7 @@ export const ScriptLibrary = () => {
 						transition={{ delay: 0.1 }}
 						className="text-sm font-medium text-ctp-text"
 					>
-						ScriptBlox API is Down
+						RScripts API is Down
 					</motion.div>
 					<motion.div
 						initial={{ y: 10, opacity: 0 }}
@@ -254,8 +282,7 @@ export const ScriptLibrary = () => {
 						transition={{ delay: 0.2 }}
 						className="mb-4 mt-1 text-xs text-ctp-subtext0"
 					>
-						We are unable to reach the ScriptBlox servers. Please try again
-						later.
+						We are unable to reach the RScripts servers. Please try again later.
 					</motion.div>
 					<motion.button
 						initial={{ scale: 1 }}
@@ -322,7 +349,7 @@ export const ScriptLibrary = () => {
 		}
 
 		return (
-			<div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+			<div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 				{scripts.map((script) => (
 					<motion.div
 						key={script._id}
@@ -354,10 +381,10 @@ export const ScriptLibrary = () => {
 					type="button"
 					key={i}
 					onClick={() => handlePageChange(i)}
-					className={`h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 px-2 text-xs font-medium transition-colors ${
+					className={`h-7 min-w-[1.75rem] rounded-md px-1.5 text-xs font-medium transition-colors ${
 						i === currentPage
-							? "bg-accent text-white hover:bg-accent/90"
-							: "bg-ctp-surface1 text-accent hover:bg-white/10"
+							? "border border-ctp-surface2 bg-accent text-white hover:bg-accent/90"
+							: "text-ctp-subtext0 hover:bg-ctp-surface1 hover:text-ctp-text"
 					}`}
 				>
 					{i}
@@ -366,37 +393,47 @@ export const ScriptLibrary = () => {
 		}
 
 		return (
-			<div className="flex items-center gap-2">
+			<div className="flex items-center gap-1">
 				<button
 					type="button"
 					onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
 					disabled={currentPage === 1}
-					className="flex h-8 w-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+					className="flex h-7 w-7 items-center justify-center rounded-md text-ctp-subtext0 transition-colors hover:bg-ctp-surface1 hover:text-ctp-text disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					<ChevronLeft size={16} className="stroke-[2.5]" />
+					<ChevronLeft size={14} className="stroke-[2.5]" />
 				</button>
 				{startPage > 1 && (
 					<>
 						<button
 							type="button"
 							onClick={() => handlePageChange(1)}
-							className="h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-2 text-xs font-medium text-accent transition-colors hover:bg-white/10"
+							className={`h-7 min-w-[1.75rem] rounded-md px-1.5 text-xs font-medium transition-colors ${
+								currentPage === 1
+									? "border border-ctp-surface2 bg-accent text-white hover:bg-accent/90"
+									: "text-ctp-subtext0 hover:bg-ctp-surface1 hover:text-ctp-text"
+							}`}
 						>
 							1
 						</button>
-						{startPage > 2 && <span className="text-ctp-subtext0">...</span>}
+						{startPage > 2 && (
+							<span className="px-0.5 text-xs text-ctp-subtext0">...</span>
+						)}
 					</>
 				)}
 				{pages}
 				{endPage < totalPages && (
 					<>
 						{endPage < totalPages - 1 && (
-							<span className="text-ctp-subtext0">...</span>
+							<span className="px-0.5 text-xs text-ctp-subtext0">...</span>
 						)}
 						<button
 							type="button"
 							onClick={() => handlePageChange(totalPages)}
-							className="h-8 min-w-[2rem] rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-2 text-xs font-medium text-accent transition-colors hover:bg-white/10"
+							className={`h-7 min-w-[1.75rem] rounded-md px-1.5 text-xs font-medium transition-colors ${
+								currentPage === totalPages
+									? "border border-ctp-surface2 bg-accent text-white hover:bg-accent/90"
+									: "text-ctp-subtext0 hover:bg-ctp-surface1 hover:text-ctp-text"
+							}`}
 						>
 							{totalPages}
 						</button>
@@ -408,18 +445,18 @@ export const ScriptLibrary = () => {
 						handlePageChange(Math.min(totalPages, currentPage + 1))
 					}
 					disabled={currentPage === totalPages}
-					className="flex h-8 w-8 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+					className="flex h-7 w-7 items-center justify-center rounded-md text-ctp-subtext0 transition-colors hover:bg-ctp-surface1 hover:text-ctp-text disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					<ChevronRight size={16} className="stroke-[2.5]" />
+					<ChevronRight size={14} className="stroke-[2.5]" />
 				</button>
 			</div>
 		);
 	};
 
 	return (
-		<div className="flex h-full flex-col bg-ctp-base">
+		<div className="relative flex h-full flex-col bg-ctp-base">
 			<div className="border-b border-white/5 bg-ctp-mantle p-4">
-				<div className="flex flex-col gap-4">
+				<div className="flex flex-col">
 					<div className="flex items-center gap-2">
 						<div className="relative flex-1">
 							<input
@@ -472,15 +509,10 @@ export const ScriptLibrary = () => {
 									await setSearchQuery(search);
 									searchScripts({
 										q: search,
-										sortBy: selectedSortBy,
-										order: selectedOrder,
 										page: 1,
-										max: 20,
-										strict: true,
-										verified: filters.verified ? 1 : undefined,
-										universal: filters.universal ? 1 : undefined,
-										patched: filters.patched ? 0 : undefined,
-										key: filters.key ? 0 : undefined,
+										orderBy: selectedSortBy,
+										sort: selectedOrder,
+										...activeFilters,
 									});
 								}}
 								onClear={clearRecentSearches}
@@ -488,35 +520,54 @@ export const ScriptLibrary = () => {
 							/>
 						</div>
 
-						<button
+						<motion.button
 							type="button"
 							onClick={() => setShowFilters(!showFilters)}
-							className={`flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 transition-colors ${
-								showFilters
+							whileTap={{ scale: 0.95 }}
+							className={`flex h-9 w-9 items-center justify-center rounded-lg border border-ctp-surface2 transition-colors ${
+								showFilters || Object.values(activeFilters).some(Boolean)
 									? "bg-accent text-white hover:bg-accent/90"
 									: "bg-ctp-surface1 text-accent hover:bg-white/10"
 							}`}
 						>
-							<SlidersHorizontal size={14} className="stroke-[2.5]" />
-						</button>
+							<SlidersHorizontal size={16} className="stroke-[2.5]" />
+						</motion.button>
 					</div>
 
 					<motion.div
-						initial={{ height: 0, opacity: 0 }}
-						animate={{ height: "auto", opacity: 1 }}
+						initial={false}
+						animate={{
+							height: showFilters ? "auto" : 0,
+							opacity: showFilters ? 1 : 0,
+							marginTop: showFilters ? 16 : 0,
+						}}
+						transition={{
+							type: "spring",
+							duration: 0.3,
+							bounce: 0.1,
+						}}
 						className="overflow-hidden"
 					>
-						{showFilters && (
-							<div className="mt-4 flex flex-wrap gap-4">
-								<div className="min-w-[200px] flex-1">
+						<motion.div
+							initial={{ y: -10 }}
+							animate={{ y: showFilters ? 0 : -10 }}
+							transition={{
+								type: "spring",
+								duration: 0.3,
+								bounce: 0.1,
+							}}
+						>
+							<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+								<div>
 									<div className="mb-2 text-xs font-medium text-ctp-subtext0">
 										Sort by
 									</div>
 									<div className="flex flex-wrap gap-2">
 										{sortOptions.map((option) => (
-											<button
+											<motion.button
 												type="button"
 												key={option.value}
+												whileTap={{ scale: 0.95 }}
 												onClick={() => {
 													if (selectedSortBy === option.value) {
 														setSelectedOrder((prev) =>
@@ -528,6 +579,7 @@ export const ScriptLibrary = () => {
 														);
 														setSelectedOrder("desc");
 													}
+													handleSearch(1);
 												}}
 												className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
 													selectedSortBy === option.value
@@ -537,58 +589,76 @@ export const ScriptLibrary = () => {
 											>
 												{option.icon}
 												<span>{option.label}</span>
-												{selectedSortBy === option.value &&
-													(selectedOrder === "asc" ? (
-														<ArrowUp size={12} className="stroke-[2.5]" />
-													) : (
-														<ArrowDown size={12} className="stroke-[2.5]" />
-													))}
-											</button>
+												{selectedSortBy === option.value && (
+													<span className="text-[10px] opacity-60">
+														({selectedOrder === "desc" ? "↓" : "↑"})
+													</span>
+												)}
+											</motion.button>
 										))}
 									</div>
 								</div>
 
-								<div className="min-w-[200px] flex-1">
+								<div>
 									<div className="mb-2 text-xs font-medium text-ctp-subtext0">
-										Filter by
+										Filters
+										{Object.values(activeFilters).some(Boolean) && (
+											<motion.button
+												type="button"
+												whileTap={{ scale: 0.95 }}
+												onClick={() => {
+													setActiveFilters({
+														noKeySystem: false,
+														mobileOnly: false,
+														notPaid: false,
+														verifiedOnly: false,
+														unpatched: false,
+													});
+													handleSearch(1);
+												}}
+												className="ml-2 text-accent hover:text-accent/80"
+											>
+												Clear all
+											</motion.button>
+										)}
 									</div>
 									<div className="flex flex-wrap gap-2">
 										{filterOptions.map((option) => (
-											<button
+											<motion.button
 												type="button"
-												key={option.value}
-												onClick={() =>
-													setFilters((prev) => ({
-														...prev,
-														[option.value]:
-															!prev[option.value as keyof typeof prev],
-													}))
-												}
+												key={option.key}
+												whileTap={{ scale: 0.95 }}
+												onClick={() => {
+													handleFilterToggle(option.key);
+													handleSearch(1);
+												}}
 												className={`flex h-7 items-center justify-center gap-2 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
-													filters[option.value as keyof typeof filters]
+													activeFilters[option.key]
 														? "bg-accent text-white hover:bg-accent/90"
 														: "bg-ctp-surface1 text-accent hover:bg-white/10"
 												}`}
 											>
 												{option.icon}
 												<span>{option.label}</span>
-											</button>
+											</motion.button>
 										))}
 									</div>
 								</div>
 							</div>
-						)}
+						</motion.div>
 					</motion.div>
 				</div>
 			</div>
 
-			<div className="flex-1 overflow-auto">
+			<div className="flex-1 overflow-auto pb-16">
 				<div className="flex h-full flex-col">{renderContent()}</div>
 			</div>
 
 			{totalPages > 1 && (
-				<div className="flex items-center justify-center gap-2 border-t border-white/5 p-4">
-					{renderPagination()}
+				<div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+					<div className="flex h-11 items-center justify-center overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0/95 px-3 shadow-lg backdrop-blur-sm">
+						{renderPagination()}
+					</div>
 				</div>
 			)}
 		</div>

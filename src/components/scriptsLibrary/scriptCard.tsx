@@ -1,6 +1,15 @@
-import { AlertTriangle, Code, Eye, Globe, Key, Shield } from "lucide-react";
+import {
+	Clock,
+	Eye,
+	Lock,
+	Shield,
+	Smartphone,
+	ThumbsDown,
+	ThumbsUp,
+} from "lucide-react";
 import { motion } from "motion/react";
-import type { ScriptCardProps } from "../../types/core/scriptBlox";
+import { Tooltip } from "react-tooltip";
+import type { ScriptCardProps } from "../../types/core/rScripts";
 
 export const ScriptCard = ({ script, onSelect }: ScriptCardProps) => {
 	const formatNumber = (num: number | undefined) => {
@@ -19,99 +28,156 @@ export const ScriptCard = ({ script, onSelect }: ScriptCardProps) => {
 		});
 	};
 
+	if (!script) {
+		return null;
+	}
+
+	const scriptId = `script-${script._id}`;
+
 	return (
-		<motion.div
-			initial={{ scale: 1 }}
-			whileHover={{ scale: 1.02 }}
-			whileTap={{ scale: 0.98 }}
-			onClick={() => onSelect(script)}
-			className="group cursor-pointer overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle"
-		>
-			<div className="p-4">
-				<div className="flex items-start justify-between gap-4">
-					<div className="min-w-0 flex-1">
-						<h3 className="truncate text-sm font-medium text-ctp-text transition-colors group-hover:text-ctp-blue">
-							{script.title || "Untitled Script"}
-						</h3>
-						<p className="mt-1 truncate text-xs text-ctp-subtext0">
-							{script.game?.name || "Unknown Game"}
+		<>
+			<motion.div
+				initial={{ scale: 1 }}
+				whileHover={{ scale: 1.02 }}
+				whileTap={{ scale: 0.98 }}
+				onClick={() => onSelect(script)}
+				className="group cursor-pointer overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle"
+			>
+				<div className="relative">
+					{script.image && (
+						<div className="aspect-video w-full overflow-hidden">
+							<img
+								src={script.image}
+								alt={script.title}
+								className="h-full w-full object-cover transition-transform group-hover:scale-105"
+							/>
+						</div>
+					)}
+					<div className="absolute right-1.5 top-1.5 flex gap-0.5">
+						{script.keySystem && (
+							<div
+								data-tooltip-id={`${scriptId}-key`}
+								className="flex h-5 w-5 items-center justify-center rounded-md bg-black/50 text-white"
+							>
+								<Lock size={12} className="stroke-[2.5]" />
+							</div>
+						)}
+						{script.mobileReady && (
+							<div
+								data-tooltip-id={`${scriptId}-mobile`}
+								className="flex h-5 w-5 items-center justify-center rounded-md bg-black/50 text-white"
+							>
+								<Smartphone size={12} className="stroke-[2.5]" />
+							</div>
+						)}
+						{script.user?.verified && (
+							<div
+								data-tooltip-id={`${scriptId}-verified`}
+								className="flex h-5 w-5 items-center justify-center rounded-md bg-black/50 text-white"
+							>
+								<Shield size={12} className="stroke-[2.5]" />
+							</div>
+						)}
+					</div>
+				</div>
+
+				<div className="p-2.5">
+					<div className="flex items-start justify-between gap-2">
+						<div className="min-w-0 flex-1">
+							<h3 className="truncate text-sm font-medium text-ctp-text transition-colors group-hover:text-ctp-blue">
+								{script.title || "Untitled Script"}
+							</h3>
+							<p className="mt-0.5 truncate text-xs text-ctp-subtext0">
+								{script.game?.title || "Unknown Game"}
+							</p>
+						</div>
+					</div>
+
+					{script.description && (
+						<p className="mt-2 text-xs text-ctp-subtext0 line-clamp-2">
+							{script.description}
 						</p>
-					</div>
-				</div>
+					)}
 
-				<div className="mt-3 flex flex-wrap gap-1.5">
-					{script.verified && (
-						<div
-							data-tooltip-id="script-tooltip"
-							data-tooltip-content="Verified Script"
-							className="flex items-center gap-1 rounded-md bg-ctp-green/10 px-1.5 py-0.5 text-[10px] font-medium text-ctp-green"
-						>
-							<Shield size={10} className="stroke-[2.5]" />
-							<span>Verified</span>
+					<div className="mt-2.5 flex items-center justify-between text-[10px] text-ctp-subtext0">
+						<div className="flex items-center gap-2">
+							<div
+								data-tooltip-id={`${scriptId}-views`}
+								className="flex items-center gap-1"
+							>
+								<Eye size={12} className="stroke-[2.5]" />
+								<span>{formatNumber(script.views)}</span>
+							</div>
+							<div className="flex items-center gap-1.5">
+								<div
+									data-tooltip-id={`${scriptId}-likes`}
+									className="flex items-center gap-0.5 text-ctp-green"
+								>
+									<ThumbsUp size={12} className="stroke-[2.5]" />
+									<span>{formatNumber(script.likes)}</span>
+								</div>
+								<div
+									data-tooltip-id={`${scriptId}-dislikes`}
+									className="flex items-center gap-0.5 text-ctp-red"
+								>
+									<ThumbsDown size={12} className="stroke-[2.5]" />
+									<span>{formatNumber(script.dislikes)}</span>
+								</div>
+							</div>
 						</div>
-					)}
-					{script.isUniversal && (
 						<div
-							data-tooltip-id="script-tooltip"
-							data-tooltip-content="Works on any game"
-							className="flex items-center gap-1 rounded-md bg-ctp-blue/10 px-1.5 py-0.5 text-[10px] font-medium text-ctp-blue"
+							data-tooltip-id={`${scriptId}-updated`}
+							className="flex items-center gap-1"
 						>
-							<Globe size={10} className="stroke-[2.5]" />
-							<span>Universal</span>
+							<Clock size={12} className="stroke-[2.5]" />
+							<span>{formatDate(script.lastUpdated)}</span>
 						</div>
-					)}
-					{script.isPatched && (
-						<div
-							data-tooltip-id="script-tooltip"
-							data-tooltip-content="Script is currently patched"
-							className="flex items-center gap-1 rounded-md bg-ctp-red/10 px-1.5 py-0.5 text-[10px] font-medium text-ctp-red"
-						>
-							<AlertTriangle size={10} className="stroke-[2.5]" />
-							<span>Patched</span>
-						</div>
-					)}
-					{script.key && (
-						<div
-							data-tooltip-id="script-tooltip"
-							data-tooltip-content="Requires key to use"
-							className="flex items-center gap-1 rounded-md bg-ctp-yellow/10 px-1.5 py-0.5 text-[10px] font-medium text-ctp-yellow"
-						>
-							<Key size={10} className="stroke-[2.5]" />
-							<span>Key Required</span>
-						</div>
-					)}
-					{script.scriptType && (
-						<div
-							data-tooltip-id="script-tooltip"
-							data-tooltip-content={`Script type: ${script.scriptType}`}
-							className="flex items-center gap-1 rounded-md bg-ctp-mauve/10 px-1.5 py-0.5 text-[10px] font-medium text-ctp-mauve"
-						>
-							<Code size={10} className="stroke-[2.5]" />
-							<span>{script.scriptType}</span>
-						</div>
-					)}
+					</div>
 				</div>
+			</motion.div>
 
-				<div className="mt-4 flex items-center justify-between text-[10px] text-ctp-subtext0">
-					<div
-						data-tooltip-id="script-tooltip"
-						data-tooltip-content={`${
-							script.views?.toLocaleString() || 0
-						} views`}
-						className="flex items-center gap-1"
-					>
-						<Eye size={12} className="stroke-[2.5]" />
-						<span>{formatNumber(script.views)}</span>
-					</div>
-					<div
-						data-tooltip-id="script-tooltip"
-						data-tooltip-content={`Updated ${formatDate(script.updatedAt)}`}
-						className="text-[10px] text-ctp-subtext1"
-					>
-						{formatDate(script.updatedAt)}
-					</div>
-				</div>
-			</div>
-		</motion.div>
+			<Tooltip
+				id={`${scriptId}-key`}
+				content="Key System Required"
+				className="z-50 !bg-ctp-surface0 !px-2 !py-1 !text-xs !font-medium !text-ctp-text"
+				place="top"
+			/>
+			<Tooltip
+				id={`${scriptId}-mobile`}
+				content="Mobile Ready"
+				className="z-50 !bg-ctp-surface0 !px-2 !py-1 !text-xs !font-medium !text-ctp-text"
+				place="top"
+			/>
+			<Tooltip
+				id={`${scriptId}-verified`}
+				content="Verified Creator"
+				className="z-50 !bg-ctp-surface0 !px-2 !py-1 !text-xs !font-medium !text-ctp-text"
+				place="top"
+			/>
+			<Tooltip
+				id={`${scriptId}-views`}
+				content={`${script.views?.toLocaleString() || 0} views`}
+				className="z-50 !bg-ctp-surface0 !px-2 !py-1 !text-xs !font-medium !text-ctp-text"
+				place="top"
+			/>
+			<Tooltip
+				id={`${scriptId}-likes`}
+				content={`${script.likes?.toLocaleString() || 0} likes`}
+				className="z-50 !bg-ctp-surface0 !px-2 !py-1 !text-xs !font-medium !text-ctp-text"
+				place="top"
+			/>
+			<Tooltip
+				id={`${scriptId}-dislikes`}
+				content={`${script.dislikes?.toLocaleString() || 0} dislikes`}
+				className="z-50 !bg-ctp-surface0 !px-2 !py-1 !text-xs !font-medium !text-ctp-text"
+				place="top"
+			/>
+			<Tooltip
+				id={`${scriptId}-updated`}
+				content={`Updated ${formatDate(script.lastUpdated)}`}
+				className="z-50 !bg-ctp-surface0 !px-2 !py-1 !text-xs !font-medium !text-ctp-text"
+				place="top"
+			/>
+		</>
 	);
 };

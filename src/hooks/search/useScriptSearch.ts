@@ -1,115 +1,47 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { searchScripts as searchScriptsService } from "../../services/core/scriptBloxService";
-import type {
-	ScriptSearchParams,
-	ScriptSearchState,
-} from "../../types/core/scriptBlox";
+import { useCallback, useState } from "react";
+import { searchScripts as searchRScripts } from "../../services/core/rScriptsService";
+import type { RScript, RScriptSearchParams } from "../../types/core/rScripts";
 
-/**
- * Hook for managing script search functionality with debounced API calls.
- * Handles searching scripts through ScriptBlox API, manages loading states,
- * error handling, and pagination. Includes built-in request cancellation
- * and API health detection.
- * @param debounceMs Delay in milliseconds before executing search after input changes
- * @returns Object containing search state and search function
- */
-export const useScriptSearch = (debounceMs = 300) => {
-	const [state, setState] = useState<ScriptSearchState>({
-		scripts: [],
-		isLoading: false,
-		isSearching: false,
-		error: null,
-		isApiDown: false,
-		totalPages: 0,
-		currentPage: 1,
-	});
+export const useScriptSearch = () => {
+	const [scripts, setScripts] = useState<RScript[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [isApiDown, setIsApiDown] = useState(false);
+	const [totalPages, setTotalPages] = useState(0);
 
-	const searchTimeoutRef = useRef<NodeJS.Timeout>();
-	const abortControllerRef = useRef<AbortController>();
+	const searchScripts = useCallback(async (params: RScriptSearchParams) => {
+		try {
+			setIsLoading(true);
+			setError(null);
+			setIsApiDown(false);
 
-	const isApiError = useCallback((error: unknown): boolean => {
-		if (error instanceof Error) {
-			const message = error.message.toLowerCase();
-			return (
-				message.includes("500") ||
-				message.includes("internal server error") ||
-				message.includes("failed to fetch") ||
-				message.includes("network") ||
-				message.includes("nginx")
-			);
-		}
-		return false;
-	}, []);
-
-	const searchScripts = useCallback(
-		async (params: ScriptSearchParams) => {
-			if (searchTimeoutRef.current) {
-				clearTimeout(searchTimeoutRef.current);
-			}
-
-			if (abortControllerRef.current) {
-				abortControllerRef.current.abort();
-			}
-
-			setState((prev) => ({
-				...prev,
-				isSearching: true,
-				error: null,
-				isApiDown: false,
-			}));
-
-			searchTimeoutRef.current = setTimeout(async () => {
-				try {
-					abortControllerRef.current = new AbortController();
-					setState((prev) => ({ ...prev, isLoading: true }));
-
-					const response = await searchScriptsService(params);
-					setState({
-						scripts: response.result.scripts || [],
-						isLoading: false,
-						isSearching: false,
-						error: null,
-						isApiDown: false,
-						totalPages: response.result.totalPages,
-						currentPage: params.page || 1,
-					});
-				} catch (error) {
-					if (error instanceof Error && error.name === "AbortError") {
-						return;
-					}
-
-					const isDown = isApiError(error);
-					setState((prev) => ({
-						...prev,
-						scripts: [],
-						isLoading: false,
-						isSearching: false,
-						isApiDown: isDown,
-						error: isDown
-							? "The ScriptBlox API is currently unavailable. Please try again later."
-							: error instanceof Error
-								? error.message
-								: "An error occurred while fetching scripts",
-					}));
+			const response = await searchRScripts(params);
+			setScripts(response.scripts);
+			setTotalPages(response.info.maxPages);
+		} catch (error) {
+			console.error("Failed to search scripts:", error);
+			if (error instanceof Error) {
+				if (error.message.includes("Network error")) {
+					setIsApiDown(true);
+				} else {
+					setError(error.message);
 				}
-			}, debounceMs);
-		},
-		[debounceMs, isApiError],
-	);
-
-	useEffect(() => {
-		return () => {
-			if (searchTimeoutRef.current) {
-				clearTimeout(searchTimeoutRef.current);
+			} else {
+				setError("An unknown error occurred");
 			}
-			if (abortControllerRef.current) {
-				abortControllerRef.current.abort();
-			}
-		};
+			setScripts([]);
+			setTotalPages(0);
+		} finally {
+			setIsLoading(false);
+		}
 	}, []);
 
 	return {
-		...state,
+		scripts,
+		isLoading,
+		error,
+		isApiDown,
+		totalPages,
 		searchScripts,
 	};
 };

@@ -2,8 +2,6 @@ use std::fs;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, Map};
-use crate::logging::LogEntry;
-use tauri::Manager;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FastFlagsResponse {
@@ -79,60 +77,17 @@ fn ensure_client_settings_dir() -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn save_fast_flags(app_handle: tauri::AppHandle, flags: Map<String, Value>) -> FastFlagsResponse {
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Saving fast flags".to_string(),
-        details: Some(serde_json::json!({
-            "flag_count": flags.len()
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
-
+pub async fn save_fast_flags(_app_handle: tauri::AppHandle, flags: Map<String, Value>) -> FastFlagsResponse {
     match save_fast_flags_internal(flags).await {
-        Ok(()) => {
-            let log_entry = LogEntry {
-                timestamp: chrono::Local::now().to_rfc3339(),
-                level: "info".to_string(),
-                message: "Fast flags saved successfully".to_string(),
-                details: None,
-            };
-            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-                if let Ok(logger) = logger.lock() {
-                    let _ = logger.write_entry(log_entry);
-                }
-            }
-            FastFlagsResponse {
-                success: true,
-                flags: None,
-                error: None,
-            }
-        }
-        Err(e) => {
-            let log_entry = LogEntry {
-                timestamp: chrono::Local::now().to_rfc3339(),
-                level: "error".to_string(),
-                message: "Failed to save fast flags".to_string(),
-                details: Some(serde_json::json!({
-                    "error": e
-                })),
-            };
-            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-                if let Ok(logger) = logger.lock() {
-                    let _ = logger.write_entry(log_entry);
-                }
-            }
-            FastFlagsResponse {
-                success: false,
-                flags: None,
-                error: Some(e.to_string()),
-            }
+        Ok(()) => FastFlagsResponse {
+            success: true,
+            flags: None,
+            error: None,
+        },
+        Err(e) => FastFlagsResponse {
+            success: false,
+            flags: None,
+            error: Some(e.to_string()),
         }
     }
 }
@@ -198,107 +153,35 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
 }
 
 #[tauri::command]
-pub async fn cleanup_fast_flags(app_handle: tauri::AppHandle) -> FastFlagsResponse {
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Cleaning up fast flags".to_string(),
-        details: None,
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
-
+pub async fn cleanup_fast_flags(_app_handle: tauri::AppHandle) -> FastFlagsResponse {
     let flags_path = match get_fast_flags_path() {
         Ok(path) => path,
-        Err(e) => {
-            let log_entry = LogEntry {
-                timestamp: chrono::Local::now().to_rfc3339(),
-                level: "error".to_string(),
-                message: "Failed to get fast flags path".to_string(),
-                details: Some(serde_json::json!({
-                    "error": e
-                })),
-            };
-            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-                if let Ok(logger) = logger.lock() {
-                    let _ = logger.write_entry(log_entry);
-                }
-            }
-            return FastFlagsResponse {
-                success: false,
-                flags: None,
-                error: Some(e),
-            };
+        Err(e) => return FastFlagsResponse {
+            success: false,
+            flags: None,
+            error: Some(e),
         }
     };
 
     match ensure_client_settings_dir() {
         Ok(_) => (),
-        Err(e) => {
-            let log_entry = LogEntry {
-                timestamp: chrono::Local::now().to_rfc3339(),
-                level: "error".to_string(),
-                message: "Failed to ensure client settings directory".to_string(),
-                details: Some(serde_json::json!({
-                    "error": e
-                })),
-            };
-            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-                if let Ok(logger) = logger.lock() {
-                    let _ = logger.write_entry(log_entry);
-                }
-            }
-            return FastFlagsResponse {
-                success: false,
-                flags: None,
-                error: Some(e),
-            };
+        Err(e) => return FastFlagsResponse {
+            success: false,
+            flags: None,
+            error: Some(e),
         }
     }
 
     match fs::write(&flags_path, "{}") {
-        Ok(_) => {
-            let log_entry = LogEntry {
-                timestamp: chrono::Local::now().to_rfc3339(),
-                level: "info".to_string(),
-                message: "Fast flags cleaned up successfully".to_string(),
-                details: None,
-            };
-            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-                if let Ok(logger) = logger.lock() {
-                    let _ = logger.write_entry(log_entry);
-                }
-            }
-            FastFlagsResponse {
-                success: true,
-                flags: None,
-                error: None,
-            }
-        }
-        Err(e) => {
-            let error_msg = format!("Failed to write flags file: {}", e);
-            let log_entry = LogEntry {
-                timestamp: chrono::Local::now().to_rfc3339(),
-                level: "error".to_string(),
-                message: error_msg.clone(),
-                details: Some(serde_json::json!({
-                    "path": flags_path.to_string_lossy()
-                })),
-            };
-            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-                if let Ok(logger) = logger.lock() {
-                    let _ = logger.write_entry(log_entry);
-                }
-            }
-            FastFlagsResponse {
-                success: false,
-                flags: None,
-                error: Some(error_msg),
-            }
+        Ok(_) => FastFlagsResponse {
+            success: true,
+            flags: None,
+            error: None,
+        },
+        Err(e) => FastFlagsResponse {
+            success: false,
+            flags: None,
+            error: Some(format!("Failed to write flags file: {}", e)),
         }
     }
 }
@@ -310,78 +193,17 @@ pub async fn open_fast_flags_directory() -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn get_fast_flag_categories(app_handle: tauri::AppHandle) -> Result<Value, String> {
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Fetching fast flag categories".to_string(),
-        details: None,
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
-
+pub async fn get_fast_flag_categories(_app_handle: tauri::AppHandle) -> Result<Value, String> {
     let client = reqwest::Client::new();
     let response = client
         .get("https://www.comet-ui.fun/api/v1/fastflags")
         .send()
         .await
-        .map_err(|e| {
-            let error_msg = e.to_string();
-            let log_entry = LogEntry {
-                timestamp: chrono::Local::now().to_rfc3339(),
-                level: "error".to_string(),
-                message: "Failed to fetch fast flag categories".to_string(),
-                details: Some(serde_json::json!({
-                    "error": error_msg
-                })),
-            };
-            if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-                if let Ok(logger) = logger.lock() {
-                    let _ = logger.write_entry(log_entry);
-                }
-            }
-            error_msg
-        })?;
-
-    if !response.status().is_success() {
-        let error_msg = format!("API error: {}", response.status());
-        let log_entry = LogEntry {
-            timestamp: chrono::Local::now().to_rfc3339(),
-            level: "error".to_string(),
-            message: "API error when fetching fast flag categories".to_string(),
-            details: Some(serde_json::json!({
-                "status": response.status().as_u16(),
-                "error": error_msg
-            })),
-        };
-        if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-            if let Ok(logger) = logger.lock() {
-                let _ = logger.write_entry(log_entry);
-            }
-        }
-        return Err(error_msg);
-    }
-
-    let categories: Value = response
-        .json()
-        .await
         .map_err(|e| e.to_string())?;
 
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Successfully fetched fast flag categories".to_string(),
-        details: None,
-    };
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
+    if !response.status().is_success() {
+        return Err(format!("API error: {}", response.status()));
     }
 
-    Ok(categories)
+    response.json().await.map_err(|e| e.to_string())
 } 

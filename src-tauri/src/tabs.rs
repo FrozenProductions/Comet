@@ -3,9 +3,7 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 use crate::workspace::get_workspace_tabs_dir;
-use crate::logging::LogEntry;
 use sha2::{Sha256, Digest};
-use tauri::Manager;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Tab {
@@ -96,53 +94,20 @@ fn get_tab_id_from_title(title: &str) -> String {
 }
 
 #[tauri::command]
-pub async fn save_tab(app_handle: tauri::AppHandle, workspace_id: String, tab: Tab) -> Result<(), String> {
+pub async fn save_tab(_app_handle: tauri::AppHandle, workspace_id: String, tab: Tab) -> Result<(), String> {
     let tabs_dir = get_workspace_tabs_dir(&workspace_id);
     let filename = sanitize_filename(&tab.title);
     let file_path = tabs_dir.join(&filename);
     
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: format!("Saving tab: {}", tab.title),
-        details: Some(serde_json::json!({
-            "workspace_id": workspace_id,
-            "tab_id": tab.id,
-            "file_path": file_path.to_string_lossy()
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
-
     fs::write(&file_path, &tab.content).map_err(|e| e.to_string())?;
     Ok(())
 }
 
 #[tauri::command]
-pub async fn delete_tab(app_handle: tauri::AppHandle, workspace_id: String, title: String) -> Result<(), String> {
+pub async fn delete_tab(_app_handle: tauri::AppHandle, workspace_id: String, title: String) -> Result<(), String> {
     let tabs_dir = get_workspace_tabs_dir(&workspace_id);
     let filename = sanitize_filename(&title);
     let file_path = tabs_dir.join(&filename);
-    
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: format!("Deleting tab: {}", title),
-        details: Some(serde_json::json!({
-            "workspace_id": workspace_id,
-            "file_path": file_path.to_string_lossy()
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
     
     if file_path.exists() {
         fs::remove_file(file_path).map_err(|e| e.to_string())?;
@@ -151,7 +116,7 @@ pub async fn delete_tab(app_handle: tauri::AppHandle, workspace_id: String, titl
 }
 
 #[tauri::command]
-pub async fn save_tab_state(app_handle: tauri::AppHandle, workspace_id: String, active_tab: Option<String>, tab_order: Vec<String>, tabs: Vec<Tab>) -> Result<(), String> {
+pub async fn save_tab_state(_app_handle: tauri::AppHandle, workspace_id: String, active_tab: Option<String>, tab_order: Vec<String>, tabs: Vec<Tab>) -> Result<(), String> {
     let state = TabState {
         active_tab: active_tab.clone(),
         tab_order: tab_order.clone(),
@@ -160,23 +125,6 @@ pub async fn save_tab_state(app_handle: tauri::AppHandle, workspace_id: String, 
             title: tab.title,
         }).collect(),
     };
-
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Saving tab state".to_string(),
-        details: Some(serde_json::json!({
-            "workspace_id": workspace_id,
-            "active_tab": active_tab,
-            "tab_count": tab_order.len()
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
 
     let state_file = get_state_file(&workspace_id);
     fs::write(state_file, serde_json::to_string_pretty(&state).unwrap())
@@ -270,29 +218,12 @@ pub async fn get_tab_state(workspace_id: String) -> Result<TabState, String> {
 }
 
 #[tauri::command]
-pub async fn rename_tab(app_handle: tauri::AppHandle, workspace_id: String, old_title: String, new_title: String) -> Result<(), String> {
+pub async fn rename_tab(_app_handle: tauri::AppHandle, workspace_id: String, old_title: String, new_title: String) -> Result<(), String> {
     let tabs_dir = get_workspace_tabs_dir(&workspace_id);
     let old_filename = sanitize_filename(&old_title);
     let new_filename = sanitize_filename(&new_title);
     let old_path = tabs_dir.join(&old_filename);
     let new_path = tabs_dir.join(&new_filename);
-
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: format!("Renaming tab: {} -> {}", old_title, new_title),
-        details: Some(serde_json::json!({
-            "workspace_id": workspace_id,
-            "old_path": old_path.to_string_lossy(),
-            "new_path": new_path.to_string_lossy()
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
 
     if !old_path.exists() {
         return Err("Source file does not exist".to_string());
@@ -303,24 +234,7 @@ pub async fn rename_tab(app_handle: tauri::AppHandle, workspace_id: String, old_
 }
 
 #[tauri::command]
-pub async fn export_tab(app_handle: tauri::AppHandle, workspace_id: String, title: String, content: String, target_path: String) -> Result<(), String> {
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: format!("Exporting tab: {} to {}", title, target_path),
-        details: Some(serde_json::json!({
-            "workspace_id": workspace_id,
-            "title": title,
-            "target_path": target_path
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
-
+pub async fn export_tab(_app_handle: tauri::AppHandle, content: String, target_path: String) -> Result<(), String> {
     fs::write(target_path, content).map_err(|e| e.to_string())?;
     Ok(())
 }

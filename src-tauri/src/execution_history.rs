@@ -2,8 +2,6 @@ use std::fs;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use tauri::api::path::config_dir;
-use crate::logging::LogEntry;
-use tauri::Manager;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExecutionRecord {
@@ -36,24 +34,9 @@ fn get_execution_history_file() -> PathBuf {
 }
 
 #[tauri::command]
-pub async fn load_execution_history(app_handle: tauri::AppHandle) -> Result<Vec<ExecutionRecord>, String> {
+pub async fn load_execution_history() -> Result<Vec<ExecutionRecord>, String> {
     let history_file = get_execution_history_file();
     
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Loading execution history".to_string(),
-        details: Some(serde_json::json!({
-            "file_path": history_file.to_string_lossy()
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
-
     if history_file.exists() {
         let content = fs::read_to_string(history_file).map_err(|e| e.to_string())?;
         serde_json::from_str(&content).map_err(|e| e.to_string())
@@ -63,7 +46,7 @@ pub async fn load_execution_history(app_handle: tauri::AppHandle) -> Result<Vec<
 }
 
 #[tauri::command]
-pub async fn save_execution_record(app_handle: tauri::AppHandle, record: ExecutionRecord, max_items: usize) -> Result<(), String> {
+pub async fn save_execution_record(record: ExecutionRecord, max_items: usize) -> Result<(), String> {
     let history_file = get_execution_history_file();
     let mut history = if history_file.exists() {
         let content = fs::read_to_string(&history_file).map_err(|e| e.to_string())?;
@@ -71,24 +54,6 @@ pub async fn save_execution_record(app_handle: tauri::AppHandle, record: Executi
     } else {
         Vec::new()
     };
-
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Saving execution record".to_string(),
-        details: Some(serde_json::json!({
-            "record_id": record.id,
-            "success": record.success,
-            "timestamp": record.timestamp,
-            "max_items": max_items
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
 
     history.insert(0, record);
 
@@ -103,24 +68,9 @@ pub async fn save_execution_record(app_handle: tauri::AppHandle, record: Executi
 }
 
 #[tauri::command]
-pub async fn clear_execution_history(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn clear_execution_history() -> Result<(), String> {
     let history_file = get_execution_history_file();
     
-    let log_entry = LogEntry {
-        timestamp: chrono::Local::now().to_rfc3339(),
-        level: "info".to_string(),
-        message: "Clearing execution history".to_string(),
-        details: Some(serde_json::json!({
-            "file_path": history_file.to_string_lossy()
-        })),
-    };
-
-    if let Some(logger) = app_handle.try_state::<std::sync::Mutex<crate::logging::Logger>>() {
-        if let Ok(logger) = logger.lock() {
-            let _ = logger.write_entry(log_entry);
-        }
-    }
-
     if history_file.exists() {
         fs::write(history_file, "[]").map_err(|e| e.to_string())?;
     }
