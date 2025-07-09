@@ -12,7 +12,9 @@ const METHOD_PATTERN = /([a-zA-Z_][a-zA-Z0-9_]*):([a-zA-Z_][a-zA-Z0-9_]*)/g;
  */
 export const getBuiltinsFromSuggestions = (): string[] => {
 	const suggestions = suggestionService.getSuggestions();
-	return suggestions.filter((s) => s.type === "function").map((s) => s.label);
+	return suggestions
+		.filter((s) => s.type === "function" || s.type === "method")
+		.map((s) => s.label);
 };
 
 export const getSuggestions = (
