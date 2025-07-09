@@ -1,11 +1,14 @@
-import { Code, ExternalLink, Github, Zap } from "lucide-react";
+import { Code, ExternalLink, Github, History, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import type { FC } from "react";
+import { useNavigate } from "react-router-dom";
 import ActionButton from "../components/buttons/actionButton";
 import GallerySection from "../components/gallery/gallerySection";
 import { GALLERY_IMAGES, LANDING_CONTENT } from "../constants/landingContent";
 
 const HeroSection: FC = () => {
+	const navigate = useNavigate();
+
 	const handleGithub = () => {
 		window.open("https://github.com/FrozenProductions/Comet", "_blank");
 	};
@@ -19,6 +22,10 @@ const HeroSection: FC = () => {
 
 	const handleHydrogen = () => {
 		window.open("https://www.hydrogen.lat/", "_blank");
+	};
+
+	const handleChangelog = () => {
+		navigate("/changelog");
 	};
 
 	return (
@@ -82,6 +89,13 @@ const HeroSection: FC = () => {
 									label="Hydrogen"
 									icon={<Zap className="h-4 w-4 sm:h-5 sm:w-5" />}
 									onClick={handleHydrogen}
+									variant="secondary"
+									className="w-full sm:w-auto"
+								/>
+								<ActionButton
+									label="Changelog"
+									icon={<History className="h-4 w-4 sm:h-5 sm:w-5" />}
+									onClick={handleChangelog}
 									variant="secondary"
 									className="w-full sm:w-auto"
 								/>
