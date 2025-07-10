@@ -43,6 +43,7 @@ export interface EditorSettings {
 		showConsole: boolean;
 		modalScale: "small" | "default" | "large";
 		middleClickTabClose: boolean;
+		disableToasts: boolean;
 		recentSearches: {
 			enabled: boolean;
 			maxItems: number;

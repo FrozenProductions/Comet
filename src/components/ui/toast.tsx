@@ -41,6 +41,11 @@ const getPositionStyles = (position: ToastPosition) => {
 
 export const Toaster = () => {
 	const { settings } = useSettings();
+
+	if (settings.interface.disableToasts) {
+		return null;
+	}
+
 	const position = settings.interface.toastPosition || "bottom-center";
 
 	return (

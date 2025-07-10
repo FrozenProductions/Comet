@@ -243,22 +243,41 @@ export const InterfaceSection: FC = () => {
 					icon={<MessageSquare size={14} className="text-accent" />}
 				>
 					<div className="space-y-4">
-						<RadioGroup
-							value={vertical}
-							onChange={(value) => handleToastPositionChange("vertical", value)}
-							options={TOAST_VERTICAL_OPTIONS}
-							label="Vertical Position"
-							description="Choose vertical alignment for toast notifications"
+						<Checkbox
+							checked={!settings.interface.disableToasts}
+							onChange={() => {
+								updateSettings({
+									interface: {
+										...settings.interface,
+										disableToasts: !settings.interface.disableToasts,
+									},
+								});
+							}}
+							label="Show Notifications"
+							description="Enable or disable toast notifications"
 						/>
-						<RadioGroup
-							value={horizontal}
-							onChange={(value) =>
-								handleToastPositionChange("horizontal", value)
-							}
-							options={TOAST_HORIZONTAL_OPTIONS}
-							label="Horizontal Position"
-							description="Choose horizontal alignment for toast notifications"
-						/>
+						{!settings.interface.disableToasts && (
+							<>
+								<RadioGroup
+									value={vertical}
+									onChange={(value) =>
+										handleToastPositionChange("vertical", value)
+									}
+									options={TOAST_VERTICAL_OPTIONS}
+									label="Vertical Position"
+									description="Choose vertical alignment for toast notifications"
+								/>
+								<RadioGroup
+									value={horizontal}
+									onChange={(value) =>
+										handleToastPositionChange("horizontal", value)
+									}
+									options={TOAST_HORIZONTAL_OPTIONS}
+									label="Horizontal Position"
+									description="Choose horizontal alignment for toast notifications"
+								/>
+							</>
+						)}
 					</div>
 				</SettingGroup>
 			</div>

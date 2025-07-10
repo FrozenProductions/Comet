@@ -65,6 +65,7 @@ export const DEFAULT_EDITOR_SETTINGS = {
 			maxItems: 100,
 		},
 		toastPosition: "bottom-center" as const,
+		disableToasts: false,
 	},
 	app: {
 		nightlyReleases: false,
