@@ -1,5 +1,6 @@
 import type { Code2 } from "lucide-react";
 import type { ReactNode } from "react";
+import type { ToastPosition } from "../ui/toast";
 import type { Keybind } from "./keybinds";
 
 export type SettingsSection = {
@@ -49,6 +50,7 @@ export interface EditorSettings {
 		executionHistory: {
 			maxItems: number;
 		};
+		toastPosition: ToastPosition;
 	};
 	app: {
 		nightlyReleases: boolean;

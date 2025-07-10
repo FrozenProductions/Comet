@@ -1,17 +1,30 @@
 import {
 	History,
 	LayoutGrid,
+	MessageSquare,
 	Palette,
 	Settings as SettingsIcon,
 } from "lucide-react";
 import { type FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSettings } from "../../../hooks/core/useSettings";
+import type { ToastPosition } from "../../../types/ui/toast";
 import { Checkbox } from "../../ui/checkbox";
 import { Modal } from "../../ui/modal";
 import { RadioGroup } from "../../ui/radioGroup";
 import { Slider } from "../../ui/slider";
 import { SettingGroup } from "../settingGroup";
+
+const TOAST_VERTICAL_OPTIONS = [
+	{ value: "top", label: "Top" },
+	{ value: "bottom", label: "Bottom" },
+];
+
+const TOAST_HORIZONTAL_OPTIONS = [
+	{ value: "left", label: "Left" },
+	{ value: "center", label: "Center" },
+	{ value: "right", label: "Right" },
+];
 
 export const InterfaceSection: FC = () => {
 	const { settings, updateSettings } = useSettings();
@@ -44,6 +57,26 @@ export const InterfaceSection: FC = () => {
 		toast.success("Zen mode enabled", {
 			id: "zen-mode-toast",
 		});
+	};
+
+	const currentPosition = settings.interface.toastPosition || "bottom-center";
+	const [vertical, horizontal] = currentPosition.split("-") as [string, string];
+
+	const handleToastPositionChange = (
+		type: "vertical" | "horizontal",
+		value: string,
+	) => {
+		const newVertical = type === "vertical" ? value : vertical;
+		const newHorizontal = type === "horizontal" ? value : horizontal;
+		const newPosition = `${newVertical}-${newHorizontal}` as ToastPosition;
+
+		updateSettings({
+			interface: {
+				...settings.interface,
+				toastPosition: newPosition,
+			},
+		});
+		toast.success("Toast position updated");
 	};
 
 	return (
@@ -202,6 +235,31 @@ export const InterfaceSection: FC = () => {
 						label="Maximum History Items"
 						description="Number of execution records to keep in history"
 					/>
+				</SettingGroup>
+
+				<SettingGroup
+					title="Notifications"
+					description="Configure toast notifications"
+					icon={<MessageSquare size={14} className="text-accent" />}
+				>
+					<div className="space-y-4">
+						<RadioGroup
+							value={vertical}
+							onChange={(value) => handleToastPositionChange("vertical", value)}
+							options={TOAST_VERTICAL_OPTIONS}
+							label="Vertical Position"
+							description="Choose vertical alignment for toast notifications"
+						/>
+						<RadioGroup
+							value={horizontal}
+							onChange={(value) =>
+								handleToastPositionChange("horizontal", value)
+							}
+							options={TOAST_HORIZONTAL_OPTIONS}
+							label="Horizontal Position"
+							description="Choose horizontal alignment for toast notifications"
+						/>
+					</div>
 				</SettingGroup>
 			</div>
 

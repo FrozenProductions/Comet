@@ -64,6 +64,7 @@ export const DEFAULT_EDITOR_SETTINGS = {
 		executionHistory: {
 			maxItems: 100,
 		},
+		toastPosition: "bottom-center" as const,
 	},
 	app: {
 		nightlyReleases: false,
