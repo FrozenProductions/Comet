@@ -20,6 +20,8 @@ export interface EditorSettings {
 	display: {
 		showLineNumbers: boolean;
 		wordWrap: boolean;
+		maxTokenizationLineLength: number;
+		showMarkers: boolean;
 	};
 	text: {
 		fontSize: number;

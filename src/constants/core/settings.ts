@@ -34,6 +34,8 @@ export const DEFAULT_EDITOR_SETTINGS = {
 	display: {
 		showLineNumbers: true,
 		wordWrap: false,
+		maxTokenizationLineLength: 20000,
+		showMarkers: true,
 	},
 	text: {
 		fontSize: 14,

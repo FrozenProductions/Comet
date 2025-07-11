@@ -82,6 +82,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			cursorStyle: settings.cursor.style,
 			cursorSmoothCaretAnimation: settings.cursor.smoothCaret ? "on" : "off",
 			cursorWidth: settings.cursor.style === "line" ? 2 : 0,
+			maxTokenizationLineLength: settings.display.maxTokenizationLineLength,
 		}),
 		[
 			settings.text.fontSize,
@@ -91,6 +92,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			settings.cursor.blinking,
 			settings.cursor.style,
 			settings.cursor.smoothCaret,
+			settings.display.maxTokenizationLineLength,
 		],
 	);
 
@@ -317,7 +319,11 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			if (language === "lua") {
 				const currentValue = model.getValue();
 				debouncedSave(currentValue);
-				luaMarkerProvider.provideMarkerData(model);
+				if (settings.display.showMarkers) {
+					luaMarkerProvider.provideMarkerData(model);
+				} else {
+					monaco.editor.setModelMarkers(model, "lua-diagnostics", []);
+				}
 			}
 
 			if (!settings.intellisense.enabled) {
@@ -363,6 +369,8 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 		monaco.languages.registerHoverProvider("lua", {
 			provideHover: (model, position) => {
+				if (!settings.display.showMarkers) return null;
+
 				const markers = monaco.editor
 					.getModelMarkers({
 						resource: model.uri,
@@ -408,7 +416,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			mouseWheelZoom: false,
 		});
 
-		if (language === "lua") {
+		if (language === "lua" && settings.display.showMarkers) {
 			luaMarkerProvider.provideMarkerData(model);
 		}
 
@@ -430,6 +438,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		saveEditorState,
 		restoreEditorState,
 		suggestionService.getSuggestions().length,
+		settings.display.showMarkers,
 	]);
 
 	useEffect(() => {

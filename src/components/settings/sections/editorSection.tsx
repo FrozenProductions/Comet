@@ -68,6 +68,31 @@ export const EditorSection: FC = () => {
 						label="Word wrap"
 						description="Wrap long lines to fit editor width"
 					/>
+					<Checkbox
+						checked={settings.display.showMarkers}
+						onChange={() => {
+							updateSettings({
+								display: {
+									...settings.display,
+									showMarkers: !settings.display.showMarkers,
+								},
+							});
+						}}
+						label="Show error markers"
+						description="Display error and warning markers in the editor"
+					/>
+					<Slider
+						value={settings.display.maxTokenizationLineLength}
+						onChange={(value) =>
+							handleSliderChange("display", "maxTokenizationLineLength", value)
+						}
+						min={20000}
+						max={40000}
+						step={1000}
+						label="Max Line Length"
+						description="Maximum line length for syntax highlighting (higher values may impact performance)"
+						unit=" chars"
+					/>
 				</SettingGroup>
 
 				<SettingGroup

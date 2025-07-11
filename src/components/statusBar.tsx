@@ -157,7 +157,7 @@ export const StatusBar: FC = () => {
 	const [showDiagnostics, setShowDiagnostics] = useState(false);
 	const { activeTab } = useEditor();
 	const { isVisible, toggleSidebar } = useSidebar();
-	const { setIsWorkspaceSearchOpen } = useKeybinds();
+	const { setIsWorkspaceSearchOpen, activeScreen } = useKeybinds();
 	const previousTabRef = useRef(activeTab);
 	const diagnosticsButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -234,48 +234,50 @@ export const StatusBar: FC = () => {
 					<Search size={13} />
 				</button>
 			</div>
-			<div className="flex items-center gap-4">
-				{(errors > 0 || warnings > 0) && (
-					<div className="relative">
-						<button
-							ref={diagnosticsButtonRef}
-							type="button"
-							onClick={handleDiagnosticsClick}
-							className={`flex items-center gap-2 rounded px-1.5 py-0.5 transition-colors hover:bg-ctp-surface0 ${
-								showDiagnostics ? "bg-ctp-surface0" : ""
-							}`}
-						>
-							<div className="flex items-center gap-1.5">
-								{errors > 0 && (
-									<span className="flex items-center text-ctp-red">
-										<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
-										{errors}
-									</span>
-								)}
-								{warnings > 0 && (
-									<span className="flex items-center text-ctp-yellow">
-										<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
-										{warnings}
-									</span>
-								)}
-							</div>
-						</button>
-						{showDiagnostics && (
-							<ErrorDropdown
-								diagnostics={diagnostics}
-								onClose={() => setShowDiagnostics(false)}
-								buttonRef={diagnosticsButtonRef}
-							/>
-						)}
-					</div>
-				)}
+			{activeScreen === "Editor" && (
 				<div className="flex items-center gap-4">
-					<span>Lines: {totalLines}</span>
-					<span>
-						Ln {position.lineNumber}, Col {position.column}
-					</span>
+					{(errors > 0 || warnings > 0) && (
+						<div className="relative">
+							<button
+								ref={diagnosticsButtonRef}
+								type="button"
+								onClick={handleDiagnosticsClick}
+								className={`flex items-center gap-2 rounded px-1.5 py-0.5 transition-colors hover:bg-ctp-surface0 ${
+									showDiagnostics ? "bg-ctp-surface0" : ""
+								}`}
+							>
+								<div className="flex items-center gap-1.5">
+									{errors > 0 && (
+										<span className="flex items-center text-ctp-red">
+											<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
+											{errors}
+										</span>
+									)}
+									{warnings > 0 && (
+										<span className="flex items-center text-ctp-yellow">
+											<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
+											{warnings}
+										</span>
+									)}
+								</div>
+							</button>
+							{showDiagnostics && (
+								<ErrorDropdown
+									diagnostics={diagnostics}
+									onClose={() => setShowDiagnostics(false)}
+									buttonRef={diagnosticsButtonRef}
+								/>
+							)}
+						</div>
+					)}
+					<div className="flex items-center gap-4">
+						<span>Lines: {totalLines}</span>
+						<span>
+							Ln {position.lineNumber}, Col {position.column}
+						</span>
+					</div>
 				</div>
-			</div>
+			)}
 			<WorkspaceSearch />
 		</div>
 	);
