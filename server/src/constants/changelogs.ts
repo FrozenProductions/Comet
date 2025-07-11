@@ -5,6 +5,100 @@ export const CHANGELOG_DATA: ChangelogSection[] = [
 		year: 2025,
 		releases: [
 			{
+				version: "1.0.9",
+				date: "2025-07-11",
+				changes: [
+					{
+						type: "feature",
+						title: "Lua Support with Diagnostics",
+						description:
+							"Added Lua language support with diagnostics in the code editor.",
+					},
+					{
+						type: "feature",
+						title: "Modal Size Adjustment",
+						description:
+							"Added feature to adjust modal sizes for better user experience.",
+					},
+					{
+						type: "improvement",
+						title: "CommandPalette Styling Update",
+						description: "Updated CommandPalette with improved visual design.",
+					},
+					{
+						type: "feature",
+						title: "Go to Line Command",
+						description:
+							'Added "Go to Line" command functionality in CommandPalette.',
+					},
+					{
+						type: "feature",
+						title: "Middle-Click Tab Close",
+						description: "Added middle-click tab close feature in settings.",
+					},
+					{
+						type: "feature",
+						title: "Status Bar Component",
+						description:
+							"Added statusBar component for improved editor information display.",
+					},
+					{
+						type: "feature",
+						title: "Editor Re-render Fix",
+						description:
+							"Fixed issues with editor re-render on robloxConsole component toggle.",
+					},
+					{
+						type: "feature",
+						title: "Workspace Search",
+						description:
+							"Implemented workspace search functionality for better file navigation.",
+					},
+					{
+						type: "feature",
+						title: "Additional Keybinds",
+						description:
+							"Added more keyboard shortcuts for improved productivity.",
+					},
+					{
+						type: "improvement",
+						title: "Script Library Refactoring",
+						description:
+							"Refactored script library components and migrated to RSScripts API.",
+					},
+					{
+						type: "improvement",
+						title: "Toast Styling Update",
+						description:
+							"Updated toast component styles for better visual appearance.",
+					},
+					{
+						type: "feature",
+						title: "Toast Position Configuration",
+						description:
+							"Added toast position configuration to interface settings.",
+					},
+					{
+						type: "feature",
+						title: "Toast Notifications Toggle",
+						description:
+							"Added toggle for toast notifications in interface settings.",
+					},
+					{
+						type: "feature",
+						title: "Editor Settings Enhancement",
+						description:
+							"Added settings for error markers and max tokenization line length in editor settings.",
+					},
+					{
+						type: "feature",
+						title: "Code Beautification",
+						description:
+							"Implemented code beautification feature for better code formatting.",
+					},
+				],
+			},
+			{
 				version: "1.0.8",
 				date: "2025-07-02",
 				changes: [
