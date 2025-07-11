@@ -2,6 +2,7 @@ import { PanelLeft, Search, Wand2 } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { type FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import { Tooltip } from "react-tooltip";
 import { useEditor } from "../hooks/core/useEditor";
 import { useKeybinds } from "../hooks/core/useKeybinds";
 import { useSidebar } from "../hooks/ui/useSidebar";
@@ -249,6 +250,8 @@ export const StatusBar: FC = () => {
 				<button
 					type="button"
 					onClick={toggleSidebar}
+					data-tooltip-id="status-bar-tooltip"
+					data-tooltip-content={isVisible ? "Hide sidebar" : "Show sidebar"}
 					className={`flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0 ${
 						isVisible ? "text-accent" : ""
 					}`}
@@ -258,6 +261,8 @@ export const StatusBar: FC = () => {
 				<button
 					type="button"
 					onClick={() => setIsWorkspaceSearchOpen(true)}
+					data-tooltip-id="status-bar-tooltip"
+					data-tooltip-content="Search workspace"
 					className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
 				>
 					<Search size={13} />
@@ -266,8 +271,9 @@ export const StatusBar: FC = () => {
 					<button
 						type="button"
 						onClick={handleBeautifyClick}
+						data-tooltip-id="status-bar-tooltip"
+						data-tooltip-content="Beautify code"
 						className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
-						title="Beautify code"
 					>
 						<Wand2 size={13} />
 					</button>
@@ -281,6 +287,8 @@ export const StatusBar: FC = () => {
 								ref={diagnosticsButtonRef}
 								type="button"
 								onClick={handleDiagnosticsClick}
+								data-tooltip-id="status-bar-tooltip"
+								data-tooltip-content={`${errors} error${errors !== 1 ? "s" : ""}, ${warnings} warning${warnings !== 1 ? "s" : ""}`}
 								className={`flex items-center gap-2 rounded px-1.5 py-0.5 transition-colors hover:bg-ctp-surface0 ${
 									showDiagnostics ? "bg-ctp-surface0" : ""
 								}`}
@@ -318,6 +326,13 @@ export const StatusBar: FC = () => {
 				</div>
 			)}
 			<WorkspaceSearch />
+
+			<Tooltip
+				id="status-bar-tooltip"
+				place="top"
+				className="!rounded-lg !border !border-ctp-surface2 !bg-ctp-mantle !px-2 !py-1 !text-xs !shadow-lg"
+				classNameArrow="!hidden"
+			/>
 		</div>
 	);
 };
