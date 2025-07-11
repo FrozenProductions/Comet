@@ -1,13 +1,13 @@
-use serde::{Deserialize, Serialize};
-use std::process::Command;
-use std::fs;
-use std::path::PathBuf;
-use semver::Version;
 use dirs;
+use semver::Version;
+use serde::{Deserialize, Serialize};
+use std::fs;
 use std::io::Write;
+use std::path::PathBuf;
+use std::process::Command;
 use tauri::Manager;
 
-const CURRENT_VERSION: &str = "1.0.8";
+const CURRENT_VERSION: &str = "1.0.9";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
 const DOWNLOAD_URL: &str = "https://github.com/FrozenProductions/Comet/releases/download";
 const APP_PATH: &str = "/Applications/Comet.app";
@@ -37,13 +37,16 @@ pub fn is_official_app(app_handle: tauri::AppHandle) -> bool {
 }
 
 #[tauri::command]
-pub async fn check_for_updates(app_handle: tauri::AppHandle, check_nightly: bool) -> Result<Option<String>, String> {
+pub async fn check_for_updates(
+    app_handle: tauri::AppHandle,
+    check_nightly: bool,
+) -> Result<Option<String>, String> {
     if !is_official_app(app_handle.clone()) {
         return Ok(None);
     }
 
     let client = reqwest::Client::new();
-    
+
     let response = client
         .get(STATUS_URL)
         .header("User-Agent", "Comet-App")
@@ -58,11 +61,11 @@ pub async fn check_for_updates(app_handle: tauri::AppHandle, check_nightly: bool
 
     let current = Version::parse(CURRENT_VERSION).unwrap();
     let stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
-    
+
     if stable > current {
         return Ok(Some(status.version));
     }
-    
+
     if check_nightly {
         if let Some(ref prerelease) = status.prerelease {
             let latest = Version::parse(&prerelease).map_err(|e| e.to_string())?;
@@ -76,28 +79,41 @@ pub async fn check_for_updates(app_handle: tauri::AppHandle, check_nightly: bool
 }
 
 #[tauri::command]
-pub async fn download_and_install_update(window: tauri::Window, check_nightly: bool) -> Result<(), String> {
+pub async fn download_and_install_update(
+    window: tauri::Window,
+    check_nightly: bool,
+) -> Result<(), String> {
     let app_handle = window.app_handle();
-    
+
     let app_name = app_handle.package_info().name.clone();
     if app_name != "Comet" {
-        window.emit("update-progress", UpdateProgress {
-            state: "completed".to_string(),
-            progress: None,
-            debug_message: Some(format!("Updates not available for {}", app_name)),
-        }).unwrap();
-        
+        window
+            .emit(
+                "update-progress",
+                UpdateProgress {
+                    state: "completed".to_string(),
+                    progress: None,
+                    debug_message: Some(format!("Updates not available for {}", app_name)),
+                },
+            )
+            .unwrap();
+
         return Ok(());
     }
 
-    window.emit("update-progress", UpdateProgress {
-        state: "preparing".to_string(),
-        progress: None,
-        debug_message: None,
-    }).unwrap();
+    window
+        .emit(
+            "update-progress",
+            UpdateProgress {
+                state: "preparing".to_string(),
+                progress: None,
+                debug_message: None,
+            },
+        )
+        .unwrap();
 
     let client = reqwest::Client::new();
-    
+
     let status = client
         .get(STATUS_URL)
         .header("User-Agent", "Comet-App")
@@ -110,7 +126,7 @@ pub async fn download_and_install_update(window: tauri::Window, check_nightly: b
 
     let current = Version::parse(CURRENT_VERSION).unwrap();
     let _stable = Version::parse(&status.version).map_err(|e| e.to_string())?;
-    
+
     let version_to_use = if check_nightly {
         if let Some(ref prerelease) = status.prerelease {
             let nightly = Version::parse(prerelease).map_err(|e| e.to_string())?;
@@ -126,15 +142,23 @@ pub async fn download_and_install_update(window: tauri::Window, check_nightly: b
         status.version
     };
 
-    let download_url = format!("{}/v{}/Comet_1.0.0_universal.dmg", DOWNLOAD_URL, version_to_use);
+    let download_url = format!(
+        "{}/v{}/Comet_1.0.0_universal.dmg",
+        DOWNLOAD_URL, version_to_use
+    );
     let dmg_path = get_downloads_dir().join("Comet_1.0.0_universal.dmg");
     let script_path = get_downloads_dir().join("comet_installer.sh");
 
-    window.emit("update-progress", UpdateProgress {
-        state: "downloading".to_string(),
-        progress: Some(0.0),
-        debug_message: None,
-    }).unwrap();
+    window
+        .emit(
+            "update-progress",
+            UpdateProgress {
+                state: "downloading".to_string(),
+                progress: Some(0.0),
+                debug_message: None,
+            },
+        )
+        .unwrap();
 
     let response = client
         .get(&download_url)
@@ -155,21 +179,31 @@ pub async fn download_and_install_update(window: tauri::Window, check_nightly: b
 
         if total_size > 0 {
             let progress = (downloaded as f32 / total_size as f32) * 100.0;
-            window.emit("update-progress", UpdateProgress {
-                state: "downloading".to_string(),
-                progress: Some(progress),
-                debug_message: None,
-            }).unwrap();
+            window
+                .emit(
+                    "update-progress",
+                    UpdateProgress {
+                        state: "downloading".to_string(),
+                        progress: Some(progress),
+                        debug_message: None,
+                    },
+                )
+                .unwrap();
         }
     }
 
     fs::write(&dmg_path, bytes).map_err(|e| e.to_string())?;
 
-    window.emit("update-progress", UpdateProgress {
-        state: "preparing".to_string(),
-        progress: None,
-        debug_message: None,
-    }).unwrap();
+    window
+        .emit(
+            "update-progress",
+            UpdateProgress {
+                state: "preparing".to_string(),
+                progress: None,
+                debug_message: None,
+            },
+        )
+        .unwrap();
 
     let script_content = String::from("#!/bin/bash
 set -e
@@ -212,7 +246,8 @@ open -n \"") + APP_PATH + &String::from("\"
 exit 0");
 
     let mut file = std::fs::File::create(&script_path).map_err(|e| e.to_string())?;
-    file.write_all(script_content.as_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(script_content.as_bytes())
+        .map_err(|e| e.to_string())?;
 
     let chmod_output = Command::new("chmod")
         .arg("+x")
@@ -223,14 +258,22 @@ exit 0");
     if !chmod_output.status.success() {
         let _ = fs::remove_file(&script_path);
         let _ = fs::remove_file(&dmg_path);
-        return Err(format!("Failed to make installer script executable: {}", String::from_utf8_lossy(&chmod_output.stderr)));
+        return Err(format!(
+            "Failed to make installer script executable: {}",
+            String::from_utf8_lossy(&chmod_output.stderr)
+        ));
     }
 
-    window.emit("update-progress", UpdateProgress {
-        state: "installing".to_string(),
-        progress: None,
-        debug_message: None,
-    }).unwrap();
+    window
+        .emit(
+            "update-progress",
+            UpdateProgress {
+                state: "installing".to_string(),
+                progress: None,
+                debug_message: None,
+            },
+        )
+        .unwrap();
 
     let _installer_process = Command::new("bash")
         .arg(&script_path)
@@ -241,13 +284,18 @@ exit 0");
             e.to_string()
         })?;
 
-    window.emit("update-progress", UpdateProgress {
-        state: "completed".to_string(),
-        progress: None,
-        debug_message: None,
-    }).unwrap();
+    window
+        .emit(
+            "update-progress",
+            UpdateProgress {
+                state: "completed".to_string(),
+                progress: None,
+                debug_message: None,
+            },
+        )
+        .unwrap();
 
     std::thread::sleep(std::time::Duration::from_secs(2));
     window.app_handle().exit(0);
     Ok(())
-} 
+}
