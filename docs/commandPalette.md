@@ -35,6 +35,10 @@ Command Palette allows you to:
 
 ### Editor Controls
 
+- **Beautify Code**: Format the current code
+- **Go to Line**: Jump to a specific line in the editor
+    - Use `>goto` or `>g` followed by a line number
+    - Example: `>goto 42` jumps to line 42
 - **New Tab**: Create a new editor tab
 - **Toggle Zen Mode**: Enable/disable distraction-free mode
 - **Toggle Console**: Show/hide the console
