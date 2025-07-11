@@ -1,9 +1,11 @@
-import { PanelLeft, Search } from "lucide-react";
+import { PanelLeft, Search, Wand2 } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { type FC, useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useEditor } from "../hooks/core/useEditor";
 import { useKeybinds } from "../hooks/core/useKeybinds";
 import { useSidebar } from "../hooks/ui/useSidebar";
+import { beautifierService } from "../services/features/beautifierService";
 import type { EditorPosition, ErrorDropdownProps } from "../types/ui/statusBar";
 import { WorkspaceSearch } from "./workspaceSearch";
 
@@ -214,6 +216,33 @@ export const StatusBar: FC = () => {
 		setShowDiagnostics(!showDiagnostics);
 	};
 
+	const handleBeautifyClick = async () => {
+		const editor = monaco.editor.getEditors()[0];
+		if (!editor) return;
+
+		const model = editor.getModel();
+		if (!model) return;
+
+		try {
+			const currentValue = model.getValue();
+			const beautifiedCode = await beautifierService.beautifyCode(currentValue);
+
+			editor.pushUndoStop();
+			editor.executeEdits("beautifier", [
+				{
+					range: model.getFullModelRange(),
+					text: beautifiedCode,
+				},
+			]);
+			editor.pushUndoStop();
+
+			toast.success("Code beautified successfully");
+		} catch (error) {
+			toast.error("Failed to beautify code");
+			console.error("Beautification error:", error);
+		}
+	};
+
 	return (
 		<div className="relative flex h-6 items-center justify-between border-t border-white/5 bg-ctp-mantle px-2 text-xs text-ctp-subtext0">
 			<div className="flex items-center gap-0.5">
@@ -233,6 +262,16 @@ export const StatusBar: FC = () => {
 				>
 					<Search size={13} />
 				</button>
+				{activeScreen === "Editor" && (
+					<button
+						type="button"
+						onClick={handleBeautifyClick}
+						className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
+						title="Beautify code"
+					>
+						<Wand2 size={13} />
+					</button>
+				)}
 			</div>
 			{activeScreen === "Editor" && (
 				<div className="flex items-center gap-4">

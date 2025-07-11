@@ -10,6 +10,7 @@ import {
 	Play,
 	Plus,
 	Terminal,
+	Wand2,
 } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { motion } from "motion/react";
@@ -22,6 +23,7 @@ import { useScript } from "../../hooks/execution/useScript";
 import { useFastFlags } from "../../hooks/roblox/useFastFlags";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsoleVisibility } from "../../hooks/ui/useConsoleVisibility";
+import { beautifierService } from "../../services/features/beautifierService";
 import type {
 	CommandItem,
 	CommandPaletteProps,
@@ -92,6 +94,45 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 	};
 
 	const commands: CommandItem[] = [
+		{
+			id: "beautify",
+			title: "Beautify Code",
+			description: "Format the current code",
+			icon: <Wand2 size={16} className="stroke-[2.5]" />,
+			action: executeCommand(async () => {
+				const editor = monaco.editor.getEditors()[0];
+				if (!editor) {
+					toast.error("No active editor");
+					return;
+				}
+
+				const model = editor.getModel();
+				if (!model) {
+					toast.error("No active file");
+					return;
+				}
+
+				try {
+					const currentValue = model.getValue();
+					const beautifiedCode =
+						await beautifierService.beautifyCode(currentValue);
+
+					editor.pushUndoStop();
+					editor.executeEdits("beautifier", [
+						{
+							range: model.getFullModelRange(),
+							text: beautifiedCode,
+						},
+					]);
+					editor.pushUndoStop();
+
+					toast.success("Code beautified successfully");
+				} catch (error) {
+					toast.error("Failed to beautify code");
+					console.error("Beautification error:", error);
+				}
+			}),
+		},
 		{
 			id: "goto",
 			title: "Go to Line",
