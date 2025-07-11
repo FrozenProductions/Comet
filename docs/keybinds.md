@@ -23,12 +23,15 @@ Keybinds allow you to:
 
 - New Tab: `⌘ T`
 - Close Tab: `⌘ W`
-- Execute Script: `Enter`
+- Execute Script: `⌘ Enter`
 
 ### Application
 
+- Hide Window: `⌘ Q`
 - Toggle Zen Mode: `⌘ ⇧ K`
 - Command Palette: `⌘ P`
+- Workspace Search: `⌘ ⇧ P`
+- Toggle Sidebar: `⌘ B`
 - Open Roblox: `⌘ O`
 - Expand/Collapse Console: `⌘ J`
 - Show/Hide Console: `⌘ L`
@@ -76,3 +79,4 @@ To customize a keybind:
 - Choose intuitive combinations that are easy to remember
 - Avoid conflicts with system shortcuts
 - Consider your workflow when customizing keybinds
+- Use Command Palette (`⌘ P`) for quick access to all features
