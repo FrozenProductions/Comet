@@ -1,6 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import type {
-	RScriptDetailResponse,
 	RScriptSearchParams,
 	RScriptSearchResponse,
 } from "../../types/core/rScripts";
