@@ -334,7 +334,7 @@ export const RobloxConsole: FC<RobloxConsoleProps> = ({ isOpen, onToggle }) => {
 				width: `${size.width}px`,
 				height: `${size.height}px`,
 				transform: "none",
-				zIndex: 9999,
+				zIndex: 9000,
 			}
 		: {};
 
