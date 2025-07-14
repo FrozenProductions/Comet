@@ -1,16 +1,16 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
-use tauri::{State, Manager, Window, CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, WindowEvent};
-use std::thread;
-use serde::{Serialize, Deserialize};
+use dirs;
 use reqwest::blocking::Client as BlockingClient;
-use std::process::Command;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::fs;
 use std::path::PathBuf;
-use dirs;
-use serde_json::Value;
+use std::process::Command;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
+use tauri::{Manager, State, SystemTray, SystemTrayMenu, Window, WindowEvent};
 
 const HOST: &str = "127.0.0.1";
 const MIN_PORT: u16 = 6969;
@@ -23,6 +23,36 @@ struct ConnectionStatus {
     port: Option<u16>,
     current_port: u16,
     is_connecting: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct VersionMessage {
+    message: String,
+    nfu: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct VersionMessages {
+    messages: std::collections::HashMap<String, VersionMessage>,
+}
+
+#[tauri::command]
+async fn fetch_version_messages() -> Result<VersionMessages, String> {
+    let client = reqwest::Client::new();
+    let response = client
+        .get("https://comet-ui.fun/api/v1/messages")
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if !response.status().is_success() {
+        return Err("Failed to fetch messages".to_string());
+    }
+
+    response
+        .json::<VersionMessages>()
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[derive(Debug)]
@@ -70,7 +100,7 @@ impl ConnectionManager {
         match self.client.get(&url).send() {
             Ok(response) => {
                 if let Ok(text) = response.text() {
-                    return text == "0xdeadbeef"
+                    return text == "0xdeadbeef";
                 }
             }
             Err(_) => {}
@@ -89,7 +119,9 @@ impl ConnectionManager {
     fn send(&mut self, script: &str) -> bool {
         if let Some(port) = self.port {
             let url = format!("http://{}:{}/execute", HOST, port);
-            match self.client.post(&url)
+            match self
+                .client
+                .post(&url)
                 .header("Content-Type", "text/plain")
                 .body(script.to_string())
                 .send()
@@ -131,7 +163,9 @@ impl AppState {
             status.port = port;
             status.current_port = port.unwrap_or(status.current_port);
             if let Some(window) = window {
-                window.emit("connection-update", &*status).unwrap_or_default();
+                window
+                    .emit("connection-update", &*status)
+                    .unwrap_or_default();
             }
         }
     }
@@ -140,13 +174,15 @@ impl AppState {
         if let Ok(mut conn) = self.connection.lock() {
             conn.port = None;
         }
-        
+
         if let Ok(mut status) = self.status.lock() {
             status.is_connected = false;
             status.port = None;
             status.current_port = port;
             if let Some(window) = window {
-                window.emit("connection-update", &*status).unwrap_or_default();
+                window
+                    .emit("connection-update", &*status)
+                    .unwrap_or_default();
             }
         }
     }
@@ -168,7 +204,11 @@ async fn send_script(script: String, state: State<'_, AppState>) -> Result<bool,
 }
 
 #[tauri::command]
-async fn change_setting(key: String, value: String, state: State<'_, AppState>) -> Result<bool, String> {
+async fn change_setting(
+    key: String,
+    value: String,
+    state: State<'_, AppState>,
+) -> Result<bool, String> {
     let content = format!("{} {}", key, value);
     let mut conn = state.connection.lock().map_err(|e| e.to_string())?;
     let success = conn.send(&content);
@@ -179,7 +219,10 @@ async fn change_setting(key: String, value: String, state: State<'_, AppState>) 
 }
 
 #[tauri::command]
-async fn refresh_connection(state: State<'_, AppState>, window: Window) -> Result<ConnectionStatus, String> {
+async fn refresh_connection(
+    state: State<'_, AppState>,
+    window: Window,
+) -> Result<ConnectionStatus, String> {
     let current_port = {
         let status = state.status.lock().map_err(|e| e.to_string())?;
         status.current_port
@@ -191,12 +234,15 @@ async fn refresh_connection(state: State<'_, AppState>, window: Window) -> Resul
     } else {
         state.update_status(Some(&window), false, None);
     }
-    
+
     Ok(state.status.lock().map_err(|e| e.to_string())?.clone())
 }
 
 #[tauri::command]
-async fn increment_port(state: State<'_, AppState>, window: Window) -> Result<ConnectionStatus, String> {
+async fn increment_port(
+    state: State<'_, AppState>,
+    window: Window,
+) -> Result<ConnectionStatus, String> {
     let current_port = {
         let status = state.status.lock().map_err(|e| e.to_string())?;
         status.current_port
@@ -255,7 +301,7 @@ pub enum ExecuteError {
     #[error("Failed to connect to server: {0}")]
     ConnectionError(String),
     #[error("Failed to execute script: {0}")]
-    ExecutionError(String)
+    ExecutionError(String),
 }
 
 impl serde::Serialize for ExecuteError {
@@ -295,7 +341,10 @@ async fn execute_script(script: String) -> Result<String, String> {
     }
 
     let port = server_port.ok_or_else(|| {
-        format!("Could not locate HTTP server on ports {}-{}. Last error: {}", MIN_PORT, MAX_PORT, last_error)
+        format!(
+            "Could not locate HTTP server on ports {}-{}. Last error: {}",
+            MIN_PORT, MAX_PORT, last_error
+        )
     })?;
 
     let url = format!("http://{}:{}/execute", HOST, port);
@@ -316,19 +365,19 @@ async fn execute_script(script: String) -> Result<String, String> {
     }
 }
 
-
 mod auto_execute;
-mod tabs;
+mod execution_history;
 mod fast_flags;
 mod fast_flags_profiles;
 mod flag_validator;
-mod roblox_logs;
 mod hydrogen;
-mod workspace;
-mod updater;
-mod execution_history;
-mod suggestions;
+mod roblox_logs;
 mod rscripts;
+mod suggestions;
+mod tabs;
+mod tray;
+mod updater;
+mod workspace;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use flag_validator::FlagValidator;
@@ -341,44 +390,62 @@ async fn open_roblox() -> Result<(), String> {
         .arg("Roblox")
         .spawn()
         .map_err(|e| e.to_string())?;
-    
+
     Ok(())
 }
 
 #[tauri::command]
-async fn load_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<(Vec<FastFlagsProfile>, Option<String>), String> {
-    let settings_file = std::path::PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
+async fn load_fast_flags_profiles(
+    app_handle: tauri::AppHandle,
+) -> Result<(Vec<FastFlagsProfile>, Option<String>), String> {
+    let settings_file = std::path::PathBuf::from(
+        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+    );
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    
+
     if !settings_file.exists() {
         let _ = profile_manager.clear_active_profile();
     }
-    
+
     let profiles = profile_manager.load_profiles()?;
     let active_id = profile_manager.get_active_profile_id()?;
     Ok((profiles, active_id))
 }
 
 #[tauri::command]
-async fn save_fast_flags_profile(app_handle: tauri::AppHandle, profile: FastFlagsProfile) -> Result<(), String> {
+async fn save_fast_flags_profile(
+    app_handle: tauri::AppHandle,
+    profile: FastFlagsProfile,
+) -> Result<(), String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
     profile_manager.save_profile(profile, &app_handle).await
 }
 
 #[tauri::command]
-async fn delete_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: String) -> Result<(), String> {
+async fn delete_fast_flags_profile(
+    app_handle: tauri::AppHandle,
+    profile_id: String,
+) -> Result<(), String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
     profile_manager.delete_profile(&profile_id)
 }
 
 #[tauri::command]
-async fn activate_fast_flags_profile(app_handle: tauri::AppHandle, profile_id: String) -> Result<FastFlagsProfile, String> {
+async fn activate_fast_flags_profile(
+    app_handle: tauri::AppHandle,
+    profile_id: String,
+) -> Result<FastFlagsProfile, String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    profile_manager.activate_profile(&app_handle, &profile_id).await
+    profile_manager
+        .activate_profile(&app_handle, &profile_id)
+        .await
 }
 
 #[tauri::command]
-async fn validate_flags(flags: Vec<String>, state: State<'_, AppState>) -> Result<Vec<String>, String> {
+async fn validate_flags(
+    flags: Vec<String>,
+    state: State<'_, AppState>,
+) -> Result<Vec<String>, String> {
     state.flag_validator.validate_flags(&flags).await
 }
 
@@ -437,7 +504,10 @@ impl ScriptConfig {
                 Some(v.to_string())
             }
         });
-        let display_name = value.get("display_name").and_then(|v| v.as_str()).map(String::from);
+        let display_name = value
+            .get("display_name")
+            .and_then(|v| v.as_str())
+            .map(String::from);
 
         Ok(ScriptConfig {
             fetch,
@@ -510,61 +580,67 @@ async fn fetch_script_configs() -> Result<ScriptsResponse, String> {
     match client
         .get("https://www.comet-ui.fun/api/v1/scripts")
         .send()
-        .await {
-            Ok(response) => {
-                if !response.status().is_success() {
-                    return Err("Failed to fetch script configs".to_string());
-                }
-
-                let text = response.text().await.map_err(|e| e.to_string())?;
-                
-                let json: Value = serde_json::from_str(&text)
-                    .map_err(|e| format!("Failed to parse script configs: {}", e))?;
-                
-                let scripts_obj = json.get("scripts")
-                    .and_then(|v| v.as_object())
-                    .ok_or("Invalid scripts object")?;
-                
-                let mut scripts = std::collections::HashMap::new();
-                
-                for (key, value) in scripts_obj {
-                    if let Ok(config) = ScriptConfig::from_value(value.clone()) {
-                        scripts.insert(key.clone(), config);
-                    }
-                }
-
-                let mut scripts_response = ScriptsResponse { scripts };
-
-                for (key, config) in scripts_response.scripts.iter_mut() {
-                    if config.display_name.is_none() {
-                        config.display_name = Some(format_script_name(key));
-                    }
-                }
-
-                Ok(scripts_response)
-            },
-            Err(_) => {
-                let mut scripts = std::collections::HashMap::new();
-                let fallback_keys = ["infinite_yield", "hydroxide", "dex_explorer"];
-                
-                for key in fallback_keys.iter() {
-                    if let Some(config) = create_fallback_config(key) {
-                        scripts.insert(key.to_string(), config);
-                    }
-                }
-                
-                Ok(ScriptsResponse { scripts })
+        .await
+    {
+        Ok(response) => {
+            if !response.status().is_success() {
+                return Err("Failed to fetch script configs".to_string());
             }
+
+            let text = response.text().await.map_err(|e| e.to_string())?;
+
+            let json: Value = serde_json::from_str(&text)
+                .map_err(|e| format!("Failed to parse script configs: {}", e))?;
+
+            let scripts_obj = json
+                .get("scripts")
+                .and_then(|v| v.as_object())
+                .ok_or("Invalid scripts object")?;
+
+            let mut scripts = std::collections::HashMap::new();
+
+            for (key, value) in scripts_obj {
+                if let Ok(config) = ScriptConfig::from_value(value.clone()) {
+                    scripts.insert(key.clone(), config);
+                }
+            }
+
+            let mut scripts_response = ScriptsResponse { scripts };
+
+            for (key, config) in scripts_response.scripts.iter_mut() {
+                if config.display_name.is_none() {
+                    config.display_name = Some(format_script_name(key));
+                }
+            }
+
+            Ok(scripts_response)
         }
+        Err(_) => {
+            let mut scripts = std::collections::HashMap::new();
+            let fallback_keys = ["infinite_yield", "hydroxide", "dex_explorer"];
+
+            for key in fallback_keys.iter() {
+                if let Some(config) = create_fallback_config(key) {
+                    scripts.insert(key.to_string(), config);
+                }
+            }
+
+            Ok(ScriptsResponse { scripts })
+        }
+    }
 }
 
 async fn execute_script_by_key(key: &str) -> Result<String, String> {
     let configs = fetch_script_configs().await?;
-    let config = configs.scripts.get(key)
+    let config = configs
+        .scripts
+        .get(key)
         .ok_or_else(|| format!("{} config not found", format_script_name(key)))?;
-    
+
     if let Some(true) = config.fetch {
-        let url = config.url.as_ref()
+        let url = config
+            .url
+            .as_ref()
             .ok_or_else(|| format!("{} URL not found", format_script_name(key)))?;
         let script = reqwest::get(url)
             .await
@@ -574,7 +650,9 @@ async fn execute_script_by_key(key: &str) -> Result<String, String> {
             .map_err(|e| e.to_string())?;
         execute_script(script).await
     } else if let Some(true) = config.execute {
-        let content = config.content.as_ref()
+        let content = config
+            .content
+            .as_ref()
             .ok_or_else(|| format!("{} content not found", format_script_name(key)))?;
         execute_script(content.to_string()).await
     } else {
@@ -609,111 +687,11 @@ async fn save_last_script(script: String) -> Result<(), String> {
         .map_err(|e| format!("Failed to create directory: {}", e))?;
 
     let script_file = script_path.join("last_script.txt");
-    std::fs::write(&script_file, script)
-        .map_err(|e| {
-            println!("Failed to write script file: {}", e);
-            format!("Failed to save last script: {}", e)
-        })?;
+    std::fs::write(&script_file, script).map_err(|e| {
+        println!("Failed to write script file: {}", e);
+        format!("Failed to save last script: {}", e)
+    })?;
     Ok(())
-}
-
-fn create_tray_menu() -> SystemTray {
-    let open = CustomMenuItem::new("open".to_string(), "Show");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-
-    let mut tray_menu = SystemTrayMenu::new()
-        .add_item(open)
-        .add_item(hide)
-        .add_native_item(SystemTrayMenuItem::Separator);
-
-    match tauri::async_runtime::block_on(fetch_script_configs()) {
-        Ok(configs) => {
-            for (key, config) in configs.scripts {
-                let display_name = config.display_name.unwrap_or_else(|| format_script_name(&key));
-                let menu_item = CustomMenuItem::new(format!("execute_{}", key), format!("Execute {}", display_name));
-                tray_menu = tray_menu.add_item(menu_item);
-            }
-        },
-        Err(_) => {
-            let failed_item = CustomMenuItem::new("failed_fetch".to_string(), "Failed to fetch scripts")
-                .disabled();
-            tray_menu = tray_menu.add_item(failed_item);
-        }
-    }
-
-    tray_menu = tray_menu
-        .add_item(CustomMenuItem::new("last_script".to_string(), "Execute Last Script"))
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit);
-
-    SystemTray::new().with_menu(tray_menu)
-}
-
-fn handle_tray_event(app: &tauri::AppHandle, event: SystemTrayEvent) {
-    match event {
-        SystemTrayEvent::MenuItemClick { id, .. } => {
-            match id.as_str() {
-                "open" => {
-                    if let Some(window) = app.get_window("main") {
-                        window.show().unwrap();
-                        window.set_focus().unwrap();
-                    }
-                }
-                "hide" => {
-                    if let Some(window) = app.get_window("main") {
-                        window.hide().unwrap();
-                    }
-                }
-                id if id.starts_with("execute_") => {
-                    let script_key = id.strip_prefix("execute_").unwrap().to_string();
-                    tauri::async_runtime::spawn(async move {
-                        let _ = execute_script_by_key(&script_key).await;
-                    });
-                }
-                "last_script" => {
-                    tauri::async_runtime::spawn(async {
-                        let _ = execute_last_script().await;
-                    });
-                }
-                "quit" => {
-                    app.exit(0);
-                }
-                _ => {}
-            }
-        }
-        _ => {}
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct VersionMessage {
-    message: String,
-    nfu: bool,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct VersionMessages {
-    messages: std::collections::HashMap<String, VersionMessage>,
-}
-
-#[tauri::command]
-async fn fetch_version_messages() -> Result<VersionMessages, String> {
-    let client = reqwest::Client::new();
-    let response = client
-        .get("https://comet-ui.fun/api/v1/messages")
-        .send()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    if !response.status().is_success() {
-        return Err("Failed to fetch messages".to_string());
-    }
-
-    response
-        .json::<VersionMessages>()
-        .await
-        .map_err(|e| e.to_string())
 }
 
 fn main() {
@@ -724,14 +702,14 @@ fn main() {
     tauri::Builder::default()
         .manage(app_state)
         .manage(window_state)
-        .system_tray(create_tray_menu())
-        .on_system_tray_event(handle_tray_event)
+        .system_tray(SystemTray::new().with_menu(SystemTrayMenu::new()))
+        .on_system_tray_event(tray::handle_tray_event)
         .on_window_event(|event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 event.window().hide().unwrap();
                 api.prevent_close();
             }
-            
+
             if let WindowEvent::Focused(focused) = event.event() {
                 let state: State<WindowState> = event.window().state();
                 *state.is_focused.lock().unwrap() = *focused;
@@ -740,7 +718,19 @@ fn main() {
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             let state = app.state::<AppState>();
-            
+
+            let app_handle = app.app_handle();
+            let tray_config = match tray::get_tray_config(app_handle.clone()) {
+                Ok(config) => config,
+                Err(_) => tray::TrayConfig::default(),
+            };
+
+            if tray_config.enabled {
+                let _ = tray::update_tray_menu(app_handle);
+            } else {
+                app.tray_handle().set_menu(SystemTrayMenu::new()).unwrap();
+            }
+
             tauri::async_runtime::spawn(async move {
                 loop {
                     let mut should_try_connect = false;
@@ -832,7 +822,14 @@ fn main() {
             tabs::export_tab,
             tabs::search_tabs,
             rscripts::search_rscripts,
-            rscripts::get_rscript_content
+            rscripts::get_rscript_content,
+            tray::get_tray_config,
+            tray::save_tray_config,
+            tray::update_tray_menu,
+            tray::add_custom_tray_script,
+            tray::update_custom_tray_script,
+            tray::remove_custom_tray_script,
+            tray::reorder_custom_tray_scripts
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

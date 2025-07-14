@@ -24,7 +24,7 @@ sha2 = "0.10"
 semver = "1.0.20"
 futures-util = "0.3"
 chrono = "0.4"
-uuid = { version = "1.6", features = ["v4"] }
+uuid = { version = "1.6", features = ["v4", "fast-rng"] }
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]

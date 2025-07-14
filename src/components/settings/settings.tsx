@@ -7,6 +7,7 @@ import { ApplicationSection } from "./sections/applicationSection";
 import { EditorSection } from "./sections/editorSection";
 import { InterfaceSection } from "./sections/interfaceSection";
 import { KeybindsSection } from "./sections/keybindsSection";
+import { TraySection } from "./sections/traySection";
 
 export const Settings: FC = () => {
 	const [activeSection, setActiveSection] = useState("editor");
@@ -22,6 +23,8 @@ export const Settings: FC = () => {
 				return <KeybindsSection />;
 			case "application":
 				return <ApplicationSection />;
+			case "tray":
+				return <TraySection />;
 			default:
 				return null;
 		}
