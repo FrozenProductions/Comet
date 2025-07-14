@@ -7,6 +7,7 @@ use serde_json::Value;
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
+use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
@@ -732,13 +733,22 @@ fn main() {
             }
 
             tauri::async_runtime::spawn(async move {
+                roblox_logs::WATCHING.store(true, Ordering::SeqCst);
+                if let Some(log_path) = roblox_logs::find_latest_log_file() {
+                    if let Err(e) = roblox_logs::watch_log_file(window, log_path) {
+                        eprintln!("Error watching log file: {}", e);
+                    }
+                }
+            });
+
+            tauri::async_runtime::spawn(async move {
                 loop {
                     let mut should_try_connect = false;
                     {
                         let mut conn = state_clone.connection.lock().unwrap();
                         if !conn.is_connected() {
                             should_try_connect = true;
-                            state_clone.update_status(Some(&window), false, None);
+                            state_clone.update_status(None, false, None);
                         }
                     }
 
@@ -746,7 +756,7 @@ fn main() {
                         let current_port = state_clone.status.lock().unwrap().current_port;
                         let mut conn = state_clone.connection.lock().unwrap();
                         if conn.connect(current_port) {
-                            state_clone.update_status(Some(&window), true, Some(current_port));
+                            state_clone.update_status(None, true, Some(current_port));
                         }
                     }
 

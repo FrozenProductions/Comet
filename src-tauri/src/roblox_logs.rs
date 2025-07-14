@@ -1,14 +1,35 @@
 use std::fs::{self, File};
 use std::io::{self, BufRead, BufReader, Seek};
-use std::path::{PathBuf};
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use std::time::Duration;
-use tauri::Window;
+use tauri::{Manager, Window};
 
-static WATCHING: AtomicBool = AtomicBool::new(false);
+pub(crate) static WATCHING: AtomicBool = AtomicBool::new(false);
+pub(crate) static LAST_DISCONNECT_TIME: AtomicBool = AtomicBool::new(false);
 
-fn find_latest_log_file() -> Option<PathBuf> {
+fn check_for_disconnect(app_handle: &tauri::AppHandle, content: &str) {
+    if content.contains("[FLog::Network] Connection lost")
+        && !LAST_DISCONNECT_TIME.load(Ordering::SeqCst)
+    {
+        LAST_DISCONNECT_TIME.store(true, Ordering::SeqCst);
+
+        let _ = tauri::api::notification::Notification::new(
+            app_handle.config().tauri.bundle.identifier.clone(),
+        )
+        .title("Comet")
+        .body("Disconnected from a server")
+        .show();
+
+        thread::spawn(move || {
+            thread::sleep(Duration::from_secs(5));
+            LAST_DISCONNECT_TIME.store(false, Ordering::SeqCst);
+        });
+    }
+}
+
+pub fn find_latest_log_file() -> Option<PathBuf> {
     let home = dirs::home_dir()?;
     let log_dir = home.join("Library").join("Logs").join("Roblox");
 
@@ -20,30 +41,25 @@ fn find_latest_log_file() -> Option<PathBuf> {
     let latest = fs::read_dir(log_dir)
         .ok()?
         .filter_map(|entry| entry.ok())
-        .filter(|entry| {
-            entry
-                .path()
-                .extension()
-                .map_or(false, |ext| ext == "log")
-        })
+        .filter(|entry| entry.path().extension().map_or(false, |ext| ext == "log"))
         .max_by_key(|entry| entry.metadata().ok().and_then(|m| m.modified().ok()));
     latest.map(|entry| entry.path())
 }
 
-fn watch_log_file(window: Window, mut current_log_path: PathBuf) -> io::Result<()> {
+pub fn watch_log_file(window: Window, mut current_log_path: PathBuf) -> io::Result<()> {
     let mut file = File::open(&current_log_path)?;
     let mut reader = BufReader::new(&file);
     let mut line = String::new();
-    
+    let app_handle = window.app_handle();
+
     while reader.read_line(&mut line)? > 0 {
         if !line.trim().is_empty() {
-            window
-                .emit("log_update", line.trim())
-                .expect("Failed to emit log update");
+            let _ = window.emit("log_update", line.trim());
+            check_for_disconnect(&app_handle, &line);
         }
         line.clear();
     }
-    
+
     let mut last_position = reader.stream_position()?;
     let mut last_check = std::time::Instant::now();
 
@@ -54,16 +70,15 @@ fn watch_log_file(window: Window, mut current_log_path: PathBuf) -> io::Result<(
                     current_log_path = new_path;
                     file = File::open(&current_log_path)?;
                     reader = BufReader::new(&file);
-                    
+
                     while reader.read_line(&mut line)? > 0 {
                         if !line.trim().is_empty() {
-                            window
-                                .emit("log_update", line.trim())
-                                .expect("Failed to emit log update");
+                            let _ = window.emit("log_update", line.trim());
+                            check_for_disconnect(&app_handle, &line);
                         }
                         line.clear();
                     }
-                    
+
                     last_position = reader.stream_position()?;
                 }
             }
@@ -82,9 +97,8 @@ fn watch_log_file(window: Window, mut current_log_path: PathBuf) -> io::Result<(
         if len > last_position {
             while reader.read_line(&mut line)? > 0 {
                 if !line.trim().is_empty() {
-                    window
-                        .emit("log_update", line.trim())
-                        .expect("Failed to emit log update");
+                    let _ = window.emit("log_update", line.trim());
+                    check_for_disconnect(&app_handle, &line);
                 }
                 line.clear();
             }
@@ -120,4 +134,4 @@ pub async fn start_log_watcher(window: Window) -> Result<(), String> {
 pub async fn stop_log_watcher() -> Result<(), String> {
     WATCHING.store(false, Ordering::SeqCst);
     Ok(())
-} 
+}
