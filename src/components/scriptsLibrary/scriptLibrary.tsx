@@ -194,14 +194,7 @@ export const ScriptLibrary = () => {
 	const handleScriptSelect = async (script: RScript) => {
 		try {
 			const loadingToast = toast.loading("Loading script content...");
-			const scriptDetail = await getScriptContent(script._id);
-
-			if (!scriptDetail.script?.[0]?.rawScript) {
-				toast.error("Script content not available", {
-					id: loadingToast,
-				});
-				return;
-			}
+			const scriptContent = await getScriptContent(script._id);
 
 			const scriptName = script.title || "Untitled Script";
 			const tabTitle = scriptName.endsWith(".lua")
@@ -210,7 +203,7 @@ export const ScriptLibrary = () => {
 
 			const newTabId = await createTabWithContent(
 				tabTitle,
-				scriptDetail.script[0].rawScript,
+				scriptContent,
 				"lua",
 			);
 

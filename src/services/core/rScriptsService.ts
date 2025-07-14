@@ -39,18 +39,12 @@ export const searchScripts = async (
  * @returns Promise with script details and content
  * @throws Error if the script content cannot be retrieved
  */
-export const getScriptContent = async (
-	scriptId: string,
-): Promise<RScriptDetailResponse> => {
+export const getScriptContent = async (scriptId: string): Promise<string> => {
 	try {
 		const response = await invoke<string>("get_rscript_content", {
 			scriptId,
 		});
-		try {
-			return JSON.parse(response);
-		} catch (_error) {
-			throw new Error("Failed to parse API response");
-		}
+		return response;
 	} catch (error) {
 		throw new Error(`Failed to get script content: ${error}`);
 	}
