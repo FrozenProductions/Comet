@@ -560,14 +560,14 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
-						className="fixed inset-0 z-50 bg-black/20"
+						className="fixed inset-0 z-[10001] bg-black/20"
 						onClick={onClose}
 					/>
 					<motion.div
 						initial={{ opacity: 0, scale: 0.95, y: -20 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.95, y: -20 }}
-						className="fixed inset-x-0 top-[20%] z-50 flex items-start justify-center"
+						className="fixed inset-x-0 top-[20%] z-[10001] flex items-start justify-center"
 					>
 						<div className="mx-auto w-full max-w-xl px-4">
 							<div className="select-none overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg">
