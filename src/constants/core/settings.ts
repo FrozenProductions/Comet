@@ -83,5 +83,6 @@ export const DEFAULT_EDITOR_SETTINGS = {
 	},
 	app: {
 		nightlyReleases: false,
+		startAtLogin: false,
 	},
 } as const;

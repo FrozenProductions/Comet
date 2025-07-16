@@ -372,6 +372,7 @@ mod fast_flags;
 mod fast_flags_profiles;
 mod flag_validator;
 mod hydrogen;
+mod login_items;
 mod permissions;
 mod roblox_logs;
 mod rscripts;
@@ -696,6 +697,16 @@ async fn save_last_script(script: String) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+async fn is_login_item_enabled() -> Result<bool, String> {
+    login_items::is_login_item_enabled()
+}
+
+#[tauri::command]
+async fn toggle_login_item(enabled: bool) -> Result<(), String> {
+    login_items::toggle_login_item(enabled)
+}
+
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
@@ -847,7 +858,9 @@ fn main() {
             tray::remove_custom_tray_script,
             tray::reorder_custom_tray_scripts,
             permissions::check_permissions,
-            permissions::fix_path_permissions
+            permissions::fix_path_permissions,
+            is_login_item_enabled,
+            toggle_login_item,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

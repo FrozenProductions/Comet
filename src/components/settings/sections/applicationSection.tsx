@@ -22,6 +22,7 @@ import {
 	openHydrogenFolder,
 } from "../../../services/core/windowService";
 import { checkIsOfficialApp } from "../../../services/system/applicationService";
+import { toggleLoginItem } from "../../../services/system/loginItemsService";
 import {
 	checkForUpdates,
 	downloadAndInstallUpdate,
@@ -313,19 +314,40 @@ export const ApplicationSection: FC = () => {
 						</div>
 					</div>
 					{isOfficialApp && (
-						<Checkbox
-							checked={settings.app.nightlyReleases}
-							onChange={() => {
-								updateSettings({
-									app: {
-										...settings.app,
-										nightlyReleases: !settings.app.nightlyReleases,
-									},
-								});
-							}}
-							label="Check for nightly releases"
-							description="Receive updates for development preview builds"
-						/>
+						<>
+							<Checkbox
+								checked={settings.app.nightlyReleases}
+								onChange={() => {
+									updateSettings({
+										app: {
+											...settings.app,
+											nightlyReleases: !settings.app.nightlyReleases,
+										},
+									});
+								}}
+								label="Check for nightly releases"
+								description="Receive updates for development preview builds"
+							/>
+							<Checkbox
+								checked={settings.app.startAtLogin}
+								onChange={async () => {
+									try {
+										await toggleLoginItem(!settings.app.startAtLogin);
+										updateSettings({
+											app: {
+												...settings.app,
+												startAtLogin: !settings.app.startAtLogin,
+											},
+										});
+									} catch (error) {
+										console.error("Failed to toggle login item:", error);
+										toast.error("Failed to update startup settings");
+									}
+								}}
+								label="Start at login"
+								description="Launch Comet automatically when you log in"
+							/>
+						</>
 					)}
 				</SettingGroup>
 

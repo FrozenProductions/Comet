@@ -57,6 +57,7 @@ export interface EditorSettings {
 	};
 	app: {
 		nightlyReleases: boolean;
+		startAtLogin: boolean;
 	};
 }
 
