@@ -18,6 +18,7 @@ import "react-tooltip/dist/react-tooltip.css";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
 import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
 import { MessageModal } from "./components/ui/messageModal";
+import { PermissionsModal } from "./components/ui/permissionsModal";
 import { UpdateChecker } from "./components/updater";
 import { APP_CONSTANTS } from "./constants/core/app";
 import { ConsoleProvider } from "./contexts/console/consoleContext";
@@ -125,6 +126,7 @@ const App: FC = () => {
 											/>
 											<UpdateChecker />
 											<Toaster />
+											<PermissionsModal />
 										</KeybindsProvider>
 									</SidebarProvider>
 								</FastFlagsProvider>
