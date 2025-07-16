@@ -1,5 +1,4 @@
 use std::process::Command;
-use tauri::api::path::app_data_dir;
 
 pub fn is_login_item_enabled() -> Result<bool, String> {
     let output = Command::new("osascript")
