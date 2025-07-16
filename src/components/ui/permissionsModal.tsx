@@ -1,11 +1,11 @@
 import { listen } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/tauri";
 import { Shield } from "lucide-react";
 import { useEffect, useState } from "react";
-import type {
-	PathPermissionStatus,
-	PermissionsCheckResult,
-} from "../../types/ui/permissions";
+import {
+	checkPermissions,
+	fixAllPermissions,
+} from "../../services/system/permissionsService";
+import type { PathPermissionStatus } from "../../types/ui/permissions";
 import { BaseMessageModal } from "./messageModal";
 
 export const PermissionsModal = () => {
@@ -13,10 +13,9 @@ export const PermissionsModal = () => {
 	const [paths, setPaths] = useState<PathPermissionStatus[]>([]);
 
 	useEffect(() => {
-		const checkPermissions = async () => {
+		const checkAppPermissions = async () => {
 			try {
-				const result =
-					await invoke<PermissionsCheckResult>("check_permissions");
+				const result = await checkPermissions();
 				if (!result.all_permitted) {
 					setPaths(result.paths);
 					setIsVisible(true);
@@ -34,7 +33,7 @@ export const PermissionsModal = () => {
 			},
 		);
 
-		checkPermissions();
+		checkAppPermissions();
 
 		return () => {
 			unlisten.then((unsubscribe) => unsubscribe());
@@ -42,15 +41,16 @@ export const PermissionsModal = () => {
 	}, []);
 
 	const handleFixPermissions = async () => {
-		for (const path of paths) {
-			if (!path.has_permission) {
-				await invoke("fix_path_permissions", { path: path.path });
+		try {
+			await fixAllPermissions(paths);
+			const result = await checkPermissions();
+			if (result.all_permitted) {
+				setIsVisible(false);
+			} else {
+				setPaths(result.paths);
 			}
-		}
-
-		const result = await invoke<PermissionsCheckResult>("check_permissions");
-		if (result.all_permitted) {
-			setIsVisible(false);
+		} catch (error) {
+			console.error("Failed to fix permissions:", error);
 		}
 	};
 
