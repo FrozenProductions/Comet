@@ -5,6 +5,46 @@ export const CHANGELOG_DATA: ChangelogSection[] = [
 		year: 2025,
 		releases: [
 			{
+				version: "1.1.0",
+				date: "2025-07-16",
+				changes: [
+					{
+						type: "improvement",
+						title: "Tray Menu Rework",
+						description:
+							"Reworked tray menu with configuration options and custom script management.",
+					},
+					{
+						type: "feature",
+						title: "Startup Settings",
+						description: "Added startup settings with start at login toggle.",
+					},
+					{
+						type: "feature",
+						title: "Permissions Checker",
+						description:
+							"Added permissions checker to ensure that Comet has access to every needed directory.",
+					},
+					{
+						type: "feature",
+						title: "Game Disconnection Notifications",
+						description:
+							"Added notification system to notify user about being disconnected from a Roblox game.",
+					},
+					{
+						type: "bugfix",
+						title: "UI Layering Fixes",
+						description:
+							"Fixed layering issues between CommandPalette, diagnostics dropdown, and RobloxConsole.",
+					},
+					{
+						type: "bugfix",
+						title: "Script Library Content Fix",
+						description: "Fixed ScriptLibrary script content fetching.",
+					},
+				],
+			},
+			{
 				version: "1.0.9",
 				date: "2025-07-11",
 				changes: [
