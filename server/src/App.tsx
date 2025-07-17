@@ -8,7 +8,7 @@ const App: FC = () => {
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<Landing />} />
-				<Route path="/changelog" element={<Changelog />} />
+				<Route path="/changelogs" element={<Changelog />} />
 				<Route path="*" element={<Landing />} />
 			</Routes>
 		</BrowserRouter>

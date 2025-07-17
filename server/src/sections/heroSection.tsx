@@ -25,7 +25,7 @@ const HeroSection: FC = () => {
 	};
 
 	const handleChangelog = () => {
-		navigate("/changelog");
+		navigate("/changelogs");
 	};
 
 	return (
