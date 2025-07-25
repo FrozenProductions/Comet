@@ -54,7 +54,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	const modelRef = useRef<monaco.editor.ITextModel | null>(null);
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
 	const [hasVisited, setHasVisited] = useLocalStorage(
-		"hasVisitedBefore",
+		"has-visited-before",
 		false,
 	);
 	const [showFirstTimeTooltip, setShowFirstTimeTooltip] = useState(!hasVisited);
