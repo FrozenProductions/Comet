@@ -1,4 +1,4 @@
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useSettings } from "../../hooks/core/useSettings";
@@ -73,15 +73,6 @@ export const BaseMessageModal = ({
 							</div>
 						)}
 					</div>
-					{(!variant || variant === "info") && (
-						<button
-							type="button"
-							onClick={onClose}
-							className="flex h-7 w-7 items-center justify-center rounded-lg border border-ctp-surface2 bg-ctp-surface1 text-accent transition-colors hover:bg-ctp-surface2"
-						>
-							<X size={14} className="stroke-[2.5]" />
-						</button>
-					)}
 				</div>
 				<div className="p-4" style={{ fontSize: `${scale}em` }}>
 					<p className="text-sm text-ctp-subtext0">{message}</p>
@@ -91,7 +82,7 @@ export const BaseMessageModal = ({
 					className="flex items-center justify-end gap-2 border-t border-ctp-surface2 p-4"
 					style={{ fontSize: `${scale}em` }}
 				>
-					{(variant === "destructive" || variant === "warning") && (
+					{variant === "info" && (
 						<button
 							type="button"
 							onClick={onClose}
