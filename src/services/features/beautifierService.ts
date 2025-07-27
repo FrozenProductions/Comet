@@ -18,7 +18,10 @@ export class BeautifierService {
 				SolveMath: true,
 				Indentation: "\t",
 			});
-			return formattedCode;
+
+			const lines = formattedCode.split("\n");
+			const remainingLines = lines.slice(8);
+			return remainingLines.join("\n");
 		} catch (error) {
 			console.error("Failed to beautify code:", error);
 			throw error;
