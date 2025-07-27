@@ -102,7 +102,7 @@ const ErrorDropdown: FC<ErrorDropdownProps> = ({
 	return (
 		<div
 			ref={dropdownRef}
-			className="absolute bottom-full right-[calc(100%-150px)] mb-2 w-[350px] overflow-hidden rounded-lg border border-ctp-surface0 bg-ctp-mantle shadow-lg outline outline-1 outline-accent/10 z-[10000]"
+			className="absolute bottom-full right-[calc(100%-150px)] mb-2 w-[350px] overflow-hidden rounded-lg border border-ctp-surface0 bg-ctp-mantle shadow-lg outline outline-1 outline-accent/10 z-[9200]"
 		>
 			<div className="max-h-[400px] overflow-y-auto p-2">
 				<div className="space-y-2">
@@ -330,7 +330,7 @@ export const StatusBar: FC = () => {
 			<Tooltip
 				id="status-bar-tooltip"
 				place="top"
-				className="!rounded-lg !border !border-ctp-surface2 !bg-ctp-mantle !px-2 !py-1 !text-xs !shadow-lg"
+				className="!rounded-lg !border !border-ctp-surface2 !bg-ctp-mantle !px-2 !py-1 !text-xs !shadow-lg !z-[9200]"
 				classNameArrow="!hidden"
 			/>
 		</div>
