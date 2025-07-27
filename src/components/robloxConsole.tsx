@@ -77,7 +77,7 @@ const ConsoleHeader = memo(
 					data-tooltip-id="console-tooltip"
 					data-tooltip-content={isWatching ? "Stop watching" : "Start watching"}
 					className={`cursor-pointer rounded p-1 hover:bg-white/5 ${
-						isWatching ? "text-red-400" : "text-green-400"
+						isWatching ? "text-red-400" : "text-ctp-subtext0"
 					}`}
 				>
 					{isWatching ? <Square size={16} /> : <Play size={16} />}
