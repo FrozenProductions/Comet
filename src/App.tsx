@@ -15,7 +15,9 @@ import { KeybindsProvider } from "./contexts/keybinds/keybindsContext";
 import { SettingsProvider } from "./contexts/settings/settingsContext";
 import { useSettings } from "./hooks/core/useSettings";
 import "react-tooltip/dist/react-tooltip.css";
+import { listen } from "@tauri-apps/api/event";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
+import { CometOffline } from "./components/ui/cometOffline";
 import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
 import { MessageModal } from "./components/ui/messageModal";
 import { UpdateChecker } from "./components/updater";
@@ -27,6 +29,7 @@ import { WorkspaceProvider } from "./contexts/workspace/workspaceContext";
 import { useKeybinds } from "./hooks/core/useKeybinds";
 import { useConsole } from "./hooks/ui/useConsole";
 import { checkHydrogenInstallation } from "./services/features/hydrogenService";
+import type { StatusInfo } from "./types/system/status";
 
 const AppContent: FC = () => {
 	const { settings } = useSettings();
@@ -90,6 +93,10 @@ const App: FC = () => {
 	const [isHydrogenInstalled, setIsHydrogenInstalled] = useState<
 		boolean | null
 	>(null);
+	const [status, setStatus] = useState<StatusInfo>({
+		online: true,
+		message: "",
+	});
 
 	useEffect(() => {
 		const checkHydrogen = async () => {
@@ -103,10 +110,22 @@ const App: FC = () => {
 		};
 
 		checkHydrogen();
+
+		const unsubscribe = listen<StatusInfo>("comet-status-update", (event) => {
+			setStatus(event.payload);
+		});
+
+		return () => {
+			unsubscribe.then((fn) => fn());
+		};
 	}, []);
 
 	if (isHydrogenInstalled === false) {
 		return <HydrogenNotFound />;
+	}
+
+	if (!status.online) {
+		return <CometOffline message={status.message} />;
 	}
 
 	return (

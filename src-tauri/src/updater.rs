@@ -13,8 +13,14 @@ const DOWNLOAD_URL: &str = "https://github.com/FrozenProductions/Comet/releases/
 const APP_PATH: &str = "/Applications/Comet.app";
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct StatusInfo {
+    pub online: bool,
+    pub message: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 struct StatusResponse {
-    status: String,
+    status: StatusInfo,
     version: String,
     prerelease: Option<String>,
 }
@@ -76,6 +82,27 @@ pub async fn check_for_updates(
     }
 
     Ok(None)
+}
+
+#[tauri::command]
+pub async fn check_comet_status(window: tauri::Window) -> Result<StatusInfo, String> {
+    let client = reqwest::Client::new();
+    let response = client
+        .get(STATUS_URL)
+        .header("User-Agent", "Comet-App")
+        .send()
+        .await
+        .map_err(|e| format!("Failed to fetch status: {}", e))?;
+
+    let status = response
+        .json::<StatusResponse>()
+        .await
+        .map_err(|e| format!("Failed to parse JSON response: {}", e))?;
+
+    window
+        .emit("comet-status-update", &status.status)
+        .unwrap_or_default();
+    Ok(status.status)
 }
 
 #[tauri::command]

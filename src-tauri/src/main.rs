@@ -743,6 +743,16 @@ fn main() {
                 app.tray_handle().set_menu(SystemTrayMenu::new()).unwrap();
             }
 
+            let window_clone = window.clone();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    if let Err(e) = updater::check_comet_status(window_clone.clone()).await {
+                        eprintln!("Failed to check Comet status: {}", e);
+                    }
+                    thread::sleep(Duration::from_secs(60));
+                }
+            });
+
             tauri::async_runtime::spawn(async move {
                 roblox_logs::WATCHING.store(true, Ordering::SeqCst);
                 if let Some(log_path) = roblox_logs::find_latest_log_file() {
@@ -828,6 +838,7 @@ fn main() {
             updater::check_for_updates,
             updater::download_and_install_update,
             updater::is_official_app,
+            updater::check_comet_status,
             open_hydrogen_folder,
             open_comet_folder,
             fast_flags_profiles::export_fast_flags_profiles,
