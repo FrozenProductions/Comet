@@ -373,7 +373,6 @@ mod fast_flags_profiles;
 mod flag_validator;
 mod hydrogen;
 mod login_items;
-mod permissions;
 mod roblox_logs;
 mod rscripts;
 mod suggestions;
@@ -744,11 +743,6 @@ fn main() {
                 app.tray_handle().set_menu(SystemTrayMenu::new()).unwrap();
             }
 
-            let window_clone = window.clone();
-            tauri::async_runtime::spawn(async move {
-                let _ = permissions::check_permissions(window_clone).await;
-            });
-
             tauri::async_runtime::spawn(async move {
                 roblox_logs::WATCHING.store(true, Ordering::SeqCst);
                 if let Some(log_path) = roblox_logs::find_latest_log_file() {
@@ -857,8 +851,6 @@ fn main() {
             tray::update_custom_tray_script,
             tray::remove_custom_tray_script,
             tray::reorder_custom_tray_scripts,
-            permissions::check_permissions,
-            permissions::fix_path_permissions,
             is_login_item_enabled,
             toggle_login_item,
         ])
