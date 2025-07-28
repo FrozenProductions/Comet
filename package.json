@@ -9,7 +9,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "build:comet": "npx tsx .comet/build/index.ts comet",
+        "build:comet": "npx tsx .comet/build/index.ts default",
         "build:hydrogen": "npx tsx .comet/build/index.ts hydrogen",
         "preview": "vite preview",
         "tauri": "tauri",
