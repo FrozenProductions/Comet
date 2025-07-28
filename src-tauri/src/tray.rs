@@ -107,7 +107,7 @@ pub fn create_tray_menu(
     }
 
     let header_app = create_header("app", "App Controls");
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit Comet");
+    let quit = CustomMenuItem::new("quit".to_string(), "Quit App");
     tray_menu = tray_menu.add_item(header_app).add_item(quit);
 
     tray_menu
