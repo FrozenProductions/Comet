@@ -4,7 +4,8 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import ora from "ora";
-import { BRANDS_CONFIG, SUPPORTED_BRANDS } from "./constants/brands";
+import { type BRANDS_CONFIG, SUPPORTED_BRANDS } from "./constants/brands";
+import { resetToDefault, switchBrand } from "./utils/brandManager";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -51,7 +52,7 @@ function spawnPromise(
 }
 
 async function buildForBrand(brand: keyof typeof BRANDS_CONFIG): Promise<void> {
-	const brandConfig = BRANDS_CONFIG[brand];
+	const brandConfig = switchBrand(brand);
 	const tauriConfigPath = resolve(__dirname, "../../src-tauri/tauri.conf.json");
 
 	console.log(
@@ -80,6 +81,17 @@ async function buildForBrand(brand: keyof typeof BRANDS_CONFIG): Promise<void> {
 		buildSpinner.succeed(chalk.green("Tauri executable built successfully"));
 		console.log(chalk.green("\n✨ Build completed successfully!"));
 		console.log(chalk.dim(`Brand: ${chalk.bold(brandConfig.productName)}`));
+
+		const resetSpinner = ora("Resetting to default configuration").start();
+		try {
+			const defaultConfig = resetToDefault();
+			updateTauriConfig(defaultConfig, tauriConfigPath);
+			resetSpinner.succeed(chalk.green("Configuration reset to default"));
+		} catch (error) {
+			resetSpinner.fail(chalk.red("Failed to reset configuration"));
+			console.error(chalk.dim("\nError details:"));
+			console.error(chalk.red(error));
+		}
 	} catch (error) {
 		buildSpinner.fail(chalk.red("Failed to build Tauri executable"));
 		console.error(chalk.dim("\nError details:"));

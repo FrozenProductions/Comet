@@ -1,5 +1,5 @@
 export const BRANDS_CONFIG = {
-	comet: {
+	default: {
 		productName: "Comet",
 		iconPath: "../public/Icon.icns",
 	},
