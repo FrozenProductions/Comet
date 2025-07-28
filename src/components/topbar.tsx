@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { APP_TITLE } from "../constants/ui/titles";
 import { TrafficLights } from "./trafficLights";
 
 export const Topbar: FC = () => {
@@ -9,9 +10,7 @@ export const Topbar: FC = () => {
 				<TrafficLights />
 			</div>
 			<div className="flex h-full items-center justify-center">
-				<span className="text-sm font-medium text-ctp-text">
-					Hydrogen - Comet
-				</span>
+				<span className="text-sm font-medium text-ctp-text">{APP_TITLE}</span>
 			</div>
 		</div>
 	);
