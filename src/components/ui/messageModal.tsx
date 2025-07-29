@@ -29,6 +29,7 @@ export const BaseMessageModal = ({
 	variant = "info",
 	primaryAction,
 	children,
+	imageUrl,
 }: GenericMessageModalProps) => {
 	const { settings } = useSettings();
 	const scale = getScaleValue(settings.interface.modalScale);
@@ -76,6 +77,15 @@ export const BaseMessageModal = ({
 				</div>
 				<div className="p-4" style={{ fontSize: `${scale}em` }}>
 					<p className="text-sm text-ctp-subtext0">{message}</p>
+					{imageUrl && (
+						<div className="mt-4 flex justify-center">
+							<img
+								src={imageUrl}
+								alt="Version update"
+								className="max-h-64 w-auto rounded-lg object-contain"
+							/>
+						</div>
+					)}
 					{children}
 				</div>
 				<div
@@ -145,6 +155,7 @@ export const MessageModal = ({ currentVersion }: MessageModalProps) => {
 			onClose={handleClose}
 			title="Message"
 			message={versionData.message}
+			imageUrl={versionData.imageUrl}
 			icon={
 				versionData.nfu && <AlertTriangle size={14} className="text-ctp-red" />
 			}

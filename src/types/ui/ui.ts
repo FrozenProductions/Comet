@@ -101,4 +101,5 @@ export interface GenericMessageModalProps {
 		icon?: React.ReactNode;
 	};
 	children?: React.ReactNode;
+	imageUrl?: string;
 }

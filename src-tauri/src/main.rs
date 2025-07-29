@@ -30,6 +30,7 @@ struct ConnectionStatus {
 struct VersionMessage {
     message: String,
     nfu: bool,
+    imageUrl: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
