@@ -1,11 +1,4 @@
-import {
-	Box,
-	Code2,
-	FileCode,
-	Hash,
-	Library as LibraryIcon,
-	Variable as VariableIcon,
-} from "lucide-react";
+import { Box, Code2, FileCode, Variable as VariableIcon } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { useSettings } from "../../hooks/core/useSettings";
 import type { Suggestion } from "../../types/core/editor";
@@ -20,13 +13,7 @@ const getIconForType = (type: Suggestion["type"]) => {
 		case "property":
 			return VariableIcon;
 		case "class":
-		case "interface":
-		case "enum":
 			return Box;
-		case "library":
-			return LibraryIcon;
-		case "type":
-			return Hash;
 		default:
 			return FileCode;
 	}

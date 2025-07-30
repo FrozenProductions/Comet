@@ -41,17 +41,7 @@ export interface EditorState {
 }
 
 export interface Suggestion {
-	type:
-		| "function"
-		| "variable"
-		| "class"
-		| "interface"
-		| "enum"
-		| "property"
-		| "method"
-		| "type"
-		| "library"
-		| "keyword";
+	type: "function" | "property" | "class" | "method" | "variable" | "keyword";
 	label: string;
 	detail?: string;
 	documentation?: string;
