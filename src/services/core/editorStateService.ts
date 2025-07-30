@@ -1,16 +1,12 @@
 import type { editor } from "monaco-editor";
+import { EDITOR_STATES_MAP } from "../../constants/core/editorState";
 
-export interface EditorState {
-	viewState: editor.ICodeEditorViewState | null;
-	model: {
-		value: string;
-		undoStack: any[];
-		redoStack: any[];
-	};
-}
-
-const EDITOR_STATES_MAP = new Map<string, EditorState>();
-
+/**
+ * Saves the current state of an editor for a specific workspace and tab
+ * @param workspaceId The ID of the workspace
+ * @param tabId The ID of the tab
+ * @param editor The Monaco editor instance
+ */
 export const saveEditorState = (
 	workspaceId: string,
 	tabId: string,
@@ -32,6 +28,12 @@ export const saveEditorState = (
 	});
 };
 
+/**
+ * Restores a previously saved editor state for a specific workspace and tab
+ * @param workspaceId The ID of the workspace
+ * @param tabId The ID of the tab
+ * @param editor The Monaco editor instance
+ */
 export const restoreEditorState = (
 	workspaceId: string,
 	tabId: string,
@@ -54,10 +56,18 @@ export const restoreEditorState = (
 	}
 };
 
+/**
+ * Clears the saved editor state for a specific workspace and tab
+ * @param workspaceId The ID of the workspace
+ * @param tabId The ID of the tab
+ */
 export const clearEditorState = (workspaceId: string, tabId: string) => {
 	EDITOR_STATES_MAP.delete(`${workspaceId}:${tabId}`);
 };
 
+/**
+ * Clears all saved editor states
+ */
 export const clearAllEditorStates = () => {
 	EDITOR_STATES_MAP.clear();
 };
