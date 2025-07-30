@@ -13,6 +13,7 @@ import {
 } from "../../constants/execution/script";
 import { useWorkspace } from "../../hooks/core/useWorkspace";
 import { useExecutionHistory } from "../../hooks/execution/useExecutionHistory";
+import { clearEditorState } from "../../services/core/editorStateService";
 import {
 	createTab as createTabService,
 	deleteTab,
@@ -269,6 +270,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				const tab = tabs.find((t) => t.id === id);
 				if (tab) {
 					await deleteTab(activeWorkspace, tab.title);
+					clearEditorState(activeWorkspace, id);
 					setTabs((prev) => prev.filter((tab) => tab.id !== id));
 					if (activeTab === id) {
 						const remainingTabs = tabs.filter((tab) => tab.id !== id);

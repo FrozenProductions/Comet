@@ -18,7 +18,12 @@ import { useEditor } from "../../hooks/core/useEditor";
 import { useKeybinds } from "../../hooks/core/useKeybinds";
 import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import { useSettings } from "../../hooks/core/useSettings";
+import { useWorkspace } from "../../hooks/core/useWorkspace";
 import { useConsole } from "../../hooks/ui/useConsole";
+import {
+	restoreEditorState,
+	saveEditorState,
+} from "../../services/core/editorStateService";
 import { luaMarkerProvider } from "../../services/features/diagnosticsService";
 import { suggestionService } from "../../services/features/suggestionService";
 import type {
@@ -31,13 +36,6 @@ import { EditorSearch } from "./editorSearch";
 import { IntelliSense } from "./intelliSense";
 
 const MODELS_MAP = new Map<string, monaco.editor.ITextModel>();
-const EDITOR_STATES_MAP = new Map<
-	string,
-	{
-		viewState: monaco.editor.ICodeEditorViewState | null;
-		position: monaco.Position | null;
-	}
->();
 
 export const CodeEditor: FC<CodeEditorProps> = ({
 	content,
@@ -49,6 +47,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 	const { settings } = useSettings();
 	const { keybinds } = useKeybinds();
 	const { isFloating } = useConsole();
+	const { activeWorkspace } = useWorkspace();
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const modelRef = useRef<monaco.editor.ITextModel | null>(null);
@@ -102,33 +101,6 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		}, 300);
 	}, [onChange])();
 
-	const saveEditorState = useCallback(() => {
-		if (!editorRef.current || !activeTab) return;
-
-		const viewState = editorRef.current.saveViewState();
-		const position = editorRef.current.getPosition();
-
-		EDITOR_STATES_MAP.set(activeTab, {
-			viewState,
-			position,
-		});
-	}, [activeTab]);
-
-	const restoreEditorState = useCallback(() => {
-		if (!editorRef.current || !activeTab) return;
-
-		const savedState = EDITOR_STATES_MAP.get(activeTab);
-		if (savedState) {
-			if (savedState.viewState) {
-				editorRef.current.restoreViewState(savedState.viewState);
-			}
-			if (savedState.position) {
-				editorRef.current.setPosition(savedState.position);
-				editorRef.current.revealPositionInCenter(savedState.position);
-			}
-		}
-	}, [activeTab]);
-
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver(() => {
 			if (editorRef.current) {
@@ -147,10 +119,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
 	useEffect(() => {
-		if (!containerRef.current || !activeTab) return;
+		if (!containerRef.current || !activeTab || !activeWorkspace) return;
 
 		if (editorRef.current) {
-			saveEditorState();
+			saveEditorState(activeWorkspace, activeTab, editorRef.current);
 			editorRef.current.dispose();
 		}
 
@@ -211,7 +183,7 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 		editorRef.current = editor;
 
-		restoreEditorState();
+		restoreEditorState(activeWorkspace, activeTab, editor);
 
 		keybinds.forEach((keybind) => {
 			let monacoKey = 0;
@@ -422,7 +394,9 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 
 		return () => {
 			debouncedSave.cancel();
-			saveEditorState();
+			if (activeWorkspace && activeTab) {
+				saveEditorState(activeWorkspace, activeTab, editor);
+			}
 
 			if (model) {
 				monaco.editor.setModelMarkers(model, "lua-diagnostics", []);
@@ -432,11 +406,10 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		};
 	}, [
 		activeTab,
+		activeWorkspace,
 		language,
 		editorOptions,
 		keybinds,
-		saveEditorState,
-		restoreEditorState,
 		suggestionService.getSuggestions().length,
 		settings.display.showMarkers,
 	]);
@@ -445,7 +418,6 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		return () => {
 			MODELS_MAP.forEach((model) => model.dispose());
 			MODELS_MAP.clear();
-			EDITOR_STATES_MAP.clear();
 		};
 	}, []);
 
