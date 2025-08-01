@@ -301,27 +301,51 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 					...updates,
 				};
 
-				await saveTab(activeWorkspace, updatedTab);
-
 				if (updates.title && updates.title !== currentTab.title) {
 					await renameTab(activeWorkspace, currentTab.title, updates.title);
+
+					setTabs((prev) => {
+						const tabIndex = prev.findIndex((tab) => tab.id === id);
+						if (tabIndex === -1) return prev;
+
+						const newTabs = [...prev];
+						newTabs[tabIndex] = updatedTab;
+						return newTabs;
+					});
+
+					const updatedTabs = tabs.map((tab) =>
+						tab.id === id ? updatedTab : tab,
+					);
+					await saveTabState(
+						activeWorkspace,
+						activeTab,
+						updatedTabs.map((tab) => tab.id),
+						updatedTabs,
+					);
 				}
 
-				setTabs((prev) => {
-					const tabIndex = prev.findIndex((tab) => tab.id === id);
-					if (tabIndex === -1) return prev;
+				await saveTab(activeWorkspace, updatedTab);
 
-					const newTabs = [...prev];
-					newTabs[tabIndex] = updatedTab;
-					return newTabs;
-				});
+				if (!updates.title) {
+					setTabs((prev) => {
+						const tabIndex = prev.findIndex((tab) => tab.id === id);
+						if (tabIndex === -1) return prev;
 
-				await saveTabState(
-					activeWorkspace,
-					activeTab,
-					tabs.map((tab) => tab.id),
-					tabs,
-				);
+						const newTabs = [...prev];
+						newTabs[tabIndex] = updatedTab;
+						return newTabs;
+					});
+
+					const updatedTabs = tabs.map((tab) =>
+						tab.id === id ? updatedTab : tab,
+					);
+					await saveTabState(
+						activeWorkspace,
+						activeTab,
+						updatedTabs.map((tab) => tab.id),
+						updatedTabs,
+					);
+				}
 			} catch (error) {
 				console.error("Failed to update tab:", error);
 			}

@@ -17,6 +17,7 @@ export const saveEditorState = (
 
 	const viewState = editor.saveViewState();
 	const commandManager = (model as any)._commandManager;
+	const position = editor.getPosition();
 
 	EDITOR_STATES_MAP.set(`${workspaceId}:${tabId}`, {
 		viewState,
@@ -25,6 +26,12 @@ export const saveEditorState = (
 			undoStack: commandManager?.past || [],
 			redoStack: commandManager?.future || [],
 		},
+		position: position
+			? {
+					lineNumber: position.lineNumber,
+					column: position.column,
+				}
+			: null,
 	});
 };
 
@@ -54,6 +61,11 @@ export const restoreEditorState = (
 		commandManager.past = state.model.undoStack;
 		commandManager.future = state.model.redoStack;
 	}
+
+	if (state.position) {
+		editor.setPosition(state.position);
+		editor.revealPositionInCenter(state.position);
+	}
 };
 
 /**
@@ -66,8 +78,10 @@ export const clearEditorState = (workspaceId: string, tabId: string) => {
 };
 
 /**
- * Clears all saved editor states
+ * Gets the saved editor state for a specific workspace and tab
+ * @param workspaceId The ID of the workspace
+ * @param tabId The ID of the tab
  */
-export const clearAllEditorStates = () => {
-	EDITOR_STATES_MAP.clear();
+export const getEditorState = (workspaceId: string, tabId: string) => {
+	return EDITOR_STATES_MAP.get(`${workspaceId}:${tabId}`);
 };

@@ -7,4 +7,8 @@ export interface EditorState {
 		undoStack: any[];
 		redoStack: any[];
 	};
+	position: {
+		lineNumber: number;
+		column: number;
+	} | null;
 }

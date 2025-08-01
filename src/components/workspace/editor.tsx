@@ -168,8 +168,15 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 		if (!model) {
 			model = monaco.editor.createModel(content, language);
 			MODELS_MAP.set(activeTab, model);
-		} else if (model.getValue() !== content) {
-			model.setValue(content);
+		} else {
+			const currentContent = model.getValue();
+			if (currentContent !== content) {
+				const editorPosition = editorRef.current?.getPosition();
+				model.setValue(content);
+				if (editorPosition && editorRef.current) {
+					editorRef.current.setPosition(editorPosition);
+				}
+			}
 		}
 		modelRef.current = model;
 
@@ -420,12 +427,6 @@ export const CodeEditor: FC<CodeEditorProps> = ({
 			MODELS_MAP.clear();
 		};
 	}, []);
-
-	useEffect(() => {
-		if (modelRef.current && modelRef.current.getValue() !== content) {
-			modelRef.current.setValue(content);
-		}
-	}, [content]);
 
 	useEffect(() => {
 		suggestionService.loadSuggestions();
