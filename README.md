@@ -58,6 +58,15 @@ curl -s https://www.comet-ui.fun/api/v1/installer | bash
 
 ### Build from source
 
+#### Dependencies
+
+To build Comet you will need:
+
+* [NodeJS](https://nodejs.org/en)
+* Cargo that is installed with [Rust](https://www.rust-lang.org/learn/get-started#installing-rust)
+
+#### Building Comet
+
 ```bash
 # Clone the repository
 git clone https://github.com/FrozenProductions/Comet.git
