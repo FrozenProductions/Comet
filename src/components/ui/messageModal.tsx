@@ -133,10 +133,23 @@ export const MessageModal = ({ currentVersion }: MessageModalProps) => {
 			if (versionMessage) {
 				setVersionData(versionMessage);
 				setIsVisible(true);
+				return true;
 			}
+			return false;
 		};
 
 		fetchMessage();
+
+		const intervalId = setInterval(async () => {
+			const found = await fetchMessage();
+			if (found) {
+				clearInterval(intervalId);
+			}
+		}, 60000);
+
+		return () => {
+			clearInterval(intervalId);
+		};
 	}, [currentVersion]);
 
 	if (!isVisible || !versionData) {
