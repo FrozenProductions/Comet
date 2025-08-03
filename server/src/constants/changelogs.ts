@@ -6,41 +6,71 @@ export const CHANGELOG_DATA: ChangelogSection[] = [
 		releases: [
 			{
 				version: "1.1.0",
-				date: "2025-07-16",
+				date: "2025-08-03",
 				changes: [
 					{
+						type: "feature",
+						title: "Enhanced Editor State Management",
+						description:
+							"Improved editor state management with position tracking and refined tab update logic. Fixed tab renaming desynchronization issues.",
+					},
+					{
+						type: "feature",
+						title: "Status Bar Enhancements",
+						description:
+							"Added reorder support for status bar items and fixed tooltip layering issues.",
+					},
+					{
+						type: "feature",
+						title: "Execution History Improvements",
+						description:
+							"Added search and status filter functionality to execution history component.",
+					},
+					{
+						type: "feature",
+						title: "Code Beautification Shortcut",
+						description: "Added keyboard shortcut for code beautification.",
+					},
+					{
+						type: "feature",
+						title: "Offline Status Handling",
+						description:
+							"Added offline status component and integrated Comet status checking functionality.",
+					},
+					{
+						type: "feature",
+						title: "Version Message Enhancement",
+						description: "Added image support to version message modal.",
+					},
+					{
+						type: "feature",
+						title: "Improved Hydrogen Detection",
+						description:
+							"Enhanced Hydrogen checking to verify both dylib and RobloxPlayer.copy files.",
+					},
+					{
+						type: "feature",
+						title: "Auto-Execute File Management",
+						description:
+							"Improved file deletion handling in auto-execute component with proper state reset.",
+					},
+					{
 						type: "improvement",
-						title: "Tray Menu Rework",
+						title: "Z-Index Fixes",
 						description:
-							"Reworked tray menu with configuration options and custom script management.",
+							"Fixed layering issues with workspace search and Roblox console components.",
 					},
 					{
-						type: "feature",
-						title: "Startup Settings",
-						description: "Added startup settings with start at login toggle.",
-					},
-					{
-						type: "feature",
-						title: "Permissions Checker",
+						type: "improvement",
+						title: "Editor State Service",
 						description:
-							"Added permissions checker to ensure that Comet has access to every needed directory.",
+							"Refactored editor state management by introducing dedicated service for state handling.",
 					},
 					{
-						type: "feature",
-						title: "Game Disconnection Notifications",
+						type: "improvement",
+						title: "Console Visibility Update",
 						description:
-							"Added notification system to notify user about being disconnected from a Roblox game.",
-					},
-					{
-						type: "bugfix",
-						title: "UI Layering Fixes",
-						description:
-							"Fixed layering issues between CommandPalette, diagnostics dropdown, and RobloxConsole.",
-					},
-					{
-						type: "bugfix",
-						title: "Script Library Content Fix",
-						description: "Fixed ScriptLibrary script content fetching.",
+							"Updated default console visibility setting to false in editor settings.",
 					},
 				],
 			},
