@@ -13,7 +13,8 @@ pub struct InstallProgress {
 pub fn check_hydrogen_installation(_app_handle: tauri::AppHandle) -> bool {
     let roblox_path =
         std::path::Path::new("/Applications/Roblox.app/Contents/MacOS/RobloxPlayer.copy");
-    let hydrogen_path = std::path::Path::new("/Applications/Hydrogen.app");
+    let hydrogen_path =
+        std::path::Path::new("/Applications/Hydrogen.app/Contents/MacOS/Hydrogen.dylib");
 
     roblox_path.exists() && hydrogen_path.exists()
 }

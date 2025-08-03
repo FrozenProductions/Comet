@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use tauri::Manager;
 
-const CURRENT_VERSION: &str = "1.1.0";
+const CURRENT_VERSION: &str = "1.1.1";
 const STATUS_URL: &str = "https://www.comet-ui.fun/api/v1/status";
 const DOWNLOAD_URL: &str = "https://github.com/FrozenProductions/Comet/releases/download";
 const APP_PATH: &str = "/Applications/Comet.app";
