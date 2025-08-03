@@ -71,32 +71,49 @@ async function buildForBrand(brand: keyof typeof BRANDS_CONFIG): Promise<void> {
 	}
 
 	const buildSpinner = ora("Building Tauri executable").start();
-	try {
-		const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
-		await spawnPromise(npmCmd, ["run", "tauri:build:universal"], {
-			cwd: resolve(__dirname, "../.."),
-			stdio: ["ignore", "ignore", "pipe"],
-		});
+	let retryCount = 0;
+	const maxRetries = 2;
 
-		buildSpinner.succeed(chalk.green("Tauri executable built successfully"));
-		console.log(chalk.green("\n✨ Build completed successfully!"));
-		console.log(chalk.dim(`Brand: ${chalk.bold(brandConfig.productName)}`));
-
-		const resetSpinner = ora("Resetting to default configuration").start();
+	while (retryCount < maxRetries) {
 		try {
-			const defaultConfig = resetToDefault();
-			updateTauriConfig(defaultConfig, tauriConfigPath);
-			resetSpinner.succeed(chalk.green("Configuration reset to default"));
-		} catch (error) {
-			resetSpinner.fail(chalk.red("Failed to reset configuration"));
+			const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+			await spawnPromise(npmCmd, ["run", "tauri:build:universal"], {
+				cwd: resolve(__dirname, "../.."),
+				stdio: ["ignore", "ignore", "pipe"],
+			});
+
+			buildSpinner.succeed(chalk.green("Tauri executable built successfully"));
+			console.log(chalk.green("\n✨ Build completed successfully!"));
+
+			const resetSpinner = ora("Resetting to default configuration").start();
+			try {
+				const defaultConfig = resetToDefault();
+				updateTauriConfig(defaultConfig, tauriConfigPath);
+			} catch (error) {
+				resetSpinner.fail(chalk.red("Failed to reset configuration"));
+				console.error(chalk.dim("\nError details:"));
+				console.error(chalk.red(error));
+			}
+			break;
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error ? error.toString() : String(error);
+			if (
+				errorMessage.includes("error running bundle_dmg.sh") &&
+				retryCount < maxRetries - 1
+			) {
+				retryCount++;
+				buildSpinner.text = chalk.yellow(
+					`Retrying build attempt ${retryCount}/${maxRetries - 1}...`,
+				);
+				continue;
+			}
+
+			buildSpinner.fail(chalk.red("Failed to build Tauri executable"));
 			console.error(chalk.dim("\nError details:"));
 			console.error(chalk.red(error));
+			process.exit(1);
 		}
-	} catch (error) {
-		buildSpinner.fail(chalk.red("Failed to build Tauri executable"));
-		console.error(chalk.dim("\nError details:"));
-		console.error(chalk.red(error));
-		process.exit(1);
 	}
 }
 
