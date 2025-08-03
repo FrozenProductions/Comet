@@ -1,10 +1,19 @@
 import * as luaparse from "luaparse";
 import * as monaco from "monaco-editor";
 
+/**
+ * Provides diagnostic markers for Lua code in Monaco editor
+ * Handles syntax error detection and style warnings
+ */
 class LuaMarkerDataProvider {
 	private owner = "lua-diagnostics";
 	private diagnosticsMap = new Map<string, monaco.editor.IMarkerData[]>();
 
+	/**
+	 * Gets diagnostic markers for a specific editor model
+	 * @param model The Monaco editor text model
+	 * @returns Array of diagnostic markers for the model
+	 */
 	public getMarkers(
 		model: monaco.editor.ITextModel,
 	): monaco.editor.IMarkerData[] {
@@ -12,6 +21,10 @@ class LuaMarkerDataProvider {
 		return this.diagnosticsMap.get(uri) || [];
 	}
 
+	/**
+	 * Analyzes code and provides diagnostic markers for syntax and style issues
+	 * @param model The Monaco editor text model to analyze
+	 */
 	public async provideMarkerData(
 		model: monaco.editor.ITextModel,
 	): Promise<void> {
@@ -90,11 +103,18 @@ class LuaMarkerDataProvider {
 		this.updateMarkers(model);
 	}
 
+	/**
+	 * Updates diagnostic markers in the editor model
+	 * @param model The Monaco editor text model to update
+	 */
 	private updateMarkers(model: monaco.editor.ITextModel): void {
 		const markers = this.getMarkers(model);
 		monaco.editor.setModelMarkers(model, this.owner, markers);
 	}
 
+	/**
+	 * Cleans up diagnostic markers when provider is disposed
+	 */
 	public dispose(): void {
 		this.diagnosticsMap.clear();
 	}

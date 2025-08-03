@@ -4,6 +4,11 @@ import type {
 	FastFlagsResponse,
 } from "../../types/roblox/fastFlags";
 
+/**
+ * Converts string value to appropriate type
+ * @param value String value to convert
+ * @returns Converted value as number, boolean or string
+ */
 const serializeValue = (value: string): any => {
 	if (!Number.isNaN(Number(value))) {
 		return Number(value);
@@ -15,6 +20,11 @@ const serializeValue = (value: string): any => {
 	return value;
 };
 
+/**
+ * Serializes flag values to appropriate types
+ * @param flags Record of flag key-value pairs
+ * @returns Record with serialized flag values
+ */
 const serializeFlags = (flags: Record<string, any>): Record<string, any> => {
 	const serialized: Record<string, any> = {};
 	for (const [key, value] of Object.entries(flags)) {

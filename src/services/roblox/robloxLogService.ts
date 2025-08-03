@@ -6,10 +6,19 @@ const listeners = new Set<(log: LogLine) => void>();
 let unlistenCallback: UnlistenFn | undefined;
 let isWatching = false;
 
+/**
+ * Notifies all registered listeners with a new log line
+ * @param log The log line to send to listeners
+ */
 const notifyListeners = (log: LogLine): void => {
 	listeners.forEach((listener) => listener(log));
 };
 
+/**
+ * Parses a raw log line into a structured LogLine object
+ * @param rawLine The raw log line to parse
+ * @returns Structured LogLine object with timestamp, level, message and raw content
+ */
 const parseLogLine = (rawLine: string): LogLine => {
 	const timestamp = new Date().toISOString();
 	let level: LogLevel = "INFO";
@@ -42,6 +51,7 @@ const parseLogLine = (rawLine: string): LogLine => {
 
 /**
  * Starts watching for Roblox log updates
+ * Initializes the log watcher and sets up event listeners
  * @throws Error if the watcher cannot be started
  */
 export const startWatching = async (): Promise<void> => {
@@ -73,6 +83,7 @@ export const startWatching = async (): Promise<void> => {
 
 /**
  * Stops watching for Roblox log updates
+ * Cleans up event listeners and stops the log watcher
  * @throws Error if the watcher cannot be stopped
  */
 export const stopWatching = async (): Promise<void> => {
@@ -95,6 +106,7 @@ export const stopWatching = async (): Promise<void> => {
 
 /**
  * Subscribes to log updates
+ * Registers a callback function to receive log updates
  * @param callback Function to be called when a new log line is received
  * @returns Function to unsubscribe the callback
  */
