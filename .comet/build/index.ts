@@ -67,9 +67,7 @@ async function buildForBrand(brandName: string): Promise<void> {
 			chalk.green("Configuration files updated successfully"),
 		);
 	} catch (_error) {
-		configSpinner.fail(
-			chalk.red("Failed to update configuration files" + _error),
-		);
+		configSpinner.fail(chalk.red("Failed to update configuration files"));
 		process.exit(1);
 	}
 
