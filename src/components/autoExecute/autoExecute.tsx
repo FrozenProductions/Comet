@@ -132,23 +132,10 @@ export const AutoExecute: React.FC = () => {
 			await deleteAutoExecuteFile(fileToDelete.name);
 			await loadFiles();
 
-			if (selectedFile?.path === fileToDelete.path) {
-				const currentIndex = files.findIndex(
-					(f) => f.path === fileToDelete.path,
-				);
-				const nextFile = files[currentIndex + 1] || files[currentIndex - 1];
-				if (nextFile) {
-					setSelectedFile(nextFile);
-					setEditedContent(nextFile.content);
-					setLastSavedContent(nextFile.content);
-					setNewFileName(removeExtension(nextFile.name));
-				} else {
-					setSelectedFile(null);
-					setEditedContent("");
-					setLastSavedContent("");
-					setNewFileName("");
-				}
-			}
+			setSelectedFile(null);
+			setEditedContent("");
+			setLastSavedContent("");
+			setNewFileName("");
 
 			toast.success("Script deleted");
 		} catch (error) {
