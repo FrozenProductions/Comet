@@ -35,6 +35,14 @@ export type ExecutionHistoryProps = {
 };
 
 export type ExecutionHistoryState = {
-	position: { x: number; y: number };
-	size: { width: number; height: number };
+	position: {
+		x: number;
+		y: number;
+	};
+	size: {
+		width: number;
+		height: number;
+	};
 };
+
+export type StatusFilter = "all" | "success" | "error";

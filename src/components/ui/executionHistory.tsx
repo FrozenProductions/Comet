@@ -1,16 +1,18 @@
-import { ChevronDown, ChevronRight, Trash2, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
 import { motion } from "motion/react";
 import {
 	type KeyboardEvent,
 	type MouseEvent,
 	useCallback,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 } from "react";
 import {
 	DEFAULT_EXECUTION_HISTORY_STATE,
 	EXECUTION_HISTORY_STORAGE_KEY,
+	STATUS_FILTER_OPTIONS,
 } from "../../constants/execution/executionHistory";
 import { useEditor } from "../../hooks/core/useEditor";
 import { useLocalStorage } from "../../hooks/core/useLocalStorage";
@@ -18,7 +20,10 @@ import { useExecutionHistory } from "../../hooks/execution/useExecutionHistory";
 import type {
 	ExecutionHistoryProps,
 	ExecutionHistoryState,
+	StatusFilter,
 } from "../../types/execution/executionHistory";
+import { Input } from "./input";
+import { Select } from "./select";
 
 export const ExecutionHistory = ({
 	isVisible,
@@ -27,6 +32,8 @@ export const ExecutionHistory = ({
 	const { history, clearHistory } = useExecutionHistory();
 	const { createTabWithContent } = useEditor();
 	const [expandedErrors, setExpandedErrors] = useState<Set<string>>(new Set());
+	const [searchQuery, setSearchQuery] = useState("");
+	const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 	const [state, setState] = useLocalStorage<ExecutionHistoryState>(
 		EXECUTION_HISTORY_STORAGE_KEY,
 		DEFAULT_EXECUTION_HISTORY_STATE,
@@ -110,6 +117,22 @@ export const ExecutionHistory = ({
 		}
 	}, [isDragging, isResizing, handleDragEnd, setState]);
 
+	const filteredHistory = useMemo(() => {
+		return history.filter((record) => {
+			const matchesSearch =
+				searchQuery === "" ||
+				record.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				record.error?.toLowerCase().includes(searchQuery.toLowerCase());
+
+			const matchesStatus =
+				statusFilter === "all" ||
+				(statusFilter === "success" && record.success) ||
+				(statusFilter === "error" && !record.success);
+
+			return matchesSearch && matchesStatus;
+		});
+	}, [history, searchQuery, statusFilter]);
+
 	const toggleErrorExpand = (id: string) => {
 		setExpandedErrors((prev) => {
 			const newSet = new Set(prev);
@@ -156,10 +179,13 @@ export const ExecutionHistory = ({
 			className="fixed z-50"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
-			transition={{ duration: 0.2 }}
+			transition={{ duration: 0.1 }}
 			style={{
 				left: state.position.x,
 				top: state.position.y,
+				transition: isDragging
+					? "none"
+					: "all 0.15s cubic-bezier(0.2, 0, 0, 1)",
 			}}
 		>
 			<motion.div
@@ -167,14 +193,17 @@ export const ExecutionHistory = ({
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{
-					duration: 0.2,
+					duration: 0.15,
 					type: "spring",
-					stiffness: 300,
-					damping: 30,
+					stiffness: 400,
+					damping: 25,
 				}}
 				style={{
 					width: state.size.width,
 					height: state.size.height,
+					transition: isResizing
+						? "none"
+						: "all 0.15s cubic-bezier(0.2, 0, 0, 1)",
 				}}
 			>
 				<button
@@ -202,14 +231,70 @@ export const ExecutionHistory = ({
 						</button>
 					</div>
 				</button>
+
+				<div className="border-b border-ctp-surface2 p-4">
+					<motion.div
+						className="flex items-center gap-2"
+						layout
+						transition={{
+							type: "spring",
+							stiffness: 400,
+							damping: 25,
+							duration: 0.15,
+						}}
+					>
+						<motion.div
+							className="relative flex-1"
+							layout
+							transition={{
+								type: "spring",
+								stiffness: 400,
+								damping: 25,
+								duration: 0.15,
+							}}
+						>
+							<Input
+								placeholder="Search execution history..."
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								className="h-8 w-full border-white/5 bg-ctp-surface1 pl-8 text-sm focus:border-accent focus:ring-accent"
+								autoCorrect="off"
+								autoCapitalize="off"
+								spellCheck={false}
+							/>
+							<Search
+								size={14}
+								className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ctp-subtext0"
+							/>
+						</motion.div>
+						<motion.div
+							layout
+							transition={{
+								type: "spring",
+								stiffness: 400,
+								damping: 25,
+								duration: 0.15,
+							}}
+						>
+							<Select
+								value={statusFilter}
+								onChange={(value) => setStatusFilter(value as StatusFilter)}
+								options={STATUS_FILTER_OPTIONS}
+							/>
+						</motion.div>
+					</motion.div>
+				</div>
+
 				<div className="flex-1 overflow-y-auto p-4">
-					{history.length === 0 ? (
+					{filteredHistory.length === 0 ? (
 						<div className="flex h-full items-center justify-center text-sm text-ctp-subtext0">
-							No execution history
+							{history.length === 0
+								? "No execution history"
+								: "No results found"}
 						</div>
 					) : (
 						<div className="flex flex-col gap-3">
-							{history.map((record) => (
+							{filteredHistory.map((record) => (
 								<div
 									key={record.id}
 									className="flex flex-col gap-2 rounded-lg border border-ctp-surface2 bg-ctp-surface1 p-3"
