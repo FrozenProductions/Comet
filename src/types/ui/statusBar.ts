@@ -1,13 +1,30 @@
-import type * as monaco from "monaco-editor";
+import type { editor } from "monaco-editor";
 import type React from "react";
 
-export interface EditorPosition {
+export type EditorPosition = {
 	lineNumber: number;
 	column: number;
-}
+};
 
-export interface ErrorDropdownProps {
-	diagnostics: monaco.editor.IMarker[];
+export type ErrorDropdownProps = {
+	diagnostics: editor.IMarker[];
 	onClose: () => void;
 	buttonRef: React.RefObject<HTMLButtonElement>;
-}
+};
+
+export type StatusBarItemType =
+	| "sidebar"
+	| "search"
+	| "beautify"
+	| "diagnostics"
+	| "lines"
+	| "position";
+
+export type StatusBarItem = {
+	id: StatusBarItemType;
+	group: "left" | "right";
+};
+
+export type StatusBarConfig = {
+	order: StatusBarItem[];
+};

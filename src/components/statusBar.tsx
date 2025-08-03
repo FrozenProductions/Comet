@@ -6,8 +6,13 @@ import { Tooltip } from "react-tooltip";
 import { useEditor } from "../hooks/core/useEditor";
 import { useKeybinds } from "../hooks/core/useKeybinds";
 import { useSidebar } from "../hooks/ui/useSidebar";
+import { useStatusBar } from "../hooks/ui/useStatusBar";
 import { beautifierService } from "../services/features/beautifierService";
-import type { EditorPosition, ErrorDropdownProps } from "../types/ui/statusBar";
+import type {
+	EditorPosition,
+	ErrorDropdownProps,
+	StatusBarItemType,
+} from "../types/ui/statusBar";
 import { WorkspaceSearch } from "./workspaceSearch";
 
 const ErrorDropdown: FC<ErrorDropdownProps> = ({
@@ -161,8 +166,11 @@ export const StatusBar: FC = () => {
 	const { activeTab } = useEditor();
 	const { isVisible, toggleSidebar } = useSidebar();
 	const { setIsWorkspaceSearchOpen, activeScreen } = useKeybinds();
+	const { config, moveItem } = useStatusBar();
 	const previousTabRef = useRef(activeTab);
 	const diagnosticsButtonRef = useRef<HTMLButtonElement>(null);
+	const [draggedItem, setDraggedItem] = useState<string | null>(null);
+	const [dragOverItem, setDragOverItem] = useState<string | null>(null);
 
 	useEffect(() => {
 		const editor = monaco.editor.getEditors()[0];
@@ -244,87 +252,170 @@ export const StatusBar: FC = () => {
 		}
 	};
 
-	return (
-		<div className="relative flex h-6 items-center justify-between border-t border-white/5 bg-ctp-mantle px-2 text-xs text-ctp-subtext0">
-			<div className="flex items-center gap-0.5">
-				<button
-					type="button"
-					onClick={toggleSidebar}
-					data-tooltip-id="status-bar-tooltip"
-					data-tooltip-content={isVisible ? "Hide sidebar" : "Show sidebar"}
-					className={`flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0 ${
-						isVisible ? "text-accent" : ""
-					}`}
-				>
-					<PanelLeft size={13} />
-				</button>
-				<button
-					type="button"
-					onClick={() => setIsWorkspaceSearchOpen(true)}
-					data-tooltip-id="status-bar-tooltip"
-					data-tooltip-content="Search workspace"
-					className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
-				>
-					<Search size={13} />
-				</button>
-				{activeScreen === "Editor" && (
-					<button
-						type="button"
-						onClick={handleBeautifyClick}
-						data-tooltip-id="status-bar-tooltip"
-						data-tooltip-content="Beautify code"
-						className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
-					>
-						<Wand2 size={13} />
-					</button>
-				)}
-			</div>
-			{activeScreen === "Editor" && (
-				<div className="flex items-center gap-4">
-					{(errors > 0 || warnings > 0) && (
-						<div className="relative">
-							<button
-								ref={diagnosticsButtonRef}
-								type="button"
-								onClick={handleDiagnosticsClick}
-								data-tooltip-id="status-bar-tooltip"
-								data-tooltip-content={`${errors} error${errors !== 1 ? "s" : ""}, ${warnings} warning${warnings !== 1 ? "s" : ""}`}
-								className={`flex items-center gap-2 rounded px-1.5 py-0.5 transition-colors hover:bg-ctp-surface0 ${
-									showDiagnostics ? "bg-ctp-surface0" : ""
-								}`}
-							>
-								<div className="flex items-center gap-1.5">
-									{errors > 0 && (
-										<span className="flex items-center text-ctp-red">
-											<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
-											{errors}
-										</span>
-									)}
-									{warnings > 0 && (
-										<span className="flex items-center text-ctp-yellow">
-											<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
-											{warnings}
-										</span>
-									)}
-								</div>
-							</button>
-							{showDiagnostics && (
-								<ErrorDropdown
-									diagnostics={diagnostics}
-									onClose={() => setShowDiagnostics(false)}
-									buttonRef={diagnosticsButtonRef}
-								/>
-							)}
-						</div>
-					)}
-					<div className="flex items-center gap-4">
+	const handleDragStart = (e: React.DragEvent, itemId: string) => {
+		e.stopPropagation();
+		e.dataTransfer.effectAllowed = "move";
+		e.dataTransfer.setData("application/x-comet-statusbar", itemId);
+		setDraggedItem(itemId);
+	};
+
+	const handleDragOver = (e: React.DragEvent, itemId: string) => {
+		e.preventDefault();
+		e.stopPropagation();
+		if (!e.dataTransfer.types.includes("application/x-comet-statusbar")) return;
+		if (draggedItem === itemId) return;
+		setDragOverItem(itemId);
+	};
+
+	const handleDragEnd = (e: React.DragEvent) => {
+		e.stopPropagation();
+		if (draggedItem && dragOverItem) {
+			const fromIndex = config.order.findIndex(
+				(item) => item.id === draggedItem,
+			);
+			const toIndex = config.order.findIndex(
+				(item) => item.id === dragOverItem,
+			);
+			if (fromIndex !== -1 && toIndex !== -1) {
+				moveItem(fromIndex, toIndex);
+			}
+		}
+		setDraggedItem(null);
+		setDragOverItem(null);
+	};
+
+	const handleDragLeave = (e: React.DragEvent) => {
+		e.stopPropagation();
+		setDragOverItem(null);
+	};
+
+	const renderStatusBarItem = (itemId: StatusBarItemType) => {
+		const dragProps = {
+			draggable: true,
+			onDragStart: (e: React.DragEvent) => handleDragStart(e, itemId),
+			onDragOver: (e: React.DragEvent) => handleDragOver(e, itemId),
+			onDragEnd: handleDragEnd,
+			onDragLeave: handleDragLeave,
+			className: `transition-all duration-200 ${dragOverItem === itemId ? "border-t-2 border-accent" : ""}`,
+		};
+
+		switch (itemId) {
+			case "sidebar":
+				return (
+					<div {...dragProps}>
+						<button
+							type="button"
+							onClick={toggleSidebar}
+							data-tooltip-id="status-bar-tooltip"
+							data-tooltip-content={isVisible ? "Hide sidebar" : "Show sidebar"}
+							className={`flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0 ${isVisible ? "text-accent" : ""}`}
+						>
+							<PanelLeft size={13} />
+						</button>
+					</div>
+				);
+			case "search":
+				return (
+					<div {...dragProps}>
+						<button
+							type="button"
+							onClick={() => setIsWorkspaceSearchOpen(true)}
+							data-tooltip-id="status-bar-tooltip"
+							data-tooltip-content="Search workspace"
+							className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
+						>
+							<Search size={13} />
+						</button>
+					</div>
+				);
+			case "beautify":
+				return activeScreen === "Editor" ? (
+					<div {...dragProps}>
+						<button
+							type="button"
+							onClick={handleBeautifyClick}
+							data-tooltip-id="status-bar-tooltip"
+							data-tooltip-content="Beautify code"
+							className="flex items-center rounded px-1 py-0.5 transition-colors hover:bg-ctp-surface0"
+						>
+							<Wand2 size={13} />
+						</button>
+					</div>
+				) : null;
+			case "diagnostics":
+				return activeScreen === "Editor" && (errors > 0 || warnings > 0) ? (
+					<div {...dragProps} className="relative">
+						<button
+							ref={diagnosticsButtonRef}
+							type="button"
+							onClick={handleDiagnosticsClick}
+							data-tooltip-id="status-bar-tooltip"
+							data-tooltip-content={`${errors} error${errors !== 1 ? "s" : ""}, ${warnings} warning${warnings !== 1 ? "s" : ""}`}
+							className={`flex items-center gap-2 rounded px-1.5 py-0.5 transition-colors hover:bg-ctp-surface0 ${showDiagnostics ? "bg-ctp-surface0" : ""}`}
+						>
+							<div className="flex items-center gap-1.5">
+								{errors > 0 && (
+									<span className="flex items-center text-ctp-red">
+										<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
+										{errors}
+									</span>
+								)}
+								{warnings > 0 && (
+									<span className="flex items-center text-ctp-yellow">
+										<span className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
+										{warnings}
+									</span>
+								)}
+							</div>
+						</button>
+						{showDiagnostics && (
+							<ErrorDropdown
+								diagnostics={diagnostics}
+								onClose={() => setShowDiagnostics(false)}
+								buttonRef={diagnosticsButtonRef}
+							/>
+						)}
+					</div>
+				) : null;
+			case "lines":
+				return activeScreen === "Editor" ? (
+					<div {...dragProps}>
 						<span>Lines: {totalLines}</span>
+					</div>
+				) : null;
+			case "position":
+				return activeScreen === "Editor" ? (
+					<div {...dragProps}>
 						<span>
 							Ln {position.lineNumber}, Col {position.column}
 						</span>
 					</div>
-				</div>
-			)}
+				) : null;
+			default:
+				return null;
+		}
+	};
+
+	return (
+		<div className="relative flex h-6 items-center justify-between border-t border-white/5 bg-ctp-mantle px-2 text-xs text-ctp-subtext0">
+			<div className="flex items-center gap-0.5">
+				{config.order
+					.filter((item) => item.group === "left")
+					.map((item) => (
+						<div key={item.id} className="flex items-center">
+							{renderStatusBarItem(item.id)}
+						</div>
+					))}
+			</div>
+			<div className="flex items-center gap-4">
+				{config.order
+					.filter((item) => item.group === "right")
+					.map((item) => (
+						<div key={item.id} className="flex items-center">
+							{renderStatusBarItem(item.id)}
+						</div>
+					))}
+			</div>
 			<WorkspaceSearch />
 
 			<Tooltip
