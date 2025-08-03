@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
+import * as monaco from "monaco-editor";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { DEFAULT_KEYBINDS } from "../../constants/core/keybinds";
@@ -9,6 +10,7 @@ import { useScript } from "../../hooks/execution/useScript";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsoleVisibility } from "../../hooks/ui/useConsoleVisibility";
 import { useSidebar } from "../../hooks/ui/useSidebar";
+import { beautifierService } from "../../services/features/beautifierService";
 import type { Keybind, KeybindAction, Screen } from "../../types/core/keybinds";
 import { KeybindsContext } from "./keybindsContextType";
 
@@ -40,6 +42,33 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const handleScreenChange = useCallback((screen: Screen) => {
 		setActiveScreen(screen);
+	}, []);
+
+	const handleBeautifyCode = useCallback(async () => {
+		const editor = monaco.editor.getEditors()[0];
+		if (!editor) return;
+
+		const model = editor.getModel();
+		if (!model) return;
+
+		try {
+			const currentValue = model.getValue();
+			const beautifiedCode = await beautifierService.beautifyCode(currentValue);
+
+			editor.pushUndoStop();
+			editor.executeEdits("beautifier", [
+				{
+					range: model.getFullModelRange(),
+					text: beautifiedCode,
+				},
+			]);
+			editor.pushUndoStop();
+
+			toast.success("Code beautified successfully");
+		} catch (error) {
+			toast.error("Failed to beautify code");
+			console.error("Beautification error:", error);
+		}
 	}, []);
 
 	const handleKeybindAction = useCallback(
@@ -115,6 +144,9 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 				case "toggleConsole":
 					toggleConsoleVisibility();
 					break;
+				case "beautifyCode":
+					handleBeautifyCode();
+					break;
 			}
 		},
 		[
@@ -131,6 +163,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
 			handleScreenChange,
 			toggleConsoleVisibility,
 			toggleSidebar,
+			handleBeautifyCode,
 		],
 	);
 

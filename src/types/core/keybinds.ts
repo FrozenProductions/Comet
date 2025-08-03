@@ -15,6 +15,7 @@ export type KeybindAction =
 	| "toggleZenMode"
 	| "toggleCommandPalette"
 	| "executeScript"
+	| "beautifyCode"
 	| "openRoblox"
 	| "openSettings"
 	| "openEditor"

@@ -15,6 +15,7 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
 	newTab: "EDITOR",
 	closeTab: "EDITOR",
 	executeScript: "EDITOR",
+	beautifyCode: "EDITOR",
 	nextTab: "NAVIGATION",
 	previousTab: "NAVIGATION",
 	switchTab: "NAVIGATION",
@@ -74,6 +75,12 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
 		modifiers: { cmd: true },
 		action: "toggleSidebar",
 		description: "Toggle sidebar",
+	},
+	{
+		key: "s",
+		modifiers: { cmd: true, shift: true },
+		action: "beautifyCode",
+		description: "Beautify current code",
 	},
 	{
 		key: "enter",
