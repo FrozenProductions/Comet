@@ -155,7 +155,7 @@ export const MessageModal = ({ currentVersion }: MessageModalProps) => {
 			onClose={handleClose}
 			title="Message"
 			message={versionData.message}
-			imageUrl={versionData.imageUrl}
+			imageUrl={versionData.image_url}
 			icon={
 				versionData.nfu && <AlertTriangle size={14} className="text-ctp-red" />
 			}

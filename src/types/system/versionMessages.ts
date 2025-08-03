@@ -1,7 +1,7 @@
 export type VersionMessage = {
 	message: string;
 	nfu: boolean;
-	imageUrl?: string;
+	image_url?: string;
 };
 
 export type VersionMessages = {
