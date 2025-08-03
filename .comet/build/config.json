@@ -1,0 +1,18 @@
+{
+    "notifications": {
+        "title": "Comet",
+        "disconnect": {
+            "body": "Disconnected from a server"
+        }
+    },
+    "brands": {
+        "default": {
+            "productName": "Comet",
+            "iconPath": "../public/Icon.icns"
+        },
+        "hydrogen": {
+            "productName": "Hydrogen",
+            "iconPath": "../public/Hydrogen-icon.icns"
+        }
+    }
+}

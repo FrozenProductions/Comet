@@ -368,6 +368,7 @@ async fn execute_script(script: String) -> Result<String, String> {
 }
 
 mod auto_execute;
+mod config;
 mod execution_history;
 mod fast_flags;
 mod fast_flags_profiles;

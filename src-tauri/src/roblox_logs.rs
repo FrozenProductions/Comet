@@ -30,12 +30,14 @@ fn check_for_disconnect(app_handle: &tauri::AppHandle, content: &str) {
     if content.contains(DISCONNECT_PATTERN) {
         LAST_DISCONNECT_TIME.store(current_time, Ordering::SeqCst);
 
-        let _ = tauri::api::notification::Notification::new(
-            app_handle.config().tauri.bundle.identifier.clone(),
-        )
-        .title("Comet")
-        .body("Disconnected from a server")
-        .show();
+        if let Ok(config) = crate::config::CometConfig::load() {
+            let _ = tauri::api::notification::Notification::new(
+                app_handle.config().tauri.bundle.identifier.clone(),
+            )
+            .title(config.notifications.title)
+            .body(config.notifications.disconnect.body)
+            .show();
+        }
     }
 }
 
