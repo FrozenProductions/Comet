@@ -153,6 +153,9 @@ export const luaLanguage: languages.IMonarchLanguage = {
 
 	tokenizer: {
 		root: [
+			[/--\[(=*)\[/, { token: "comment.block", next: "@comment_multiline" }],
+			[/--.*$/, "comment.line"],
+
 			[
 				/:\s*([A-Za-z_][\w<>|]*(?:\[\])?(?:\s*\|\s*[A-Za-z_][\w<>|]*(?:\[\])?)*)\b/,
 				{
@@ -194,16 +197,9 @@ export const luaLanguage: languages.IMonarchLanguage = {
 			[/"/, "string", "@string_double"],
 			[/'/, "string", "@string_single"],
 			[/\[(=*)\[/, "string", "@string_multiline"],
-
-			[/--\[(=*)\[/, { token: "comment.block", next: "@comment_multiline" }],
-			[/--.*$/, "comment.line"],
 		],
 
-		whitespace: [
-			[/[ \t\r\n]+/, ""],
-			[/--\[(=*)\[/, { token: "comment.block", next: "@comment_multiline" }],
-			[/--.*$/, "comment.line"],
-		],
+		whitespace: [[/[ \t\r\n]+/, ""]],
 
 		string_double: [
 			[/[^\\"]+/, "string"],
@@ -233,7 +229,11 @@ export const luaLanguage: languages.IMonarchLanguage = {
 		],
 
 		comment_multiline: [
-			[/[^\]]+/, "comment.block"],
+			[/[^(\]]+/, "comment.block"],
+			[/\(/, "comment.block"],
+			[/\)/, "comment.block"],
+			[/\[/, "comment.block"],
+			[/\](?!=)/, "comment.block"],
 			[
 				/\](=*)\]/,
 				{
