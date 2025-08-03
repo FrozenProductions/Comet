@@ -2,6 +2,11 @@ import { useCallback, useState } from "react";
 import { searchScripts as searchRScripts } from "../../services/core/rScriptsService";
 import type { RScript, RScriptSearchParams } from "../../types/core/rScripts";
 
+/**
+ * Hook for searching and managing script results
+ * Handles loading states, errors, and pagination
+ * Returns script search results and methods to perform searches
+ */
 export const useScriptSearch = () => {
 	const [scripts, setScripts] = useState<RScript[]>([]);
 	const [isLoading, setIsLoading] = useState(false);

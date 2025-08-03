@@ -1,6 +1,11 @@
 import { toast } from "react-hot-toast";
 import { useSettings } from "../core/useSettings";
 
+/**
+ * Hook for managing console visibility state
+ * Provides methods to toggle console visibility and check current state
+ * Updates settings and shows toast notifications on visibility changes
+ */
 export const useConsoleVisibility = () => {
 	const { settings, updateSettings } = useSettings();
 

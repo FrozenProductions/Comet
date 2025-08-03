@@ -2,6 +2,10 @@ import { useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { openRoblox as openRobloxService } from "../../services/roblox/robloxService";
 
+/**
+ * Hook for managing Roblox application interactions
+ * Provides method to open Roblox application with error handling and notifications
+ */
 export const useRoblox = () => {
 	const openRoblox = useCallback(async () => {
 		try {
