@@ -2,8 +2,8 @@ use reqwest::Client;
 use serde::Deserialize;
 use std::collections::HashSet;
 use std::sync::Arc;
-use tokio::sync::RwLock;
 use std::time::Duration;
+use tokio::sync::RwLock;
 #[derive(Debug, Clone, Default)]
 pub struct FlagCache {
     mac: Option<HashSet<String>>,
@@ -28,7 +28,7 @@ impl FlagValidator {
 
     pub async fn validate_flags(&self, flags: &[String]) -> Result<Vec<String>, String> {
         let cache = self.cache.read().await;
-        
+
         if cache.mac.is_none() && cache.client.is_none() {
             return Err("Could not fetch valid fast flags list".to_string());
         }
@@ -52,7 +52,7 @@ impl FlagValidator {
 
     pub async fn refresh_cache(&self) {
         let mut cache = self.cache.write().await;
-        
+
         match self.fetch_mac_flags().await {
             Ok(mac_flags) => {
                 cache.mac = Some(mac_flags.clone());
@@ -96,7 +96,7 @@ impl FlagValidator {
 
         let input = res.text().await?;
         let flag_regex = regex::Regex::new(r"\[(?:C\+\+|Lua)\]\s+(\w+)")?;
-        
+
         let flags: HashSet<String> = input
             .lines()
             .filter_map(|line| {
@@ -109,4 +109,4 @@ impl FlagValidator {
 
         Ok(flags)
     }
-} 
+}

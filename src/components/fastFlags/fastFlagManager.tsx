@@ -146,6 +146,9 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 						onChange={(e) => setNewFlagKey(e.target.value)}
 						onKeyDown={(e) => e.key === "Enter" && handleAddFlag()}
 						className="h-8 border-white/5 bg-ctp-surface0 text-sm focus:border-accent focus:ring-accent"
+						autoCorrect="off"
+						autoCapitalize="off"
+						spellCheck={false}
 					/>
 					<Input
 						placeholder="Value"
@@ -153,6 +156,9 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 						onChange={(e) => setNewFlagValue(e.target.value)}
 						onKeyDown={(e) => e.key === "Enter" && handleAddFlag()}
 						className="h-8 border-white/5 bg-ctp-surface0 text-sm focus:border-accent focus:ring-accent"
+						autoCorrect="off"
+						autoCapitalize="off"
+						spellCheck={false}
 					/>
 					<Button
 						onClick={handleAddFlag}
@@ -248,6 +254,9 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 													}}
 													className="h-7 border-white/5 bg-ctp-surface0 text-xs focus:border-accent focus:ring-accent"
 													autoFocus
+													autoCorrect="off"
+													autoCapitalize="off"
+													spellCheck={false}
 												/>
 												<Button
 													size="sm"
@@ -339,6 +348,8 @@ export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
 						onChange={(e: any) => setJsonInput(e.target.value)}
 						className="h-64 w-full resize-none border-white/5 bg-ctp-surface0 font-mono text-sm focus:border-accent focus:ring-accent"
 						spellCheck={false}
+						autoCorrect="off"
+						autoCapitalize="off"
 					/>
 				</div>
 			</Modal>
