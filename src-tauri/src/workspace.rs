@@ -1,6 +1,6 @@
-use std::fs;
-use std::path::{PathBuf};
 use serde::{Deserialize, Serialize};
+use std::fs;
+use std::path::PathBuf;
 use tauri::api::path::config_dir;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -42,7 +42,7 @@ pub fn get_workspace_tabs_dir(workspace_id: &str) -> PathBuf {
 #[tauri::command]
 pub async fn load_workspaces() -> Result<WorkspaceState, String> {
     let state_file = get_workspace_state_file();
-    
+
     if state_file.exists() {
         let content = fs::read_to_string(state_file).map_err(|e| e.to_string())?;
         let state: WorkspaceState = serde_json::from_str(&content).map_err(|e| e.to_string())?;
@@ -51,7 +51,9 @@ pub async fn load_workspaces() -> Result<WorkspaceState, String> {
         let default_workspace = Workspace {
             id: "default".to_string(),
             name: "Default".to_string(),
-            path: get_workspace_tabs_dir("default").to_string_lossy().to_string(),
+            path: get_workspace_tabs_dir("default")
+                .to_string_lossy()
+                .to_string(),
         };
 
         let state = WorkspaceState {
@@ -70,7 +72,9 @@ pub async fn create_workspace(name: String) -> Result<Workspace, String> {
     let workspace = Workspace {
         id: workspace_id.clone(),
         name: name.clone(),
-        path: get_workspace_tabs_dir(&workspace_id).to_string_lossy().to_string(),
+        path: get_workspace_tabs_dir(&workspace_id)
+            .to_string_lossy()
+            .to_string(),
     };
 
     let mut state = load_workspaces().await?;
@@ -87,7 +91,7 @@ pub async fn create_workspace(name: String) -> Result<Workspace, String> {
 #[tauri::command]
 pub async fn delete_workspace(workspace_id: String) -> Result<(), String> {
     let mut state = load_workspaces().await?;
-    
+
     if state.workspaces.len() <= 1 {
         return Err("Cannot delete the last workspace".to_string());
     }
@@ -114,7 +118,7 @@ pub async fn delete_workspace(workspace_id: String) -> Result<(), String> {
 #[tauri::command]
 pub async fn set_active_workspace(workspace_id: String) -> Result<(), String> {
     let mut state = load_workspaces().await?;
-    
+
     if !state.workspaces.iter().any(|w| w.id == workspace_id) {
         return Err(format!("Workspace '{}' not found", workspace_id));
     }
@@ -128,8 +132,12 @@ pub async fn set_active_workspace(workspace_id: String) -> Result<(), String> {
 #[tauri::command]
 pub async fn rename_workspace(workspace_id: String, new_name: String) -> Result<(), String> {
     let mut state = load_workspaces().await?;
-    
-    if state.workspaces.iter().any(|w| w.name.to_lowercase() == new_name.to_lowercase() && w.id != workspace_id) {
+
+    if state
+        .workspaces
+        .iter()
+        .any(|w| w.name.to_lowercase() == new_name.to_lowercase() && w.id != workspace_id)
+    {
         return Err(format!("Workspace with name '{}' already exists", new_name));
     }
 
@@ -147,4 +155,4 @@ fn save_workspace_state(state: &WorkspaceState) -> Result<(), String> {
     let content = serde_json::to_string_pretty(state).map_err(|e| e.to_string())?;
     fs::write(state_file, content).map_err(|e| e.to_string())?;
     Ok(())
-} 
+}

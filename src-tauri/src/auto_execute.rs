@@ -1,10 +1,10 @@
+use dirs;
+use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
 use std::io::Read;
 use std::path::Path;
-use serde::{Deserialize, Serialize};
-use dirs;
-use tauri::api::path::config_dir;
 use std::path::PathBuf;
+use tauri::api::path::config_dir;
 
 const VALID_EXTENSIONS: [&str; 3] = [".lua", ".luau", ".txt"];
 
@@ -43,9 +43,7 @@ fn read_file_content(path: &Path) -> Result<String, String> {
 
     let content_clone = content.clone();
     String::from_utf8(content)
-        .or_else::<String, _>(|_| {
-            Ok(content_clone.iter().map(|&b| b as char).collect::<String>())
-        })
+        .or_else::<String, _>(|_| Ok(content_clone.iter().map(|&b| b as char).collect::<String>()))
         .map_err(|e| e.to_string())
 }
 
@@ -96,11 +94,12 @@ pub fn get_auto_execute_files() -> Result<Vec<AutoExecuteFile>, String> {
     for entry in entries {
         let entry = entry.map_err(|e| e.to_string())?;
         let path = entry.path();
-        
+
         if path.is_file() && is_valid_script_file(&path) {
             if let Ok(content) = read_file_content(&path) {
                 files.push(AutoExecuteFile {
-                    name: path.file_name()
+                    name: path
+                        .file_name()
                         .ok_or("Invalid filename")?
                         .to_string_lossy()
                         .into_owned(),
@@ -178,7 +177,7 @@ pub fn rename_auto_execute_file(old_name: String, new_name: String) -> Result<()
         let hydrogen_dir = home.join("Hydrogen/autoexecute");
         let old_hydrogen_path = hydrogen_dir.join(&old_name);
         let new_hydrogen_path = hydrogen_dir.join(&new_file_name);
-        
+
         if old_hydrogen_path.exists() {
             fs::rename(&old_hydrogen_path, &new_hydrogen_path).map_err(|e| e.to_string())?;
         }
@@ -199,7 +198,7 @@ pub fn toggle_auto_execute() -> Result<bool, String> {
     let scripts_dir = get_scripts_dir();
 
     let currently_enabled = get_auto_execute_state()?;
-    
+
     if currently_enabled {
         if hydrogen_dir.exists() {
             let entries = fs::read_dir(&hydrogen_dir).map_err(|e| e.to_string())?;
@@ -220,9 +219,10 @@ pub fn toggle_auto_execute() -> Result<bool, String> {
         for entry in entries {
             let entry = entry.map_err(|e| e.to_string())?;
             let path = entry.path();
-            
+
             if path.is_file() && is_valid_script_file(&path) {
-                let file_name = path.file_name()
+                let file_name = path
+                    .file_name()
                     .ok_or("Invalid filename")?
                     .to_string_lossy()
                     .into_owned();
@@ -242,4 +242,4 @@ pub fn toggle_auto_execute() -> Result<bool, String> {
 pub fn open_auto_execute_directory() -> Result<(), String> {
     let scripts_dir = get_scripts_dir();
     crate::open_directory(scripts_dir)
-} 
+}

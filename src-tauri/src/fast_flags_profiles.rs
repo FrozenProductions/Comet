@@ -1,10 +1,10 @@
+use crate::fast_flags::{save_fast_flags, FastFlagsResponse};
 use serde::{Deserialize, Serialize};
+use serde_json::Map;
 use std::fs;
 use std::path::PathBuf;
-use serde_json::Map;
-use crate::fast_flags::{save_fast_flags, FastFlagsResponse};
-use tauri::api::path::config_dir;
 use tauri::api::dialog;
+use tauri::api::path::config_dir;
 use uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -41,31 +41,37 @@ pub fn get_active_profile_file() -> PathBuf {
 
 impl FastFlagsProfileManager {
     pub fn new(_app_handle: &tauri::AppHandle) -> Self {
-        Self { 
-            profiles_dir: get_profiles_dir()
+        Self {
+            profiles_dir: get_profiles_dir(),
         }
     }
 
     pub fn load_profiles(&self) -> Result<Vec<FastFlagsProfile>, String> {
-        let settings_file = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
-        
+        let settings_file = PathBuf::from(
+            "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+        );
+
         if !settings_file.exists() {
             let _ = self.clear_active_profile();
         }
 
         let mut profiles = Vec::new();
-        
+
         if let Ok(entries) = fs::read_dir(&self.profiles_dir) {
             for entry in entries {
                 if let Ok(entry) = entry {
                     let path = entry.path();
                     if path.is_file() && path.extension().map_or(false, |ext| ext == "json") {
-                        if path.file_name().map_or(false, |name| name == "active_profile.json") {
+                        if path
+                            .file_name()
+                            .map_or(false, |name| name == "active_profile.json")
+                        {
                             continue;
                         }
-                        
+
                         if let Ok(content) = fs::read_to_string(&path) {
-                            if let Ok(profile) = serde_json::from_str::<FastFlagsProfile>(&content) {
+                            if let Ok(profile) = serde_json::from_str::<FastFlagsProfile>(&content)
+                            {
                                 profiles.push(profile);
                             }
                         }
@@ -77,31 +83,37 @@ impl FastFlagsProfileManager {
         Ok(profiles)
     }
 
-    pub async fn save_profile(&self, profile: FastFlagsProfile, app_handle: &tauri::AppHandle) -> Result<(), String> {
+    pub async fn save_profile(
+        &self,
+        profile: FastFlagsProfile,
+        app_handle: &tauri::AppHandle,
+    ) -> Result<(), String> {
         let profile_path = self.profiles_dir.join(format!("{}.json", profile.id));
         let content = serde_json::to_string_pretty(&profile)
             .map_err(|e| format!("Failed to serialize profile: {}", e))?;
-        
-        fs::write(profile_path, content)
-            .map_err(|e| format!("Failed to write profile: {}", e))?;
+
+        fs::write(profile_path, content).map_err(|e| format!("Failed to write profile: {}", e))?;
 
         if let Some(active_id) = self.get_active_profile_id()? {
             if active_id == profile.id {
-                let flags_map: Map<String, serde_json::Value> = profile.flags.clone().into_iter().collect();
+                let flags_map: Map<String, serde_json::Value> =
+                    profile.flags.clone().into_iter().collect();
                 match save_fast_flags(app_handle.clone(), flags_map).await {
                     FastFlagsResponse { success: true, .. } => Ok(()),
-                    FastFlagsResponse { error: Some(err), .. } => Err(err),
+                    FastFlagsResponse {
+                        error: Some(err), ..
+                    } => Err(err),
                     _ => Err("Unknown error while saving flags".to_string()),
                 }?;
             }
         }
-        
+
         Ok(())
     }
 
     pub fn delete_profile(&self, profile_id: &str) -> Result<(), String> {
         let profile_path = self.profiles_dir.join(format!("{}.json", profile_id));
-        
+
         if profile_path.exists() {
             fs::remove_file(profile_path)
                 .map_err(|e| format!("Failed to delete profile: {}", e))?;
@@ -112,20 +124,24 @@ impl FastFlagsProfileManager {
                 self.clear_active_profile()?;
             }
         }
-        
+
         Ok(())
     }
 
-    pub async fn activate_profile(&self, app_handle: &tauri::AppHandle, profile_id: &str) -> Result<FastFlagsProfile, String> {
+    pub async fn activate_profile(
+        &self,
+        app_handle: &tauri::AppHandle,
+        profile_id: &str,
+    ) -> Result<FastFlagsProfile, String> {
         let profile_path = self.profiles_dir.join(format!("{}.json", profile_id));
-        
+
         if !profile_path.exists() {
             return Err("Profile not found".to_string());
         }
 
         let content = fs::read_to_string(profile_path)
             .map_err(|e| format!("Failed to read profile: {}", e))?;
-            
+
         let profile: FastFlagsProfile = serde_json::from_str(&content)
             .map_err(|e| format!("Failed to parse profile: {}", e))?;
 
@@ -136,22 +152,26 @@ impl FastFlagsProfileManager {
             FastFlagsResponse { success: true, .. } => {
                 self.set_active_profile_id(profile_id)?;
                 Ok(profile)
-            },
-            FastFlagsResponse { error: Some(err), .. } => Err(err),
+            }
+            FastFlagsResponse {
+                error: Some(err), ..
+            } => Err(err),
             _ => Err("Unknown error while saving flags".to_string()),
         }
     }
 
     pub fn get_active_profile_id(&self) -> Result<Option<String>, String> {
-        let settings_file = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
-        
+        let settings_file = PathBuf::from(
+            "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+        );
+
         if !settings_file.exists() {
             let _ = self.clear_active_profile();
             return Ok(None);
         }
 
         let active_file = get_active_profile_file();
-        
+
         if !active_file.exists() {
             return Ok(None);
         }
@@ -168,8 +188,8 @@ impl FastFlagsProfileManager {
                         Ok(None)
                     }
                 }
-            },
-            Err(_) => Ok(None)
+            }
+            Err(_) => Ok(None),
         }
     }
 
@@ -185,13 +205,12 @@ impl FastFlagsProfileManager {
 
     pub fn clear_active_profile(&self) -> Result<(), String> {
         let active_file = get_active_profile_file();
-        
+
         if active_file.exists() {
             match fs::remove_file(&active_file) {
                 Ok(_) => Ok(()),
-                Err(_) => {
-                    fs::write(&active_file, "").map_err(|e| format!("Failed to clear active profile: {}", e))
-                }
+                Err(_) => fs::write(&active_file, "")
+                    .map_err(|e| format!("Failed to clear active profile: {}", e)),
             }
         } else {
             Ok(())
@@ -207,7 +226,7 @@ impl FastFlagsProfileManager {
             let profile_path = self.profiles_dir.join(format!("{}.json", profile.id));
             let content = serde_json::to_string_pretty(&profile)
                 .map_err(|e| format!("Failed to serialize profile: {}", e))?;
-            
+
             fs::write(profile_path, content)
                 .map_err(|e| format!("Failed to write profile: {}", e))?;
         }
@@ -216,10 +235,13 @@ impl FastFlagsProfileManager {
 }
 
 #[tauri::command]
-pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle, selected_profile_id: Option<String>) -> Result<bool, String> {
+pub async fn export_fast_flags_profiles(
+    app_handle: tauri::AppHandle,
+    selected_profile_id: Option<String>,
+) -> Result<bool, String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
     let profiles = profile_manager.export_profiles()?;
-    
+
     let path = dialog::blocking::FileDialogBuilder::new()
         .add_filter("Fast Flags", &["json"])
         .set_file_name("fast-flags.json")
@@ -244,45 +266,49 @@ pub async fn export_fast_flags_profiles(app_handle: tauri::AppHandle, selected_p
                     "{}".to_string()
                 }
             };
-            
-            fs::write(path, content)
-                .map_err(|e| format!("Failed to write file: {}", e))?;
+
+            fs::write(path, content).map_err(|e| format!("Failed to write file: {}", e))?;
             Ok(true)
-        },
-        None => Ok(false)
+        }
+        None => Ok(false),
     }
 }
 
 #[tauri::command]
 pub async fn import_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<bool, String> {
     let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    
+
     let path = match dialog::blocking::FileDialogBuilder::new()
         .add_filter("Fast Flags", &["json"])
-        .pick_file() {
-            Some(path) => path,
-            None => return Ok(false)
-        };
-            
-    let content = fs::read_to_string(&path)
-        .map_err(|e| format!("Failed to read file: {}", e))?;
-        
+        .pick_file()
+    {
+        Some(path) => path,
+        None => return Ok(false),
+    };
+
+    let content = fs::read_to_string(&path).map_err(|e| format!("Failed to read file: {}", e))?;
+
     let import_result = serde_json::from_str::<Vec<FastFlagsProfile>>(&content);
-        
+
     let profiles = match import_result {
         Ok(profiles) => profiles,
         Err(_) => {
-            let flags: std::collections::HashMap<String, serde_json::Value> = serde_json::from_str(&content)
-                .map_err(|e| format!("Failed to parse JSON: {}", e))?;
-                
+            let flags: std::collections::HashMap<String, serde_json::Value> =
+                serde_json::from_str(&content)
+                    .map_err(|e| format!("Failed to parse JSON: {}", e))?;
+
             let mut profile_name = "Untitled".to_string();
             let mut counter = 1;
-                
-            while profile_manager.load_profiles()?.iter().any(|p| p.name == profile_name) {
+
+            while profile_manager
+                .load_profiles()?
+                .iter()
+                .any(|p| p.name == profile_name)
+            {
                 profile_name = format!("Untitled-{}", counter);
                 counter += 1;
             }
-                
+
             vec![FastFlagsProfile {
                 id: uuid::Uuid::new_v4().to_string(),
                 name: profile_name,
@@ -290,7 +316,7 @@ pub async fn import_fast_flags_profiles(app_handle: tauri::AppHandle) -> Result<
             }]
         }
     };
-        
+
     profile_manager.import_profiles(profiles)?;
     Ok(true)
-} 
+}

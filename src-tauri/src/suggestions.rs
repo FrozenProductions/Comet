@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use reqwest::Client;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Suggestion {
@@ -35,10 +35,7 @@ pub async fn fetch_suggestions() -> Result<Vec<TypedSuggestion>, String> {
         .await
         .map_err(|e| e.to_string())?;
 
-    let data: SuggestionResponse = response
-        .json()
-        .await
-        .map_err(|e| e.to_string())?;
+    let data: SuggestionResponse = response.json().await.map_err(|e| e.to_string())?;
 
     let mut suggestions = Vec::new();
 
@@ -71,4 +68,4 @@ pub async fn fetch_suggestions() -> Result<Vec<TypedSuggestion>, String> {
     }));
 
     Ok(suggestions)
-} 
+}

@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
+use serde_json::{Map, Value};
 use std::fs;
 use std::path::PathBuf;
-use serde::{Deserialize, Serialize};
-use serde_json::{Value, Map};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FastFlagsResponse {
@@ -43,41 +43,46 @@ pub struct FastFlagCategory {
 }
 
 fn get_fast_flags_path() -> Result<PathBuf, String> {
-    let path = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json");
+    let path = PathBuf::from(
+        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+    );
     Ok(path)
 }
 
 fn ensure_client_settings_dir() -> Result<(), String> {
     let dir = PathBuf::from("/Applications/Roblox.app/Contents/MacOS/ClientSettings");
     let settings_file = dir.join("ClientAppSettings.json");
-    
+
     let should_clear_profile = !dir.exists() || !settings_file.exists();
-    
+
     if !dir.exists() {
         fs::create_dir_all(&dir)
             .map_err(|e| format!("Failed to create settings directory: {}", e))?;
     }
-    
+
     if should_clear_profile {
         let active_file = crate::fast_flags_profiles::get_active_profile_file();
-        
+
         if active_file.exists() {
             match fs::remove_file(&active_file) {
                 Ok(_) => {
                     let _ = fs::write(&active_file, "");
-                },
+                }
                 Err(_) => {
                     let _ = fs::write(&active_file, "");
                 }
             }
         }
     }
-    
+
     Ok(())
 }
 
 #[tauri::command]
-pub async fn save_fast_flags(_app_handle: tauri::AppHandle, flags: Map<String, Value>) -> FastFlagsResponse {
+pub async fn save_fast_flags(
+    _app_handle: tauri::AppHandle,
+    flags: Map<String, Value>,
+) -> FastFlagsResponse {
     match save_fast_flags_internal(flags).await {
         Ok(()) => FastFlagsResponse {
             success: true,
@@ -88,7 +93,7 @@ pub async fn save_fast_flags(_app_handle: tauri::AppHandle, flags: Map<String, V
             success: false,
             flags: None,
             error: Some(e.to_string()),
-        }
+        },
     }
 }
 
@@ -101,8 +106,8 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
         match fs::read_to_string(&flags_path) {
             Ok(content) if !content.trim().is_empty() => {
                 serde_json::from_str(&content).unwrap_or_default()
-            },
-            _ => Map::new()
+            }
+            _ => Map::new(),
         }
     } else {
         Map::new()
@@ -112,10 +117,10 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
         match v {
             Value::Null => {
                 existing_flags.remove(&k);
-            },
+            }
             Value::String(s) if s.is_empty() => {
                 existing_flags.remove(&k);
-            },
+            }
             Value::String(s) => {
                 let value = if s.eq_ignore_ascii_case("true") {
                     Value::Bool(true)
@@ -126,13 +131,13 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
                 } else if let Ok(num) = s.parse::<f64>() {
                     match serde_json::Number::from_f64(num) {
                         Some(n) => Value::Number(n),
-                        None => Value::String(s)
+                        None => Value::String(s),
                     }
                 } else {
                     Value::String(s)
                 };
                 existing_flags.insert(k, value);
-            },
+            }
             _ => {
                 existing_flags.insert(k, v);
             }
@@ -146,8 +151,7 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
             .map_err(|e| format!("Failed to serialize flags: {}", e))?
     };
 
-    fs::write(&flags_path, content)
-        .map_err(|e| format!("Failed to write flags file: {}", e))?;
+    fs::write(&flags_path, content).map_err(|e| format!("Failed to write flags file: {}", e))?;
 
     Ok(())
 }
@@ -156,19 +160,23 @@ async fn save_fast_flags_internal(flags: Map<String, Value>) -> Result<(), Strin
 pub async fn cleanup_fast_flags(_app_handle: tauri::AppHandle) -> FastFlagsResponse {
     let flags_path = match get_fast_flags_path() {
         Ok(path) => path,
-        Err(e) => return FastFlagsResponse {
-            success: false,
-            flags: None,
-            error: Some(e),
+        Err(e) => {
+            return FastFlagsResponse {
+                success: false,
+                flags: None,
+                error: Some(e),
+            }
         }
     };
 
     match ensure_client_settings_dir() {
         Ok(_) => (),
-        Err(e) => return FastFlagsResponse {
-            success: false,
-            flags: None,
-            error: Some(e),
+        Err(e) => {
+            return FastFlagsResponse {
+                success: false,
+                flags: None,
+                error: Some(e),
+            }
         }
     }
 
@@ -182,7 +190,7 @@ pub async fn cleanup_fast_flags(_app_handle: tauri::AppHandle) -> FastFlagsRespo
             success: false,
             flags: None,
             error: Some(format!("Failed to write flags file: {}", e)),
-        }
+        },
     }
 }
 
@@ -206,4 +214,4 @@ pub async fn get_fast_flag_categories(_app_handle: tauri::AppHandle) -> Result<V
     }
 
     response.json().await.map_err(|e| e.to_string())
-} 
+}
