@@ -235,7 +235,7 @@ export const ExecutionHistory = ({
 				<div className="border-b border-ctp-surface2 p-4">
 					<motion.div
 						className="flex items-center gap-2"
-						layout
+						layout={!isDragging}
 						transition={{
 							type: "spring",
 							stiffness: 400,
@@ -245,7 +245,7 @@ export const ExecutionHistory = ({
 					>
 						<motion.div
 							className="relative flex-1"
-							layout
+							layout={!isDragging}
 							transition={{
 								type: "spring",
 								stiffness: 400,
@@ -268,7 +268,7 @@ export const ExecutionHistory = ({
 							/>
 						</motion.div>
 						<motion.div
-							layout
+							layout={!isDragging}
 							transition={{
 								type: "spring",
 								stiffness: 400,
