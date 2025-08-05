@@ -113,11 +113,11 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
 				top: position.y,
 				zIndex: 1000,
 			}}
-			className="max-h-[400px] w-64 overflow-hidden rounded-lg border border-ctp-surface1/50 bg-ctp-surface0/95 shadow-2xl"
+			className="max-h-[400px] w-64 overflow-hidden rounded-lg border border-white/5 bg-ctp-mantle shadow-2xl"
 		>
 			<div
 				ref={listRef}
-				className="max-h-[400px] divide-y divide-ctp-surface1/20 overflow-y-auto"
+				className="max-h-[400px] divide-y divide-white/5 overflow-y-auto"
 			>
 				{suggestions
 					.slice(0, settings.intellisense.maxSuggestions)
@@ -130,8 +130,8 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
 								key={suggestion.label}
 								className={`flex cursor-pointer flex-col text-[11px] ${
 									isSelected
-										? "bg-ctp-surface1 text-ctp-text"
-										: "text-ctp-subtext0 hover:bg-ctp-surface1/50 hover:text-ctp-text"
+										? "bg-white/5 text-ctp-text"
+										: "text-ctp-text hover:bg-white/5 hover:text-ctp-text"
 								} `}
 								onClick={() => onSelect(suggestion.label)}
 							>
@@ -141,7 +141,7 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
 										{suggestion.label}
 									</span>
 									{suggestion.type && (
-										<span className="flex-shrink-0 rounded-full bg-ctp-surface2/50 px-1.5 py-0.5 text-[10px] text-ctp-subtext1">
+										<span className="flex-shrink-0 rounded-full bg-white/5 px-1.5 py-0.5 text-[10px] text-ctp-text">
 											{suggestion.type}
 										</span>
 									)}
@@ -149,14 +149,14 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
 								{isSelected &&
 									!settings.intellisense.compactMode &&
 									(suggestion.detail || suggestion.documentation) && (
-										<div className="space-y-1 bg-ctp-surface1/30 px-2 pb-1.5">
+										<div className="space-y-1 px-2 pb-1.5">
 											{suggestion.detail && (
-												<div className="pl-6 font-mono text-[10px] text-ctp-subtext1 opacity-90">
+												<div className="pl-6 font-mono text-[10px] text-ctp-text opacity-90">
 													{suggestion.detail}
 												</div>
 											)}
 											{suggestion.documentation && (
-												<div className="pl-6 text-[10px] leading-normal text-ctp-subtext1 opacity-90">
+												<div className="pl-6 text-[10px] leading-normal text-ctp-text opacity-90">
 													{suggestion.documentation}
 												</div>
 											)}
