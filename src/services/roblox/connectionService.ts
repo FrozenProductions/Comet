@@ -7,12 +7,12 @@ import type { ConnectionStatus } from "../../types/system/connection";
  * @throws Error if the status check fails
  */
 export const getConnectionStatus = async (): Promise<ConnectionStatus> => {
-	try {
-		return await invoke<ConnectionStatus>("get_connection_status");
-	} catch (error) {
-		console.error("Failed to get connection status:", error);
-		throw error;
-	}
+    try {
+        return await invoke<ConnectionStatus>("get_connection_status");
+    } catch (error) {
+        console.error("Failed to get connection status:", error);
+        throw error;
+    }
 };
 
 /**
@@ -21,12 +21,12 @@ export const getConnectionStatus = async (): Promise<ConnectionStatus> => {
  * @throws Error if the refresh operation fails
  */
 export const refreshConnection = async (): Promise<ConnectionStatus> => {
-	try {
-		return await invoke<ConnectionStatus>("refresh_connection");
-	} catch (error) {
-		console.error("Failed to refresh connection:", error);
-		throw error;
-	}
+    try {
+        return await invoke<ConnectionStatus>("refresh_connection");
+    } catch (error) {
+        console.error("Failed to refresh connection:", error);
+        throw error;
+    }
 };
 
 /**
@@ -35,10 +35,10 @@ export const refreshConnection = async (): Promise<ConnectionStatus> => {
  * @throws Error if the port increment operation fails
  */
 export const incrementPort = async (): Promise<ConnectionStatus> => {
-	try {
-		return await invoke<ConnectionStatus>("increment_port");
-	} catch (error) {
-		console.error("Failed to increment port:", error);
-		throw error;
-	}
+    try {
+        return await invoke<ConnectionStatus>("increment_port");
+    } catch (error) {
+        console.error("Failed to increment port:", error);
+        throw error;
+    }
 };

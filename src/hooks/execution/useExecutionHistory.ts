@@ -8,11 +8,11 @@ import type { ExecutionHistoryContextType } from "../../types/execution/executio
  * Returns execution history context containing state and methods for managing execution history
  */
 export const useExecutionHistory = (): ExecutionHistoryContextType => {
-	const context = useContext(ExecutionHistoryContext);
-	if (!context) {
-		throw new Error(
-			"useExecutionHistory must be used within an ExecutionHistoryProvider",
-		);
-	}
-	return context;
+    const context = useContext(ExecutionHistoryContext);
+    if (!context) {
+        throw new Error(
+            "useExecutionHistory must be used within an ExecutionHistoryProvider",
+        );
+    }
+    return context;
 };

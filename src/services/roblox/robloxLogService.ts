@@ -11,7 +11,7 @@ let isWatching = false;
  * @param log The log line to send to listeners
  */
 const notifyListeners = (log: LogLine): void => {
-	listeners.forEach((listener) => listener(log));
+    listeners.forEach((listener) => listener(log));
 };
 
 /**
@@ -20,33 +20,33 @@ const notifyListeners = (log: LogLine): void => {
  * @returns Structured LogLine object with timestamp, level, message and raw content
  */
 const parseLogLine = (rawLine: string): LogLine => {
-	const timestamp = new Date().toISOString();
-	let level: LogLevel = "INFO";
-	let message = rawLine.trim();
+    const timestamp = new Date().toISOString();
+    let level: LogLevel = "INFO";
+    let message = rawLine.trim();
 
-	const bracketMatch = message.match(/\[(ERROR|WARN|DEBUG|INFO)\]/i);
-	if (bracketMatch) {
-		level = bracketMatch[1].toUpperCase() as LogLevel;
-		message = message.replace(bracketMatch[0], "").trim();
-	} else {
-		const lowerMessage = message.toLowerCase();
-		if (lowerMessage.includes("error")) {
-			level = "ERROR";
-		} else if (lowerMessage.includes("warn")) {
-			level = "WARN";
-		} else if (lowerMessage.includes("debug")) {
-			level = "DEBUG";
-		} else if (lowerMessage.includes("info")) {
-			level = "INFO";
-		}
-	}
+    const bracketMatch = message.match(/\[(ERROR|WARN|DEBUG|INFO)\]/i);
+    if (bracketMatch) {
+        level = bracketMatch[1].toUpperCase() as LogLevel;
+        message = message.replace(bracketMatch[0], "").trim();
+    } else {
+        const lowerMessage = message.toLowerCase();
+        if (lowerMessage.includes("error")) {
+            level = "ERROR";
+        } else if (lowerMessage.includes("warn")) {
+            level = "WARN";
+        } else if (lowerMessage.includes("debug")) {
+            level = "DEBUG";
+        } else if (lowerMessage.includes("info")) {
+            level = "INFO";
+        }
+    }
 
-	return {
-		timestamp,
-		level,
-		message,
-		raw: rawLine,
-	};
+    return {
+        timestamp,
+        level,
+        message,
+        raw: rawLine,
+    };
 };
 
 /**
@@ -55,30 +55,30 @@ const parseLogLine = (rawLine: string): LogLine => {
  * @throws Error if the watcher cannot be started
  */
 export const startWatching = async (): Promise<void> => {
-	if (isWatching) {
-		return;
-	}
+    if (isWatching) {
+        return;
+    }
 
-	try {
-		await invoke("start_log_watcher");
-		isWatching = true;
+    try {
+        await invoke("start_log_watcher");
+        isWatching = true;
 
-		unlistenCallback = await listen(
-			"log_update",
-			(event: { payload: string }) => {
-				const rawLine = event.payload;
-				const parsedLog = parseLogLine(rawLine);
-				notifyListeners(parsedLog);
-			},
-		);
-	} catch (error) {
-		isWatching = false;
-		throw new Error(
-			`Failed to start log watcher: ${
-				error instanceof Error ? error.message : String(error)
-			}`,
-		);
-	}
+        unlistenCallback = await listen(
+            "log_update",
+            (event: { payload: string }) => {
+                const rawLine = event.payload;
+                const parsedLog = parseLogLine(rawLine);
+                notifyListeners(parsedLog);
+            },
+        );
+    } catch (error) {
+        isWatching = false;
+        throw new Error(
+            `Failed to start log watcher: ${
+                error instanceof Error ? error.message : String(error)
+            }`,
+        );
+    }
 };
 
 /**
@@ -87,21 +87,21 @@ export const startWatching = async (): Promise<void> => {
  * @throws Error if the watcher cannot be stopped
  */
 export const stopWatching = async (): Promise<void> => {
-	if (!isWatching) {
-		return;
-	}
+    if (!isWatching) {
+        return;
+    }
 
-	try {
-		await invoke("stop_log_watcher");
-		await unlistenCallback?.();
-		isWatching = false;
-	} catch (error) {
-		throw new Error(
-			`Failed to stop log watcher: ${
-				error instanceof Error ? error.message : String(error)
-			}`,
-		);
-	}
+    try {
+        await invoke("stop_log_watcher");
+        await unlistenCallback?.();
+        isWatching = false;
+    } catch (error) {
+        throw new Error(
+            `Failed to stop log watcher: ${
+                error instanceof Error ? error.message : String(error)
+            }`,
+        );
+    }
 };
 
 /**
@@ -111,8 +111,8 @@ export const stopWatching = async (): Promise<void> => {
  * @returns Function to unsubscribe the callback
  */
 export const subscribe = (callback: (log: LogLine) => void): (() => void) => {
-	listeners.add(callback);
-	return () => {
-		listeners.delete(callback);
-	};
+    listeners.add(callback);
+    return () => {
+        listeners.delete(callback);
+    };
 };

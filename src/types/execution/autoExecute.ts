@@ -1,5 +1,5 @@
 export interface AutoExecuteFile {
-	name: string;
-	content: string;
-	path: string;
+    name: string;
+    content: string;
+    path: string;
 }

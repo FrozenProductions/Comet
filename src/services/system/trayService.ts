@@ -7,7 +7,7 @@ import type { TrayConfig } from "../../types/system/tray";
  * @throws Error if the configuration cannot be retrieved
  */
 export const getTrayConfig = async (): Promise<TrayConfig> => {
-	return invoke<TrayConfig>("get_tray_config");
+    return invoke<TrayConfig>("get_tray_config");
 };
 
 /**
@@ -16,8 +16,8 @@ export const getTrayConfig = async (): Promise<TrayConfig> => {
  * @throws Error if the configuration cannot be saved or the menu cannot be updated
  */
 export const saveTrayConfig = async (config: TrayConfig): Promise<void> => {
-	await invoke("save_tray_config", { config });
-	await invoke("update_tray_menu");
+    await invoke("save_tray_config", { config });
+    await invoke("update_tray_menu");
 };
 
 /**
@@ -25,7 +25,7 @@ export const saveTrayConfig = async (config: TrayConfig): Promise<void> => {
  * @throws Error if the menu cannot be updated
  */
 export const updateTrayMenu = async (): Promise<void> => {
-	await invoke("update_tray_menu");
+    await invoke("update_tray_menu");
 };
 
 /**
@@ -35,10 +35,10 @@ export const updateTrayMenu = async (): Promise<void> => {
  * @throws Error if the script cannot be added
  */
 export const addCustomTrayScript = async (
-	name: string,
-	content: string,
+    name: string,
+    content: string,
 ): Promise<void> => {
-	await invoke("add_custom_tray_script", { name, content });
+    await invoke("add_custom_tray_script", { name, content });
 };
 
 /**
@@ -47,5 +47,5 @@ export const addCustomTrayScript = async (
  * @throws Error if the script cannot be removed
  */
 export const removeCustomTrayScript = async (id: string): Promise<void> => {
-	await invoke("remove_custom_tray_script", { id });
+    await invoke("remove_custom_tray_script", { id });
 };

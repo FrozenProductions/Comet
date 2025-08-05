@@ -7,9 +7,9 @@ import { ConsoleContext } from "../../contexts/console/consoleContextType";
  * Returns console context containing state and methods for console manipulation
  */
 export const useConsole = () => {
-	const context = useContext(ConsoleContext);
-	if (!context) {
-		throw new Error("useConsole must be used within a ConsoleProvider");
-	}
-	return context;
+    const context = useContext(ConsoleContext);
+    if (!context) {
+        throw new Error("useConsole must be used within a ConsoleProvider");
+    }
+    return context;
 };

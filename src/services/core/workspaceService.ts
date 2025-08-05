@@ -7,18 +7,18 @@ import type { Workspace } from "../../types/core/workspace";
  * @throws Error if workspaces cannot be loaded
  */
 export const loadWorkspaces = async (): Promise<{
-	workspaces: Workspace[];
-	active_workspace: string | null;
+    workspaces: Workspace[];
+    active_workspace: string | null;
 }> => {
-	try {
-		return await invoke<{
-			workspaces: Workspace[];
-			active_workspace: string | null;
-		}>("load_workspaces");
-	} catch (error) {
-		console.error("Failed to load workspaces:", error);
-		throw error;
-	}
+    try {
+        return await invoke<{
+            workspaces: Workspace[];
+            active_workspace: string | null;
+        }>("load_workspaces");
+    } catch (error) {
+        console.error("Failed to load workspaces:", error);
+        throw error;
+    }
 };
 
 /**
@@ -28,12 +28,12 @@ export const loadWorkspaces = async (): Promise<{
  * @throws Error if workspace creation fails
  */
 export const createWorkspace = async (name: string): Promise<Workspace> => {
-	try {
-		return await invoke<Workspace>("create_workspace", { name });
-	} catch (error) {
-		console.error("Failed to create workspace:", error);
-		throw error;
-	}
+    try {
+        return await invoke<Workspace>("create_workspace", { name });
+    } catch (error) {
+        console.error("Failed to create workspace:", error);
+        throw error;
+    }
 };
 
 /**
@@ -42,12 +42,12 @@ export const createWorkspace = async (name: string): Promise<Workspace> => {
  * @throws Error if workspace deletion fails
  */
 export const deleteWorkspace = async (workspaceId: string): Promise<void> => {
-	try {
-		await invoke("delete_workspace", { workspaceId });
-	} catch (error) {
-		console.error("Failed to delete workspace:", error);
-		throw error;
-	}
+    try {
+        await invoke("delete_workspace", { workspaceId });
+    } catch (error) {
+        console.error("Failed to delete workspace:", error);
+        throw error;
+    }
 };
 
 /**
@@ -56,14 +56,14 @@ export const deleteWorkspace = async (workspaceId: string): Promise<void> => {
  * @throws Error if setting active workspace fails
  */
 export const setActiveWorkspace = async (
-	workspaceId: string,
+    workspaceId: string,
 ): Promise<void> => {
-	try {
-		await invoke("set_active_workspace", { workspaceId });
-	} catch (error) {
-		console.error("Failed to set active workspace:", error);
-		throw error;
-	}
+    try {
+        await invoke("set_active_workspace", { workspaceId });
+    } catch (error) {
+        console.error("Failed to set active workspace:", error);
+        throw error;
+    }
 };
 
 /**
@@ -73,13 +73,13 @@ export const setActiveWorkspace = async (
  * @throws Error if workspace renaming fails
  */
 export const renameWorkspace = async (
-	workspaceId: string,
-	newName: string,
+    workspaceId: string,
+    newName: string,
 ): Promise<void> => {
-	try {
-		await invoke("rename_workspace", { workspaceId, newName });
-	} catch (error) {
-		console.error("Failed to rename workspace:", error);
-		throw error;
-	}
+    try {
+        await invoke("rename_workspace", { workspaceId, newName });
+    } catch (error) {
+        console.error("Failed to rename workspace:", error);
+        throw error;
+    }
 };

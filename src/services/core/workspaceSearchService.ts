@@ -8,13 +8,13 @@ import type { SearchResult } from "../../types/ui/workspaceSearch";
  * @returns A promise that resolves to an array of search results
  */
 async function searchTabs(
-	workspaceId: string,
-	query: string,
+    workspaceId: string,
+    query: string,
 ): Promise<SearchResult[]> {
-	return invoke<SearchResult[]>("search_tabs", {
-		workspaceId,
-		query,
-	});
+    return invoke<SearchResult[]>("search_tabs", {
+        workspaceId,
+        query,
+    });
 }
 
 /**
@@ -24,13 +24,13 @@ async function searchTabs(
  * @returns A promise that resolves to an object containing the tab content
  */
 async function getTabContent(
-	workspaceId: string,
-	tabId: string,
+    workspaceId: string,
+    tabId: string,
 ): Promise<{ content: string }> {
-	return invoke<{ content: string }>("get_tab_content", {
-		workspaceId,
-		tabId,
-	}).catch(() => ({ content: "" }));
+    return invoke<{ content: string }>("get_tab_content", {
+        workspaceId,
+        tabId,
+    }).catch(() => ({ content: "" }));
 }
 
 /**
@@ -40,34 +40,34 @@ async function getTabContent(
  * @returns A promise that resolves to an array of search results with context
  */
 export async function getResultsWithContext(
-	workspaceId: string,
-	query: string,
+    workspaceId: string,
+    query: string,
 ): Promise<SearchResult[]> {
-	const searchResults = await searchTabs(workspaceId, query);
+    const searchResults = await searchTabs(workspaceId, query);
 
-	return Promise.all(
-		searchResults.map(async (result) => {
-			const tab = await getTabContent(workspaceId, result.tab_id);
+    return Promise.all(
+        searchResults.map(async (result) => {
+            const tab = await getTabContent(workspaceId, result.tab_id);
 
-			if (!tab.content) return result;
+            if (!tab.content) return result;
 
-			const lines = tab.content.split("\n");
-			const contextBefore = lines.slice(
-				Math.max(0, result.line_number - 3),
-				result.line_number - 1,
-			);
-			const contextAfter = lines.slice(
-				result.line_number,
-				result.line_number + 2,
-			);
+            const lines = tab.content.split("\n");
+            const contextBefore = lines.slice(
+                Math.max(0, result.line_number - 3),
+                result.line_number - 1,
+            );
+            const contextAfter = lines.slice(
+                result.line_number,
+                result.line_number + 2,
+            );
 
-			return {
-				...result,
-				context: {
-					before: contextBefore,
-					after: contextAfter,
-				},
-			};
-		}),
-	);
+            return {
+                ...result,
+                context: {
+                    before: contextBefore,
+                    after: contextAfter,
+                },
+            };
+        }),
+    );
 }

@@ -7,9 +7,9 @@ import { FastFlagsContext } from "../../contexts/fastFlags/fastFlagsContextType"
  * Returns fast flags context containing state and methods for flags management
  */
 export const useFastFlags = () => {
-	const context = useContext(FastFlagsContext);
-	if (!context) {
-		throw new Error("useFastFlags must be used within a FastFlagsProvider");
-	}
-	return context;
+    const context = useContext(FastFlagsContext);
+    if (!context) {
+        throw new Error("useFastFlags must be used within a FastFlagsProvider");
+    }
+    return context;
 };

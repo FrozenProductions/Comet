@@ -7,9 +7,9 @@ import { ExecuteContext } from "../../contexts/execute/executeContextType";
  * Returns execute context containing state and methods for script execution
  */
 export const useExecute = () => {
-	const context = useContext(ExecuteContext);
-	if (!context) {
-		throw new Error("useExecute must be used within an ExecuteProvider");
-	}
-	return context;
+    const context = useContext(ExecuteContext);
+    if (!context) {
+        throw new Error("useExecute must be used within an ExecuteProvider");
+    }
+    return context;
 };

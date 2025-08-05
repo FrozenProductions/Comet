@@ -1,45 +1,45 @@
 import { SupabaseService } from "./supabaseService.js";
 
 export class MessagesService {
-	private supabase: SupabaseService;
+    private supabase: SupabaseService;
 
-	constructor() {
-		const url = process.env.SUPABASE_URL;
-		const key = process.env.SUPABASE_KEY;
+    constructor() {
+        const url = process.env.SUPABASE_URL;
+        const key = process.env.SUPABASE_KEY;
 
-		if (!url || !key) {
-			throw new Error(
-				"SUPABASE_URL and SUPABASE_KEY must be set in environment variables",
-			);
-		}
+        if (!url || !key) {
+            throw new Error(
+                "SUPABASE_URL and SUPABASE_KEY must be set in environment variables",
+            );
+        }
 
-		this.supabase = new SupabaseService(url, key);
-	}
+        this.supabase = new SupabaseService(url, key);
+    }
 
-	public async getMessages(): Promise<any> {
-		try {
-			const bucketName = "messages";
-			const filePath = "config/versionMessages.json";
+    public async getMessages(): Promise<any> {
+        try {
+            const bucketName = "messages";
+            const filePath = "config/versionMessages.json";
 
-			const { data, error } = await this.supabase.downloadFile(
-				bucketName,
-				filePath,
-			);
+            const { data, error } = await this.supabase.downloadFile(
+                bucketName,
+                filePath,
+            );
 
-			if (error) {
-				throw error;
-			}
+            if (error) {
+                throw error;
+            }
 
-			if (!data) {
-				throw new Error("No data found in Supabase storage");
-			}
+            if (!data) {
+                throw new Error("No data found in Supabase storage");
+            }
 
-			const text = await data.text();
-			const parsed = JSON.parse(text);
+            const text = await data.text();
+            const parsed = JSON.parse(text);
 
-			return parsed;
-		} catch (error) {
-			throw error;
-		}
-	}
+            return parsed;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

@@ -1,88 +1,88 @@
 import {
-	Code2,
-	Keyboard,
-	MenuSquare,
-	Settings2,
-	SettingsIcon,
+    Code2,
+    Keyboard,
+    MenuSquare,
+    Settings2,
+    SettingsIcon,
 } from "lucide-react";
 import type { SettingsSection } from "../../types/core/settings";
 
 export const SETTINGS_STORAGE_KEY = "comet-settings";
 
 export const SETTINGS_SECTIONS: SettingsSection[] = [
-	{
-		id: "editor",
-		title: "Editor",
-		description: "Configure editor preferences",
-		icon: Code2,
-	},
-	{
-		id: "interface",
-		title: "Interface",
-		description: "Customize appearance",
-		icon: SettingsIcon,
-	},
-	{
-		id: "keybinds",
-		title: "Keyboard Shortcuts",
-		description: "Customize hotkeys",
-		icon: Keyboard,
-	},
-	{
-		id: "tray",
-		title: "Tray menu",
-		description: "Configure tray menu",
-		icon: MenuSquare,
-	},
-	{
-		id: "application",
-		title: "Application",
-		description: "Comet settings and info",
-		icon: Settings2,
-	},
+    {
+        id: "editor",
+        title: "Editor",
+        description: "Configure editor preferences",
+        icon: Code2,
+    },
+    {
+        id: "interface",
+        title: "Interface",
+        description: "Customize appearance",
+        icon: SettingsIcon,
+    },
+    {
+        id: "keybinds",
+        title: "Keyboard Shortcuts",
+        description: "Customize hotkeys",
+        icon: Keyboard,
+    },
+    {
+        id: "tray",
+        title: "Tray menu",
+        description: "Configure tray menu",
+        icon: MenuSquare,
+    },
+    {
+        id: "application",
+        title: "Application",
+        description: "Comet settings and info",
+        icon: Settings2,
+    },
 ] as const;
 
 export const DEFAULT_EDITOR_SETTINGS = {
-	display: {
-		showLineNumbers: true,
-		wordWrap: false,
-		maxTokenizationLineLength: 20000,
-		showMarkers: true,
-	},
-	text: {
-		fontSize: 14,
-		tabSize: 4,
-		lineHeight: 1.5,
-	},
-	cursor: {
-		style: "line" as const,
-		blinking: "blink" as const,
-		smoothCaret: true,
-	},
-	intellisense: {
-		enabled: true,
-		maxSuggestions: 5,
-		acceptSuggestionKey: "Tab" as const,
-		compactMode: false,
-	},
-	interface: {
-		zenMode: false,
-		showTabBar: false,
-		showConsole: false,
-		modalScale: "default" as const,
-		middleClickTabClose: true,
-		recentSearches: {
-			enabled: true,
-			maxItems: 5,
-		},
-		executionHistory: {
-			maxItems: 100,
-		},
-		toastPosition: "bottom-center" as const,
-		disableToasts: false,
-	},
-	app: {
-		nightlyReleases: false,
-		startAtLogin: false,
-	},
+    display: {
+        showLineNumbers: true,
+        wordWrap: false,
+        maxTokenizationLineLength: 20000,
+        showMarkers: true,
+    },
+    text: {
+        fontSize: 14,
+        tabSize: 4,
+        lineHeight: 1.5,
+    },
+    cursor: {
+        style: "line" as const,
+        blinking: "blink" as const,
+        smoothCaret: true,
+    },
+    intellisense: {
+        enabled: true,
+        maxSuggestions: 5,
+        acceptSuggestionKey: "Tab" as const,
+        compactMode: false,
+    },
+    interface: {
+        zenMode: false,
+        showTabBar: false,
+        showConsole: false,
+        modalScale: "default" as const,
+        middleClickTabClose: true,
+        recentSearches: {
+            enabled: true,
+            maxItems: 5,
+        },
+        executionHistory: {
+            maxItems: 100,
+        },
+        toastPosition: "bottom-center" as const,
+        disableToasts: false,
+    },
+    app: {
+        nightlyReleases: false,
+        startAtLogin: false,
+    },
 } as const;

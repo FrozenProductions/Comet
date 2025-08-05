@@ -8,31 +8,31 @@ import { EDITOR_STATES_MAP } from "../../constants/core/editorState";
  * @param editor The Monaco editor instance
  */
 export const saveEditorState = (
-	workspaceId: string,
-	tabId: string,
-	editor: editor.IStandaloneCodeEditor,
+    workspaceId: string,
+    tabId: string,
+    editor: editor.IStandaloneCodeEditor,
 ) => {
-	const model = editor.getModel();
-	if (!model) return;
+    const model = editor.getModel();
+    if (!model) return;
 
-	const viewState = editor.saveViewState();
-	const commandManager = (model as any)._commandManager;
-	const position = editor.getPosition();
+    const viewState = editor.saveViewState();
+    const commandManager = (model as any)._commandManager;
+    const position = editor.getPosition();
 
-	EDITOR_STATES_MAP.set(`${workspaceId}:${tabId}`, {
-		viewState,
-		model: {
-			value: model.getValue(),
-			undoStack: commandManager?.past || [],
-			redoStack: commandManager?.future || [],
-		},
-		position: position
-			? {
-					lineNumber: position.lineNumber,
-					column: position.column,
-				}
-			: null,
-	});
+    EDITOR_STATES_MAP.set(`${workspaceId}:${tabId}`, {
+        viewState,
+        model: {
+            value: model.getValue(),
+            undoStack: commandManager?.past || [],
+            redoStack: commandManager?.future || [],
+        },
+        position: position
+            ? {
+                  lineNumber: position.lineNumber,
+                  column: position.column,
+              }
+            : null,
+    });
 };
 
 /**
@@ -42,30 +42,30 @@ export const saveEditorState = (
  * @param editor The Monaco editor instance
  */
 export const restoreEditorState = (
-	workspaceId: string,
-	tabId: string,
-	editor: editor.IStandaloneCodeEditor,
+    workspaceId: string,
+    tabId: string,
+    editor: editor.IStandaloneCodeEditor,
 ) => {
-	const state = EDITOR_STATES_MAP.get(`${workspaceId}:${tabId}`);
-	if (!state) return;
+    const state = EDITOR_STATES_MAP.get(`${workspaceId}:${tabId}`);
+    if (!state) return;
 
-	const model = editor.getModel();
-	if (!model) return;
+    const model = editor.getModel();
+    if (!model) return;
 
-	if (state.viewState) {
-		editor.restoreViewState(state.viewState);
-	}
+    if (state.viewState) {
+        editor.restoreViewState(state.viewState);
+    }
 
-	const commandManager = (model as any)._commandManager;
-	if (commandManager) {
-		commandManager.past = state.model.undoStack;
-		commandManager.future = state.model.redoStack;
-	}
+    const commandManager = (model as any)._commandManager;
+    if (commandManager) {
+        commandManager.past = state.model.undoStack;
+        commandManager.future = state.model.redoStack;
+    }
 
-	if (state.position) {
-		editor.setPosition(state.position);
-		editor.revealPositionInCenter(state.position);
-	}
+    if (state.position) {
+        editor.setPosition(state.position);
+        editor.revealPositionInCenter(state.position);
+    }
 };
 
 /**
@@ -74,7 +74,7 @@ export const restoreEditorState = (
  * @param tabId The ID of the tab
  */
 export const clearEditorState = (workspaceId: string, tabId: string) => {
-	EDITOR_STATES_MAP.delete(`${workspaceId}:${tabId}`);
+    EDITOR_STATES_MAP.delete(`${workspaceId}:${tabId}`);
 };
 
 /**
@@ -83,5 +83,5 @@ export const clearEditorState = (workspaceId: string, tabId: string) => {
  * @param tabId The ID of the tab
  */
 export const getEditorState = (workspaceId: string, tabId: string) => {
-	return EDITOR_STATES_MAP.get(`${workspaceId}:${tabId}`);
+    return EDITOR_STATES_MAP.get(`${workspaceId}:${tabId}`);
 };

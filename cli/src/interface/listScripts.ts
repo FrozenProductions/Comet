@@ -7,12 +7,12 @@ import { loadScripts } from "../services/scriptService.js";
  * @param returnToMenu Function to return to main menu
  */
 export async function listScripts(
-	promptContinue: () => Promise<void>,
-	returnToMenu: () => Promise<void>,
+    promptContinue: () => Promise<void>,
+    returnToMenu: () => Promise<void>,
 ): Promise<void> {
-	console.clear();
-	console.log(
-		chalk.blue.bold(`
+    console.clear();
+    console.log(
+        chalk.blue.bold(`
 ░▒▓█▓▒░       ░▒▓█▓▒░ ░▒▓███████▓▒░░▒▓████████▓▒░ 
 ░▒▓█▓▒░       ░▒▓█▓▒░░▒▓█▓▒░          ░▒▓█▓▒░     
 ░▒▓█▓▒░       ░▒▓█▓▒░░▒▓█▓▒░          ░▒▓█▓▒░     
@@ -21,25 +21,25 @@ export async function listScripts(
 ░▒▓█▓▒░       ░▒▓█▓▒░       ░▒▓█▓▒░   ░▒▓█▓▒░     
 ░▒▓████████▓▒░░▒▓█▓▒░░▒▓███████▓▒░    ░▒▓█▓▒░    
 `),
-	);
+    );
 
-	const scripts = await loadScripts();
+    const scripts = await loadScripts();
 
-	if (scripts.length === 0) {
-		console.log(chalk.yellow("\nNo scripts found."));
-	} else {
-		scripts.forEach((script, index) => {
-			console.log(chalk.green.bold(`\n${index + 1}. ${script.name}`));
+    if (scripts.length === 0) {
+        console.log(chalk.yellow("\nNo scripts found."));
+    } else {
+        scripts.forEach((script, index) => {
+            console.log(chalk.green.bold(`\n${index + 1}. ${script.name}`));
 
-			const firstLine = script.content.split("\n")[0];
-			console.log(
-				chalk.dim(
-					`   ${firstLine}${script.content.split("\n").length > 1 ? "..." : ""}`,
-				),
-			);
-		});
-	}
+            const firstLine = script.content.split("\n")[0];
+            console.log(
+                chalk.dim(
+                    `   ${firstLine}${script.content.split("\n").length > 1 ? "..." : ""}`,
+                ),
+            );
+        });
+    }
 
-	await promptContinue();
-	await returnToMenu();
+    await promptContinue();
+    await returnToMenu();
 }

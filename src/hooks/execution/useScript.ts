@@ -6,6 +6,6 @@ import { useEditor } from "../core/useEditor";
  * Returns executeScript method for running scripts
  */
 export const useScript = () => {
-	const { executeScript } = useEditor();
-	return { executeScript };
+    const { executeScript } = useEditor();
+    return { executeScript };
 };

@@ -32,128 +32,133 @@ import { checkHydrogenInstallation } from "./services/features/hydrogenService";
 import type { StatusInfo } from "./types/system/status";
 
 const AppContent: FC = () => {
-	const { settings } = useSettings();
-	const {
-		isCommandPaletteOpen,
-		toggleCommandPalette,
-		activeScreen,
-		handleScreenChange,
-	} = useKeybinds();
-	const { isFloating, setIsFloating } = useConsole();
+    const { settings } = useSettings();
+    const {
+        isCommandPaletteOpen,
+        toggleCommandPalette,
+        activeScreen,
+        handleScreenChange,
+    } = useKeybinds();
+    const { isFloating, setIsFloating } = useConsole();
 
-	const toggleFloating = () => {
-		setIsFloating(!isFloating);
-	};
+    const toggleFloating = () => {
+        setIsFloating(!isFloating);
+    };
 
-	const renderScreen = () => {
-		switch (activeScreen) {
-			case "Editor":
-				return <Workspace />;
-			case "Settings":
-				return <Settings />;
-			case "Library":
-				return <Library />;
-			case "AutoExecution":
-				return <AutoExecute />;
-			case "FastFlags":
-				return <FastFlags />;
-			default:
-				return null;
-		}
-	};
+    const renderScreen = () => {
+        switch (activeScreen) {
+            case "Editor":
+                return <Workspace />;
+            case "Settings":
+                return <Settings />;
+            case "Library":
+                return <Library />;
+            case "AutoExecution":
+                return <AutoExecute />;
+            case "FastFlags":
+                return <FastFlags />;
+            default:
+                return null;
+        }
+    };
 
-	// maybe make a better handler for that?
-	if (!settings) {
-		return null;
-	}
+    // maybe make a better handler for that?
+    if (!settings) {
+        return null;
+    }
 
-	return (
-		<div className="flex h-screen flex-col bg-ctp-base text-ctp-text">
-			<Topbar />
-			<div className="flex flex-1 overflow-hidden">
-				{!settings.interface.zenMode && (
-					<Sidebar
-						activeScreen={activeScreen}
-						onScreenChange={handleScreenChange}
-					/>
-				)}
-				<main className="relative flex-1">{renderScreen()}</main>
-			</div>
-			<StatusBar />
-			<CommandPalette
-				isOpen={isCommandPaletteOpen}
-				onClose={toggleCommandPalette}
-				onFloatToggle={toggleFloating}
-			/>
-		</div>
-	);
+    return (
+        <div className="flex h-screen flex-col bg-ctp-base text-ctp-text">
+            <Topbar />
+            <div className="flex flex-1 overflow-hidden">
+                {!settings.interface.zenMode && (
+                    <Sidebar
+                        activeScreen={activeScreen}
+                        onScreenChange={handleScreenChange}
+                    />
+                )}
+                <main className="relative flex-1">{renderScreen()}</main>
+            </div>
+            <StatusBar />
+            <CommandPalette
+                isOpen={isCommandPaletteOpen}
+                onClose={toggleCommandPalette}
+                onFloatToggle={toggleFloating}
+            />
+        </div>
+    );
 };
 
 const App: FC = () => {
-	const [isHydrogenInstalled, setIsHydrogenInstalled] = useState<
-		boolean | null
-	>(null);
-	const [status, setStatus] = useState<StatusInfo>({
-		online: true,
-		message: "",
-	});
+    const [isHydrogenInstalled, setIsHydrogenInstalled] = useState<
+        boolean | null
+    >(null);
+    const [status, setStatus] = useState<StatusInfo>({
+        online: true,
+        message: "",
+    });
 
-	useEffect(() => {
-		const checkHydrogen = async () => {
-			try {
-				const isInstalled = await checkHydrogenInstallation();
-				setIsHydrogenInstalled(isInstalled);
-			} catch (error) {
-				console.error("Failed to check Hydrogen installation:", error);
-				setIsHydrogenInstalled(false);
-			}
-		};
+    useEffect(() => {
+        const checkHydrogen = async () => {
+            try {
+                const isInstalled = await checkHydrogenInstallation();
+                setIsHydrogenInstalled(isInstalled);
+            } catch (error) {
+                console.error("Failed to check Hydrogen installation:", error);
+                setIsHydrogenInstalled(false);
+            }
+        };
 
-		checkHydrogen();
+        checkHydrogen();
 
-		const unsubscribe = listen<StatusInfo>("comet-status-update", (event) => {
-			setStatus(event.payload);
-		});
+        const unsubscribe = listen<StatusInfo>(
+            "comet-status-update",
+            (event) => {
+                setStatus(event.payload);
+            },
+        );
 
-		return () => {
-			unsubscribe.then((fn) => fn());
-		};
-	}, []);
+        return () => {
+            unsubscribe.then((fn) => fn());
+        };
+    }, []);
 
-	if (isHydrogenInstalled === false) {
-		return <HydrogenNotFound />;
-	}
+    if (isHydrogenInstalled === false) {
+        return <HydrogenNotFound />;
+    }
 
-	if (!status.online) {
-		return <CometOffline message={status.message} />;
-	}
+    if (!status.online) {
+        return <CometOffline message={status.message} />;
+    }
 
-	return (
-		<ExecuteProvider>
-			<SettingsProvider>
-				<WorkspaceProvider>
-					<ExecutionHistoryProvider>
-						<EditorProvider>
-							<ConsoleProvider>
-								<FastFlagsProvider>
-									<SidebarProvider>
-										<KeybindsProvider>
-											<AppContent />
-											<MessageModal
-												currentVersion={APP_CONSTANTS.currentVersion}
-											/>
-											<UpdateChecker />
-											<Toaster />
-										</KeybindsProvider>
-									</SidebarProvider>
-								</FastFlagsProvider>
-							</ConsoleProvider>
-						</EditorProvider>
-					</ExecutionHistoryProvider>
-				</WorkspaceProvider>
-			</SettingsProvider>
-		</ExecuteProvider>
-	);
+    return (
+        <ExecuteProvider>
+            <SettingsProvider>
+                <WorkspaceProvider>
+                    <ExecutionHistoryProvider>
+                        <EditorProvider>
+                            <ConsoleProvider>
+                                <FastFlagsProvider>
+                                    <SidebarProvider>
+                                        <KeybindsProvider>
+                                            <AppContent />
+                                            <MessageModal
+                                                currentVersion={
+                                                    APP_CONSTANTS.currentVersion
+                                                }
+                                            />
+                                            <UpdateChecker />
+                                            <Toaster />
+                                        </KeybindsProvider>
+                                    </SidebarProvider>
+                                </FastFlagsProvider>
+                            </ConsoleProvider>
+                        </EditorProvider>
+                    </ExecutionHistoryProvider>
+                </WorkspaceProvider>
+            </SettingsProvider>
+        </ExecuteProvider>
+    );
 };
 
 export default App;

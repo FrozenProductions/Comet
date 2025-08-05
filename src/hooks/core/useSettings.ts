@@ -7,9 +7,9 @@ import { SettingsContext } from "../../contexts/settings/settingsContextType";
  * Returns settings context containing state and methods for settings management
  */
 export const useSettings = () => {
-	const context = useContext(SettingsContext);
-	if (context === undefined) {
-		throw new Error("useSettings must be used within a SettingsProvider");
-	}
-	return context;
+    const context = useContext(SettingsContext);
+    if (context === undefined) {
+        throw new Error("useSettings must be used within a SettingsProvider");
+    }
+    return context;
 };

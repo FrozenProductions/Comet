@@ -7,5 +7,5 @@ import { twMerge } from "tailwind-merge";
  * @returns A string containing all merged and deduplicated class names
  */
 export function mergeClasses(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
+    return twMerge(clsx(inputs));
 }

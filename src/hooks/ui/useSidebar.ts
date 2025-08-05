@@ -7,8 +7,8 @@ import { SidebarContext } from "../../contexts/sidebar/sidebarContextType";
  * Returns sidebar context containing state and methods for sidebar manipulation
  */
 export const useSidebar = () => {
-	const context = useContext(SidebarContext);
-	if (!context)
-		throw new Error("useSidebar must be used within SidebarProvider");
-	return context;
+    const context = useContext(SidebarContext);
+    if (!context)
+        throw new Error("useSidebar must be used within SidebarProvider");
+    return context;
 };

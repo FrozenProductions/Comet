@@ -1,8 +1,8 @@
 export type StatusInfo = {
-	online: boolean;
-	message: string;
+    online: boolean;
+    message: string;
 };
 
 export type CometOfflineProps = {
-	message: string;
+    message: string;
 };

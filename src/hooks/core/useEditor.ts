@@ -7,9 +7,9 @@ import { EditorContext } from "../../contexts/editor/editorContextType";
  * Returns editor context containing state and methods for editor management
  */
 export const useEditor = () => {
-	const context = useContext(EditorContext);
-	if (!context) {
-		throw new Error("useEditor must be used within an EditorProvider");
-	}
-	return context;
+    const context = useContext(EditorContext);
+    if (!context) {
+        throw new Error("useEditor must be used within an EditorProvider");
+    }
+    return context;
 };
