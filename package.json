@@ -11,6 +11,7 @@
         "build": "vite build",
         "build:comet": "npx tsx .comet/build/index.ts default",
         "build:hydrogen": "npx tsx .comet/build/index.ts hydrogen",
+        "build:ronix": "npx tsx .comet/build/index.ts ronix",
         "preview": "vite preview",
         "tauri": "tauri",
         "tauri:dev": "tauri dev",

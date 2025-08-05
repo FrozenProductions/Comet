@@ -13,6 +13,10 @@
         "hydrogen": {
             "productName": "Hydrogen",
             "iconPath": "../public/Hydrogen-icon.icns"
+        },
+        "ronix": {
+            "productName": "Ronix",
+            "iconPath": "../public/Ronix-icon.icns"
         }
     }
 }
