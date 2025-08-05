@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Changelog from "./pages/changelogs";
-import Landing from "./pages/Landing";
+import Landing from "./pages/landing";
 
 const App: FC = () => {
     return (
