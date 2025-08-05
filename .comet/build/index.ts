@@ -8,6 +8,7 @@ import {
 	updateCometConfig,
 	updateTauriConfig,
 } from "./utils/configManager";
+import { updateThemes } from "./utils/themeManager";
 import { updateTitles } from "./utils/updateTitles";
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -63,6 +64,7 @@ async function buildForBrand(brandName: string): Promise<void> {
 		updateTauriConfig(brandConfig, tauriConfigPath);
 		updateCometConfig(brandConfig);
 		updateTitles(brandConfig);
+		updateThemes(brandName);
 		configSpinner.succeed(
 			chalk.green("Configuration files updated successfully"),
 		);
@@ -90,6 +92,7 @@ async function buildForBrand(brandName: string): Promise<void> {
 				updateTauriConfig(defaultConfig, tauriConfigPath);
 				updateCometConfig(defaultConfig);
 				updateTitles(defaultConfig);
+				updateThemes("default");
 				resetSpinner.succeed(
 					chalk.green("Configuration reset to default brand"),
 				);

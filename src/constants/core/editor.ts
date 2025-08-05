@@ -256,7 +256,7 @@ suggestionService.loadSuggestions().then(() => {
 	luaLanguage.builtins = builtins;
 });
 
-export const monacoTheme: editor.IStandaloneThemeData = {
+export const defaultMonacoTheme: editor.IStandaloneThemeData = {
 	base: "vs-dark",
 	inherit: false,
 	rules: [
@@ -310,3 +310,60 @@ export const monacoTheme: editor.IStandaloneThemeData = {
 		"editorLineNumber.activeForeground": "#97a4af",
 	},
 } as const;
+
+export const ronixMonacoTheme: editor.IStandaloneThemeData = {
+	base: "vs-dark",
+	inherit: false,
+	rules: [
+		{ token: "", foreground: "d4dde5", background: "10141a" },
+		{ token: "comment.line", foreground: "7d8590", fontStyle: "italic" },
+		{ token: "comment.block", foreground: "7d8590", fontStyle: "italic" },
+		{ token: "constant", foreground: "f5a97f" },
+		{ token: "keyword", foreground: "c6a0f6" },
+		{ token: "number", foreground: "f5a97f" },
+		{ token: "string", foreground: "7ee787" },
+		{ token: "type", foreground: "8bd5ca" },
+		{ token: "function", foreground: "79c0ff" },
+		{ token: "operator", foreground: "91d7e3" },
+		{ token: "variable", foreground: "d4dde5" },
+		{ token: "custom-yellow", foreground: "e3b341" },
+		{ token: "type.annotation", foreground: "79c0ff", fontStyle: "italic" },
+		{ token: "type.identifier", foreground: "8bd5ca", fontStyle: "italic" },
+		{ token: "type.parameter", foreground: "f5a97f", fontStyle: "italic" },
+		{ token: "type.operator", foreground: "91d7e3" },
+		{ token: "type.builtin", foreground: "f5bde6", fontStyle: "italic" },
+		{ token: "type.definition", foreground: "c6a0f6", fontStyle: "bold" },
+	],
+	colors: {
+		"editor.background": "#10141a",
+		"editor.foreground": "#d4dde5",
+		"editor.lineHighlightBackground": "#22272e",
+		"editor.selectionBackground": "#2d333b",
+		"editor.inactiveSelectionBackground": "#22272e",
+		"editorCursor.foreground": "#d4dde5",
+		"editorWhitespace.foreground": "#2d333b",
+		"editorIndentGuide.background": "#22272e",
+		"editorIndentGuide.activeBackground": "#2d333b",
+		"editor.selectionHighlightBackground": "#2d333b80",
+		"editor.wordHighlightBackground": "#2d333b80",
+		"editor.findMatchBackground": "#f5bde6",
+		"editor.findMatchHighlightBackground": "#c6a0f6",
+		"editor.findMatchBorder": "#f5bde6",
+		"editor.findMatchHighlightBorder": "#c6a0f6",
+		"editorBracketMatch.background": "#22272e",
+		"editorBracketMatch.border": "#79c0ff",
+		"editorOverviewRuler.border": "#22272e",
+		"editorHoverWidget.background": "#10141a",
+		"editorHoverWidget.border": "#22272e",
+		"editorSuggestWidget.background": "#10141a",
+		"editorSuggestWidget.border": "#22272e",
+		"editorSuggestWidget.selectedBackground": "#22272e",
+		"editorError.foreground": "#ff7b72",
+		"editorWarning.foreground": "#e3b341",
+		"editorInfo.foreground": "#79c0ff",
+		"editorLineNumber.foreground": "#7d8590",
+		"editorLineNumber.activeForeground": "#97a4af",
+	},
+} as const;
+
+export const monacoTheme = defaultMonacoTheme;
