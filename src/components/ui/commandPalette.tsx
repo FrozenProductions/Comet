@@ -570,8 +570,8 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 						className="fixed inset-x-0 top-[20%] z-[10001] flex items-start justify-center"
 					>
 						<div className="mx-auto w-full max-w-xl px-4">
-							<div className="select-none overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg">
-								<div className="flex items-center gap-3 border-b border-ctp-surface2 p-4">
+							<div className="select-none overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle shadow-lg">
+								<div className="flex items-center gap-3 border-b border-white/5 p-4">
 									<Command size={20} className="text-ctp-subtext0" />
 									<input
 										ref={inputRef}
@@ -588,7 +588,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 										spellCheck="false"
 									/>
 									<div className="flex select-none items-center gap-1">
-										<kbd className="rounded bg-ctp-surface2 px-2 py-1 text-xs font-medium text-ctp-subtext0">
+										<kbd className="rounded bg-white/5 px-2 py-1 text-xs font-medium text-ctp-subtext0">
 											esc
 										</kbd>
 										<span className="text-xs text-ctp-subtext0">to close</span>
@@ -619,8 +619,8 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 														transition={{ delay: index * 0.1 }}
 														className={`flex w-full select-none items-center gap-3 rounded-lg px-2 py-2 text-left ${
 															selectedIndex === index
-																? "bg-ctp-surface1 text-ctp-text"
-																: "text-ctp-subtext0 hover:bg-ctp-surface1/50 hover:text-ctp-text"
+																? "bg-white/5 text-ctp-text"
+																: "text-ctp-subtext0 hover:bg-white/5 hover:text-ctp-text"
 														} `}
 														onClick={() => {
 															item.action();
@@ -640,7 +640,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
 														</div>
 														{selectedIndex === index && (
 															<div className="flex select-none items-center gap-1 text-xs">
-																<kbd className="rounded bg-ctp-surface2 px-2 py-1 text-ctp-subtext0">
+																<kbd className="rounded bg-white/5 px-2 py-1 text-ctp-subtext0">
 																	{!searchQuery.startsWith(">") &&
 																	!searchQuery.startsWith("/") &&
 																	isCmdPressed

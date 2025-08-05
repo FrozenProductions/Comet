@@ -162,10 +162,10 @@ export const WorkspaceSearch: FC = () => {
 				initial={{ opacity: 0, scale: 0.95, y: -20 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.95, y: -20 }}
-				className="w-[800px] overflow-hidden rounded-xl border border-ctp-surface2 bg-ctp-surface0 shadow-lg"
+				className="w-[800px] overflow-hidden rounded-xl border border-white/5 bg-ctp-mantle shadow-lg"
 				onClick={(e: any) => e.stopPropagation()}
 			>
-				<div className="flex items-center gap-3 border-b border-ctp-surface2 p-4">
+				<div className="flex items-center gap-3 border-b border-white/5 p-4">
 					<Command size={16} className="text-ctp-subtext0" />
 					<input
 						ref={inputRef}
@@ -209,21 +209,21 @@ export const WorkspaceSearch: FC = () => {
 									</div>
 									<div className="flex flex-wrap items-center justify-center gap-3 text-xs text-ctp-subtext0">
 										<div className="flex items-center gap-2">
-											<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium">
+											<kbd className="rounded border border-white/5 px-1.5 py-0.5 text-[10px] font-medium">
 												Enter
 											</kbd>
 											<span>select</span>
 										</div>
 										<span className="text-ctp-surface2">•</span>
 										<div className="flex items-center gap-2">
-											<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium">
+											<kbd className="rounded border border-white/5 px-1.5 py-0.5 text-[10px] font-medium">
 												↑↓
 											</kbd>
 											<span>navigate</span>
 										</div>
 										<span className="text-ctp-surface2">•</span>
 										<div className="flex items-center gap-2">
-											<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium">
+											<kbd className="rounded border border-white/5 px-1.5 py-0.5 text-[10px] font-medium">
 												Esc
 											</kbd>
 											<span>close</span>
@@ -247,25 +247,25 @@ export const WorkspaceSearch: FC = () => {
 										key={`${result.tab_id}-${result.line_number}-${result.column_start}`}
 										className={`group w-full select-none rounded-lg border ${
 											selectedIndex === index
-												? "border-ctp-surface2 bg-ctp-surface1"
-												: "border-transparent bg-transparent hover:border-ctp-surface2 hover:bg-ctp-surface1/50"
+												? "border-white/5 bg-white/5"
+												: "border-transparent bg-transparent hover:border-white/5 hover:bg-white/5"
 										}`}
 										onClick={() => handleResultClick(result)}
 										initial={{ opacity: 0, y: 10 }}
 										animate={{ opacity: 1, y: 0 }}
 										transition={{ delay: index * 0.05 }}
 									>
-										<div className="flex items-center justify-between border-b border-ctp-surface2 px-3 py-2">
+										<div className="flex items-center justify-between border-b border-white/5 px-3 py-2">
 											<div className="flex items-center gap-2">
 												<span className="font-medium text-ctp-text">
 													{result.title}
 												</span>
-												<span className="rounded bg-ctp-surface2/30 px-1.5 py-0.5 text-[10px] text-ctp-subtext0">
+												<span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-ctp-subtext0">
 													Line {result.line_number}
 												</span>
 											</div>
 											{selectedIndex === index && (
-												<kbd className="rounded border border-ctp-surface2 px-1.5 py-0.5 text-[10px] font-medium text-ctp-subtext0">
+												<kbd className="rounded border border-white/5 px-1.5 py-0.5 text-[10px] font-medium text-ctp-subtext0">
 													Enter
 												</kbd>
 											)}
@@ -280,7 +280,7 @@ export const WorkspaceSearch: FC = () => {
 												</div>
 											))}
 
-											<div className="relative rounded bg-ctp-surface2/30 px-2 text-xs leading-5">
+											<div className="relative rounded bg-white/5 px-2 text-xs leading-5">
 												<div className="absolute -left-0.5 top-0 h-full w-0.5 bg-ctp-yellow/50" />
 												{result.line_content.slice(0, result.column_start)}
 												<span className="bg-ctp-yellow/20 text-ctp-text">
