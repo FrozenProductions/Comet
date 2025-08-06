@@ -17,10 +17,9 @@ pub struct AutoExecuteFile {
 }
 
 fn get_auto_execute_dir_name(app_name: &str) -> String {
-    if app_name.to_lowercase() == "comet" {
+    if app_name.to_lowercase() == "comet" || app_name.to_lowercase() == "hydrogen" {
         "Hydrogen".to_string()
     } else {
-        println!("{}", app_name);
         app_name.to_string()
     }
 }
