@@ -11,7 +11,9 @@ export const Topbar: FC = () => {
             </div>
             <div className="flex h-full items-center justify-center">
                 <span className="text-sm font-medium text-ctp-text">
-                    {APP_TITLE === "Comet" ? APP_TITLE : `${APP_TITLE} - Comet`}
+                    {String(APP_TITLE) === "Comet"
+                        ? APP_TITLE
+                        : `${APP_TITLE} - Comet`}
                 </span>
             </div>
         </div>
