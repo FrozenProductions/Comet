@@ -39,7 +39,7 @@ struct VersionMessages {
 }
 
 #[tauri::command]
-async fn fetch_version_messages() -> Result<VersionMessages, String> {
+async fn fetch_version_messages(app_handle: tauri::AppHandle) -> Result<VersionMessages, String> {
     let client = reqwest::Client::new();
     let response = client
         .get("https://comet-ui.fun/api/v1/messages")
@@ -51,10 +51,29 @@ async fn fetch_version_messages() -> Result<VersionMessages, String> {
         return Err("Failed to fetch messages".to_string());
     }
 
-    response
-        .json::<VersionMessages>()
+    let all_messages: Value = response
+        .json()
         .await
-        .map_err(|e| e.to_string())
+        .map_err(|e| format!("Failed to parse messages: {}", e))?;
+
+    let app_name = app_handle.package_info().name.clone().to_lowercase();
+    let branch = if app_name == "comet" {
+        "comet"
+    } else if app_name == "hydrogen" {
+        "hydrogen"
+    } else {
+        "ronix"
+    };
+
+    let branch_messages = all_messages
+        .get(branch)
+        .and_then(|b| b.get("messages"))
+        .ok_or_else(|| format!("No messages found for branch: {}", branch))?;
+
+    let messages = serde_json::from_value(branch_messages.clone())
+        .map_err(|e| format!("Failed to parse branch messages: {}", e))?;
+
+    Ok(VersionMessages { messages })
 }
 
 #[derive(Debug)]
