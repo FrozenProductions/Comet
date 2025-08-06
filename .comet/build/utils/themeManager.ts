@@ -12,7 +12,7 @@ export function updateThemes(brandName: string): void {
         `tailwind.${brandName}.config.ts`,
     );
 
-    if (brandName !== "default") {
+    if (brandName !== "default" && brandName !== "hydrogen") {
         const currentConfig = readFileSync(tailwindConfigPath, "utf-8");
         writeFileSync(tailwindBackupPath, currentConfig, "utf-8");
         const brandConfig = readFileSync(tailwindBrandPath, "utf-8");
