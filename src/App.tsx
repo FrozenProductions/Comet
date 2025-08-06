@@ -28,7 +28,7 @@ import { SidebarProvider } from "./contexts/sidebar/sidebarContext";
 import { WorkspaceProvider } from "./contexts/workspace/workspaceContext";
 import { useKeybinds } from "./hooks/core/useKeybinds";
 import { useConsole } from "./hooks/ui/useConsole";
-import { checkHydrogenInstallation } from "./services/features/hydrogenService";
+import { checkExecutorInstallation } from "./services/features/hydrogenService";
 import type { StatusInfo } from "./types/system/status";
 
 const AppContent: FC = () => {
@@ -99,17 +99,17 @@ const App: FC = () => {
     });
 
     useEffect(() => {
-        const checkHydrogen = async () => {
+        const checkExecutor = async () => {
             try {
-                const isInstalled = await checkHydrogenInstallation();
+                const isInstalled = await checkExecutorInstallation();
                 setIsHydrogenInstalled(isInstalled);
             } catch (error) {
-                console.error("Failed to check Hydrogen installation:", error);
+                console.error("Failed to check executor installation:", error);
                 setIsHydrogenInstalled(false);
             }
         };
 
-        checkHydrogen();
+        checkExecutor();
 
         const unsubscribe = listen<StatusInfo>(
             "comet-status-update",

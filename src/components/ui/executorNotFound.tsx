@@ -10,7 +10,7 @@ import {
 import { motion } from "motion/react";
 import { type FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { installHydrogen } from "../../services/features/hydrogenService";
+import { installExecutor } from "../../services/features/hydrogenService";
 import type { InstallProgress } from "../../types/ui/ui";
 
 const LoadingDots = () => {
@@ -107,7 +107,7 @@ export const ExecutorNotFound: FC = () => {
         setIsInstalling(true);
 
         try {
-            await installHydrogen();
+            await installExecutor();
         } catch (error) {
             console.error(`Failed to install ${appName}:`, error);
             toast.error(`Failed to install ${appName}`);

@@ -840,7 +840,7 @@ fn main() {
             fast_flags::open_fast_flags_directory,
             roblox_logs::start_log_watcher,
             roblox_logs::stop_log_watcher,
-            hydrogen::check_hydrogen_installation,
+            hydrogen::check_executor_installation,
             hydrogen::install_app,
             workspace::load_workspaces,
             workspace::create_workspace,

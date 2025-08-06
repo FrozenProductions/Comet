@@ -35,7 +35,7 @@ fn get_dylib_path(app_name: &str) -> PathBuf {
 }
 
 #[tauri::command]
-pub fn check_hydrogen_installation(app_handle: tauri::AppHandle) -> bool {
+pub fn check_executor_installation(app_handle: tauri::AppHandle) -> bool {
     let roblox_path =
         std::path::Path::new("/Applications/Roblox.app/Contents/MacOS/RobloxPlayer.copy");
     let (app_name, _) = get_app_info(&app_handle);
