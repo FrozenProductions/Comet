@@ -263,7 +263,7 @@ pub fn toggle_auto_execute(app_handle: AppHandle) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn open_auto_execute_directory() -> Result<(), String> {
-    let scripts_dir = get_scripts_dir();
-    crate::open_directory(scripts_dir)
+pub fn open_auto_execute_directory(app_handle: AppHandle) -> Result<(), String> {
+    let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+    crate::open_directory(auto_execute_dir)
 }
