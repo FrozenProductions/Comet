@@ -708,6 +708,16 @@ async fn toggle_login_item(enabled: bool) -> Result<(), String> {
     login_items::toggle_login_item(enabled)
 }
 
+#[tauri::command]
+fn get_app_name(app_handle: tauri::AppHandle) -> String {
+    let app_name = app_handle.package_info().name.clone();
+    if app_name.to_lowercase() == "comet" || app_name.to_lowercase() == "hydrogen" {
+        "Hydrogen".to_string()
+    } else {
+        app_name
+    }
+}
+
 fn main() {
     let app_state = AppState::new();
     let state_clone = app_state.clone();
@@ -866,6 +876,7 @@ fn main() {
             tray::reorder_custom_tray_scripts,
             is_login_item_enabled,
             toggle_login_item,
+            get_app_name,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

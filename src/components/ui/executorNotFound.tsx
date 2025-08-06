@@ -1,4 +1,5 @@
 import { listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/tauri";
 import {
     AlertTriangle,
     CheckCircle2,
@@ -33,12 +34,23 @@ const LoadingDots = () => {
     );
 };
 
-export const HydrogenNotFound: FC = () => {
+export const ExecutorNotFound: FC = () => {
     const [copied, setCopied] = useState(false);
     const [isInstalling, setIsInstalling] = useState(false);
     const [installState, setInstallState] = useState<string>("");
-    const installCommand =
-        'bash -c "$(curl -fsSL https://www.hydrogen.lat/install)"';
+    const [appName, setAppName] = useState<string>("");
+    const [installCommand, setInstallCommand] = useState<string>("");
+
+    useEffect(() => {
+        invoke<string>("get_app_name").then((name) => {
+            setAppName(name);
+            const installUrl =
+                name.toLowerCase() === "ronix"
+                    ? "https://www.ronixmac.lol/install"
+                    : "https://www.hydrogen.lat/install";
+            setInstallCommand(`bash -c "$(curl -fsSL ${installUrl})"`);
+        });
+    }, []);
 
     useEffect(() => {
         const unlisten = listen<InstallProgress>(
@@ -50,7 +62,7 @@ export const HydrogenNotFound: FC = () => {
                 const getStatusMessage = () => {
                     switch (state) {
                         case "installing":
-                            return "Installing Hydrogen...";
+                            return `Installing ${appName}...`;
                         case "error":
                             return "Installation failed!";
                         case "completed":
@@ -82,7 +94,7 @@ export const HydrogenNotFound: FC = () => {
         return () => {
             unlisten.then((fn) => fn());
         };
-    }, []);
+    }, [appName]);
 
     const handleCopy = async () => {
         await navigator.clipboard.writeText(installCommand);
@@ -97,8 +109,8 @@ export const HydrogenNotFound: FC = () => {
         try {
             await installHydrogen();
         } catch (error) {
-            console.error("Failed to install Hydrogen:", error);
-            toast.error("Failed to install Hydrogen");
+            console.error(`Failed to install ${appName}:`, error);
+            toast.error(`Failed to install ${appName}`);
             setIsInstalling(false);
         }
     };
@@ -130,11 +142,11 @@ export const HydrogenNotFound: FC = () => {
                     </div>
                     <div className="space-y-2 text-center">
                         <h1 className="text-2xl font-medium text-ctp-text">
-                            Hydrogen Not Found
+                            Executor Not Found
                         </h1>
                         <p className="text-sm text-ctp-subtext0">
-                            Hydrogen installation was not detected. Click the
-                            button below to install Hydrogen automatically:
+                            {appName} installation was not detected. Click the
+                            button below to install {appName} automatically:
                         </p>
                     </div>
                 </motion.div>
@@ -162,7 +174,7 @@ export const HydrogenNotFound: FC = () => {
                                         <LoadingDots />
                                     </>
                                 ) : (
-                                    "Install Hydrogen"
+                                    `Install ${appName}`
                                 )}
                             </span>
                         </button>
@@ -245,7 +257,7 @@ export const HydrogenNotFound: FC = () => {
                             >
                                 {installState === "preparing"
                                     ? "Preparing installation..."
-                                    : "Installing Hydrogen..."}
+                                    : `Installing ${appName}...`}
                             </motion.div>
                         </motion.div>
                     )}
@@ -266,7 +278,9 @@ export const HydrogenNotFound: FC = () => {
                                 <span className="text-ctp-blue">curl</span>
                                 <span className="text-ctp-text"> -fsSL </span>
                                 <span className="text-ctp-yellow">
-                                    https://www.hydrogen.lat/install
+                                    {appName.toLowerCase() === "ronix"
+                                        ? "https://www.ronixmac.lol/install"
+                                        : "https://www.hydrogen.lat/install"}
                                 </span>
                                 <span className="text-ctp-green">)"</span>
                             </code>

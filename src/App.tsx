@@ -18,7 +18,7 @@ import "react-tooltip/dist/react-tooltip.css";
 import { listen } from "@tauri-apps/api/event";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
 import { CometOffline } from "./components/ui/cometOffline";
-import { HydrogenNotFound } from "./components/ui/hydrogenNotFound";
+import { ExecutorNotFound } from "./components/ui/executorNotFound";
 import { MessageModal } from "./components/ui/messageModal";
 import { UpdateChecker } from "./components/updater";
 import { APP_CONSTANTS } from "./constants/core/app";
@@ -124,7 +124,7 @@ const App: FC = () => {
     }, []);
 
     if (isHydrogenInstalled === false) {
-        return <HydrogenNotFound />;
+        return <ExecutorNotFound />;
     }
 
     if (!status.online) {
