@@ -5,6 +5,7 @@ use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 use tauri::api::path::config_dir;
+use tauri::AppHandle;
 
 const VALID_EXTENSIONS: [&str; 3] = [".lua", ".luau", ".txt"];
 
@@ -13,6 +14,23 @@ pub struct AutoExecuteFile {
     pub name: String,
     pub content: String,
     pub path: String,
+}
+
+fn get_auto_execute_dir_name(app_name: &str) -> String {
+    if app_name.to_lowercase() == "comet" {
+        "Hydrogen".to_string()
+    } else {
+        println!("{}", app_name);
+        app_name.to_string()
+    }
+}
+
+fn get_auto_execute_dir(app_handle: &AppHandle) -> Result<PathBuf, String> {
+    let home = dirs::home_dir().ok_or("Could not find home directory")?;
+    let app_name = app_handle.package_info().name.clone();
+    let dir_name = get_auto_execute_dir_name(&app_name);
+    let auto_execute_dir = home.join(format!("{}/autoexecute", dir_name));
+    Ok(auto_execute_dir)
 }
 
 fn get_comet_dir() -> PathBuf {
@@ -24,10 +42,11 @@ fn get_comet_dir() -> PathBuf {
 }
 
 fn get_scripts_dir() -> PathBuf {
-    let mut path = get_comet_dir();
-    path.push("scripts");
-    fs::create_dir_all(&path).expect("Failed to create directory");
-    path
+    let base_dir = config_dir().expect("Failed to get Application Support directory");
+    let mut app_dir = base_dir;
+    app_dir.push("com.comet.dev");
+    fs::create_dir_all(&app_dir).expect("Failed to create directory");
+    app_dir
 }
 
 fn get_state_file() -> PathBuf {
@@ -115,7 +134,11 @@ pub fn get_auto_execute_files() -> Result<Vec<AutoExecuteFile>, String> {
 }
 
 #[tauri::command]
-pub fn save_auto_execute_file(name: String, content: String) -> Result<(), String> {
+pub fn save_auto_execute_file(
+    app_handle: AppHandle,
+    name: String,
+    content: String,
+) -> Result<(), String> {
     let file_name = ensure_valid_extension(&name);
     let scripts_dir = get_scripts_dir();
     let file_path = scripts_dir.join(&file_name);
@@ -123,20 +146,19 @@ pub fn save_auto_execute_file(name: String, content: String) -> Result<(), Strin
     fs::write(&file_path, &content).map_err(|e| e.to_string())?;
 
     if get_auto_execute_state()? {
-        let home = dirs::home_dir().ok_or("Could not find home directory")?;
-        let hydrogen_dir = home.join("Hydrogen/autoexecute");
-        if !hydrogen_dir.exists() {
-            fs::create_dir_all(&hydrogen_dir).map_err(|e| e.to_string())?;
+        let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+        if !auto_execute_dir.exists() {
+            fs::create_dir_all(&auto_execute_dir).map_err(|e| e.to_string())?;
         }
-        let hydrogen_path = hydrogen_dir.join(&file_name);
-        fs::copy(&file_path, &hydrogen_path).map_err(|e| e.to_string())?;
+        let auto_execute_path = auto_execute_dir.join(&file_name);
+        fs::copy(&file_path, &auto_execute_path).map_err(|e| e.to_string())?;
     }
 
     Ok(())
 }
 
 #[tauri::command]
-pub fn delete_auto_execute_file(name: String) -> Result<(), String> {
+pub fn delete_auto_execute_file(app_handle: AppHandle, name: String) -> Result<(), String> {
     let scripts_dir = get_scripts_dir();
     let file_path = scripts_dir.join(&name);
 
@@ -145,10 +167,10 @@ pub fn delete_auto_execute_file(name: String) -> Result<(), String> {
     }
 
     if get_auto_execute_state()? {
-        let home = dirs::home_dir().ok_or("Could not find home directory")?;
-        let hydrogen_path = home.join("Hydrogen/autoexecute").join(&name);
-        if hydrogen_path.exists() {
-            fs::remove_file(&hydrogen_path).map_err(|e| e.to_string())?;
+        let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+        let auto_execute_path = auto_execute_dir.join(&name);
+        if auto_execute_path.exists() {
+            fs::remove_file(&auto_execute_path).map_err(|e| e.to_string())?;
         }
     }
 
@@ -156,7 +178,11 @@ pub fn delete_auto_execute_file(name: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn rename_auto_execute_file(old_name: String, new_name: String) -> Result<(), String> {
+pub fn rename_auto_execute_file(
+    app_handle: AppHandle,
+    old_name: String,
+    new_name: String,
+) -> Result<(), String> {
     let new_file_name = ensure_valid_extension(&new_name);
     let scripts_dir = get_scripts_dir();
     let old_path = scripts_dir.join(&old_name);
@@ -173,13 +199,13 @@ pub fn rename_auto_execute_file(old_name: String, new_name: String) -> Result<()
     fs::rename(&old_path, &new_path).map_err(|e| e.to_string())?;
 
     if get_auto_execute_state()? {
-        let home = dirs::home_dir().ok_or("Could not find home directory")?;
-        let hydrogen_dir = home.join("Hydrogen/autoexecute");
-        let old_hydrogen_path = hydrogen_dir.join(&old_name);
-        let new_hydrogen_path = hydrogen_dir.join(&new_file_name);
+        let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+        let old_auto_execute_path = auto_execute_dir.join(&old_name);
+        let new_auto_execute_path = auto_execute_dir.join(&new_file_name);
 
-        if old_hydrogen_path.exists() {
-            fs::rename(&old_hydrogen_path, &new_hydrogen_path).map_err(|e| e.to_string())?;
+        if old_auto_execute_path.exists() {
+            fs::rename(&old_auto_execute_path, &new_auto_execute_path)
+                .map_err(|e| e.to_string())?;
         }
     }
 
@@ -192,16 +218,15 @@ pub fn is_auto_execute_enabled() -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn toggle_auto_execute() -> Result<bool, String> {
-    let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let hydrogen_dir = home.join("Hydrogen/autoexecute");
+pub fn toggle_auto_execute(app_handle: AppHandle) -> Result<bool, String> {
+    let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
     let scripts_dir = get_scripts_dir();
 
     let currently_enabled = get_auto_execute_state()?;
 
     if currently_enabled {
-        if hydrogen_dir.exists() {
-            let entries = fs::read_dir(&hydrogen_dir).map_err(|e| e.to_string())?;
+        if auto_execute_dir.exists() {
+            let entries = fs::read_dir(&auto_execute_dir).map_err(|e| e.to_string())?;
             for entry in entries {
                 let entry = entry.map_err(|e| e.to_string())?;
                 let path = entry.path();
@@ -211,8 +236,8 @@ pub fn toggle_auto_execute() -> Result<bool, String> {
             }
         }
     } else {
-        if !hydrogen_dir.exists() {
-            fs::create_dir_all(&hydrogen_dir).map_err(|e| e.to_string())?;
+        if !auto_execute_dir.exists() {
+            fs::create_dir_all(&auto_execute_dir).map_err(|e| e.to_string())?;
         }
 
         let entries = fs::read_dir(&scripts_dir).map_err(|e| e.to_string())?;
@@ -226,8 +251,8 @@ pub fn toggle_auto_execute() -> Result<bool, String> {
                     .ok_or("Invalid filename")?
                     .to_string_lossy()
                     .into_owned();
-                let hydrogen_path = hydrogen_dir.join(&file_name);
-                fs::copy(&path, &hydrogen_path).map_err(|e| e.to_string())?;
+                let auto_execute_path = auto_execute_dir.join(&file_name);
+                fs::copy(&path, &auto_execute_path).map_err(|e| e.to_string())?;
             }
         }
     }
