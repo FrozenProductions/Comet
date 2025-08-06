@@ -370,10 +370,10 @@ async fn execute_script(script: String) -> Result<String, String> {
 mod auto_execute;
 mod config;
 mod execution_history;
+mod executor;
 mod fast_flags;
 mod fast_flags_profiles;
 mod flag_validator;
-mod hydrogen;
 mod login_items;
 mod roblox_logs;
 mod rscripts;
@@ -473,17 +473,23 @@ pub fn open_directory(path: PathBuf) -> Result<(), String> {
 }
 
 #[tauri::command]
-async fn open_hydrogen_folder() -> Result<(), String> {
-    let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let hydrogen_dir = home.join("Hydrogen");
-    open_directory(hydrogen_dir)
-}
-
-#[tauri::command]
 async fn open_comet_folder() -> Result<(), String> {
     let home = dirs::home_dir().ok_or("Could not find home directory")?;
     let app_dir = home.join("Library/Application Support/com.comet.dev");
     open_directory(app_dir)
+}
+
+#[tauri::command]
+async fn open_executor_folder(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let home = dirs::home_dir().ok_or("Could not find home directory")?;
+    let app_name = app_handle.package_info().name.clone();
+    let dir_name = if app_name.to_lowercase() == "comet" || app_name.to_lowercase() == "hydrogen" {
+        "Hydrogen".to_string()
+    } else {
+        app_name
+    };
+    let executor_dir = home.join(&dir_name);
+    open_directory(executor_dir)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -840,8 +846,8 @@ fn main() {
             fast_flags::open_fast_flags_directory,
             roblox_logs::start_log_watcher,
             roblox_logs::stop_log_watcher,
-            hydrogen::check_executor_installation,
-            hydrogen::install_app,
+            executor::check_executor_installation,
+            executor::install_app,
             workspace::load_workspaces,
             workspace::create_workspace,
             workspace::delete_workspace,
@@ -851,7 +857,7 @@ fn main() {
             updater::download_and_install_update,
             updater::is_official_app,
             updater::check_comet_status,
-            open_hydrogen_folder,
+            open_executor_folder,
             open_comet_folder,
             fast_flags_profiles::export_fast_flags_profiles,
             fast_flags_profiles::import_fast_flags_profiles,

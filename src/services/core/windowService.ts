@@ -38,14 +38,14 @@ export const openCometFolder = async (): Promise<void> => {
 };
 
 /**
- * Opens the Hydrogen folder in the system file explorer
+ * Opens the executor folder in the system file explorer
  * @throws Error if the folder cannot be opened
  */
-export const openHydrogenFolder = async (): Promise<void> => {
+export const openExecutorFolder = async (): Promise<void> => {
     try {
-        await invoke("open_hydrogen_folder");
+        await invoke("open_executor_folder");
     } catch (error) {
-        console.error("Failed to open Hydrogen folder:", error);
+        console.error("Failed to open executor folder:", error);
         throw error;
     }
 };

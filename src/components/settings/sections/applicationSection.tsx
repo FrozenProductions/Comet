@@ -19,7 +19,7 @@ import { toast } from "react-hot-toast";
 import { useSettings } from "../../../hooks/core/useSettings";
 import {
     openCometFolder,
-    openHydrogenFolder,
+    openExecutorFolder,
 } from "../../../services/core/windowService";
 import { checkIsOfficialApp } from "../../../services/system/applicationService";
 import { toggleLoginItem } from "../../../services/system/loginItemsService";
@@ -478,13 +478,13 @@ export const ApplicationSection: FC = () => {
                                     type="button"
                                     onClick={async () => {
                                         try {
-                                            await openHydrogenFolder();
+                                            await openExecutorFolder();
                                         } catch (error) {
                                             toast.error(
-                                                "Failed to open Hydrogen directory",
+                                                "Failed to open executor directory",
                                             );
                                             console.error(
-                                                "Failed to open Hydrogen directory",
+                                                "Failed to open Executor directory",
                                                 error,
                                             );
                                         }
@@ -495,7 +495,7 @@ export const ApplicationSection: FC = () => {
                                         size={14}
                                         className="stroke-[2.5]"
                                     />
-                                    Hydrogen Directory
+                                    Executor Directory
                                 </button>
                             </div>
                         </div>
@@ -566,7 +566,7 @@ export const ApplicationSection: FC = () => {
                                     Frozen Productions
                                 </div>
                                 <div className="select-none text-xs text-ctp-subtext0">
-                                    Comet Developer
+                                    Comet(Application) Developer
                                 </div>
                             </div>
                             <div>
@@ -574,7 +574,7 @@ export const ApplicationSection: FC = () => {
                                     xGladius
                                 </div>
                                 <div className="select-none text-xs text-ctp-subtext0">
-                                    Hydrogen Developer
+                                    Executor Developer
                                 </div>
                             </div>
                             <div>

@@ -54,7 +54,7 @@ export const ExecutorNotFound: FC = () => {
 
     useEffect(() => {
         const unlisten = listen<InstallProgress>(
-            "hydrogen-progress",
+            "executor-progress",
             (event) => {
                 const { state } = event.payload;
                 setInstallState(state);
@@ -74,18 +74,18 @@ export const ExecutorNotFound: FC = () => {
 
                 if (state === "error") {
                     toast.error(getStatusMessage(), {
-                        id: "hydrogen-progress",
+                        id: "executor-progress",
                     });
                     setIsInstalling(false);
                 } else if (state === "completed") {
                     toast.success(getStatusMessage(), {
-                        id: "hydrogen-progress",
+                        id: "executor-progress",
                         duration: 3000,
                     });
                     setIsInstalling(false);
                 } else {
                     toast.loading(getStatusMessage(), {
-                        id: "hydrogen-progress",
+                        id: "executor-progress",
                     });
                 }
             },

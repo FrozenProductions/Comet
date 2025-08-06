@@ -55,7 +55,7 @@ pub async fn install_app(window: tauri::Window) -> Result<(), String> {
 
     window
         .emit(
-            "hydrogen-progress",
+            "executor-progress",
             InstallProgress {
                 state: "preparing".to_string(),
             },
@@ -101,7 +101,7 @@ exit 0"#,
 
     window
         .emit(
-            "hydrogen-progress",
+            "executor-progress",
             InstallProgress {
                 state: "installing".to_string(),
             },
@@ -125,7 +125,7 @@ exit 0"#,
 
         window
             .emit(
-                "hydrogen-progress",
+                "executor-progress",
                 InstallProgress {
                     state: "error".to_string(),
                 },
@@ -140,7 +140,7 @@ exit 0"#,
 
     window
         .emit(
-            "hydrogen-progress",
+            "executor-progress",
             InstallProgress {
                 state: "completed".to_string(),
             },

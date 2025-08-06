@@ -3,7 +3,7 @@ import type { Tab } from "../../types/core/editor";
 import type { ScriptExecutionResult } from "../../types/execution/script";
 
 /**
- * Executes a Lua script through the Hydrogen API
+ * Executes a Lua script through the Executor API
  * @param script The Lua script to execute
  * @returns Promise that resolves to the execution result
  * @throws Error if the script execution fails

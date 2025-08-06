@@ -222,7 +222,7 @@ export const AutoExecute: React.FC = () => {
             <Header
                 title="Auto Execute"
                 icon={<Syringe size={16} className="text-accent" />}
-                description="Manage Hydrogen auto-execute scripts"
+                description="Manage auto-execute scripts"
                 actions={
                     <div className="flex items-center gap-2">
                         <Button
