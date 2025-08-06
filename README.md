@@ -8,7 +8,7 @@
 </div>
 
 <div align="center">
-  <p>A modern, minimalist interface for <a href="https://www.hydrogen.lat/">Hydrogen</a> executor developed with Tauri.</p>
+  <p>A modern, minimalist interface for <a href="https://www.hydrogen.lat/">Hydrogen(MacOS)</a> and <a href="https://ronixstudios.com/">Ronix(MacOS)</a> executors developed with Tauri.</p>
 </div>
 
 <div align="center">
