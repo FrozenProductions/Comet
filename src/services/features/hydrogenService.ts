@@ -1,8 +1,8 @@
 import { invoke } from "@tauri-apps/api/tauri";
 
 /**
- * Checks if Hydrogen is installed on the system
- * @returns Promise that resolves to boolean indicating if Hydrogen is installed
+ * Checks if executor is installed on the system
+ * @returns Promise that resolves to boolean indicating if executor is installed
  * @throws Error if the check operation fails
  */
 export const checkHydrogenInstallation = async (): Promise<boolean> => {
@@ -15,12 +15,12 @@ export const checkHydrogenInstallation = async (): Promise<boolean> => {
 };
 
 /**
- * Installs Hydrogen on the system
+ * Installs the executor on the system
  * @throws Error if the installation fails
  */
 export const installHydrogen = async (): Promise<void> => {
     try {
-        await invoke("install_hydrogen");
+        await invoke("install_app");
     } catch (error) {
         console.error("Failed to install Hydrogen:", error);
         throw error;

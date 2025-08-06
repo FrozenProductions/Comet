@@ -2,21 +2,46 @@ use dirs;
 use serde::Serialize;
 use std::fs;
 use std::io::Write;
+use std::path::PathBuf;
 use std::process::Command;
+use tauri::Manager;
 
 #[derive(Debug, Serialize, Clone)]
 pub struct InstallProgress {
     state: String,
 }
 
+fn get_app_info(app_handle: &tauri::AppHandle) -> (String, String) {
+    let app_name = app_handle.package_info().name.clone();
+    let app_name_lower = app_name.to_lowercase();
+    if app_name_lower == "comet" || app_name_lower == "hydrogen" {
+        (
+            "Hydrogen".to_string(),
+            "https://www.hydrogen.lat/install".to_string(),
+        )
+    } else {
+        (
+            "Ronix".to_string(),
+            "https://www.ronixmac.lol/install".to_string(),
+        )
+    }
+}
+
+fn get_dylib_path(app_name: &str) -> PathBuf {
+    PathBuf::from(format!(
+        "/Applications/{}.app/Contents/MacOS/{}.dylib",
+        app_name, app_name
+    ))
+}
+
 #[tauri::command]
-pub fn check_hydrogen_installation(_app_handle: tauri::AppHandle) -> bool {
+pub fn check_hydrogen_installation(app_handle: tauri::AppHandle) -> bool {
     let roblox_path =
         std::path::Path::new("/Applications/Roblox.app/Contents/MacOS/RobloxPlayer.copy");
-    let hydrogen_path =
-        std::path::Path::new("/Applications/Hydrogen.app/Contents/MacOS/Hydrogen.dylib");
+    let (app_name, _) = get_app_info(&app_handle);
+    let dylib_path = get_dylib_path(&app_name);
 
-    roblox_path.exists() && hydrogen_path.exists()
+    roblox_path.exists() && dylib_path.exists()
 }
 
 fn get_downloads_dir() -> std::path::PathBuf {
@@ -24,7 +49,10 @@ fn get_downloads_dir() -> std::path::PathBuf {
 }
 
 #[tauri::command]
-pub async fn install_hydrogen(window: tauri::Window) -> Result<(), String> {
+pub async fn install_app(window: tauri::Window) -> Result<(), String> {
+    let app_handle = window.app_handle();
+    let (_app_name, install_url) = get_app_info(&app_handle);
+
     window
         .emit(
             "hydrogen-progress",
@@ -34,21 +62,22 @@ pub async fn install_hydrogen(window: tauri::Window) -> Result<(), String> {
         )
         .unwrap();
 
-    let script_path = get_downloads_dir().join("hydrogen_installer.sh");
+    let script_path = get_downloads_dir().join("installer.sh");
 
-    let script_content = String::from(
+    let script_content = format!(
         r#"#!/bin/bash
 set -e
 
-curl -fsSL https://www.hydrogen.lat/install > /tmp/hydrogen_install.sh
-chmod +x /tmp/hydrogen_install.sh
+curl -fsSL {} > /tmp/install.sh
+chmod +x /tmp/install.sh
 
-/tmp/hydrogen_install.sh > /dev/null 2>&1
+/tmp/install.sh > /dev/null 2>&1
 
-rm -f /tmp/hydrogen_install.sh
+rm -f /tmp/install.sh
 
 rm -f "$0"
 exit 0"#,
+        install_url
     );
 
     let mut file = std::fs::File::create(&script_path).map_err(|e| e.to_string())?;

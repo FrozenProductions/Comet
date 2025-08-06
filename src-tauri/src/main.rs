@@ -831,7 +831,7 @@ fn main() {
             roblox_logs::start_log_watcher,
             roblox_logs::stop_log_watcher,
             hydrogen::check_hydrogen_installation,
-            hydrogen::install_hydrogen,
+            hydrogen::install_app,
             workspace::load_workspaces,
             workspace::create_workspace,
             workspace::delete_workspace,

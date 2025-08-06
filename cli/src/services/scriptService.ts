@@ -6,7 +6,7 @@ import type { ExecutionResponse, Script } from "../types/script.js";
 import { ensureScriptsDirExists } from "../utils/file.js";
 
 /**
- * Attempts to find the port where the Hydrogen server is running by checking ports in range
+ * Attempts to find the port where the server is running by checking ports in range
  * @returns Port number if server is found, null otherwise
  */
 async function findServerPort(): Promise<number | null> {
@@ -26,7 +26,7 @@ async function findServerPort(): Promise<number | null> {
 }
 
 /**
- * Sends a script to the Hydrogen server for execution
+ * Sends a script to the server for execution
  * @param scriptContent The Lua script content to execute
  * @returns Response containing success status and output/error message
  */
@@ -39,7 +39,7 @@ export async function executeScript(
         if (!serverPort) {
             return {
                 success: false,
-                error: `Could not locate Hydrogen server on ports ${START_PORT}-${END_PORT}. Is Roblox running?`,
+                error: `Could not locate server on ports ${START_PORT}-${END_PORT}. Is Roblox running?`,
             };
         }
 
