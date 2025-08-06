@@ -10,7 +10,7 @@ import {
 import { motion } from "motion/react";
 import { type FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { installExecutor } from "../../services/features/hydrogenService";
+import { installExecutor } from "../../services/features/executorService";
 import type { InstallProgress } from "../../types/ui/ui";
 
 const LoadingDots = () => {

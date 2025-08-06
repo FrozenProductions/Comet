@@ -28,7 +28,7 @@ import { SidebarProvider } from "./contexts/sidebar/sidebarContext";
 import { WorkspaceProvider } from "./contexts/workspace/workspaceContext";
 import { useKeybinds } from "./hooks/core/useKeybinds";
 import { useConsole } from "./hooks/ui/useConsole";
-import { checkExecutorInstallation } from "./services/features/hydrogenService";
+import { checkExecutorInstallation } from "./services/features/executorService";
 import type { StatusInfo } from "./types/system/status";
 
 const AppContent: FC = () => {
@@ -90,7 +90,7 @@ const AppContent: FC = () => {
 };
 
 const App: FC = () => {
-    const [isHydrogenInstalled, setIsHydrogenInstalled] = useState<
+    const [isExecutorInstalled, setIsExecutorInstalled] = useState<
         boolean | null
     >(null);
     const [status, setStatus] = useState<StatusInfo>({
@@ -102,10 +102,10 @@ const App: FC = () => {
         const checkExecutor = async () => {
             try {
                 const isInstalled = await checkExecutorInstallation();
-                setIsHydrogenInstalled(isInstalled);
+                setIsExecutorInstalled(isInstalled);
             } catch (error) {
                 console.error("Failed to check executor installation:", error);
-                setIsHydrogenInstalled(false);
+                setIsExecutorInstalled(false);
             }
         };
 
@@ -123,7 +123,7 @@ const App: FC = () => {
         };
     }, []);
 
-    if (isHydrogenInstalled === false) {
+    if (isExecutorInstalled === false) {
         return <ExecutorNotFound />;
     }
 
