@@ -27,7 +27,7 @@ import {
     checkForUpdates,
     downloadAndInstallUpdate,
 } from "../../../services/system/updateService";
-import { Checkbox } from "../../ui/checkbox";
+import { Checkbox } from "../../ui/input/checkbox";
 import { Modal } from "../../ui/modal";
 import { SettingGroup } from "../settingGroup";
 import { TechStackItem } from "../techStackItem";

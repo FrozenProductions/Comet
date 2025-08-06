@@ -15,10 +15,10 @@ import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { refreshFlagValidationCache } from "../../services/roblox/flagValidationService";
 import type { FastFlagManagerProps } from "../../types/roblox/fastFlags";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "../ui/input/button";
+import { Input } from "../ui/input/input";
+import { Textarea } from "../ui/input/textarea";
 import { Modal } from "../ui/modal";
-import { Textarea } from "../ui/textarea";
 
 export const FastFlagManager: React.FC<FastFlagManagerProps> = ({
     profile,

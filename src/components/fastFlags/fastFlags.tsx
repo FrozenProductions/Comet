@@ -28,9 +28,9 @@ import {
     openFastFlagsDirectory,
 } from "../../services/roblox/fastFlagsService";
 import { validateFlags } from "../../services/roblox/flagValidationService";
-import { Button } from "../ui/button";
 import { Header } from "../ui/header";
-import { Input } from "../ui/input";
+import { Button } from "../ui/input/button";
+import { Input } from "../ui/input/input";
 import { BaseMessageModal } from "../ui/messageModal";
 import { EasyMode } from "./easyMode";
 import { FastFlagManager } from "./fastFlagManager";

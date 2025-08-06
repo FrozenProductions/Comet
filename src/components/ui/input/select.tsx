@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { type FC, useEffect, useRef, useState } from "react";
-import type { SelectProps } from "../../types/ui/select";
+import type { SelectProps } from "../../../types/ui/select";
 
 export const Select: FC<SelectProps> = ({
     value,

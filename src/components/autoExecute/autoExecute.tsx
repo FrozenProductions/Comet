@@ -28,9 +28,9 @@ import {
     toggleAutoExecute,
 } from "../../services/execution/autoExecuteService";
 import type { AutoExecuteFile } from "../../types/execution/autoExecute";
-import { Button } from "../ui/button";
 import { Header } from "../ui/header";
-import { Input } from "../ui/input";
+import { Button } from "../ui/input/button";
+import { Input } from "../ui/input/input";
 import { Modal } from "../ui/modal";
 import { CodeEditor } from "../workspace/editor";
 

@@ -9,10 +9,10 @@ import { type FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSettings } from "../../../hooks/core/useSettings";
 import type { ToastPosition } from "../../../types/ui/toast";
-import { Checkbox } from "../../ui/checkbox";
+import { Checkbox } from "../../ui/input/checkbox";
+import { RadioGroup } from "../../ui/input/radioGroup";
+import { Slider } from "../../ui/input/slider";
 import { Modal } from "../../ui/modal";
-import { RadioGroup } from "../../ui/radioGroup";
-import { Slider } from "../../ui/slider";
 import { SettingGroup } from "../settingGroup";
 
 const TOAST_VERTICAL_OPTIONS = [

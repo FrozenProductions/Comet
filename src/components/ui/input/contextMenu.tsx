@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
 import { type FC, useEffect, useRef, useState } from "react";
-import type { ContextMenuItem, ContextMenuProps } from "../../types/ui/ui";
+import type { ContextMenuItem, ContextMenuProps } from "../../../types/ui/ui";
 
 export const ContextMenu: FC<ContextMenuProps> = ({
     items,

@@ -19,7 +19,7 @@ import type {
     FastFlagDefinition,
     FastFlagManagerProps,
 } from "../../types/roblox/fastFlags";
-import { Slider } from "../ui/slider";
+import { Slider } from "../ui/input/slider";
 
 type CategoryConfig = {
     icon: LucideIcon;

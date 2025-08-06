@@ -7,7 +7,7 @@ import type {
     KeybindEditorProps,
     ValidationError,
 } from "../../types/core/keybinds";
-import { Button } from "../ui/button";
+import { Button } from "../ui/input/button";
 import { Modal } from "../ui/modal";
 
 export const KeybindEditor: FC<KeybindEditorProps> = ({

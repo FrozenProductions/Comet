@@ -9,15 +9,15 @@ import {
 import { motion } from "motion/react";
 import { type FC, useState } from "react";
 import { Tooltip } from "react-tooltip";
-import { useLocalStorage } from "../../hooks/core/useLocalStorage";
-import { useSettings } from "../../hooks/core/useSettings";
-import { useExecute } from "../../hooks/execution/useExecute";
-import { useScript } from "../../hooks/execution/useScript";
-import { useRoblox } from "../../hooks/roblox/useRoblox";
-import { useConsole } from "../../hooks/ui/useConsole";
-import type { EditorActionsState } from "../../types/core/editor";
-import type { ActionMenuProps } from "../../types/core/workspace";
-import { ExecutionHistory } from "./executionHistory";
+import { useLocalStorage } from "../../../hooks/core/useLocalStorage";
+import { useSettings } from "../../../hooks/core/useSettings";
+import { useExecute } from "../../../hooks/execution/useExecute";
+import { useScript } from "../../../hooks/execution/useScript";
+import { useRoblox } from "../../../hooks/roblox/useRoblox";
+import { useConsole } from "../../../hooks/ui/useConsole";
+import type { EditorActionsState } from "../../../types/core/editor";
+import type { ActionMenuProps } from "../../../types/core/workspace";
+import { ExecutionHistory } from "../executionHistory";
 
 const EDITOR_ACTIONS_STORAGE_KEY = "comet-editor-actions";
 

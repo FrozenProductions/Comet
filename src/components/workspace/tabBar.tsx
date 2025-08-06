@@ -13,7 +13,7 @@ import { useSettings } from "../../hooks/core/useSettings";
 import { useWorkspace } from "../../hooks/core/useWorkspace";
 import { exportTab } from "../../services/core/tabService";
 import type { TabbarProps } from "../../types/core/workspace";
-import { ContextMenu } from "../ui/contextMenu";
+import { ContextMenu } from "../ui/input/contextMenu";
 import { WorkspaceSelector } from "./workspaceSelector";
 
 export const Tabbar: FC<TabbarProps> = ({

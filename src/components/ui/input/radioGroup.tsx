@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import type { RadioGroupProps } from "../../types/ui/ui";
+import type { RadioGroupProps } from "../../../types/ui/ui";
 
 export const RadioGroup = <T extends string>({
     value,

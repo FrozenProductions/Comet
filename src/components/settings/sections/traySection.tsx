@@ -7,10 +7,10 @@ import {
     saveTrayConfig,
 } from "../../../services/system/trayService";
 import type { TrayConfig } from "../../../types/system/tray";
-import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
-import { Input } from "../../ui/input";
-import { Textarea } from "../../ui/textarea";
+import { Button } from "../../ui/input/button";
+import { Checkbox } from "../../ui/input/checkbox";
+import { Input } from "../../ui/input/input";
+import { Textarea } from "../../ui/input/textarea";
 import { SettingGroup } from "../settingGroup";
 
 export const TraySection = () => {

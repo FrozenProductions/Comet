@@ -31,7 +31,7 @@ import type {
     IntellisenseState,
 } from "../../types/core/workspace";
 import { getSuggestions } from "../../utils/suggestions";
-import { Actions } from "../ui/editorActions";
+import { Actions } from "../ui/input/editorActions";
 import { EditorSearch } from "./editorSearch";
 import { IntelliSense } from "./intelliSense";
 

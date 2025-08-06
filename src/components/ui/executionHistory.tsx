@@ -22,8 +22,8 @@ import type {
     ExecutionHistoryState,
     StatusFilter,
 } from "../../types/execution/executionHistory";
-import { Input } from "./input";
-import { Select } from "./select";
+import { Input } from "./input/input";
+import { Select } from "./input/select";
 
 export const ExecutionHistory = ({
     isVisible,
