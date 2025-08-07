@@ -44,7 +44,7 @@ export const readFlags = async (): Promise<FastFlagsResponse> => {
         const response = await invoke<FastFlagsResponse>("read_fast_flags");
         return response;
     } catch (error) {
-        console.error("[FastFlags] Error reading flags:", error);
+        console.error("Error reading flags:", error);
         return {
             success: false,
             error:
@@ -71,7 +71,7 @@ export const saveFlags = async (
         });
         return response;
     } catch (error) {
-        console.error("[FastFlags] Error saving flags:", error);
+        console.error("Error saving flags:", error);
         return {
             success: false,
             error:
@@ -114,7 +114,7 @@ export const getFastFlagCategories = async (): Promise<
             "get_fast_flag_categories",
         );
     } catch (error) {
-        console.error("[FastFlags] Error fetching categories:", error);
+        console.error("Error fetching categories:", error);
         throw error;
     }
 };
