@@ -58,9 +58,7 @@ async function buildForBrand(brandName: string): Promise<void> {
     );
 
     console.log(
-        chalk.cyan(
-            `\n🚀 Starting build process for ${chalk.bold(brandName)}\n`,
-        ),
+        chalk.cyan(`\nStarting build process for ${chalk.bold(brandName)}\n`),
     );
 
     const configSpinner = ora("Updating configuration files").start();
@@ -107,7 +105,7 @@ async function buildForBrand(brandName: string): Promise<void> {
             }
         }
 
-        console.log(chalk.green("\n✨ Build completed successfully!"));
+        console.log(chalk.green("\nBuild completed successfully!"));
     } catch (error) {
         buildSpinner.fail(chalk.red("Failed to build Tauri executable"));
         console.error(chalk.dim("\nError details:"));
@@ -122,7 +120,7 @@ async function main(): Promise<void> {
     const supportedBrands = Object.keys(config.brands);
 
     if (!brandToBuild) {
-        console.error(chalk.red("\n❌ Please specify a brand to build"));
+        console.error(chalk.red("\nPlease specify a brand to build"));
         console.log(
             chalk.dim(
                 `Available brands: ${supportedBrands.map((b) => chalk.cyan(b)).join(", ")}\n`,
@@ -133,7 +131,7 @@ async function main(): Promise<void> {
 
     if (!supportedBrands.includes(brandToBuild)) {
         console.error(
-            chalk.red(`\n❌ Unknown brand: ${chalk.bold(brandToBuild)}`),
+            chalk.red(`\nUnknown brand: ${chalk.bold(brandToBuild)}`),
         );
         console.log(
             chalk.dim(
@@ -147,7 +145,7 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => {
-    console.error(chalk.red("\n❌ Build process failed"));
+    console.error(chalk.red("\nBuild process failed"));
     console.error(chalk.dim(error));
     process.exit(1);
 });
