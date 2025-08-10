@@ -9,6 +9,6 @@ export const MAIN_SCREENS: SidebarItem[] = [
     { id: "FastFlags", icon: Flag, label: "Fast Flags" },
 ] as const;
 
-export const BUTTON_SPACING = 50 as const;
+export const BUTTON_SPACING = 42 as const;
 
 export const SIDEBAR_STORAGE_KEY = "comet-sidebar-visible" as const;

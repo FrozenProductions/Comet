@@ -14,14 +14,14 @@ export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
             {isVisible && (
                 <motion.div
                     initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 72, opacity: 1 }}
+                    animate={{ width: 60, opacity: 1 }}
                     exit={{ width: 0, opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="flex h-full w-[72px] flex-shrink-0 select-none flex-col items-center border-r border-white/5 bg-ctp-mantle py-3 overflow-hidden"
+                    className="flex h-full w-[60px] flex-shrink-0 select-none flex-col items-center border-r border-white/5 bg-ctp-mantle py-3 overflow-hidden"
                 >
                     <div className="relative flex flex-1 flex-col items-center gap-[10px]">
                         <motion.div
-                            className="absolute h-10 w-10 rounded-xl bg-accent-gradient shadow-lg shadow-white/20"
+                            className="absolute h-8 w-8 rounded-xl bg-accent-gradient shadow-lg shadow-white/20"
                             animate={{
                                 top:
                                     MAIN_SCREENS.findIndex(
@@ -43,14 +43,14 @@ export const Sidebar: FC<SidebarProps> = ({ activeScreen, onScreenChange }) => {
                                 data-tooltip-place="right"
                                 data-tooltip-offset={4}
                                 onClick={() => onScreenChange(id)}
-                                className={`group relative z-10 flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-200 ${
+                                className={`group relative z-10 flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-200 ${
                                     activeScreen === id
                                         ? "text-ctp-base"
                                         : "text-accent hover:text-ctp-text"
                                 } `}
                             >
                                 <Icon
-                                    size={18}
+                                    size={16}
                                     className="transition-transform duration-200 group-hover:scale-110"
                                 />
                             </button>
