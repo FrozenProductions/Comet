@@ -44,6 +44,7 @@ fn get_scripts_dir() -> PathBuf {
     let base_dir = config_dir().expect("Failed to get Application Support directory");
     let mut app_dir = base_dir;
     app_dir.push("com.comet.dev");
+    app_dir.push("scripts");
     fs::create_dir_all(&app_dir).expect("Failed to create directory");
     app_dir
 }
