@@ -9,11 +9,9 @@ import { motion } from "motion/react";
 import { type FC, memo, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type {
-    DeleteWorkspaceState,
     WorkspaceDropdownPortalProps,
     WorkspaceProps,
 } from "../../types/core/workspace";
-import { Modal } from "../ui/modal";
 
 const WorkspaceInput = memo(
     ({ onSubmit }: { onSubmit: (name: string) => void }) => {
@@ -68,33 +66,6 @@ const WorkspaceInput = memo(
     },
 );
 
-const DeleteWorkspaceModal = memo(
-    ({
-        isOpen,
-        workspaceName,
-        onClose,
-        onConfirm,
-    }: {
-        isOpen: boolean;
-        workspaceName: string | null;
-        onClose: () => void;
-        onConfirm: () => void;
-    }) => {
-        return createPortal(
-            <Modal
-                isOpen={isOpen}
-                onClose={onClose}
-                title="Delete Workspace"
-                description={`Are you sure you want to delete "${workspaceName}"? This action cannot be undone.`}
-                onConfirm={onConfirm}
-                confirmText="Delete"
-                confirmVariant="destructive"
-            />,
-            document.body,
-        );
-    },
-);
-
 const WorkspaceList = memo(
     ({
         workspaces,
@@ -109,12 +80,6 @@ const WorkspaceList = memo(
         onWorkspaceDelete: (id: string) => void;
         onRenameWorkspace: (id: string, newName: string) => void;
     }) => {
-        const [deleteConfirm, setDeleteConfirm] =
-            useState<DeleteWorkspaceState>({
-                isOpen: false,
-                workspaceId: null,
-                workspaceName: null,
-            });
         const [editingWorkspace, setEditingWorkspace] = useState<string | null>(
             null,
         );
@@ -127,25 +92,6 @@ const WorkspaceList = memo(
                 inputRef.current.select();
             }
         }, [editingWorkspace]);
-
-        const handleDelete = (id: string, name: string) => {
-            setDeleteConfirm({
-                isOpen: true,
-                workspaceId: id,
-                workspaceName: name,
-            });
-        };
-
-        const confirmDelete = async () => {
-            if (deleteConfirm.workspaceId) {
-                await onWorkspaceDelete(deleteConfirm.workspaceId);
-                setDeleteConfirm({
-                    isOpen: false,
-                    workspaceId: null,
-                    workspaceName: null,
-                });
-            }
-        };
 
         const startRenaming = (id: string, currentName: string) => {
             setEditingWorkspace(id);
@@ -171,115 +117,95 @@ const WorkspaceList = memo(
         };
 
         return (
-            <>
-                <div className="space-y-0.5">
-                    {workspaces.map((workspace) => (
-                        <div
-                            key={workspace.id}
-                            className={`group/item flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-xs transition-all duration-150 ${
-                                activeWorkspace === workspace.id
-                                    ? "bg-ctp-surface0 text-ctp-text"
-                                    : "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
-                            } `}
-                            onClick={() => onWorkspaceChange(workspace.id)}
-                        >
-                            <div className="flex min-w-0 flex-1 items-center gap-2">
-                                <AlignLeft
-                                    size={14}
-                                    strokeWidth={2}
-                                    className={`flex-shrink-0 transition-colors ${
-                                        activeWorkspace === workspace.id
-                                            ? "text-ctp-text"
-                                            : "text-ctp-subtext0 group-hover/item:text-ctp-text"
-                                    } `}
+            <div className="space-y-0.5">
+                {workspaces.map((workspace) => (
+                    <div
+                        key={workspace.id}
+                        className={`group/item flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-xs transition-all duration-150 ${
+                            activeWorkspace === workspace.id
+                                ? "bg-ctp-surface0 text-ctp-text"
+                                : "text-ctp-subtext0 hover:bg-ctp-surface0/50 hover:text-ctp-text"
+                        } `}
+                        onClick={() => onWorkspaceChange(workspace.id)}
+                    >
+                        <div className="flex min-w-0 flex-1 items-center gap-2">
+                            <AlignLeft
+                                size={14}
+                                strokeWidth={2}
+                                className={`flex-shrink-0 transition-colors ${
+                                    activeWorkspace === workspace.id
+                                        ? "text-ctp-text"
+                                        : "text-ctp-subtext0 group-hover/item:text-ctp-text"
+                                } `}
+                            />
+                            {editingWorkspace === workspace.id ? (
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    value={editValue}
+                                    maxLength={24}
+                                    onChange={(e) =>
+                                        setEditValue(e.target.value)
+                                    }
+                                    onBlur={() => handleRename(workspace.id)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            handleRename(workspace.id);
+                                        } else if (e.key === "Escape") {
+                                            setEditingWorkspace(null);
+                                        }
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="min-w-0 max-w-[150px] flex-1 border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
                                 />
-                                {editingWorkspace === workspace.id ? (
-                                    <input
-                                        ref={inputRef}
-                                        type="text"
-                                        value={editValue}
-                                        maxLength={24}
-                                        onChange={(e) =>
-                                            setEditValue(e.target.value)
-                                        }
-                                        onBlur={() =>
-                                            handleRename(workspace.id)
-                                        }
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                handleRename(workspace.id);
-                                            } else if (e.key === "Escape") {
-                                                setEditingWorkspace(null);
-                                            }
-                                        }}
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="min-w-0 max-w-[150px] flex-1 border-none bg-transparent px-0 py-0.5 text-xs font-medium outline-none focus:ring-0"
-                                    />
-                                ) : (
-                                    <span className="truncate font-medium">
-                                        {workspace.name}
-                                    </span>
-                                )}
-                            </div>
-                            {workspaces.length > 1 &&
-                                activeWorkspace !== workspace.id && (
-                                    <div className="flex items-center gap-1">
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                startRenaming(
-                                                    workspace.id,
-                                                    workspace.name,
-                                                );
-                                            }}
-                                            className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-text group-hover/item:opacity-100"
-                                        >
-                                            <Edit2
-                                                size={12}
-                                                className="stroke-[2.5]"
-                                            />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDelete(
-                                                    workspace.id,
-                                                    workspace.name,
-                                                );
-                                            }}
-                                            className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-red group-hover/item:opacity-100"
-                                        >
-                                            <Trash2
-                                                size={12}
-                                                className="stroke-[2.5]"
-                                            />
-                                        </button>
-                                    </div>
-                                )}
-                            {activeWorkspace === workspace.id && (
-                                <div className="rounded-full bg-ctp-surface1 px-1.5 py-0.5 text-[10px] text-ctp-subtext1">
-                                    Active
-                                </div>
+                            ) : (
+                                <span className="truncate font-medium">
+                                    {workspace.name}
+                                </span>
                             )}
                         </div>
-                    ))}
-                </div>
-
-                <DeleteWorkspaceModal
-                    isOpen={deleteConfirm.isOpen}
-                    workspaceName={deleteConfirm.workspaceName}
-                    onClose={() =>
-                        setDeleteConfirm({
-                            isOpen: false,
-                            workspaceId: null,
-                            workspaceName: null,
-                        })
-                    }
-                    onConfirm={confirmDelete}
-                />
-            </>
+                        {workspaces.length > 1 &&
+                            activeWorkspace !== workspace.id && (
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            startRenaming(
+                                                workspace.id,
+                                                workspace.name,
+                                            );
+                                        }}
+                                        className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-text group-hover/item:opacity-100"
+                                    >
+                                        <Edit2
+                                            size={12}
+                                            className="stroke-[2.5]"
+                                        />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onWorkspaceDelete(workspace.id);
+                                        }}
+                                        className="rounded p-1 opacity-0 transition-all duration-200 hover:text-ctp-red group-hover/item:opacity-100"
+                                    >
+                                        <Trash2
+                                            size={12}
+                                            className="stroke-[2.5]"
+                                        />
+                                    </button>
+                                </div>
+                            )}
+                        {activeWorkspace === workspace.id && (
+                            <div className="rounded-full bg-ctp-surface1 px-1.5 py-0.5 text-[10px] text-ctp-subtext1">
+                                Active
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
         );
     },
 );
