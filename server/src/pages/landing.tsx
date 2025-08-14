@@ -23,6 +23,10 @@ const Landing: FC = () => {
         window.open("https://www.hydrogen.lat/", "_blank");
     };
 
+    const handleRonix = () => {
+        window.open("https://ronixstudios.com/", "_blank");
+    };
+
     const handleScroll = useCallback(() => {
         if (window.scrollY > 50) {
             setHasScrolled(true);
@@ -52,6 +56,7 @@ const Landing: FC = () => {
                     onGithubClick={handleGithub}
                     onDocsClick={handleDocs}
                     onHydrogenClick={handleHydrogen}
+                    onRonixClick={handleRonix}
                 />
             </div>
         </div>

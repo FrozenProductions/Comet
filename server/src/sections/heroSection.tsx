@@ -2,6 +2,7 @@ import { Code, ExternalLink, Github, History, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import type { FC } from "react";
 import { useNavigate } from "react-router-dom";
+import { Tooltip } from "react-tooltip";
 import ActionButton from "../components/buttons/actionButton";
 import GallerySection from "../components/gallery/gallerySection";
 import { GALLERY_IMAGES, LANDING_CONTENT } from "../constants/landingContent";
@@ -22,6 +23,10 @@ const HeroSection: FC = () => {
 
     const handleHydrogen = () => {
         window.open("https://www.hydrogen.lat/", "_blank");
+    };
+
+    const handleRonix = () => {
+        window.open("https://ronixstudios.com/", "_blank");
     };
 
     const handleChangelog = () => {
@@ -79,6 +84,8 @@ const HeroSection: FC = () => {
                                     onClick={handleGithub}
                                     variant="secondary"
                                     className="w-full sm:w-auto"
+                                    data-tooltip-id="hero-tooltip"
+                                    data-tooltip-content="View project on GitHub"
                                 />
                                 <ActionButton
                                     label="Docs"
@@ -88,6 +95,8 @@ const HeroSection: FC = () => {
                                     onClick={handleDocs}
                                     variant="primary"
                                     className="w-full sm:w-auto"
+                                    data-tooltip-id="hero-tooltip"
+                                    data-tooltip-content="Read documentation"
                                 />
                                 <ActionButton
                                     label="Hydrogen"
@@ -97,6 +106,19 @@ const HeroSection: FC = () => {
                                     onClick={handleHydrogen}
                                     variant="secondary"
                                     className="w-full sm:w-auto"
+                                    data-tooltip-id="hero-tooltip"
+                                    data-tooltip-content="Visit Hydrogen website"
+                                />
+                                <ActionButton
+                                    label="Ronix"
+                                    icon={
+                                        <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" />
+                                    }
+                                    onClick={handleRonix}
+                                    variant="secondary"
+                                    className="w-full sm:w-auto"
+                                    data-tooltip-id="hero-tooltip"
+                                    data-tooltip-content="Visit Ronix website"
                                 />
                                 <ActionButton
                                     label="Changelog"
@@ -106,6 +128,8 @@ const HeroSection: FC = () => {
                                     onClick={handleChangelog}
                                     variant="secondary"
                                     className="w-full sm:w-auto"
+                                    data-tooltip-id="hero-tooltip"
+                                    data-tooltip-content="View changelog"
                                 />
                             </div>
                         </div>
@@ -142,6 +166,12 @@ const HeroSection: FC = () => {
                     </motion.div>
                 </div>
             </div>
+            <Tooltip
+                id="hero-tooltip"
+                className="z-50"
+                place="top"
+                delayShow={200}
+            />
         </main>
     );
 };

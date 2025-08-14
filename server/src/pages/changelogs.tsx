@@ -40,6 +40,10 @@ const Changelogs: FC = () => {
         window.open("https://www.hydrogen.lat/", "_blank");
     };
 
+    const handleRonix = () => {
+        window.open("https://ronixstudios.com/", "_blank");
+    };
+
     return (
         <div className="min-h-screen bg-theme-base flex flex-col">
             <div className="flex-1">
@@ -165,6 +169,7 @@ const Changelogs: FC = () => {
                 onGithubClick={handleGithub}
                 onDocsClick={handleDocs}
                 onHydrogenClick={handleHydrogen}
+                onRonixClick={handleRonix}
             />
         </div>
     );
