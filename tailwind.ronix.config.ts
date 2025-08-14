@@ -34,17 +34,17 @@ export default {
                     crust: "#090c10",
                 },
                 accent: {
-                    light: "#b8a1e3",
-                    DEFAULT: "#9d82d9",
+                    light: "#8785c7",
+                    DEFAULT: "#6c69b5",
                     gradient:
-                        "linear-gradient(to bottom right, #b8a1e3, #9d82d9)",
+                        "linear-gradient(to bottom right, #8785c7, #6c69b5)",
                 },
             },
             backgroundImage: {
                 "accent-gradient":
-                    "linear-gradient(to bottom right, #b8a1e3, #9d82d9)",
+                    "linear-gradient(to bottom right, #8785c7, #6c69b5)",
                 "accent-gradient-r":
-                    "linear-gradient(to right, #b8a1e3, #9d82d9)",
+                    "linear-gradient(to right, #8785c7, #6c69b5)",
             },
             animation: {
                 "fade-in": "fadeIn 0.5s ease-in-out",
@@ -66,7 +66,7 @@ export default {
                 },
             },
             boxShadow: {
-                glow: "0 0 20px -5px rgba(157, 130, 217, 0.25)",
+                glow: "0 0 20px -5px rgba(108, 105, 181, 0.25)",
             },
         },
     },
