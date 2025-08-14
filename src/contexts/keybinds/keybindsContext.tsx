@@ -6,6 +6,7 @@ import { DEFAULT_KEYBINDS } from "../../constants/core/keybinds";
 import { useEditor } from "../../hooks/core/useEditor";
 import { useLocalStorage } from "../../hooks/core/useLocalStorage";
 import { useSettings } from "../../hooks/core/useSettings";
+import { useWorkspace } from "../../hooks/core/useWorkspace";
 import { useScript } from "../../hooks/execution/useScript";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsoleVisibility } from "../../hooks/ui/useConsoleVisibility";
@@ -23,6 +24,7 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
     const { executeScript } = useScript();
     const { toggleConsoleVisibility } = useConsoleVisibility();
     const { toggleSidebar } = useSidebar();
+    const { workspaces, activeWorkspace, setActiveWorkspace } = useWorkspace();
     const [activeScreen, setActiveScreen] = useState<Screen>("Editor");
     const [keybinds, setKeybinds] = useLocalStorage<Keybind[]>(
         "keybinds",
@@ -91,6 +93,34 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
                     if (typeof targetIndex === "number" && tabs[targetIndex]) {
                         setActiveTab(tabs[targetIndex].id);
                     }
+                    break;
+                }
+                case "nextWorkspace": {
+                    const currentIndex = workspaces.findIndex(
+                        (w) => w.id === activeWorkspace,
+                    );
+                    if (currentIndex === -1) return;
+                    const nextIndex = (currentIndex + 1) % workspaces.length;
+                    const nextWorkspace = workspaces[nextIndex];
+                    setActiveWorkspace(nextWorkspace.id);
+                    toast.success(
+                        `Switched to workspace ${nextWorkspace.name}`,
+                    );
+                    break;
+                }
+                case "previousWorkspace": {
+                    const currentIndex = workspaces.findIndex(
+                        (w) => w.id === activeWorkspace,
+                    );
+                    if (currentIndex === -1) return;
+                    const prevIndex =
+                        (currentIndex - 1 + workspaces.length) %
+                        workspaces.length;
+                    const prevWorkspace = workspaces[prevIndex];
+                    setActiveWorkspace(prevWorkspace.id);
+                    toast.success(
+                        `Switched to workspace ${prevWorkspace.name}`,
+                    );
                     break;
                 }
                 case "toggleZenMode":
@@ -165,6 +195,9 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
             toggleConsoleVisibility,
             toggleSidebar,
             handleBeautifyCode,
+            workspaces,
+            activeWorkspace,
+            setActiveWorkspace,
         ],
     );
 

@@ -19,6 +19,8 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
     nextTab: "NAVIGATION",
     previousTab: "NAVIGATION",
     switchTab: "NAVIGATION",
+    nextWorkspace: "NAVIGATION",
+    previousWorkspace: "NAVIGATION",
     toggleZenMode: "APPLICATION",
     toggleCommandPalette: "APPLICATION",
     toggleWorkspaceSearch: "APPLICATION",
@@ -135,6 +137,18 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
         modifiers: { cmd: true, shift: true },
         action: "openAutoExecution",
         description: "Switch to auto execution",
+    },
+    {
+        key: "]",
+        modifiers: { cmd: true, shift: true },
+        action: "nextWorkspace",
+        description: "Switch to next workspace",
+    },
+    {
+        key: "[",
+        modifiers: { cmd: true, shift: true },
+        action: "previousWorkspace",
+        description: "Switch to previous workspace",
     },
     ...Array.from({ length: 20 }, (_, i) => ({
         key: (i + 1).toString(),

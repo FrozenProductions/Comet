@@ -50,6 +50,10 @@ const getKeybindTitle = (action: KeybindAction): string => {
             return "Switch to Library";
         case "openAutoExecution":
             return "Switch to Auto Execution";
+        case "nextWorkspace":
+            return "Next Workspace";
+        case "previousWorkspace":
+            return "Previous Workspace";
         default:
             return action;
     }

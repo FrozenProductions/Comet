@@ -25,7 +25,9 @@ export type KeybindAction =
     | "collapseConsole"
     | "toggleConsole"
     | "toggleWorkspaceSearch"
-    | "toggleSidebar";
+    | "toggleSidebar"
+    | "nextWorkspace"
+    | "previousWorkspace";
 
 export interface Keybind {
     key: string;
