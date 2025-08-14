@@ -106,6 +106,42 @@ export const InterfaceSection: FC = () => {
                         label="Zen Mode"
                         description="Hide sidebar and tab bar for distraction-free coding"
                     />
+                    {settings.interface.zenMode && (
+                        <div className="ml-6 space-y-3 border-l-2 border-ctp-surface0 pl-3">
+                            <Checkbox
+                                checked={settings.interface.hideTopbarInZenMode}
+                                onChange={() => {
+                                    updateSettings({
+                                        interface: {
+                                            ...settings.interface,
+                                            hideTopbarInZenMode:
+                                                !settings.interface
+                                                    .hideTopbarInZenMode,
+                                        },
+                                    });
+                                }}
+                                label="Hide Topbar"
+                                description="Hide the window title bar in zen mode"
+                            />
+                            <Checkbox
+                                checked={
+                                    settings.interface.hideStatusBarInZenMode
+                                }
+                                onChange={() => {
+                                    updateSettings({
+                                        interface: {
+                                            ...settings.interface,
+                                            hideStatusBarInZenMode:
+                                                !settings.interface
+                                                    .hideStatusBarInZenMode,
+                                        },
+                                    });
+                                }}
+                                label="Hide Status Bar"
+                                description="Hide the status bar in zen mode"
+                            />
+                        </div>
+                    )}
                     <Checkbox
                         checked={settings.interface.showConsole}
                         onChange={() => {
@@ -302,7 +338,7 @@ export const InterfaceSection: FC = () => {
                 isOpen={showZenModeConfirm}
                 onClose={() => setShowZenModeConfirm(false)}
                 title="Enable Zen Mode"
-                description="Zen Mode will hide the sidebar and tab bar for a distraction-free coding experience. You can toggle it back using the command palette (⌘+P) or keyboard shortcut (⌘+⇧+K)."
+                description="Zen Mode will hide the sidebar and tab bar for a distraction-free coding experience. You can also configure it to hide the topbar and status bar in the settings. Toggle zen mode using the command palette (⌘+P) or keyboard shortcut (⌘+⇧+K)."
                 onConfirm={confirmZenMode}
                 confirmText="Enable"
             />

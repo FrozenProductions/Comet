@@ -69,7 +69,8 @@ const AppContent: FC = () => {
 
     return (
         <div className="flex h-screen flex-col bg-ctp-base text-ctp-text">
-            <Topbar />
+            {(!settings.interface.zenMode ||
+                !settings.interface.hideTopbarInZenMode) && <Topbar />}
             <div className="flex flex-1 overflow-hidden">
                 {!settings.interface.zenMode && (
                     <Sidebar
@@ -79,7 +80,8 @@ const AppContent: FC = () => {
                 )}
                 <main className="relative flex-1">{renderScreen()}</main>
             </div>
-            <StatusBar />
+            {(!settings.interface.zenMode ||
+                !settings.interface.hideStatusBarInZenMode) && <StatusBar />}
             <CommandPalette
                 isOpen={isCommandPaletteOpen}
                 onClose={toggleCommandPalette}

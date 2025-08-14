@@ -41,6 +41,8 @@ export interface EditorSettings {
     };
     interface: {
         zenMode: boolean;
+        hideTopbarInZenMode: boolean;
+        hideStatusBarInZenMode: boolean;
         showTabBar: boolean;
         showConsole: boolean;
         modalScale: "small" | "default" | "large";

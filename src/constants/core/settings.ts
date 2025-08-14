@@ -67,6 +67,8 @@ export const DEFAULT_EDITOR_SETTINGS = {
     },
     interface: {
         zenMode: false,
+        hideTopbarInZenMode: false,
+        hideStatusBarInZenMode: false,
         showTabBar: false,
         showConsole: false,
         modalScale: "default" as const,
