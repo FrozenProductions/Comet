@@ -90,7 +90,7 @@ export default function Command() {
             showToast({
                 style: Toast.Style.Failure,
                 title: "Not Connected",
-                message: "Cannot execute scripts without Hydrogen connection",
+                message: "Cannot execute scripts without Executor connection",
             });
 
             await saveRecentScript(scriptToExecute, false);
@@ -107,11 +107,11 @@ export default function Command() {
 
     function getConnectionStatus() {
         if (isConnecting) {
-            return "Connecting to Hydrogen...";
+            return "Connecting to Executor...";
         } else if (serverPort) {
-            return `Connected to Hydrogen on port ${serverPort}`;
+            return `Connected to Executor on port ${serverPort}`;
         } else {
-            return "Not connected to Hydrogen";
+            return "Not connected to Executor";
         }
     }
 
@@ -243,7 +243,7 @@ export default function Command() {
             navigationTitle="Quick execution"
         >
             <Form.Description
-                title="Hydrogen Script Executor"
+                title="Script Executor"
                 text="Quickly run Lua scripts in your Roblox games"
             />
             <Form.TextArea
@@ -253,10 +253,10 @@ export default function Command() {
                 enableMarkdown={false}
                 info={
                     isConnecting
-                        ? "Connecting to Hydrogen..."
+                        ? "Connecting to Executor..."
                         : serverPort
                           ? "Ready to execute scripts"
-                          : "⚠️ Not connected to Hydrogen"
+                          : "⚠️ Not connected to Executor"
                 }
                 value={currentScript}
                 onChange={setCurrentScript}
