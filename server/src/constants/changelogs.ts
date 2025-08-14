@@ -5,6 +5,54 @@ export const CHANGELOG_DATA: ChangelogSection[] = [
         year: 2025,
         releases: [
             {
+                version: "1.1.1",
+                date: "2025-08-14",
+                changes: [
+                    {
+                        type: "feature",
+                        title: "Sidebar Component Improvements",
+                        description:
+                            "Adjusted Sidebar component dimensions and button spacing.",
+                    },
+                    {
+                        type: "feature",
+                        title: "Workspace Management Updates",
+                        description:
+                            "Updated workspaceSelector component and fixed workspace delete process.",
+                    },
+                    {
+                        type: "improvement",
+                        title: "Brand Color Updates",
+                        description:
+                            "Updated accent colors and gradients configuration for Ronix brand.",
+                    },
+                    {
+                        type: "feature",
+                        title: "Enhanced Zen Mode Settings",
+                        description:
+                            "Added settings for hiding topbar and status bar in zen mode.",
+                    },
+                    {
+                        type: "feature",
+                        title: "Workspace Navigation Shortcuts",
+                        description:
+                            "Added keybinds for navigating to next and previous workspaces.",
+                    },
+                    {
+                        type: "bugfix",
+                        title: "Multiline String Parsing Fix",
+                        description:
+                            "Fixed multiline string parsing related to multi-line comments.",
+                    },
+                    {
+                        type: "feature",
+                        title: "Execution History Layout Fix",
+                        description:
+                            "Updated layout handling in executionHistory component to prevent layout shifts during dragging.",
+                    },
+                ],
+            },
+            {
                 version: "1.1.0",
                 date: "2025-08-03",
                 changes: [
