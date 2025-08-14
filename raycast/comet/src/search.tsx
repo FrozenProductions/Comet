@@ -9,7 +9,7 @@ import {
     Toast,
 } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { useHydrogen } from "./hooks/useHydrogen";
+import { useExecutor } from "./hooks/useExecutor";
 
 interface Script {
     title: string;
@@ -41,7 +41,7 @@ export default function Command() {
     const [showFavorites, setShowFavorites] = useState(false);
     const [selectedGame, setSelectedGame] = useState<string | null>(null);
     const [games, setGames] = useState<Set<string>>(new Set());
-    const { serverPort, isConnecting, connect, execute } = useHydrogen();
+    const { serverPort, isConnecting, connect, execute } = useExecutor();
 
     useEffect(() => {
         loadFavorites();

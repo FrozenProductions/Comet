@@ -1,20 +1,20 @@
 import { showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
 import {
+    type ExecutorState,
     executeScript,
-    findHydrogenServer,
-    type HydrogenState,
-} from "../utils/hydrogen";
+    findExecutorServer,
+} from "../utils/executor";
 
-export function useHydrogen() {
-    const [state, setState] = useState<HydrogenState>({
+export function useExecutor() {
+    const [state, setState] = useState<ExecutorState>({
         serverPort: null,
         isConnecting: true,
     });
 
     const connect = async () => {
         setState((prev) => ({ ...prev, isConnecting: true }));
-        const port = await findHydrogenServer();
+        const port = await findExecutorServer();
         setState({
             serverPort: port,
             isConnecting: false,

@@ -10,7 +10,7 @@ import {
     Toast,
 } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { useHydrogen } from "./hooks/useHydrogen";
+import { useExecutor } from "./hooks/useExecutor";
 
 type Values = {
     scriptInput: string;
@@ -30,7 +30,7 @@ export default function Command() {
     const [isShowingRecent, setIsShowingRecent] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [currentScript, setCurrentScript] = useState("");
-    const { serverPort, isConnecting, connect, execute } = useHydrogen();
+    const { serverPort, isConnecting, connect, execute } = useExecutor();
 
     useEffect(() => {
         loadRecentScripts();

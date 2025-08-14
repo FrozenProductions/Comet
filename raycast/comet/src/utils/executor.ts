@@ -1,16 +1,16 @@
 export const START_PORT = 6969 as const;
 export const END_PORT = 7069 as const;
 
-export interface HydrogenState {
+export interface ExecutorState {
     serverPort: number | null;
     isConnecting: boolean;
 }
 
 /**
- * Scans ports to find running Hydrogen server
+ * Scans ports to find running Executor server
  * @returns Port number if server found, null otherwise
  */
-export async function findHydrogenServer(): Promise<number | null> {
+export async function findExecutorServer(): Promise<number | null> {
     for (let port = START_PORT; port <= END_PORT; port++) {
         try {
             const res = await fetch(`http://127.0.0.1:${port}/secret`, {
@@ -28,7 +28,7 @@ export async function findHydrogenServer(): Promise<number | null> {
 
 /**
  * Executes Lua script
- * @param serverPort Port number of Hydrogen server
+ * @param serverPort Port number of Executor server
  * @param scriptContent Lua script content to execute
  * @returns Server response text
  */
@@ -38,7 +38,7 @@ export async function executeScript(
 ): Promise<string> {
     if (!serverPort) {
         throw new Error(
-            `Could not locate Hydrogen server on ports ${START_PORT}-${END_PORT}`,
+            `Could not locate Executor server on ports ${START_PORT}-${END_PORT}`,
         );
     }
 
