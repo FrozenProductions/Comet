@@ -424,6 +424,7 @@ export const AutoExecute: React.FC = () => {
                             </div>
                             <div className="flex-1">
                                 <CodeEditor
+                                    key={selectedFile.path}
                                     content={editedContent}
                                     language="lua"
                                     onChange={handleContentChange}
