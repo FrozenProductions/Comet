@@ -1,5 +1,7 @@
 > [!CAUTION]
 > Using [Roblox](https://www.roblox.com) executors may result in your account being banned. Use at your own risk. The developers are not responsible for any consequences.
+> [!CAUTION]
+> Currently project is discontinued for an undefined ammount of time.
 
 # <div align="center">Comet</div>
 
@@ -48,13 +50,6 @@
 </div>
 
 ## <div align="center">🚀 Getting Started</div>
-
-### Install the ready application
-
-```bash
-# One-line installation
-curl -s https://www.comet-ui.fun/api/v1/installer | bash
-```
 
 ### Build from source
 

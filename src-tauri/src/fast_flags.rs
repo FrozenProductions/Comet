@@ -202,16 +202,5 @@ pub async fn open_fast_flags_directory() -> Result<(), String> {
 
 #[tauri::command]
 pub async fn get_fast_flag_categories(_app_handle: tauri::AppHandle) -> Result<Value, String> {
-    let client = reqwest::Client::new();
-    let response = client
-        .get("https://www.comet-ui.fun/api/v1/fastflags")
-        .send()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    if !response.status().is_success() {
-        return Err(format!("API error: {}", response.status()));
-    }
-
-    response.json().await.map_err(|e| e.to_string())
+    Ok(Value::Object(serde_json::Map::new()))
 }

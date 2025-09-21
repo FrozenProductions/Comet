@@ -1,12 +1,5 @@
-import { AlertTriangle } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
 import { useSettings } from "../../hooks/core/useSettings";
-import { fetchVersionMessage } from "../../services/system/versionMessagesService";
-import type {
-    MessageModalProps,
-    VersionMessage,
-} from "../../types/system/versionMessages";
 import type { GenericMessageModalProps } from "../../types/ui/ui";
 
 const getScaleValue = (modalScale: "small" | "default" | "large"): number => {
@@ -122,61 +115,5 @@ export const BaseMessageModal = ({
                 </div>
             </motion.div>
         </motion.div>
-    );
-};
-
-export const MessageModal = ({ currentVersion }: MessageModalProps) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [versionData, setVersionData] = useState<VersionMessage | null>(null);
-
-    useEffect(() => {
-        const fetchMessage = async () => {
-            const versionMessage = await fetchVersionMessage(currentVersion);
-            if (versionMessage) {
-                setVersionData(versionMessage);
-                setIsVisible(true);
-                return true;
-            }
-            return false;
-        };
-
-        fetchMessage();
-
-        const intervalId = setInterval(async () => {
-            const found = await fetchMessage();
-            if (found) {
-                clearInterval(intervalId);
-            }
-        }, 60000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [currentVersion]);
-
-    if (!isVisible || !versionData) {
-        return null;
-    }
-
-    const handleClose = () => {
-        if (!versionData.nfu) {
-            setIsVisible(false);
-        }
-    };
-
-    return (
-        <BaseMessageModal
-            isOpen={isVisible}
-            onClose={handleClose}
-            title="Message"
-            message={versionData.message}
-            imageUrl={versionData.image_url}
-            icon={
-                versionData.nfu && (
-                    <AlertTriangle size={14} className="text-ctp-red" />
-                )
-            }
-            variant={versionData.nfu ? "destructive" : "info"}
-        />
     );
 };

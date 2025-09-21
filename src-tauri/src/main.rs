@@ -3,7 +3,6 @@
 use dirs;
 use reqwest::blocking::Client as BlockingClient;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
@@ -24,56 +23,6 @@ struct ConnectionStatus {
     port: Option<u16>,
     current_port: u16,
     is_connecting: bool,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct VersionMessage {
-    message: String,
-    nfu: bool,
-    image_url: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct VersionMessages {
-    messages: std::collections::HashMap<String, VersionMessage>,
-}
-
-#[tauri::command]
-async fn fetch_version_messages(app_handle: tauri::AppHandle) -> Result<VersionMessages, String> {
-    let client = reqwest::Client::new();
-    let response = client
-        .get("https://comet-ui.fun/api/v1/messages")
-        .send()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    if !response.status().is_success() {
-        return Err("Failed to fetch messages".to_string());
-    }
-
-    let all_messages: Value = response
-        .json()
-        .await
-        .map_err(|e| format!("Failed to parse messages: {}", e))?;
-
-    let app_name = app_handle.package_info().name.clone().to_lowercase();
-    let branch = if app_name == "comet" {
-        "comet"
-    } else if app_name == "hydrogen" {
-        "hydrogen"
-    } else {
-        "ronix"
-    };
-
-    let branch_messages = all_messages
-        .get(branch)
-        .and_then(|b| b.get("messages"))
-        .ok_or_else(|| format!("No messages found for branch: {}", branch))?;
-
-    let messages = serde_json::from_value(branch_messages.clone())
-        .map_err(|e| format!("Failed to parse branch messages: {}", e))?;
-
-    Ok(VersionMessages { messages })
 }
 
 #[derive(Debug)]
@@ -396,7 +345,6 @@ mod flag_validator;
 mod login_items;
 mod roblox_logs;
 mod rscripts;
-mod suggestions;
 mod tabs;
 mod tray;
 mod updater;
@@ -404,7 +352,6 @@ mod workspace;
 
 use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
 use flag_validator::FlagValidator;
-use suggestions::fetch_suggestions;
 
 #[tauri::command]
 async fn open_roblox() -> Result<(), String> {
@@ -521,33 +468,6 @@ struct ScriptConfig {
     display_name: Option<String>,
 }
 
-impl ScriptConfig {
-    fn from_value(value: Value) -> Result<Self, String> {
-        let fetch = value.get("fetch").and_then(|v| v.as_bool());
-        let url = value.get("url").and_then(|v| v.as_str()).map(String::from);
-        let execute = value.get("execute").and_then(|v| v.as_bool());
-        let content = value.get("content").and_then(|v| {
-            if v.is_string() {
-                v.as_str().map(String::from)
-            } else {
-                Some(v.to_string())
-            }
-        });
-        let display_name = value
-            .get("display_name")
-            .and_then(|v| v.as_str())
-            .map(String::from);
-
-        Ok(ScriptConfig {
-            fetch,
-            url,
-            execute,
-            content,
-            display_name,
-        })
-    }
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ScriptsResponse {
     scripts: std::collections::HashMap<String, ScriptConfig>,
@@ -569,94 +489,43 @@ fn format_script_name(key: &str) -> String {
         .join(" ")
 }
 
-fn create_fallback_config(key: &str) -> Option<ScriptConfig> {
-    match key {
-        "infinite_yield" => Some(ScriptConfig {
+async fn fetch_script_configs() -> Result<ScriptsResponse, String> {
+    let mut scripts = std::collections::HashMap::new();
+
+    scripts.insert(
+        "infinite_yield".to_string(),
+        ScriptConfig {
             fetch: Some(true),
             url: Some("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source".to_string()),
             execute: None,
             content: None,
             display_name: Some("Infinite Yield".to_string()),
-        }),
-        "hydroxide" => Some(ScriptConfig {
+        }
+    );
+
+    scripts.insert(
+        "remote_spy".to_string(),
+        ScriptConfig {
             fetch: None,
             url: None,
             execute: Some(true),
-            content: Some(r#"local owner = "Upbolt"
-local branch = "revision"
+            content: Some(r#"loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()"#.to_string()),
+            display_name: Some("Remote Spy".to_string()),
+        }
+    );
 
-local function webImport(file)
-    return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)), file .. '.lua')()
-end
-
-webImport("init")
-webImport("ui/main")"#.to_string()),
-            display_name: Some("Hydroxide".to_string()),
-        }),
-        "dex_explorer" => Some(ScriptConfig {
-            fetch: Some(true),
-            url: Some("https://cdn.wearedevs.net/scripts/Dex%20Explorer.txt".to_string()),
-            execute: None,
-            content: None,
+    scripts.insert(
+        "dex_explorer".to_string(),
+        ScriptConfig {
+            fetch: None,
+            url: None,
+            execute: Some(true),
+            content: Some(r#"loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()"#.to_string()),
             display_name: Some("DEX Explorer".to_string()),
-        }),
-        _ => None,
-    }
-}
-
-async fn fetch_script_configs() -> Result<ScriptsResponse, String> {
-    let client = reqwest::Client::new();
-    match client
-        .get("https://www.comet-ui.fun/api/v1/scripts")
-        .send()
-        .await
-    {
-        Ok(response) => {
-            if !response.status().is_success() {
-                return Err("Failed to fetch script configs".to_string());
-            }
-
-            let text = response.text().await.map_err(|e| e.to_string())?;
-
-            let json: Value = serde_json::from_str(&text)
-                .map_err(|e| format!("Failed to parse script configs: {}", e))?;
-
-            let scripts_obj = json
-                .get("scripts")
-                .and_then(|v| v.as_object())
-                .ok_or("Invalid scripts object")?;
-
-            let mut scripts = std::collections::HashMap::new();
-
-            for (key, value) in scripts_obj {
-                if let Ok(config) = ScriptConfig::from_value(value.clone()) {
-                    scripts.insert(key.clone(), config);
-                }
-            }
-
-            let mut scripts_response = ScriptsResponse { scripts };
-
-            for (key, config) in scripts_response.scripts.iter_mut() {
-                if config.display_name.is_none() {
-                    config.display_name = Some(format_script_name(key));
-                }
-            }
-
-            Ok(scripts_response)
         }
-        Err(_) => {
-            let mut scripts = std::collections::HashMap::new();
-            let fallback_keys = ["infinite_yield", "hydroxide", "dex_explorer"];
+    );
 
-            for key in fallback_keys.iter() {
-                if let Some(config) = create_fallback_config(key) {
-                    scripts.insert(key.to_string(), config);
-                }
-            }
-
-            Ok(ScriptsResponse { scripts })
-        }
-    }
+    Ok(ScriptsResponse { scripts })
 }
 
 async fn execute_script_by_key(key: &str) -> Result<String, String> {
@@ -780,16 +649,6 @@ fn main() {
                 app.tray_handle().set_menu(SystemTrayMenu::new()).unwrap();
             }
 
-            let window_clone = window.clone();
-            tauri::async_runtime::spawn(async move {
-                loop {
-                    if let Err(e) = updater::check_comet_status(window_clone.clone()).await {
-                        eprintln!("Failed to check Comet status: {}", e);
-                    }
-                    thread::sleep(Duration::from_secs(60));
-                }
-            });
-
             tauri::async_runtime::spawn(async move {
                 roblox_logs::WATCHING.store(true, Ordering::SeqCst);
                 if let Some(log_path) = roblox_logs::find_latest_log_file() {
@@ -872,10 +731,7 @@ fn main() {
             workspace::delete_workspace,
             workspace::set_active_workspace,
             workspace::rename_workspace,
-            updater::check_for_updates,
-            updater::download_and_install_update,
             updater::is_official_app,
-            updater::check_comet_status,
             open_executor_folder,
             open_comet_folder,
             fast_flags_profiles::export_fast_flags_profiles,
@@ -883,8 +739,6 @@ fn main() {
             hide_window,
             fast_flags::save_fast_flags,
             fast_flags::get_fast_flag_categories,
-            fetch_version_messages,
-            fetch_suggestions,
             execution_history::load_execution_history,
             execution_history::save_execution_record,
             execution_history::clear_execution_history,

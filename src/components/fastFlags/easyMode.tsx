@@ -1,6 +1,5 @@
 import {
     Cpu,
-    Loader2,
     type LucideIcon,
     Radio,
     Sun,
@@ -10,10 +9,10 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
-import { getFastFlagCategories } from "../../services/roblox/fastFlagsService";
+import { CATEGORIES } from "../../constants/roblox/fastFlags";
 import type {
     FastFlagCategory,
     FastFlagDefinition,
@@ -48,31 +47,7 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
     onUpdateFlag,
 }) => {
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
-    const [categories, setCategories] = useState<
-        Record<string, FastFlagCategory>
-    >({});
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const data = await getFastFlagCategories();
-                setCategories(data);
-            } catch (err) {
-                setError(
-                    err instanceof Error
-                        ? err.message
-                        : "Failed to fetch categories",
-                );
-                toast.error("Failed to load fast flags categories");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchCategories();
-    }, []);
+    const categories = CATEGORIES;
 
     const handleFlagChange = async (flag: FastFlagDefinition, value: any) => {
         try {
@@ -113,46 +88,6 @@ export const EasyMode: React.FC<FastFlagManagerProps> = ({
             setIsUpdating(null);
         }
     };
-
-    if (isLoading) {
-        return (
-            <div className="flex flex-1 flex-col bg-ctp-base">
-                <div className="flex h-14 items-center border-b border-white/5 px-4">
-                    <div className="flex items-center gap-2">
-                        <User size={16} className="text-white/50" />
-                        <h3 className="text-sm font-medium text-ctp-text">
-                            {profile.name}
-                        </h3>
-                    </div>
-                </div>
-                <div className="flex flex-1 items-center justify-center">
-                    <div className="flex flex-col items-center gap-3">
-                        <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                        <span className="text-sm text-ctp-text">
-                            Loading fast flags...
-                        </span>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex h-full items-center justify-center">
-                <div className="text-center">
-                    <p className="text-sm text-red-500">{error}</p>
-                    <button
-                        type="button"
-                        onClick={() => window.location.reload()}
-                        className="mt-4 rounded-md bg-accent px-4 py-2 text-sm text-white hover:bg-accent/90"
-                    >
-                        Retry
-                    </button>
-                </div>
-            </div>
-        );
-    }
 
     const getCurrentValue = (flag: FastFlagDefinition) => {
         if (!flag.relatedFlags || typeof flag.relatedFlags === "function") {

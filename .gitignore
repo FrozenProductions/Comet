@@ -11,6 +11,8 @@ lerna-debug.log*
 server/api/database/scripts/
 cli/bundle/
 cli/scripts
+QWEN.md
+.qwen
 
 node_modules
 dist

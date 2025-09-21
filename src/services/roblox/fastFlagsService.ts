@@ -1,6 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import type {
-    FastFlagCategory,
     FastFlagsResponse,
 } from "../../types/roblox/fastFlags";
 
@@ -97,24 +96,6 @@ export const cleanupFastFlags = async (): Promise<{
         );
     } catch (error) {
         console.error("Failed to clean up fast flags file:", error);
-        throw error;
-    }
-};
-
-/**
- * Fetches fast flag categories from the backend
- * @returns Promise with fast flag categories
- * @throws Error if fetching categories fails
- */
-export const getFastFlagCategories = async (): Promise<
-    Record<string, FastFlagCategory>
-> => {
-    try {
-        return await invoke<Record<string, FastFlagCategory>>(
-            "get_fast_flag_categories",
-        );
-    } catch (error) {
-        console.error("Error fetching categories:", error);
         throw error;
     }
 };

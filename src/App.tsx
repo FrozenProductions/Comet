@@ -19,9 +19,7 @@ import { listen } from "@tauri-apps/api/event";
 import { AutoExecute } from "./components/autoExecute/autoExecute";
 import { CometOffline } from "./components/ui/cometOffline";
 import { ExecutorNotFound } from "./components/ui/executorNotFound";
-import { MessageModal } from "./components/ui/messageModal";
 import { UpdateChecker } from "./components/updater";
-import { APP_CONSTANTS } from "./constants/core/app";
 import { ConsoleProvider } from "./contexts/console/consoleContext";
 import { ExecutionHistoryProvider } from "./contexts/execution/executionHistoryContext";
 import { SidebarProvider } from "./contexts/sidebar/sidebarContext";
@@ -144,11 +142,6 @@ const App: FC = () => {
                                     <SidebarProvider>
                                         <KeybindsProvider>
                                             <AppContent />
-                                            <MessageModal
-                                                currentVersion={
-                                                    APP_CONSTANTS.currentVersion
-                                                }
-                                            />
                                             <UpdateChecker />
                                             <Toaster />
                                         </KeybindsProvider>
