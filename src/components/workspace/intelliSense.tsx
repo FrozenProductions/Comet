@@ -56,17 +56,14 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                     );
                     break;
                 case settings.intellisense.acceptSuggestionKey:
-                case settings.intellisense.acceptSuggestionKey === "Enter"
-                    ? "Tab"
-                    : "Enter":
                     e.preventDefault();
                     e.stopPropagation();
-                    if (
-                        e.key === settings.intellisense.acceptSuggestionKey &&
-                        suggestions[selectedIndex]
-                    ) {
+                    if (suggestions[selectedIndex]) {
                         onSelect(suggestions[selectedIndex].label);
                     }
+                    break;
+                case (settings.intellisense.acceptSuggestionKey === "Enter" ? "Tab" : "Enter"):
+                    onClose();
                     break;
                 case "Escape":
                     e.preventDefault();
