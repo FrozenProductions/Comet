@@ -41,6 +41,30 @@ export const ExecutionHistory = ({
         DEFAULT_EXECUTION_HISTORY_STATE,
     );
 
+    useEffect(() => {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        const isOutsideBounds = 
+            state.position.x < 0 || 
+            state.position.y < 0 || 
+            state.position.x + state.size.width > viewportWidth || 
+            state.position.y + state.size.height > viewportHeight;
+
+        if (isOutsideBounds) {
+            const correctedX = Math.max(0, Math.min(state.position.x, viewportWidth - state.size.width));
+            const correctedY = Math.max(0, Math.min(state.position.y, viewportHeight - state.size.height));
+            
+            setState(prev => ({
+                ...prev,
+                position: {
+                    x: correctedX,
+                    y: correctedY
+                }
+            }));
+        }
+    }, [state.position.x, state.position.y, state.size.width, state.size.height, setState]);
+
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
     const dragStartPos = useRef<{ x: number; y: number } | null>(null);
@@ -87,11 +111,26 @@ export const ExecutionHistory = ({
                 if (!dragStart) return;
 
                 if (isDragging) {
+                    const newX = event.clientX - dragStart.x;
+                    const newY = event.clientY - dragStart.y;
+                    
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+                    
+                    const constrainedX = Math.max(
+                        0, 
+                        Math.min(newX, viewportWidth - state.size.width)
+                    );
+                    const constrainedY = Math.max(
+                        0, 
+                        Math.min(newY, viewportHeight - state.size.height)
+                    );
+
                     setState((prev) => ({
                         ...prev,
                         position: {
-                            x: event.clientX - dragStart.x,
-                            y: event.clientY - dragStart.y,
+                            x: constrainedX,
+                            y: constrainedY,
                         },
                     }));
                 } else if (isResizing) {
@@ -117,7 +156,7 @@ export const ExecutionHistory = ({
                 window.removeEventListener("mouseup", handleDragEnd);
             };
         }
-    }, [isDragging, isResizing, handleDragEnd, setState]);
+    }, [isDragging, isResizing, handleDragEnd, setState, state.size.width, state.size.height]);
 
     const filteredHistory = useMemo(() => {
         return history.filter((record) => {
