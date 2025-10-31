@@ -46,9 +46,7 @@
                 "depends": []
             },
             "externalBin": [],
-            "icon": [
-                "../public/Icon.icns"
-            ],
+            "icon": ["../public/Icon.icns"],
             "identifier": "com.comet.dev",
             "longDescription": "A modern and minimalistic interface for Hydrogen executor.",
             "macOS": {
@@ -60,9 +58,7 @@
             },
             "resources": [],
             "shortDescription": "A modern and minimalistic interface for Hydrogen executor.",
-            "targets": [
-                "dmg"
-            ],
+            "targets": ["dmg"],
             "windows": {
                 "certificateThumbprint": null,
                 "digestAlgorithm": "sha256",
