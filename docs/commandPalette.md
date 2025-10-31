@@ -48,10 +48,3 @@ Command Palette allows you to:
 
 - **Execute Script**: Run the current tab's script
 - **Open Roblox**: Launch Roblox application
-
-### Fast Flags
-
-- **Fast Flags**: Quick access to Fast Flags profiles
-    - Use `>flags` or `>f` to list all profiles
-    - Use `>flags [name]` to filter profiles
-    - Use `>flags none` or `>flags clear` to disable all flags

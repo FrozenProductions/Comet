@@ -40,7 +40,6 @@ Keybinds allow you to:
 
 - Open Settings: `⌘ ,`
 - Switch to Editor: `⌘ ⇧ E`
-- Switch to Fast Flags: `⌘ ⇧ F`
 - Switch to Library: `⌘ ⇧ L`
 - Switch to Auto Execution: `⌘ ⇧ A`
 

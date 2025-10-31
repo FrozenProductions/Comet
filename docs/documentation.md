@@ -36,13 +36,7 @@
       </td>
     </tr>
     <tr>
-      <td align="center" width="300px">
-        <a href="fastFlags.md">
-          <b>Fast Flags</b>
-        </a><br/>
-        Configure and manage Roblox Fast Flags profiles
-      </td>
-      <td align="center" width="300px">
+      <td align="center" width="600px" colspan="2">
         <a href="autoExecute.md">
           <b>Auto Execute</b>
         </a><br/>

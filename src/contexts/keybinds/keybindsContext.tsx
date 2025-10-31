@@ -160,9 +160,6 @@ export const KeybindsProvider: React.FC<{ children: React.ReactNode }> = ({
                 case "openEditor":
                     handleScreenChange("Editor");
                     break;
-                case "openFastFlags":
-                    handleScreenChange("FastFlags");
-                    break;
                 case "openLibrary":
                     handleScreenChange("Library");
                     break;

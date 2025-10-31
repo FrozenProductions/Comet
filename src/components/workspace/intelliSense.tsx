@@ -62,7 +62,9 @@ export const IntelliSense: FC<IntelliSenseProps> = ({
                         onSelect(suggestions[selectedIndex].label);
                     }
                     break;
-                case (settings.intellisense.acceptSuggestionKey === "Enter" ? "Tab" : "Enter"):
+                case settings.intellisense.acceptSuggestionKey === "Enter"
+                    ? "Tab"
+                    : "Enter":
                     onClose();
                     break;
                 case "Escape":

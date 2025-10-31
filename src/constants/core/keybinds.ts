@@ -30,7 +30,6 @@ export const KEYBIND_CATEGORY_MAPPING: Record<
     collapseConsole: "APPLICATION",
     toggleConsole: "APPLICATION",
     openEditor: "SCREENS",
-    openFastFlags: "SCREENS",
     openLibrary: "SCREENS",
     openAutoExecution: "SCREENS",
 };
@@ -119,12 +118,6 @@ export const DEFAULT_KEYBINDS: Keybind[] = [
         modifiers: { cmd: true, shift: true },
         action: "openEditor",
         description: "Switch to editor",
-    },
-    {
-        key: "f",
-        modifiers: { cmd: true, shift: true },
-        action: "openFastFlags",
-        description: "Switch to fast flags",
     },
     {
         key: "l",

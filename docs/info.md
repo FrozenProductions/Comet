@@ -63,14 +63,6 @@
         </ul>
       </td>
       <td align="center" width="20%">
-        <h3>⚡ Fast Flags</h3>
-        <ul align="left">
-          <li>Profile system</li>
-          <li>Dual management modes</li>
-          <li>Real-time updates</li>
-        </ul>
-      </td>
-      <td align="center" width="20%">
         <h3>🔄 Auto Execute</h3>
         <ul align="left">
           <li>Auto-execution</li>
@@ -83,7 +75,6 @@
         <ul align="left">
           <li>Quick navigation</li>
           <li>Command execution</li>
-          <li>Fast flags control</li>
         </ul>
       </td>
     </tr>
@@ -105,10 +96,6 @@
 
 ## <div align="center">🙏 Credits & Inspiration</div>
 
-### Fast Flags Implementation
-
-- Inspired by [AppleBlox](https://github.com/AppleBlox/appleblox)'s Fast Flags system
-
 ### Core Development
 
 - **Developer**: [Frozen Productions](https://github.com/FrozenProductions)
@@ -116,7 +103,6 @@
 
 ### Special Thanks
 
-- [MaximumADHD](https://github.com/MaximumADHD) for Roblox FFlag tracking system
 - The Hydrogen community for support and feedback
 
 ## <div align="center">📝 License</div>

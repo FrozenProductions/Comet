@@ -4,7 +4,6 @@ import {
     Command,
     ExternalLink,
     FileCode,
-    Flag,
     Layout,
     Maximize2,
     Play,
@@ -20,7 +19,6 @@ import { useEditor } from "../../hooks/core/useEditor";
 import { useSettings } from "../../hooks/core/useSettings";
 import { useWorkspace } from "../../hooks/core/useWorkspace";
 import { useScript } from "../../hooks/execution/useScript";
-import { useFastFlags } from "../../hooks/roblox/useFastFlags";
 import { useRoblox } from "../../hooks/roblox/useRoblox";
 import { useConsoleVisibility } from "../../hooks/ui/useConsoleVisibility";
 import { beautifierService } from "../../services/features/beautifierService";
@@ -44,11 +42,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
     const { openRoblox } = useRoblox();
     const { executeScript } = useScript();
     const { createWorkspace } = useWorkspace();
-    const {
-        state: { profiles, activeProfileId },
-        activateProfile,
-        deactivateProfile,
-    } = useFastFlags();
     const { toggleConsoleVisibility } = useConsoleVisibility();
 
     useEffect(() => {
@@ -86,16 +79,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
         await Promise.resolve(action());
         setSearchQuery("");
         onClose();
-    };
-
-    const handleClearFlags = async () => {
-        try {
-            await deactivateProfile();
-            toast.success("Fast flags cleared");
-        } catch (error) {
-            console.error("Failed to clear fast flags:", error);
-            toast.error("Failed to clear fast flags");
-        }
     };
 
     const commands: CommandItem[] = [
@@ -244,30 +227,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             icon: <ExternalLink size={16} className="stroke-[2.5]" />,
             action: executeCommand(() => openRoblox()),
         },
-        {
-            id: "fast-flags",
-            title: "Fast Flags",
-            description: activeProfileId
-                ? `Current: ${
-                      profiles.find((p) => p.id === activeProfileId)?.name ||
-                      "None"
-                  }`
-                : "Switch fast flags profile",
-            icon: (
-                <Flag
-                    size={16}
-                    className={`stroke-[2.5] ${activeProfileId ? "text-accent" : ""}`}
-                />
-            ),
-            action: () => {
-                setSearchQuery(">flags ");
-                if (inputRef.current) {
-                    const len = inputRef.current.value.length;
-                    inputRef.current.focus();
-                    inputRef.current.setSelectionRange(len, len);
-                }
-            },
-        },
     ];
 
     const getFilteredItems = () => {
@@ -328,111 +287,6 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                     action: () => {},
                 },
             ];
-        }
-
-        if (command === "flags" || command === "f") {
-            if (!param) {
-                return [
-                    {
-                        id: "fast-flags-none",
-                        title: "None",
-                        description: "Clear all fast flags",
-                        icon: <Flag size={16} className="stroke-[2.5]" />,
-                        action: executeCommand(handleClearFlags),
-                    },
-                    ...profiles.map((profile) => ({
-                        id: `fast-flags-${profile.id}`,
-                        title: profile.name,
-                        description: `${
-                            activeProfileId === profile.id
-                                ? "Current profile"
-                                : "Switch to this profile"
-                        }`,
-                        icon: (
-                            <Flag
-                                size={16}
-                                className={`stroke-[2.5] ${
-                                    activeProfileId === profile.id
-                                        ? "text-accent"
-                                        : ""
-                                }`}
-                            />
-                        ),
-                        action: executeCommand(async () => {
-                            try {
-                                await activateProfile(profile.id);
-                                toast.success(
-                                    `Activated profile: ${profile.name}`,
-                                );
-                            } catch (error) {
-                                console.error(
-                                    "Failed to activate profile:",
-                                    error,
-                                );
-                                toast.error("Failed to activate profile");
-                            }
-                        }),
-                    })),
-                ];
-            }
-
-            if (
-                param.toLowerCase() === "none" ||
-                param.toLowerCase() === "clear"
-            ) {
-                return [
-                    {
-                        id: "fast-flags-none",
-                        title: "Clear Fast Flags",
-                        description: "Remove all fast flags",
-                        icon: <Flag size={16} className="stroke-[2.5]" />,
-                        action: handleClearFlags,
-                    },
-                ];
-            }
-
-            const matchingProfiles = profiles.filter((profile) =>
-                profile.name.toLowerCase().includes(param),
-            );
-
-            if (matchingProfiles.length === 0) {
-                return [
-                    {
-                        id: "fast-flags-no-match",
-                        title: "No matching profiles",
-                        description: `No profiles found matching "${param}"`,
-                        icon: <Flag size={16} className="stroke-[2.5]" />,
-                        action: () => {},
-                    },
-                ];
-            }
-
-            return matchingProfiles.map((profile) => ({
-                id: `fast-flags-${profile.id}`,
-                title: profile.name,
-                description: `${
-                    activeProfileId === profile.id
-                        ? "Current profile"
-                        : "Switch to this profile"
-                }`,
-                icon: (
-                    <Flag
-                        size={16}
-                        className={`stroke-[2.5] ${
-                            activeProfileId === profile.id ? "text-accent" : ""
-                        }`}
-                    />
-                ),
-                action: async () => {
-                    try {
-                        await activateProfile(profile.id);
-                        toast.success(`Activated profile: ${profile.name}`);
-                    } catch (error) {
-                        console.error("Failed to activate profile:", error);
-                        toast.error("Failed to activate profile");
-                    }
-                },
-            }));
         }
 
         if (command === "workspace" || command === "w") {

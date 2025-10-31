@@ -1,11 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-export type Screen =
-    | "Editor"
-    | "Settings"
-    | "Library"
-    | "FastFlags"
-    | "AutoExecution";
+export type Screen = "Editor" | "Settings" | "Library" | "AutoExecution";
 
 export interface SidebarProps {
     activeScreen: Screen;

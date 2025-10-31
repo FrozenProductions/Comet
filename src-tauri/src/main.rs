@@ -109,8 +109,7 @@ impl ConnectionManager {
 #[derive(Clone)]
 struct AppState {
     connection: Arc<Mutex<ConnectionManager>>,
-    status: Arc<Mutex<ConnectionStatus>>,
-    flag_validator: Arc<FlagValidator>,
+    status: Arc<Mutex<ConnectionStatus>>
 }
 
 impl AppState {
@@ -122,8 +121,7 @@ impl AppState {
                 port: None,
                 current_port: MIN_PORT,
                 is_connecting: false,
-            })),
-            flag_validator: Arc::new(FlagValidator::new()),
+            }))
         }
     }
 
@@ -339,9 +337,6 @@ mod auto_execute;
 mod config;
 mod execution_history;
 mod executor;
-mod fast_flags;
-mod fast_flags_profiles;
-mod flag_validator;
 mod login_items;
 mod roblox_logs;
 mod rscripts;
@@ -349,9 +344,6 @@ mod tabs;
 mod tray;
 mod updater;
 mod workspace;
-
-use fast_flags_profiles::{FastFlagsProfile, FastFlagsProfileManager};
-use flag_validator::FlagValidator;
 
 #[tauri::command]
 async fn open_roblox() -> Result<(), String> {
@@ -361,67 +353,6 @@ async fn open_roblox() -> Result<(), String> {
         .spawn()
         .map_err(|e| e.to_string())?;
 
-    Ok(())
-}
-
-#[tauri::command]
-async fn load_fast_flags_profiles(
-    app_handle: tauri::AppHandle,
-) -> Result<(Vec<FastFlagsProfile>, Option<String>), String> {
-    let settings_file = std::path::PathBuf::from(
-        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
-    );
-    let profile_manager = FastFlagsProfileManager::new(&app_handle);
-
-    if !settings_file.exists() {
-        let _ = profile_manager.clear_active_profile();
-    }
-
-    let profiles = profile_manager.load_profiles()?;
-    let active_id = profile_manager.get_active_profile_id()?;
-    Ok((profiles, active_id))
-}
-
-#[tauri::command]
-async fn save_fast_flags_profile(
-    app_handle: tauri::AppHandle,
-    profile: FastFlagsProfile,
-) -> Result<(), String> {
-    let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    profile_manager.save_profile(profile, &app_handle).await
-}
-
-#[tauri::command]
-async fn delete_fast_flags_profile(
-    app_handle: tauri::AppHandle,
-    profile_id: String,
-) -> Result<(), String> {
-    let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    profile_manager.delete_profile(&profile_id)
-}
-
-#[tauri::command]
-async fn activate_fast_flags_profile(
-    app_handle: tauri::AppHandle,
-    profile_id: String,
-) -> Result<FastFlagsProfile, String> {
-    let profile_manager = FastFlagsProfileManager::new(&app_handle);
-    profile_manager
-        .activate_profile(&app_handle, &profile_id)
-        .await
-}
-
-#[tauri::command]
-async fn validate_flags(
-    flags: Vec<String>,
-    state: State<'_, AppState>,
-) -> Result<Vec<String>, String> {
-    state.flag_validator.validate_flags(&flags).await
-}
-
-#[tauri::command]
-async fn refresh_flag_validation_cache(state: State<'_, AppState>) -> Result<(), String> {
-    state.flag_validator.refresh_cache().await;
     Ok(())
 }
 
@@ -635,7 +566,6 @@ fn main() {
         })
         .setup(|app| {
             let window = app.get_window("main").unwrap();
-            let state = app.state::<AppState>();
 
             let app_handle = app.app_handle();
             let tray_config = match tray::get_tray_config(app_handle.clone()) {
@@ -680,12 +610,6 @@ fn main() {
                     thread::sleep(CHECK_INTERVAL);
                 }
             });
-
-            let flag_validator = state.flag_validator.clone();
-            tauri::async_runtime::spawn(async move {
-                flag_validator.refresh_cache().await;
-            });
-
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -714,14 +638,6 @@ fn main() {
             auto_execute::is_auto_execute_enabled,
             auto_execute::toggle_auto_execute,
             open_roblox,
-            load_fast_flags_profiles,
-            save_fast_flags_profile,
-            delete_fast_flags_profile,
-            activate_fast_flags_profile,
-            validate_flags,
-            refresh_flag_validation_cache,
-            fast_flags::cleanup_fast_flags,
-            fast_flags::open_fast_flags_directory,
             roblox_logs::start_log_watcher,
             roblox_logs::stop_log_watcher,
             executor::check_executor_installation,
@@ -734,11 +650,7 @@ fn main() {
             updater::is_official_app,
             open_executor_folder,
             open_comet_folder,
-            fast_flags_profiles::export_fast_flags_profiles,
-            fast_flags_profiles::import_fast_flags_profiles,
             hide_window,
-            fast_flags::save_fast_flags,
-            fast_flags::get_fast_flag_categories,
             execution_history::load_execution_history,
             execution_history::save_execution_record,
             execution_history::clear_execution_history,

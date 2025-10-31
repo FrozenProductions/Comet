@@ -1,9 +1,4 @@
-export type Screen =
-    | "Editor"
-    | "Settings"
-    | "FastFlags"
-    | "Library"
-    | "AutoExecution";
+export type Screen = "Editor" | "Settings" | "Library" | "AutoExecution";
 
 export type KeybindAction =
     | "hideWindow"
@@ -19,7 +14,6 @@ export type KeybindAction =
     | "openRoblox"
     | "openSettings"
     | "openEditor"
-    | "openFastFlags"
     | "openLibrary"
     | "openAutoExecution"
     | "collapseConsole"

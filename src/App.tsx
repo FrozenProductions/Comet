@@ -1,5 +1,4 @@
 import { type FC, useEffect, useState } from "react";
-import { FastFlags } from "./components/fastFlags/fastFlags";
 import { Library } from "./components/library";
 import { Settings } from "./components/settings/settings";
 import { Sidebar } from "./components/sidebar";
@@ -10,7 +9,6 @@ import { Toaster } from "./components/ui/toast";
 import { Workspace } from "./components/workspace/workspace";
 import { EditorProvider } from "./contexts/editor/editorContext";
 import { ExecuteProvider } from "./contexts/execute/executeContext";
-import { FastFlagsProvider } from "./contexts/fastFlags/fastFlagsContext";
 import { KeybindsProvider } from "./contexts/keybinds/keybindsContext";
 import { SettingsProvider } from "./contexts/settings/settingsContext";
 import { useSettings } from "./hooks/core/useSettings";
@@ -53,8 +51,6 @@ const AppContent: FC = () => {
                 return <Library />;
             case "AutoExecution":
                 return <AutoExecute />;
-            case "FastFlags":
-                return <FastFlags />;
             default:
                 return null;
         }
@@ -138,15 +134,13 @@ const App: FC = () => {
                     <ExecutionHistoryProvider>
                         <EditorProvider>
                             <ConsoleProvider>
-                                <FastFlagsProvider>
-                                    <SidebarProvider>
-                                        <KeybindsProvider>
-                                            <AppContent />
-                                            <UpdateChecker />
-                                            <Toaster />
-                                        </KeybindsProvider>
-                                    </SidebarProvider>
-                                </FastFlagsProvider>
+                                <SidebarProvider>
+                                    <KeybindsProvider>
+                                        <AppContent />
+                                        <UpdateChecker />
+                                        <Toaster />
+                                    </KeybindsProvider>
+                                </SidebarProvider>
                             </ConsoleProvider>
                         </EditorProvider>
                     </ExecutionHistoryProvider>

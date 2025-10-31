@@ -34,13 +34,6 @@
             "subtitle": "Auto Execute Scripts",
             "description": "Auto execute scripts when they are added to the favorites",
             "mode": "view"
-        },
-        {
-            "name": "editFastFlags",
-            "title": "Edit Fast Flags",
-            "subtitle": "Roblox Fast Flags Editor",
-            "description": "Edit Roblox client fast flags configuration",
-            "mode": "view"
         }
     ],
     "dependencies": {
