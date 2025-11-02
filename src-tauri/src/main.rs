@@ -1,4 +1,4 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "darwin")]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use dirs;
 use reqwest::blocking::Client as BlockingClient;

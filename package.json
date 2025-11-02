@@ -53,6 +53,7 @@
         "@types/react-window": "^1.8.8",
         "@vitejs/plugin-react": "^4.2.1",
         "autoprefixer": "^10.4.17",
+        "esbuild": "^0.25.12",
         "globals": "^13.24.0",
         "postcss": "^8.4.33",
         "postcss-import": "^15.1.0",
