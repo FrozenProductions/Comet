@@ -24,8 +24,13 @@ export const ExecutionHistoryProvider: FC<{ children: ReactNode }> = ({
 
     useEffect(() => {
         const initHistory = async () => {
-            const loadedHistory = await loadExecutionHistory();
-            setHistory(loadedHistory.slice(0, maxItems));
+            try {
+                const loadedHistory = await loadExecutionHistory();
+                setHistory(loadedHistory.slice(0, maxItems));
+            } catch (error) {
+                console.error("Failed to initialize execution history:", error);
+                setHistory([]);
+            }
         };
 
         initHistory();

@@ -22,3 +22,7 @@ export const STATUS_FILTER_OPTIONS: SelectOption[] = [
     { value: "success", label: "Success" },
     { value: "error", label: "Error" },
 ] satisfies { value: StatusFilter; label: string }[];
+
+export const ITEMS_PER_PAGE = 50;
+export const MAX_CODE_LINES = 5;
+export const MAX_CODE_CHARS_PER_LINE = 100;

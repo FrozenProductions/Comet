@@ -12,6 +12,9 @@ import {
 import {
     DEFAULT_EXECUTION_HISTORY_STATE,
     EXECUTION_HISTORY_STORAGE_KEY,
+    ITEMS_PER_PAGE,
+    MAX_CODE_CHARS_PER_LINE,
+    MAX_CODE_LINES,
     STATUS_FILTER_OPTIONS,
 } from "../../constants/execution/executionHistory";
 import { useEditor } from "../../hooks/core/useEditor";
@@ -34,8 +37,10 @@ export const ExecutionHistory = ({
     const [expandedErrors, setExpandedErrors] = useState<Set<string>>(
         new Set(),
     );
+    const [expandedCode, setExpandedCode] = useState<Set<string>>(new Set());
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+    const [currentPage, setCurrentPage] = useState(0);
     const [state, setState] = useLocalStorage<ExecutionHistoryState>(
         EXECUTION_HISTORY_STORAGE_KEY,
         DEFAULT_EXECUTION_HISTORY_STATE,
@@ -195,6 +200,26 @@ export const ExecutionHistory = ({
         });
     }, [history, searchQuery, statusFilter]);
 
+    const paginatedHistory = useMemo(() => {
+        const startIndex = currentPage * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        return filteredHistory.slice(startIndex, endIndex);
+    }, [filteredHistory, currentPage]);
+
+    const displayHistory = useMemo(() => {
+        if (isDragging || isResizing) {
+            return paginatedHistory.slice(0, 10);
+        }
+        return paginatedHistory;
+    }, [paginatedHistory, isDragging, isResizing]);
+
+    const totalPages = Math.ceil(filteredHistory.length / ITEMS_PER_PAGE);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
+    useEffect(() => {
+        setCurrentPage(0);
+    }, [filteredHistory.length]);
+
     const toggleErrorExpand = (id: string) => {
         setExpandedErrors((prev) => {
             const newSet = new Set(prev);
@@ -205,6 +230,34 @@ export const ExecutionHistory = ({
             }
             return newSet;
         });
+    };
+
+    const toggleCodeExpand = (id: string) => {
+        setExpandedCode((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(id)) {
+                newSet.delete(id);
+            } else {
+                newSet.add(id);
+            }
+            return newSet;
+        });
+    };
+
+    const truncateCode = (code: string) => {
+        const lines = code.split("\n");
+        if (lines.length <= MAX_CODE_LINES) {
+            return { truncated: code, needsExpansion: false };
+        }
+        const truncated = lines
+            .slice(0, MAX_CODE_LINES)
+            .map((line) =>
+                line.length > MAX_CODE_CHARS_PER_LINE
+                    ? line.slice(0, MAX_CODE_CHARS_PER_LINE) + "..."
+                    : line,
+            )
+            .join("\n");
+        return { truncated, needsExpansion: true };
     };
 
     const handleErrorKeyPress = (
@@ -245,9 +298,10 @@ export const ExecutionHistory = ({
             style={{
                 left: state.position.x,
                 top: state.position.y,
-                transition: isDragging
-                    ? "none"
-                    : "all 0.15s cubic-bezier(0.2, 0, 0, 1)",
+                transition:
+                    isDragging || isResizing
+                        ? "none"
+                        : "all 0.15s cubic-bezier(0.2, 0, 0, 1)",
             }}
         >
             <motion.div
@@ -263,9 +317,11 @@ export const ExecutionHistory = ({
                 style={{
                     width: state.size.width,
                     height: state.size.height,
-                    transition: isResizing
-                        ? "none"
-                        : "all 0.15s cubic-bezier(0.2, 0, 0, 1)",
+                    transition:
+                        isDragging || isResizing
+                            ? "none"
+                            : "all 0.15s cubic-bezier(0.2, 0, 0, 1)",
+                    willChange: isDragging || isResizing ? "transform" : "auto",
                 }}
             >
                 <button
@@ -295,26 +351,8 @@ export const ExecutionHistory = ({
                 </button>
 
                 <div className="border-b border-ctp-surface2 p-4">
-                    <motion.div
-                        className="flex items-center gap-2"
-                        layout={!isDragging}
-                        transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 25,
-                            duration: 0.15,
-                        }}
-                    >
-                        <motion.div
-                            className="relative flex-1"
-                            layout={!isDragging}
-                            transition={{
-                                type: "spring",
-                                stiffness: 400,
-                                damping: 25,
-                                duration: 0.15,
-                            }}
-                        >
+                    <div className="flex items-center gap-2">
+                        <div className="relative flex-1">
                             <Input
                                 placeholder="Search execution history..."
                                 value={searchQuery}
@@ -328,16 +366,8 @@ export const ExecutionHistory = ({
                                 size={14}
                                 className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ctp-subtext0"
                             />
-                        </motion.div>
-                        <motion.div
-                            layout={!isDragging}
-                            transition={{
-                                type: "spring",
-                                stiffness: 400,
-                                damping: 25,
-                                duration: 0.15,
-                            }}
-                        >
+                        </div>
+                        <div>
                             <Select
                                 value={statusFilter}
                                 onChange={(value) =>
@@ -345,8 +375,8 @@ export const ExecutionHistory = ({
                                 }
                                 options={STATUS_FILTER_OPTIONS}
                             />
-                        </motion.div>
-                    </motion.div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4">
@@ -358,7 +388,7 @@ export const ExecutionHistory = ({
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3">
-                            {filteredHistory.map((record) => (
+                            {displayHistory.map((record) => (
                                 <div
                                     key={record.id}
                                     className="flex flex-col gap-2 rounded-lg border border-ctp-surface2 bg-ctp-surface1 p-3"
@@ -394,10 +424,40 @@ export const ExecutionHistory = ({
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="max-h-20 overflow-y-auto rounded bg-ctp-mantle p-2">
-                                        <pre className="text-xs text-ctp-text">
-                                            {record.content}
-                                        </pre>
+                                    <div className="rounded bg-ctp-mantle p-2">
+                                        {(() => {
+                                            const {
+                                                truncated,
+                                                needsExpansion,
+                                            } = truncateCode(record.content);
+                                            const isExpanded = expandedCode.has(
+                                                record.id,
+                                            );
+                                            return (
+                                                <div>
+                                                    <pre className="text-xs text-ctp-text overflow-x-auto max-h-32">
+                                                        {isExpanded
+                                                            ? record.content
+                                                            : truncated}
+                                                    </pre>
+                                                    {needsExpansion && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                toggleCodeExpand(
+                                                                    record.id,
+                                                                )
+                                                            }
+                                                            className="mt-1 text-xs text-accent hover:underline"
+                                                        >
+                                                            {isExpanded
+                                                                ? "Show less"
+                                                                : `Show all (${record.content.split("\n").length} lines)`}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                     {record.error && (
                                         <div className="rounded bg-ctp-red/10 p-2 text-xs text-ctp-red">
@@ -462,6 +522,52 @@ export const ExecutionHistory = ({
                         </div>
                     )}
                 </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="border-t border-ctp-surface2 p-3">
+                        <div className="flex items-center justify-between text-xs text-ctp-subtext0">
+                            <span>
+                                Showing {currentPage * ITEMS_PER_PAGE + 1}-
+                                {Math.min(
+                                    (currentPage + 1) * ITEMS_PER_PAGE,
+                                    filteredHistory.length,
+                                )}{" "}
+                                of {filteredHistory.length}
+                            </span>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setCurrentPage((p) =>
+                                            Math.max(0, p - 1),
+                                        )
+                                    }
+                                    disabled={currentPage === 0}
+                                    className="rounded border border-ctp-surface2 bg-ctp-surface1 px-3 py-1 text-xs transition-colors hover:bg-ctp-surface2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Previous
+                                </button>
+                                <span className="text-ctp-text">
+                                    Page {currentPage + 1} of {totalPages}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setCurrentPage((p) =>
+                                            Math.min(totalPages - 1, p + 1),
+                                        )
+                                    }
+                                    disabled={currentPage >= totalPages - 1}
+                                    className="rounded border border-ctp-surface2 bg-ctp-surface1 px-3 py-1 text-xs transition-colors hover:bg-ctp-surface2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <button
                     type="button"
                     className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize"

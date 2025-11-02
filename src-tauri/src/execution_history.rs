@@ -1,4 +1,5 @@
-use std::fs;
+use std::fs::{self, File};
+use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use tauri::api::path::config_dir;
@@ -37,20 +38,53 @@ fn get_execution_history_file() -> PathBuf {
 pub async fn load_execution_history() -> Result<Vec<ExecutionRecord>, String> {
     let history_file = get_execution_history_file();
     
-    if history_file.exists() {
-        let content = fs::read_to_string(history_file).map_err(|e| e.to_string())?;
-        serde_json::from_str(&content).map_err(|e| e.to_string())
+    if !history_file.exists() {
+        return Ok(Vec::new());
+    }
+
+    let metadata = fs::metadata(&history_file).map_err(|e| e.to_string())?;
+    let file_size = metadata.len();
+    
+    if file_size > 5_000_000 {
+        load_history_streaming(&history_file)
     } else {
-        Ok(Vec::new())
+        load_history_standard(&history_file)
+    }
+}
+
+fn load_history_standard(path: &PathBuf) -> Result<Vec<ExecutionRecord>, String> {
+    let file = File::open(path).map_err(|e| e.to_string())?;
+    let reader = BufReader::new(file);
+    serde_json::from_reader(reader).map_err(|e| {
+        eprintln!("JSON parse error: {}", e);
+        "Failed to parse execution history. File may be corrupted.".to_string()
+    })
+}
+
+fn load_history_streaming(path: &PathBuf) -> Result<Vec<ExecutionRecord>, String> {
+    let file = File::open(path).map_err(|e| e.to_string())?;
+    let reader = BufReader::with_capacity(8192, file);
+    
+    match serde_json::from_reader::<_, Vec<ExecutionRecord>>(reader) {
+        Ok(mut records) => {
+            if records.len() > 1000 {
+                records.truncate(1000);
+            }
+            Ok(records)
+        }
+        Err(e) => {
+            eprintln!("Streaming JSON parse error: {}", e);
+            Err("Failed to parse large execution history file. Consider clearing history.".to_string())
+        }
     }
 }
 
 #[tauri::command]
 pub async fn save_execution_record(record: ExecutionRecord, max_items: usize) -> Result<(), String> {
     let history_file = get_execution_history_file();
+    
     let mut history = if history_file.exists() {
-        let content = fs::read_to_string(&history_file).map_err(|e| e.to_string())?;
-        serde_json::from_str::<Vec<ExecutionRecord>>(&content).unwrap_or_default()
+        load_execution_history().await.unwrap_or_default()
     } else {
         Vec::new()
     };
@@ -61,8 +95,13 @@ pub async fn save_execution_record(record: ExecutionRecord, max_items: usize) ->
         history.truncate(max_items);
     }
 
-    let content = serde_json::to_string_pretty(&history).map_err(|e| e.to_string())?;
-    fs::write(history_file, content).map_err(|e| e.to_string())?;
+    let file = File::create(&history_file).map_err(|e| e.to_string())?;
+    let writer = BufWriter::new(file);
+    
+    serde_json::to_writer_pretty(writer, &history).map_err(|e| {
+        eprintln!("Failed to write execution history: {}", e);
+        e.to_string()
+    })?;
 
     Ok(())
 }
