@@ -2,31 +2,24 @@ import {
     AlertTriangle,
     Book,
     Box,
-    Download,
     Folder,
     Github,
-    Globe,
     Layers,
-    RefreshCw,
     RotateCcw,
     Settings2,
+    Trash2,
     Users,
     Wrench,
 } from "lucide-react";
-import { motion } from "motion/react";
-import { type FC, useEffect, useState } from "react";
+import { type FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSettings } from "../../../hooks/core/useSettings";
 import {
     openCometFolder,
     openExecutorFolder,
 } from "../../../services/core/windowService";
-import { checkIsOfficialApp } from "../../../services/system/applicationService";
 import { toggleLoginItem } from "../../../services/system/loginItemsService";
-import {
-    checkForUpdates,
-    downloadAndInstallUpdate,
-} from "../../../services/system/updateService";
+import { uninstallApp } from "../../../services/system/uninstallService";
 import { Checkbox } from "../../ui/input/checkbox";
 import { Modal } from "../../ui/modal";
 import { SettingGroup } from "../settingGroup";
@@ -35,32 +28,7 @@ import { TechStackItem } from "../techStackItem";
 export const ApplicationSection: FC = () => {
     const { settings, updateSettings } = useSettings();
     const [showResetConfirm, setShowResetConfirm] = useState(false);
-    const [isOfficialApp, setIsOfficialApp] = useState(true);
-    const [updateCheck, setUpdateCheck] = useState<{
-        loading: boolean;
-        version: string | null;
-        isNightly: boolean;
-        hasChecked: boolean;
-    }>({
-        loading: false,
-        version: null,
-        isNightly: false,
-        hasChecked: false,
-    });
-
-    useEffect(() => {
-        const checkAppOfficial = async () => {
-            try {
-                const isOfficial = await checkIsOfficialApp();
-                setIsOfficialApp(isOfficial);
-            } catch (error) {
-                console.error("Failed to check if app is official:", error);
-                setIsOfficialApp(false);
-            }
-        };
-
-        checkAppOfficial();
-    }, []);
+    const [showUninstallConfirm, setShowUninstallConfirm] = useState(false);
 
     return (
         <>
@@ -106,15 +74,6 @@ export const ApplicationSection: FC = () => {
                                     GitHub
                                 </a>
                                 <a
-                                    href="https://www.comet-ui.fun/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-accent/90"
-                                >
-                                    <Globe size={14} className="stroke-[2.5]" />
-                                    Website
-                                </a>
-                                <a
                                     href="https://github.com/FrozenProductions/Comet/blob/main/docs/documentation.md"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -125,290 +84,34 @@ export const ApplicationSection: FC = () => {
                                 </a>
                             </div>
                         </div>
-
-                        <div className="flex flex-col gap-4 rounded-lg bg-ctp-surface0/50 p-4">
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex h-6 w-6 items-center justify-center rounded bg-accent/10">
-                                            <RefreshCw
-                                                size={14}
-                                                className="text-accent"
-                                            />
-                                        </div>
-                                        <div className="text-sm font-medium text-ctp-text">
-                                            Software Update
-                                        </div>
-                                    </div>
-                                    <div className="select-none text-xs text-ctp-subtext0">
-                                        {isOfficialApp
-                                            ? "Check if a new version of Comet is available"
-                                            : "Updates are only available in official Comet builds"}
-                                    </div>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={async () => {
-                                        if (!isOfficialApp) {
-                                            toast.error(
-                                                "Updates are disabled for unofficial builds",
-                                            );
-                                            return;
-                                        }
-
-                                        try {
-                                            setUpdateCheck((prev) => ({
-                                                ...prev,
-                                                loading: true,
-                                                hasChecked: true,
-                                            }));
-                                            const newVersion =
-                                                await checkForUpdates(
-                                                    settings.app
-                                                        .nightlyReleases ??
-                                                        false,
-                                                );
-
-                                            if (newVersion) {
-                                                const isNightly =
-                                                    newVersion.includes("-");
-                                                setUpdateCheck({
-                                                    loading: false,
-                                                    version: newVersion,
-                                                    isNightly,
-                                                    hasChecked: true,
-                                                });
-                                            } else {
-                                                setUpdateCheck({
-                                                    loading: false,
-                                                    version: null,
-                                                    isNightly: false,
-                                                    hasChecked: true,
-                                                });
-                                            }
-                                        } catch (error) {
-                                            console.error(
-                                                "Failed to check for updates:",
-                                                error,
-                                            );
-                                            setUpdateCheck({
-                                                loading: false,
-                                                version: null,
-                                                isNightly: false,
-                                                hasChecked: true,
-                                            });
-                                            toast.error(
-                                                "Failed to check for updates",
-                                            );
-                                        }
-                                    }}
-                                    disabled={
-                                        updateCheck.loading || !isOfficialApp
-                                    }
-                                    className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    <RefreshCw
-                                        size={14}
-                                        className={`stroke-[2.5] ${
-                                            updateCheck.loading
-                                                ? "animate-spin"
-                                                : ""
-                                        }`}
-                                    />
-                                    {updateCheck.loading
-                                        ? "Checking..."
-                                        : "Check for Updates"}
-                                </button>
-                            </div>
-
-                            {updateCheck.hasChecked && !updateCheck.loading && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.2 }}
-                                    className={`relative overflow-hidden rounded-md border px-4 py-3 ${
-                                        updateCheck.version
-                                            ? updateCheck.isNightly
-                                                ? "border-ctp-red/20 bg-gradient-to-r from-ctp-red/5 to-transparent"
-                                                : "border-accent/20 bg-gradient-to-r from-accent/5 to-transparent"
-                                            : "border-ctp-green/20 bg-gradient-to-r from-ctp-green/5 to-transparent"
-                                    }`}
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <div
-                                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                                                updateCheck.version
-                                                    ? updateCheck.isNightly
-                                                        ? "bg-ctp-red/10"
-                                                        : "bg-accent/10"
-                                                    : "bg-ctp-green/10"
-                                            }`}
-                                        >
-                                            {updateCheck.version ? (
-                                                updateCheck.isNightly ? (
-                                                    <AlertTriangle
-                                                        size={12}
-                                                        className="text-ctp-red"
-                                                    />
-                                                ) : (
-                                                    <Download
-                                                        size={12}
-                                                        className="text-accent"
-                                                    />
-                                                )
-                                            ) : (
-                                                <div className="h-2 w-2 rounded-full bg-ctp-green" />
-                                            )}
-                                        </div>
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <div
-                                                    className={`font-medium ${
-                                                        updateCheck.version
-                                                            ? updateCheck.isNightly
-                                                                ? "text-ctp-red"
-                                                                : "text-accent"
-                                                            : ""
-                                                    }`}
-                                                >
-                                                    {updateCheck.version ? (
-                                                        <>
-                                                            {updateCheck.isNightly
-                                                                ? "Preview"
-                                                                : "Update"}{" "}
-                                                            {
-                                                                updateCheck.version
-                                                            }{" "}
-                                                            available
-                                                        </>
-                                                    ) : (
-                                                        "You're up to date!"
-                                                    )}
-                                                </div>
-                                                {updateCheck.version && (
-                                                    <div
-                                                        className={`inline-flex h-4 items-center rounded-full px-1.5 text-[10px] font-medium uppercase leading-none tracking-wide ${
-                                                            updateCheck.isNightly
-                                                                ? "bg-ctp-red/10 text-ctp-red"
-                                                                : "bg-accent/10 text-accent"
-                                                        }`}
-                                                    >
-                                                        {updateCheck.isNightly
-                                                            ? "Preview"
-                                                            : "Stable"}
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="text-xs text-ctp-subtext0">
-                                                {updateCheck.version
-                                                    ? updateCheck.isNightly
-                                                        ? "Development preview build • May contain bugs"
-                                                        : "Stable public release • Recommended update"
-                                                    : "Comet is running the latest version"}
-                                            </div>
-                                            {updateCheck.version && (
-                                                <motion.div
-                                                    initial={{
-                                                        opacity: 0,
-                                                        y: -10,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        y: 0,
-                                                    }}
-                                                    transition={{ delay: 0.1 }}
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        onClick={async () => {
-                                                            try {
-                                                                await downloadAndInstallUpdate(
-                                                                    settings.app
-                                                                        .nightlyReleases,
-                                                                );
-                                                            } catch (error) {
-                                                                toast.error(
-                                                                    "Failed to update Comet",
-                                                                );
-                                                                console.error(
-                                                                    "Failed to update:",
-                                                                    error,
-                                                                );
-                                                            }
-                                                        }}
-                                                        className={`mt-2 flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 px-3 text-xs font-medium transition-colors ${
-                                                            updateCheck.isNightly
-                                                                ? "bg-ctp-surface1 text-ctp-red hover:bg-white/10"
-                                                                : "bg-ctp-surface1 text-accent hover:bg-white/10"
-                                                        }`}
-                                                    >
-                                                        <div
-                                                            className={`flex h-[18px] w-[18px] items-center justify-center rounded ${
-                                                                updateCheck.isNightly
-                                                                    ? "bg-ctp-red/10"
-                                                                    : "bg-accent/10"
-                                                            }`}
-                                                        >
-                                                            <Download
-                                                                size={12}
-                                                                className="stroke-[2.5]"
-                                                            />
-                                                        </div>
-                                                        Install Update
-                                                    </button>
-                                                </motion.div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </div>
                     </div>
-                    {isOfficialApp && (
-                        <>
-                            <Checkbox
-                                checked={settings.app.nightlyReleases}
-                                onChange={() => {
-                                    updateSettings({
-                                        app: {
-                                            ...settings.app,
-                                            nightlyReleases:
-                                                !settings.app.nightlyReleases,
-                                        },
-                                    });
-                                }}
-                                label="Check for nightly releases"
-                                description="Receive updates for development preview builds"
-                            />
-                            <Checkbox
-                                checked={settings.app.startAtLogin}
-                                onChange={async () => {
-                                    try {
-                                        await toggleLoginItem(
+                    <Checkbox
+                        checked={settings.app.startAtLogin}
+                        onChange={async () => {
+                            try {
+                                await toggleLoginItem(
+                                    !settings.app.startAtLogin,
+                                );
+                                updateSettings({
+                                    app: {
+                                        ...settings.app,
+                                        startAtLogin:
                                             !settings.app.startAtLogin,
-                                        );
-                                        updateSettings({
-                                            app: {
-                                                ...settings.app,
-                                                startAtLogin:
-                                                    !settings.app.startAtLogin,
-                                            },
-                                        });
-                                    } catch (error) {
-                                        console.error(
-                                            "Failed to toggle login item:",
-                                            error,
-                                        );
-                                        toast.error(
-                                            "Failed to update startup settings",
-                                        );
-                                    }
-                                }}
-                                label="Start at login"
-                                description="Launch Comet automatically when you log in"
-                            />
-                        </>
-                    )}
+                                    },
+                                });
+                            } catch (error) {
+                                console.error(
+                                    "Failed to toggle login item:",
+                                    error,
+                                );
+                                toast.error(
+                                    "Failed to update startup settings",
+                                );
+                            }
+                        }}
+                        label="Start at login"
+                        description="Launch Comet automatically when you log in"
+                    />
                 </SettingGroup>
 
                 <SettingGroup
@@ -498,6 +201,27 @@ export const ApplicationSection: FC = () => {
                                     Executor Directory
                                 </button>
                             </div>
+                        </div>
+
+                        <div className="flex items-center justify-between rounded-lg bg-ctp-surface0/50 p-4">
+                            <div>
+                                <div className="space-y-1">
+                                    <div className="text-sm font-medium text-ctp-text">
+                                        Uninstall Application
+                                    </div>
+                                    <div className="select-none text-xs text-ctp-subtext0">
+                                        Remove Executor from your system
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowUninstallConfirm(true)}
+                                className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-ctp-red transition-colors hover:bg-white/10"
+                            >
+                                <Trash2 size={14} className="stroke-[2.5]" />
+                                Uninstall
+                            </button>
                         </div>
                     </div>
                 </SettingGroup>
@@ -602,6 +326,45 @@ export const ApplicationSection: FC = () => {
                 confirmText="Reset"
                 confirmVariant="destructive"
             />
+
+            <Modal
+                isOpen={showUninstallConfirm}
+                onClose={() => setShowUninstallConfirm(false)}
+                title="Uninstall Executor"
+                description="This will completely remove Executor, Roblox, and all associated data from your system. This action cannot be undone."
+                onConfirm={async () => {
+                    try {
+                        await uninstallApp();
+                        toast.success("Uninstalling Executor...");
+                    } catch (error) {
+                        toast.error("Failed to uninstall Executor");
+                        console.error("Failed to uninstall:", error);
+                        setShowUninstallConfirm(false);
+                    }
+                }}
+                confirmText="Uninstall"
+                confirmVariant="destructive"
+            >
+                <div className="rounded-lg border border-ctp-yellow/20 bg-ctp-yellow/5 p-3">
+                    <div className="flex items-start gap-2">
+                        <AlertTriangle
+                            size={16}
+                            className="mt-0.5 shrink-0 text-ctp-yellow"
+                        />
+                        <div className="space-y-1">
+                            <div className="text-xs font-medium text-ctp-yellow">
+                                Warning
+                            </div>
+                            <div className="text-xs text-ctp-subtext0">
+                                This will permanently delete all application
+                                data, executor files, Roblox installation,
+                                scripts, settings, tabs, workspaces, and
+                                execution history.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </>
     );
 };

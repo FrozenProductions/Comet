@@ -1,4 +1,4 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "darwin")]
 
 use dirs;
 use reqwest::blocking::Client as BlockingClient;
@@ -342,7 +342,7 @@ mod roblox_logs;
 mod rscripts;
 mod tabs;
 mod tray;
-mod updater;
+mod uninstall;
 mod workspace;
 
 #[tauri::command]
@@ -647,7 +647,6 @@ fn main() {
             workspace::delete_workspace,
             workspace::set_active_workspace,
             workspace::rename_workspace,
-            updater::is_official_app,
             open_executor_folder,
             open_comet_folder,
             hide_window,
@@ -668,6 +667,7 @@ fn main() {
             is_login_item_enabled,
             toggle_login_item,
             get_app_name,
+            uninstall::uninstall_app,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

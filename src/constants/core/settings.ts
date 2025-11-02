@@ -84,7 +84,6 @@ export const DEFAULT_EDITOR_SETTINGS = {
         disableToasts: false,
     },
     app: {
-        nightlyReleases: false,
         startAtLogin: false,
     },
 } as const;

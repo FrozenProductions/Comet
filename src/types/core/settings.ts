@@ -58,7 +58,6 @@ export interface EditorSettings {
         toastPosition: ToastPosition;
     };
     app: {
-        nightlyReleases: boolean;
         startAtLogin: boolean;
     };
 }
