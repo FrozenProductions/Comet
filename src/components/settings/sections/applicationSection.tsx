@@ -256,18 +256,12 @@ export const ApplicationSection: FC = () => {
                             href="https://tailwindcss.com"
                             icon="/assets/tailwind.svg"
                         />
+
                         <TechStackItem
-                            name="Supabase"
-                            description="Open source Firebase alternative with PostgreSQL database"
-                            href="https://supabase.io"
-                            icon="/assets/supabase.svg"
-                        />
-                        <TechStackItem
-                            name="Framer Motion"
+                            name="Motion"
                             description="Production-ready library for smooth animations and gestures"
-                            href="https://www.framer.com"
-                            icon="/assets/framer.svg"
-                            invertIcon
+                            href="https://www.motion.dev"
+                            icon="/assets/motion.svg"
                         />
                         <TechStackItem
                             name="Lucide Icons"
@@ -301,14 +295,7 @@ export const ApplicationSection: FC = () => {
                                     Executor Developer
                                 </div>
                             </div>
-                            <div>
-                                <div className="text-sm font-medium text-ctp-text">
-                                    MaximumADHD
-                                </div>
-                                <div className="select-none text-xs text-ctp-subtext0">
-                                    Roblox FFlag Tracking System Creator
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </SettingGroup>
