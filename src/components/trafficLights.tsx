@@ -1,11 +1,29 @@
+import { PinOff } from "lucide-react";
 import type { FC } from "react";
+import { useEffect } from "react";
+import { useLocalStorage } from "../hooks/core/useLocalStorage";
 import {
     closeWindow,
     minimizeWindow,
+    setWindowAlwaysOnTop,
     toggleMaximizeWindow,
 } from "../services/core/windowService";
 
 export const TrafficLights: FC = () => {
+    const [isPinned, setIsPinned] = useLocalStorage<boolean>(
+        "window-pinned",
+        false,
+    );
+
+    useEffect(() => {
+        setWindowAlwaysOnTop(isPinned);
+    }, [isPinned]);
+
+    const togglePinning = async () => {
+        await setWindowAlwaysOnTop(!isPinned);
+        setIsPinned(!isPinned);
+    };
+
     return (
         <div className="z-50 flex items-center gap-2 px-3">
             <button
@@ -70,6 +88,31 @@ export const TrafficLights: FC = () => {
                         fill="none"
                     />
                 </svg>
+            </button>
+            <button
+                type="button"
+                onClick={togglePinning}
+                className={`group relative h-3 w-3 rounded-full transition-all focus:outline-none ${
+                    isPinned
+                        ? "bg-accent"
+                        : "border-2 border-accent/70 bg-transparent"
+                }`}
+            >
+                <div
+                    className={`absolute inset-0 rounded-full ${
+                        isPinned
+                            ? "bg-accent"
+                            : "bg-accent/20 opacity-0 group-hover:opacity-100"
+                    }`}
+                />
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    {isPinned ? (
+                        <PinOff
+                            size={8}
+                            className="text-ctp-mantle opacity-0 group-hover:opacity-100 rotate-0 group-hover:rotate-45 transition-all duration-200"
+                        />
+                    ) : null}
+                </div>
             </button>
         </div>
     );

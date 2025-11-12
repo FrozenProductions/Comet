@@ -25,6 +25,15 @@ export const toggleMaximizeWindow = async (): Promise<void> => {
 };
 
 /**
+ * Sets whether the window should always stay on top of other windows
+ * @param alwaysOnTop Whether the window should always be on top
+ * @throws Error if the window state cannot be set
+ */
+export const setWindowAlwaysOnTop = async (alwaysOnTop: boolean): Promise<void> => {
+    await invoke("set_window_always_on_top", { alwaysOnTop });
+};
+
+/**
  * Opens the Comet application folder in the system file explorer
  * @throws Error if the folder cannot be opened
  */

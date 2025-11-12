@@ -260,6 +260,11 @@ fn toggle_maximize_window(window: tauri::Window) {
 }
 
 #[tauri::command]
+fn set_window_always_on_top(window: tauri::Window, always_on_top: bool) {
+    window.set_always_on_top(always_on_top).unwrap();
+}
+
+#[tauri::command]
 fn hide_window(window: Window) {
     window.hide().unwrap();
 }
@@ -627,6 +632,7 @@ fn main() {
             close_window,
             minimize_window,
             toggle_maximize_window,
+            set_window_always_on_top,
             execute_script,
             execute_last_script,
             save_last_script,
