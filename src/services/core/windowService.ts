@@ -29,7 +29,9 @@ export const toggleMaximizeWindow = async (): Promise<void> => {
  * @param alwaysOnTop Whether the window should always be on top
  * @throws Error if the window state cannot be set
  */
-export const setWindowAlwaysOnTop = async (alwaysOnTop: boolean): Promise<void> => {
+export const setWindowAlwaysOnTop = async (
+    alwaysOnTop: boolean,
+): Promise<void> => {
     await invoke("set_window_always_on_top", { alwaysOnTop });
 };
 

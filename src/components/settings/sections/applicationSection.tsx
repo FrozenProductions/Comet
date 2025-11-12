@@ -295,7 +295,6 @@ export const ApplicationSection: FC = () => {
                                     Executor Developer
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </SettingGroup>
