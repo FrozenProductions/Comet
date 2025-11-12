@@ -342,6 +342,7 @@ mod auto_execute;
 mod config;
 mod execution_history;
 mod executor;
+mod key;
 mod login_items;
 mod roblox_logs;
 mod rscripts;
@@ -674,6 +675,7 @@ fn main() {
             toggle_login_item,
             get_app_name,
             uninstall::uninstall_app,
+            key::validate_key,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -4,7 +4,9 @@ import {
     Box,
     Folder,
     Github,
+    KeyRound,
     Layers,
+    RefreshCw,
     RotateCcw,
     Settings2,
     Trash2,
@@ -18,8 +20,10 @@ import {
     openCometFolder,
     openExecutorFolder,
 } from "../../../services/core/windowService";
+import { validateKey } from "../../../services/system/keyService";
 import { toggleLoginItem } from "../../../services/system/loginItemsService";
 import { uninstallApp } from "../../../services/system/uninstallService";
+import type { KeyStatus } from "../../../types/system/key";
 import { Checkbox } from "../../ui/input/checkbox";
 import { Modal } from "../../ui/modal";
 import { SettingGroup } from "../settingGroup";
@@ -29,6 +33,34 @@ export const ApplicationSection: FC = () => {
     const { settings, updateSettings } = useSettings();
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [showUninstallConfirm, setShowUninstallConfirm] = useState(false);
+    const [keyStatus, setKeyStatus] = useState<KeyStatus | null>(null);
+    const [isValidatingKey, setIsValidatingKey] = useState(false);
+
+    const handleValidateKey = async () => {
+        setIsValidatingKey(true);
+        try {
+            const status = await validateKey();
+            setKeyStatus(status);
+        } catch (error) {
+            console.error("Failed to validate key:", error);
+            toast.error("Failed to validate key");
+            setKeyStatus({
+                success: false,
+                key_found: false,
+                valid: false,
+                expires_at: null,
+                current_time: Date.now() / 1000,
+                days_remaining: null,
+                error: error instanceof Error ? error.message : "Unknown error",
+            });
+        } finally {
+            setIsValidatingKey(false);
+        }
+    };
+
+    const formatDate = (timestamp: number) => {
+        return new Date(timestamp * 1000).toLocaleString();
+    };
 
     return (
         <>
@@ -112,6 +144,117 @@ export const ApplicationSection: FC = () => {
                         label="Start at login"
                         description="Launch Comet automatically when you log in"
                     />
+                </SettingGroup>
+
+                <SettingGroup
+                    title="Key Information"
+                    description="Hydrogen subscription key status and expiration"
+                    icon={<KeyRound size={14} className="text-accent" />}
+                >
+                    <div className="space-y-4">
+                        <div className="rounded-lg bg-ctp-surface0/50 p-4">
+                            <div className="flex items-center justify-between">
+                                <div className="text-sm font-medium text-ctp-text">
+                                    Subscription Status
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleValidateKey}
+                                    disabled={isValidatingKey}
+                                    className="flex h-7 items-center justify-center gap-1.5 rounded-lg border border-ctp-surface2 bg-ctp-surface1 px-3 text-xs font-medium text-accent transition-colors hover:bg-white/10 disabled:opacity-50"
+                                >
+                                    <RefreshCw
+                                        size={14}
+                                        className={`stroke-[2.5] ${
+                                            isValidatingKey
+                                                ? "animate-spin"
+                                                : ""
+                                        }`}
+                                    />
+                                    {isValidatingKey
+                                        ? "Checking..."
+                                        : "Check Key"}
+                                </button>
+                            </div>
+
+                            <div className="overflow-hidden transition-all duration-300 ease-in-out">
+                                {!keyStatus ? (
+                                    <div className="min-h-0"></div>
+                                ) : !keyStatus.key_found ? (
+                                    <div className="pt-3 min-h-[48px]"></div>
+                                ) : !keyStatus.success ? (
+                                    <div className="pt-3 min-h-[48px]">
+                                        <div className="flex items-start gap-2">
+                                            <AlertTriangle
+                                                size={16}
+                                                className="mt-0.5 shrink-0 text-ctp-red"
+                                            />
+                                            <div className="space-y-1">
+                                                <div className="text-xs font-medium text-ctp-red">
+                                                    Validation Failed
+                                                </div>
+                                                <div className="text-xs text-ctp-subtext0">
+                                                    {keyStatus.error ||
+                                                        "Unknown error occurred"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : keyStatus.valid ? (
+                                    <div className="pt-3 min-h-[48px]">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className="h-2 w-2 rounded-full bg-ctp-green"></div>
+                                                <div className="text-xs font-medium text-ctp-green">
+                                                    Active Subscription
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                                <div className="text-ctp-subtext0">
+                                                    Days Remaining
+                                                </div>
+                                                <div className="font-medium text-ctp-text text-right">
+                                                    {keyStatus.days_remaining}
+                                                </div>
+                                                <div className="text-ctp-subtext0">
+                                                    Expires
+                                                </div>
+                                                <div className="font-medium text-ctp-text text-right">
+                                                    {keyStatus.expires_at
+                                                        ? formatDate(
+                                                              keyStatus.expires_at,
+                                                          )
+                                                        : "N/A"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="pt-3 min-h-[48px]">
+                                        <div className="flex items-start gap-2">
+                                            <AlertTriangle
+                                                size={16}
+                                                className="mt-0.5 shrink-0 text-ctp-red"
+                                            />
+                                            <div className="space-y-1">
+                                                <div className="text-xs font-medium text-ctp-red">
+                                                    Expired Subscription
+                                                </div>
+                                                <div className="text-xs text-ctp-subtext0">
+                                                    Your subscription expired on{" "}
+                                                    {keyStatus.expires_at
+                                                        ? formatDate(
+                                                              keyStatus.expires_at,
+                                                          )
+                                                        : "N/A"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </SettingGroup>
 
                 <SettingGroup

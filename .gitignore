@@ -12,7 +12,10 @@ server/api/database/scripts/
 cli/bundle/
 cli/scripts
 QWEN.md
+CLAUDE.md
+GEMINI.md
 .qwen
+.claude
 
 node_modules
 dist
