@@ -1,6 +1,18 @@
 const START_PORT = 6969;
 const END_PORT = 7069;
 
+/**
+ * The function `executeScript` attempts to locate an HTTP server within a specified port range, sends
+ * a script content to the server for execution, and returns the response.
+ * @param scriptContent - The `scriptContent` parameter in the `executeScript` function is the content
+ * of the script that you want to execute on the HTTP server. This script content will be sent in the
+ * body of a POST request to the server for execution.
+ * @returns The `executeScript` function returns the response text from the HTTP POST request made to
+ * the server at the located port after successfully finding the server port by iterating through a
+ * range of ports and checking for a specific response from the server. If the server port is not found
+ * within the specified range, an error is thrown indicating the failure to locate the HTTP server on
+ * the specified ports along with the last error encountered
+ */
 async function executeScript(scriptContent) {
     let serverPort = null;
     let lastError = "";
