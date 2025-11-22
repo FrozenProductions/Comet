@@ -36,6 +36,18 @@
             "mode": "view"
         }
     ],
+    "preferences": [
+        {
+            "name": "historyLimit",
+            "type": "textfield",
+            "title": "History Limit",
+            "description": "Number of scripts to keep in execution history",
+            "required": false,
+            "default": "10",
+            "minimum": 5,
+            "maximum": 100
+        }
+    ],
     "dependencies": {
         "@raycast/api": "^1.99.2",
         "@raycast/utils": "^1.17.0"

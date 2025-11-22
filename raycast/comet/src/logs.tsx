@@ -1,10 +1,10 @@
+import { createReadStream } from "node:fs";
+import { readdir, stat } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join } from "node:path";
+import { createInterface } from "node:readline";
 import { Action, ActionPanel, Color, Detail, Icon, List } from "@raycast/api";
-import { createReadStream } from "fs";
-import { readdir, stat } from "fs/promises";
-import { homedir } from "os";
-import { join } from "path";
 import { useEffect, useMemo, useState } from "react";
-import { createInterface } from "readline";
 
 interface LogEntry {
     content: string;

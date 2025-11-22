@@ -3,6 +3,7 @@ import {
     ActionPanel,
     Color,
     Form,
+    getPreferenceValues,
     Icon,
     List,
     LocalStorage,
@@ -22,10 +23,14 @@ interface RecentScript {
     executed: boolean;
 }
 
-const MAX_RECENT_SCRIPTS = 10;
 const RECENT_SCRIPTS_KEY = "recent-scripts";
 
 export default function Command() {
+    const preferences = getPreferenceValues<{
+        historyLimit: number;
+    }>();
+    const MAX_RECENT_SCRIPTS = preferences.historyLimit || 10;
+
     const [recentScripts, setRecentScripts] = useState<RecentScript[]>([]);
     const [isShowingRecent, setIsShowingRecent] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -52,22 +57,48 @@ export default function Command() {
 
     async function saveRecentScript(scriptContent: string, executed: boolean) {
         try {
-            const newScript: RecentScript = {
-                content: scriptContent,
-                timestamp: Date.now(),
-                executed,
-            };
-
-            const updatedScripts = [
-                newScript,
-                ...recentScripts.filter((s) => s.content !== scriptContent),
-            ].slice(0, MAX_RECENT_SCRIPTS);
-
-            setRecentScripts(updatedScripts);
-            await LocalStorage.setItem(
-                RECENT_SCRIPTS_KEY,
-                JSON.stringify(updatedScripts),
+            const existingScriptIndex = recentScripts.findIndex(
+                (s) => s.content === scriptContent,
             );
+
+            if (existingScriptIndex !== -1) {
+                const existingScript = recentScripts[existingScriptIndex];
+                const updatedScript: RecentScript = {
+                    ...existingScript,
+                    timestamp: Date.now(),
+                    executed,
+                };
+
+                const updatedScripts = [
+                    updatedScript,
+                    ...recentScripts.filter(
+                        (_, i) => i !== existingScriptIndex,
+                    ),
+                ].slice(0, MAX_RECENT_SCRIPTS);
+
+                setRecentScripts(updatedScripts);
+                await LocalStorage.setItem(
+                    RECENT_SCRIPTS_KEY,
+                    JSON.stringify(updatedScripts),
+                );
+            } else {
+                const newScript: RecentScript = {
+                    content: scriptContent,
+                    timestamp: Date.now(),
+                    executed,
+                };
+
+                const updatedScripts = [newScript, ...recentScripts].slice(
+                    0,
+                    MAX_RECENT_SCRIPTS,
+                );
+
+                setRecentScripts(updatedScripts);
+                await LocalStorage.setItem(
+                    RECENT_SCRIPTS_KEY,
+                    JSON.stringify(updatedScripts),
+                );
+            }
         } catch (error) {
             console.error("Failed to save recent script:", error);
         }
@@ -122,7 +153,7 @@ export default function Command() {
 
     function truncateScript(script: string, maxLength = 50): string {
         if (script.length <= maxLength) return script;
-        return script.substring(0, maxLength) + "...";
+        return `${script.substring(0, maxLength)}...`;
     }
 
     function useScript(script: string) {
@@ -160,7 +191,7 @@ export default function Command() {
                 ) : (
                     recentScripts.map((script) => (
                         <List.Item
-                            key={script.timestamp}
+                            key={`${script.content}-${script.timestamp}`}
                             title={truncateScript(script.content)}
                             subtitle={formatTimestamp(script.timestamp)}
                             icon={{
