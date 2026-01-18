@@ -50,6 +50,7 @@ export default {
                 "fade-in": "fadeIn 0.5s ease-in-out",
                 "slide-up": "slideUp 0.5s ease-out",
                 "slide-in": "slideIn 0.3s ease-out",
+                "char-pop": "charPop 0.15s ease-out",
             },
             keyframes: {
                 fadeIn: {
@@ -63,6 +64,16 @@ export default {
                 slideIn: {
                     "0%": { transform: "translateX(-20px)", opacity: "0" },
                     "100%": { transform: "translateX(0)", opacity: "1" },
+                },
+                charPop: {
+                    "0%": {
+                        opacity: "0",
+                        transform: "scale(0.5) translateY(4px)",
+                    },
+                    "100%": {
+                        opacity: "1",
+                        transform: "scale(1) translateY(0)",
+                    },
                 },
             },
             boxShadow: {

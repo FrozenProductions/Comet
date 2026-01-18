@@ -85,5 +85,6 @@ export const DEFAULT_EDITOR_SETTINGS = {
     },
     app: {
         startAtLogin: false,
+        apiType: "hydrogen" as const,
     },
 } as const;

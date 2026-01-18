@@ -1,8 +1,11 @@
+export type ApiType = "hydrogen" | "opiumware" | "macsploit";
+
 export interface ConnectionStatus {
     is_connected: boolean;
     port: number | null;
     current_port: number;
     is_connecting: boolean;
+    api_type: ApiType;
 }
 
 export interface ConnectionContextType {

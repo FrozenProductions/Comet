@@ -198,7 +198,7 @@ pub async fn validate_key() -> Result<KeyStatus, String> {
                 .map_err(|e| format!("Failed to perform request: {}", e))?;
         }
 
-        let response_code = easy
+        let _response_code = easy
             .response_code()
             .map_err(|e| format!("Failed to get response code: {}", e))?;
 

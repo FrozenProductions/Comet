@@ -1,4 +1,5 @@
 import type { Code2 } from "lucide-react";
+import type { ApiType } from "../system/connection";
 import type { ReactNode } from "react";
 import type { ToastPosition } from "../ui/toast";
 import type { Keybind } from "./keybinds";
@@ -59,6 +60,7 @@ export interface EditorSettings {
     };
     app: {
         startAtLogin: boolean;
+        apiType: ApiType;
     };
 }
 

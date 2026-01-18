@@ -7,6 +7,7 @@ import { Topbar } from "./components/topbar";
 import { CommandPalette } from "./components/ui/commandPalette";
 import { Toaster } from "./components/ui/toast";
 import { Workspace } from "./components/workspace/workspace";
+import { APP_TITLE } from "./constants/ui/titles";
 import { EditorProvider } from "./contexts/editor/editorContext";
 import { ExecuteProvider } from "./contexts/execute/executeContext";
 import { KeybindsProvider } from "./contexts/keybinds/keybindsContext";
@@ -55,7 +56,6 @@ const AppContent: FC = () => {
         }
     };
 
-    // maybe make a better handler for that?
     if (!settings) {
         return null;
     }
@@ -118,7 +118,7 @@ const App: FC = () => {
         };
     }, []);
 
-    if (isExecutorInstalled === false) {
+    if (isExecutorInstalled === false && String(APP_TITLE) !== "Comet") {
         return <ExecutorNotFound />;
     }
 

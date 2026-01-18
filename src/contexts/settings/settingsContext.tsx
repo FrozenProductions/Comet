@@ -62,6 +62,12 @@ const validateSettings = (settings: EditorSettings): boolean => {
             typeof settings.interface.executionHistory.maxItems !== "number"
         )
             return false;
+        if (
+            !settings.app ||
+            typeof settings.app.startAtLogin !== "boolean" ||
+            typeof settings.app.apiType !== "string"
+        )
+            return false;
 
         return true;
     } catch {
@@ -139,6 +145,10 @@ export const SettingsProvider = ({
                             ...prev.interface.executionHistory,
                             ...(newSettings.interface?.executionHistory || {}),
                         },
+                    },
+                    app: {
+                        ...prev.app,
+                        ...(newSettings.app || {}),
                     },
                 };
 

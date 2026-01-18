@@ -11,12 +11,15 @@ import type { ScriptExecutionResult } from "../../types/execution/script";
 export const executeScript = async (
     script: string,
 ): Promise<ScriptExecutionResult> => {
+    console.log("[executeScript] Starting script execution");
     try {
         await invoke("save_last_script", { script });
 
         try {
-            await invoke("execute_script", { script });
-            return { success: true, content: script };
+            console.log("[executeScript] Calling send_script...");
+            const result = await invoke<boolean>("send_script", { script });
+            console.log("[executeScript] send_script result:", result);
+            return { success: result, content: script };
         } catch (execError) {
             const errorMessage =
                 execError instanceof Error
@@ -25,6 +28,7 @@ export const executeScript = async (
                       ? execError
                       : "Unknown error occurred";
 
+            console.error("[executeScript] Execution failed:", errorMessage);
             return {
                 success: false,
                 error: errorMessage,
@@ -32,6 +36,7 @@ export const executeScript = async (
             };
         }
     } catch (error) {
+        console.error("[executeScript] Save failed:", error);
         return {
             success: false,
             error:

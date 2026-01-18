@@ -1,9 +1,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use dirs;
+use flate2::write::ZlibEncoder;
+use flate2::Compression;
 use reqwest::blocking::Client as BlockingClient;
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::io::Write;
+use std::net::TcpStream;
 use std::path::PathBuf;
 use std::process::Command;
 use std::sync::atomic::Ordering;
@@ -17,18 +21,49 @@ const MIN_PORT: u16 = 6969;
 const MAX_PORT: u16 = 7069;
 const CHECK_INTERVAL: Duration = Duration::from_millis(2500);
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum ApiType {
+    Hydrogen,
+    Opiumware,
+    MacSploit,
+}
+
+impl ApiType {
+    fn port_range(&self) -> (u16, u16) {
+        match self {
+            ApiType::Hydrogen => (6969, 7069),
+            ApiType::Opiumware => (8392, 8397),
+            ApiType::MacSploit => (5553, 5562),
+        }
+    }
+}
+
+impl Default for ApiType {
+    fn default() -> Self {
+        ApiType::Hydrogen
+    }
+}
+
+fn compress_data(data: &[u8]) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    let mut encoder = ZlibEncoder::new(Vec::new(), Compression::default());
+    encoder.write_all(data)?;
+    Ok(encoder.finish()?)
+}
+
 #[derive(Debug, Clone, serde::Serialize)]
 struct ConnectionStatus {
     is_connected: bool,
     port: Option<u16>,
     current_port: u16,
     is_connecting: bool,
+    api_type: ApiType,
 }
 
 #[derive(Debug)]
 struct ConnectionManager {
     client: BlockingClient,
     port: Option<u16>,
+    api_type: ApiType,
 }
 
 #[derive(Debug)]
@@ -52,7 +87,13 @@ impl ConnectionManager {
                 .build()
                 .unwrap(),
             port: None,
+            api_type: ApiType::Hydrogen,
         }
+    }
+
+    fn set_api_type(&mut self, api_type: ApiType) {
+        self.api_type = api_type;
+        self.port = None;
     }
 
     fn is_connected(&mut self) -> bool {
@@ -66,16 +107,23 @@ impl ConnectionManager {
     }
 
     fn check_connection(&self, port: u16) -> bool {
-        let url = format!("http://{}:{}/secret", HOST, port);
-        match self.client.get(&url).send() {
-            Ok(response) => {
-                if let Ok(text) = response.text() {
-                    return text == "0xdeadbeef";
+        match self.api_type {
+            ApiType::Hydrogen => {
+                let url = format!("http://{}:{}/secret", HOST, port);
+                match self.client.get(&url).send() {
+                    Ok(response) => {
+                        if let Ok(text) = response.text() {
+                            return text == "0xdeadbeef";
+                        }
+                    }
+                    Err(_) => {}
                 }
+                false
             }
-            Err(_) => {}
+            ApiType::Opiumware | ApiType::MacSploit => {
+                TcpStream::connect(format!("{}:{}", HOST, port)).is_ok()
+            }
         }
-        false
     }
 
     fn connect(&mut self, port: u16) -> bool {
@@ -88,28 +136,126 @@ impl ConnectionManager {
 
     fn send(&mut self, script: &str) -> bool {
         if let Some(port) = self.port {
-            let url = format!("http://{}:{}/execute", HOST, port);
-            match self
-                .client
-                .post(&url)
-                .header("Content-Type", "text/plain")
-                .body(script.to_string())
-                .send()
-            {
-                Ok(response) => return response.status().is_success(),
-                Err(_) => {
-                    self.port = None;
+            match self.api_type {
+                ApiType::Hydrogen => {
+                    let url = format!("http://{}:{}/execute", HOST, port);
+                    match self
+                        .client
+                        .post(&url)
+                        .header("Content-Type", "text/plain")
+                        .body(script.to_string())
+                        .send()
+                    {
+                        Ok(response) => {
+                            return response.status().is_success();
+                        }
+                        Err(_) => {
+                            self.port = None;
+                        }
+                    }
+                }
+                ApiType::Opiumware => {
+                    match send_opiumware_script(script, port) {
+                        Ok(()) => {
+                            return true;
+                        }
+                        Err(_) => {
+                            self.port = None;
+                        }
+                    }
+                }
+                ApiType::MacSploit => {
+                    match send_macsploit_script(script, port) {
+                        Ok(()) => {
+                            return true;
+                        }
+                        Err(_) => {
+                            self.port = None;
+                        }
+                    }
                 }
             }
         }
         false
     }
+
+    fn try_send_on_port(&mut self, script: &str, port: u16) -> bool {
+        match self.api_type {
+            ApiType::Hydrogen => {
+                let url = format!("http://{}:{}/execute", HOST, port);
+                let script_body = script.to_string();
+                // avoid tokio runtime conflict
+                let handle = std::thread::spawn(move || {
+                    let client = BlockingClient::new();
+                    client
+                        .post(&url)
+                        .header("Content-Type", "text/plain")
+                        .body(script_body)
+                        .send()
+                        .map(|r| r.status().is_success())
+                        .unwrap_or(false)
+                });
+                handle.join().unwrap_or(false)
+            }
+            ApiType::Opiumware => send_opiumware_script(script, port).is_ok(),
+            ApiType::MacSploit => send_macsploit_script(script, port).is_ok(),
+        }
+    }
+
+    fn try_send_on_all_ports(&mut self, script: &str) -> bool {
+        let (min_port, max_port) = match self.api_type {
+            // only 6969 for now
+            ApiType::Hydrogen => (6969, 6969),
+            ApiType::Opiumware => (8392, 8397),
+            ApiType::MacSploit => (5553, 5562),
+        };
+
+        if let Some(current_port) = self.port {
+            if self.try_send_on_port(script, current_port) {
+                return true;
+            }
+            self.port = None;
+        }
+
+        for port in min_port..=max_port {
+            if self.try_send_on_port(script, port) {
+                self.port = Some(port);
+                return true;
+            }
+        }
+
+        self.port = None;
+        false
+    }
+}
+
+fn send_opiumware_script(script: &str, port: u16) -> Result<(), String> {
+    let mut stream = TcpStream::connect(format!("{}:{}", HOST, port)).map_err(|e| e.to_string())?;
+
+    let compressed = compress_data(script.as_bytes()).map_err(|e| e.to_string())?;
+
+    stream.write_all(&compressed).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+fn send_macsploit_script(script: &str, port: u16) -> Result<(), String> {
+    let mut stream = TcpStream::connect(format!("{}:{}", HOST, port)).map_err(|e| e.to_string())?;
+
+    let encoded = script.as_bytes();
+    let mut buffer = vec![0u8; 16 + encoded.len()];
+    buffer[0] = 0; // IPC_EXECUTE
+    buffer[8..12].copy_from_slice(&(encoded.len() as u32).to_le_bytes());
+    buffer[16..].copy_from_slice(encoded);
+
+    stream.write_all(&buffer).map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 #[derive(Clone)]
 struct AppState {
     connection: Arc<Mutex<ConnectionManager>>,
-    status: Arc<Mutex<ConnectionStatus>>
+    status: Arc<Mutex<ConnectionStatus>>,
+    api_type: Arc<Mutex<ApiType>>,
 }
 
 impl AppState {
@@ -121,36 +267,70 @@ impl AppState {
                 port: None,
                 current_port: MIN_PORT,
                 is_connecting: false,
-            }))
+                api_type: ApiType::Hydrogen,
+            })),
+            api_type: Arc::new(Mutex::new(ApiType::Hydrogen)),
         }
     }
 
     fn update_status(&self, window: Option<&Window>, is_connected: bool, port: Option<u16>) {
-        if let Ok(mut status) = self.status.lock() {
-            status.is_connected = is_connected;
-            status.port = port;
-            status.current_port = port.unwrap_or(status.current_port);
-            if let Some(window) = window {
-                window
-                    .emit("connection-update", &*status)
-                    .unwrap_or_default();
+        match self.status.lock() {
+            Ok(mut status) => {
+                status.is_connected = is_connected;
+                status.port = port;
+                status.current_port = port.unwrap_or(status.current_port);
+                if let Some(window) = window {
+                    window
+                        .emit("connection-update", &*status)
+                        .unwrap_or_default();
+                }
+            }
+            Err(e) => {
+                let mut status = e.into_inner();
+                status.is_connected = is_connected;
+                status.port = port;
+                status.current_port = port.unwrap_or(status.current_port);
+                if let Some(window) = window {
+                    window
+                        .emit("connection-update", &*status)
+                        .unwrap_or_default();
+                }
             }
         }
     }
 
     fn set_current_port(&self, window: Option<&Window>, port: u16) {
-        if let Ok(mut conn) = self.connection.lock() {
-            conn.port = None;
+        match self.connection.lock() {
+            Ok(mut conn) => {
+                conn.port = None;
+            }
+            Err(e) => {
+                let mut conn = e.into_inner();
+                conn.port = None;
+            }
         }
 
-        if let Ok(mut status) = self.status.lock() {
-            status.is_connected = false;
-            status.port = None;
-            status.current_port = port;
-            if let Some(window) = window {
-                window
-                    .emit("connection-update", &*status)
-                    .unwrap_or_default();
+        match self.status.lock() {
+            Ok(mut status) => {
+                status.is_connected = false;
+                status.port = None;
+                status.current_port = port;
+                if let Some(window) = window {
+                    window
+                        .emit("connection-update", &*status)
+                        .unwrap_or_default();
+                }
+            }
+            Err(e) => {
+                let mut status = e.into_inner();
+                status.is_connected = false;
+                status.port = None;
+                status.current_port = port;
+                if let Some(window) = window {
+                    window
+                        .emit("connection-update", &*status)
+                        .unwrap_or_default();
+                }
             }
         }
     }
@@ -162,12 +342,86 @@ fn get_connection_status(state: State<AppState>) -> ConnectionStatus {
 }
 
 #[tauri::command]
+fn get_api_type(state: State<AppState>) -> ApiType {
+    *state.api_type.lock().unwrap()
+}
+
+#[tauri::command]
+async fn set_api_type(
+    api_type: ApiType,
+    state: State<'_, AppState>,
+    window: Window,
+) -> Result<ConnectionStatus, String> {
+    {
+        match state.connection.lock() {
+            Ok(mut conn) => {
+                conn.set_api_type(api_type);
+            }
+            Err(e) => {
+                let mut conn = e.into_inner();
+                conn.set_api_type(api_type);
+            }
+        }
+    }
+
+    match state.api_type.lock() {
+        Ok(mut guard) => *guard = api_type,
+        Err(e) => {
+            let mut guard = e.into_inner();
+            *guard = api_type;
+        }
+    }
+
+    let (min_port, _max_port) = api_type.port_range();
+
+    match state.status.lock() {
+        Ok(mut status) => {
+            status.api_type = api_type;
+            status.is_connected = false;
+            status.port = None;
+            status.current_port = min_port;
+        }
+        Err(e) => {
+            let mut status = e.into_inner();
+            status.api_type = api_type;
+            status.is_connected = false;
+            status.port = None;
+            status.current_port = min_port;
+        }
+    }
+
+    let status = state.status.lock().unwrap().clone();
+    window
+        .emit("connection-update", &status)
+        .unwrap_or_default();
+
+    Ok(status)
+}
+
+#[tauri::command]
 async fn send_script(script: String, state: State<'_, AppState>) -> Result<bool, String> {
-    let mut conn = state.connection.lock().map_err(|e| e.to_string())?;
-    let success = conn.send(&script);
-    if !success {
+    let (success, connected_port) = {
+        match state.connection.lock() {
+            Ok(mut conn) => {
+                let result = conn.try_send_on_all_ports(&script);
+                let port = conn.port;
+                (result, port)
+            }
+            Err(e) => {
+                let mut conn = e.into_inner();
+                let result = conn.try_send_on_all_ports(&script);
+                let port = conn.port;
+                (result, port)
+            }
+        }
+    };
+
+    if success {
+        state.update_status(None, true, connected_port);
+    } else {
         state.update_status(None, false, None);
     }
+
     Ok(success)
 }
 
@@ -211,13 +465,14 @@ async fn increment_port(
     state: State<'_, AppState>,
     window: Window,
 ) -> Result<ConnectionStatus, String> {
-    let current_port = {
+    let (current_port, api_type) = {
         let status = state.status.lock().map_err(|e| e.to_string())?;
-        status.current_port
+        (status.current_port, status.api_type)
     };
 
-    let next_port = if current_port >= MAX_PORT {
-        MIN_PORT
+    let (min_port, max_port) = api_type.port_range();
+    let next_port = if current_port >= max_port {
+        min_port
     } else {
         current_port + 1
     };
@@ -433,11 +688,14 @@ async fn fetch_script_configs() -> Result<ScriptsResponse, String> {
         "infinite_yield".to_string(),
         ScriptConfig {
             fetch: Some(true),
-            url: Some("https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source".to_string()),
+            url: Some(
+                "https://raw.githubusercontent.com/EdgeIY/infiniteyield/refs/heads/master/source"
+                    .to_string(),
+            ),
             execute: None,
             content: None,
             display_name: Some("Infinite Yield".to_string()),
-        }
+        },
     );
 
     scripts.insert(
@@ -522,10 +780,8 @@ async fn save_last_script(script: String) -> Result<(), String> {
         .map_err(|e| format!("Failed to create directory: {}", e))?;
 
     let script_file = script_path.join("last_script.txt");
-    std::fs::write(&script_file, script).map_err(|e| {
-        println!("Failed to write script file: {}", e);
-        format!("Failed to save last script: {}", e)
-    })?;
+    std::fs::write(&script_file, script)
+        .map_err(|e| format!("Failed to save last script: {}", e))?;
     Ok(())
 }
 
@@ -598,15 +854,28 @@ fn main() {
                 loop {
                     let mut should_try_connect = false;
                     {
-                        let mut conn = state_clone.connection.lock().unwrap();
-                        if !conn.is_connected() {
-                            should_try_connect = true;
-                            state_clone.update_status(None, false, None);
+                        match state_clone.connection.lock() {
+                            Ok(mut conn) => {
+                                if !conn.is_connected() {
+                                    should_try_connect = true;
+                                    state_clone.update_status(None, false, None);
+                                }
+                            }
+                            Err(e) => {
+                                let mut conn = e.into_inner();
+                                conn.port = None;
+                            }
                         }
                     }
 
                     if should_try_connect {
-                        let current_port = state_clone.status.lock().unwrap().current_port;
+                        let current_port = match state_clone.status.lock() {
+                            Ok(status) => status.current_port,
+                            Err(e) => {
+                                let mut status = e.into_inner();
+                                status.current_port
+                            }
+                        };
                         let mut conn = state_clone.connection.lock().unwrap();
                         if conn.connect(current_port) {
                             state_clone.update_status(None, true, Some(current_port));
@@ -620,6 +889,8 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             get_connection_status,
+            get_api_type,
+            set_api_type,
             send_script,
             change_setting,
             refresh_connection,
