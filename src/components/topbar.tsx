@@ -6,7 +6,6 @@ import type { ApiType } from "../types/system/connection";
 
 const API_TYPES: { id: ApiType; label: string }[] = [
     { id: "hydrogen", label: "Hydrogen" },
-    { id: "opiumware", label: "Opium" },
     { id: "macsploit", label: "MacSploit" },
 ];
 

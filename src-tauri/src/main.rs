@@ -1,8 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use dirs;
-use flate2::write::ZlibEncoder;
-use flate2::Compression;
 use reqwest::blocking::Client as BlockingClient;
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -24,7 +22,6 @@ const CHECK_INTERVAL: Duration = Duration::from_millis(2500);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum ApiType {
     Hydrogen,
-    Opiumware,
     MacSploit,
 }
 
@@ -32,7 +29,6 @@ impl ApiType {
     fn port_range(&self) -> (u16, u16) {
         match self {
             ApiType::Hydrogen => (6969, 7069),
-            ApiType::Opiumware => (8392, 8397),
             ApiType::MacSploit => (5553, 5562),
         }
     }
@@ -42,12 +38,6 @@ impl Default for ApiType {
     fn default() -> Self {
         ApiType::Hydrogen
     }
-}
-
-fn compress_data(data: &[u8]) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    let mut encoder = ZlibEncoder::new(Vec::new(), Compression::default());
-    encoder.write_all(data)?;
-    Ok(encoder.finish()?)
 }
 
 #[derive(Debug, Clone, serde::Serialize)]
@@ -80,14 +70,14 @@ impl WindowState {
 }
 
 impl ConnectionManager {
-    fn new() -> Self {
+    fn new(api_type: ApiType) -> Self {
         Self {
             client: BlockingClient::builder()
                 .timeout(Duration::from_secs(1))
                 .build()
                 .unwrap(),
             port: None,
-            api_type: ApiType::Hydrogen,
+            api_type,
         }
     }
 
@@ -120,9 +110,7 @@ impl ConnectionManager {
                 }
                 false
             }
-            ApiType::Opiumware | ApiType::MacSploit => {
-                TcpStream::connect(format!("{}:{}", HOST, port)).is_ok()
-            }
+            ApiType::MacSploit => TcpStream::connect(format!("{}:{}", HOST, port)).is_ok(),
         }
     }
 
@@ -154,26 +142,14 @@ impl ConnectionManager {
                         }
                     }
                 }
-                ApiType::Opiumware => {
-                    match send_opiumware_script(script, port) {
-                        Ok(()) => {
-                            return true;
-                        }
-                        Err(_) => {
-                            self.port = None;
-                        }
+                ApiType::MacSploit => match send_macsploit_script(script, port) {
+                    Ok(()) => {
+                        return true;
                     }
-                }
-                ApiType::MacSploit => {
-                    match send_macsploit_script(script, port) {
-                        Ok(()) => {
-                            return true;
-                        }
-                        Err(_) => {
-                            self.port = None;
-                        }
+                    Err(_) => {
+                        self.port = None;
                     }
-                }
+                },
             }
         }
         false
@@ -197,7 +173,6 @@ impl ConnectionManager {
                 });
                 handle.join().unwrap_or(false)
             }
-            ApiType::Opiumware => send_opiumware_script(script, port).is_ok(),
             ApiType::MacSploit => send_macsploit_script(script, port).is_ok(),
         }
     }
@@ -206,7 +181,6 @@ impl ConnectionManager {
         let (min_port, max_port) = match self.api_type {
             // only 6969 for now
             ApiType::Hydrogen => (6969, 6969),
-            ApiType::Opiumware => (8392, 8397),
             ApiType::MacSploit => (5553, 5562),
         };
 
@@ -229,15 +203,6 @@ impl ConnectionManager {
     }
 }
 
-fn send_opiumware_script(script: &str, port: u16) -> Result<(), String> {
-    let mut stream = TcpStream::connect(format!("{}:{}", HOST, port)).map_err(|e| e.to_string())?;
-
-    let compressed = compress_data(script.as_bytes()).map_err(|e| e.to_string())?;
-
-    stream.write_all(&compressed).map_err(|e| e.to_string())?;
-    Ok(())
-}
-
 fn send_macsploit_script(script: &str, port: u16) -> Result<(), String> {
     let mut stream = TcpStream::connect(format!("{}:{}", HOST, port)).map_err(|e| e.to_string())?;
 
@@ -248,6 +213,8 @@ fn send_macsploit_script(script: &str, port: u16) -> Result<(), String> {
     buffer[16..].copy_from_slice(encoded);
 
     stream.write_all(&buffer).map_err(|e| e.to_string())?;
+    stream.flush().map_err(|e| e.to_string())?;
+    drop(stream);
     Ok(())
 }
 
@@ -260,16 +227,19 @@ struct AppState {
 
 impl AppState {
     fn new() -> Self {
+        // Detect executor on startup
+        let detected_api = detector::detect_executor();
+
         Self {
-            connection: Arc::new(Mutex::new(ConnectionManager::new())),
+            connection: Arc::new(Mutex::new(ConnectionManager::new(detected_api))),
             status: Arc::new(Mutex::new(ConnectionStatus {
                 is_connected: false,
                 port: None,
                 current_port: MIN_PORT,
                 is_connecting: false,
-                api_type: ApiType::Hydrogen,
+                api_type: detected_api,
             })),
-            api_type: Arc::new(Mutex::new(ApiType::Hydrogen)),
+            api_type: Arc::new(Mutex::new(detected_api)),
         }
     }
 
@@ -595,6 +565,7 @@ async fn execute_script(script: String) -> Result<String, String> {
 
 mod auto_execute;
 mod config;
+mod detector;
 mod execution_history;
 mod executor;
 mod key;

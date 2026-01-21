@@ -1,4 +1,4 @@
-export type ApiType = "hydrogen" | "opiumware" | "macsploit";
+export type ApiType = "hydrogen" | "macsploit";
 
 export interface ConnectionStatus {
     is_connected: boolean;

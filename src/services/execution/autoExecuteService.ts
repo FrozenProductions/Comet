@@ -1,5 +1,34 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import type { AutoExecuteFile } from "../../types/execution/autoExecute";
+import { SETTINGS_STORAGE_KEY } from "../../constants/core/settings";
+import type { EditorSettings } from "../../types/core/settings";
+
+/**
+ * Convert lowercase API type to PascalCase for Rust enum
+ */
+const toPascalCase = (apiType: string): string => {
+    if (apiType === "macsploit") return "MacSploit";
+    if (apiType === "hydrogen") return "Hydrogen";
+    return apiType.charAt(0).toUpperCase() + apiType.slice(1);
+};
+
+/**
+ * Helper to get the current API type from localStorage
+ * Returns PascalCase string for Rust backend (Hydrogen, MacSploit)
+ */
+const getCurrentApiType = (): string => {
+    try {
+        const savedValue = localStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (savedValue) {
+            const parsed = JSON.parse(savedValue) as Partial<EditorSettings>;
+            const apiType = parsed.app?.apiType ?? "hydrogen";
+            return toPascalCase(apiType);
+        }
+    } catch (error) {
+        console.error("Failed to get API type from localStorage:", error);
+    }
+    return "Hydrogen";
+};
 
 /**
  * Retrieves all auto-execute files
@@ -20,7 +49,8 @@ export const saveAutoExecuteFile = async (
     name: string,
     content: string,
 ): Promise<void> => {
-    return invoke("save_auto_execute_file", { name, content });
+    const apiType = getCurrentApiType();
+    return invoke("save_auto_execute_file", { name, content, apiType });
 };
 
 /**
@@ -29,7 +59,8 @@ export const saveAutoExecuteFile = async (
  * @throws Error if deleting file fails
  */
 export const deleteAutoExecuteFile = async (name: string): Promise<void> => {
-    return invoke("delete_auto_execute_file", { name });
+    const apiType = getCurrentApiType();
+    return invoke("delete_auto_execute_file", { name, apiType });
 };
 
 /**
@@ -42,7 +73,8 @@ export const renameAutoExecuteFile = async (
     oldName: string,
     newName: string,
 ): Promise<void> => {
-    return invoke("rename_auto_execute_file", { oldName, newName });
+    const apiType = getCurrentApiType();
+    return invoke("rename_auto_execute_file", { oldName, newName, apiType });
 };
 
 /**
@@ -50,7 +82,8 @@ export const renameAutoExecuteFile = async (
  * @throws Error if opening directory fails
  */
 export const openAutoExecuteDirectory = async (): Promise<void> => {
-    return invoke("open_auto_execute_directory");
+    const apiType = getCurrentApiType();
+    return invoke("open_auto_execute_directory", { apiType });
 };
 
 /**
@@ -68,5 +101,6 @@ export const isAutoExecuteEnabled = async (): Promise<boolean> => {
  * @throws Error if toggling state fails
  */
 export const toggleAutoExecute = async (): Promise<boolean> => {
-    return invoke("toggle_auto_execute");
+    const apiType = getCurrentApiType();
+    return invoke("toggle_auto_execute", { apiType });
 };

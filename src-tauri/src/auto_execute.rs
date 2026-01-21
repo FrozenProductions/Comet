@@ -1,3 +1,4 @@
+use crate::ApiType;
 use dirs;
 use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
@@ -16,20 +17,13 @@ pub struct AutoExecuteFile {
     pub path: String,
 }
 
-fn get_auto_execute_dir_name(app_name: &str) -> String {
-    if app_name.to_lowercase() == "comet" || app_name.to_lowercase() == "hydrogen" {
-        "Hydrogen".to_string()
-    } else {
-        app_name.to_string()
-    }
-}
-
-fn get_auto_execute_dir(app_handle: &AppHandle) -> Result<PathBuf, String> {
+fn get_auto_execute_dir(app_handle: &AppHandle, api_type: ApiType) -> Result<PathBuf, String> {
     let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    let app_name = app_handle.package_info().name.clone();
-    let dir_name = get_auto_execute_dir_name(&app_name);
-    let auto_execute_dir = home.join(format!("{}/autoexecute", dir_name));
-    Ok(auto_execute_dir)
+
+    match api_type {
+        ApiType::MacSploit => Ok(home.join("Documents/Macsploit Automatic Execution")),
+        ApiType::Hydrogen => Ok(home.join("Hydrogen/autoexecute")),
+    }
 }
 
 fn get_comet_dir() -> PathBuf {
@@ -138,6 +132,7 @@ pub fn save_auto_execute_file(
     app_handle: AppHandle,
     name: String,
     content: String,
+    api_type: ApiType,
 ) -> Result<(), String> {
     let file_name = ensure_valid_extension(&name);
     let scripts_dir = get_scripts_dir();
@@ -146,7 +141,7 @@ pub fn save_auto_execute_file(
     fs::write(&file_path, &content).map_err(|e| e.to_string())?;
 
     if get_auto_execute_state()? {
-        let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+        let auto_execute_dir = get_auto_execute_dir(&app_handle, api_type)?;
         if !auto_execute_dir.exists() {
             fs::create_dir_all(&auto_execute_dir).map_err(|e| e.to_string())?;
         }
@@ -158,7 +153,11 @@ pub fn save_auto_execute_file(
 }
 
 #[tauri::command]
-pub fn delete_auto_execute_file(app_handle: AppHandle, name: String) -> Result<(), String> {
+pub fn delete_auto_execute_file(
+    app_handle: AppHandle,
+    name: String,
+    api_type: ApiType,
+) -> Result<(), String> {
     let scripts_dir = get_scripts_dir();
     let file_path = scripts_dir.join(&name);
 
@@ -167,7 +166,7 @@ pub fn delete_auto_execute_file(app_handle: AppHandle, name: String) -> Result<(
     }
 
     if get_auto_execute_state()? {
-        let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+        let auto_execute_dir = get_auto_execute_dir(&app_handle, api_type)?;
         let auto_execute_path = auto_execute_dir.join(&name);
         if auto_execute_path.exists() {
             fs::remove_file(&auto_execute_path).map_err(|e| e.to_string())?;
@@ -182,6 +181,7 @@ pub fn rename_auto_execute_file(
     app_handle: AppHandle,
     old_name: String,
     new_name: String,
+    api_type: ApiType,
 ) -> Result<(), String> {
     let new_file_name = ensure_valid_extension(&new_name);
     let scripts_dir = get_scripts_dir();
@@ -199,7 +199,7 @@ pub fn rename_auto_execute_file(
     fs::rename(&old_path, &new_path).map_err(|e| e.to_string())?;
 
     if get_auto_execute_state()? {
-        let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+        let auto_execute_dir = get_auto_execute_dir(&app_handle, api_type)?;
         let old_auto_execute_path = auto_execute_dir.join(&old_name);
         let new_auto_execute_path = auto_execute_dir.join(&new_file_name);
 
@@ -218,8 +218,8 @@ pub fn is_auto_execute_enabled() -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn toggle_auto_execute(app_handle: AppHandle) -> Result<bool, String> {
-    let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+pub fn toggle_auto_execute(app_handle: AppHandle, api_type: ApiType) -> Result<bool, String> {
+    let auto_execute_dir = get_auto_execute_dir(&app_handle, api_type)?;
     let scripts_dir = get_scripts_dir();
 
     let currently_enabled = get_auto_execute_state()?;
@@ -264,7 +264,7 @@ pub fn toggle_auto_execute(app_handle: AppHandle) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn open_auto_execute_directory(app_handle: AppHandle) -> Result<(), String> {
-    let auto_execute_dir = get_auto_execute_dir(&app_handle)?;
+pub fn open_auto_execute_directory(app_handle: AppHandle, api_type: ApiType) -> Result<(), String> {
+    let auto_execute_dir = get_auto_execute_dir(&app_handle, api_type)?;
     crate::open_directory(auto_execute_dir)
 }

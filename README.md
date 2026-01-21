@@ -8,7 +8,7 @@
 </div>
 
 <div align="center">
-  <p>A modern, minimalist interface for <a href="https://www.hydrogen.lat/">Hydrogen</a>, <a href="https://ronixstudios.com/">Ronix</a>, MacSploit, and Opiumware MacOS executors developed with Tauri.</p>
+  <p>A modern, minimalist interface for <a href="https://www.hydrogen.lat/">Hydrogen</a>, <a href="https://ronixstudios.com/">Ronix</a>, and MacSploit MacOS executors developed with Tauri.</p>
 </div>
 
 <div align="center">

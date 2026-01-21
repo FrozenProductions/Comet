@@ -16,7 +16,6 @@ export const useApiType = () => {
 
             const apiTypeMap: Record<ApiType, string> = {
                 hydrogen: "Hydrogen",
-                opiumware: "Opiumware",
                 macsploit: "MacSploit",
             };
             await invoke("set_api_type", { apiType: apiTypeMap[newApiType] });

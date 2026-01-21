@@ -5,6 +5,7 @@ import {
     SETTINGS_STORAGE_KEY,
 } from "../../constants/core/settings";
 import { useLocalStorage } from "../../hooks/core/useLocalStorage";
+import { getApiType } from "../../services/roblox/connectionService";
 import type { EditorSettings } from "../../types/core/settings";
 import { SettingsContext } from "./settingsContextType";
 
@@ -111,6 +112,31 @@ export const SettingsProvider = ({
             setIsInitialized(true);
         }
     }, []);
+
+    useEffect(() => {
+        if (!isInitialized) return;
+
+        const syncApiType = async () => {
+            try {
+                const backendApiType = await getApiType();
+                if (
+                    backendApiType &&
+                    backendApiType !== settings?.app.apiType
+                ) {
+                    updateSettings({
+                        app: {
+                            ...settings?.app,
+                            apiType: backendApiType as any,
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to sync API type from backend:", error);
+            }
+        };
+
+        syncApiType();
+    }, [isInitialized]);
 
     const updateSettings = (newSettings: Partial<EditorSettings>) => {
         setSettings((prev) => {
