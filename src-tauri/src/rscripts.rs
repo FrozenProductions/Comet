@@ -70,7 +70,6 @@ pub async fn get_rscript_content(script_id: String) -> Result<String, String> {
     let script_json: Value = serde_json::from_str(&script_data).map_err(|e| e.to_string())?;
     let raw_script_url = script_json
         .get("script")
-        .and_then(|s| s.get(0))
         .and_then(|s| s.get("rawScript"))
         .and_then(|u| u.as_str())
         .ok_or_else(|| "Failed to get raw script URL".to_string())?;
