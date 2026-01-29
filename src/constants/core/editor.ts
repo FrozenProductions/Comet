@@ -230,7 +230,7 @@ export const luaLanguage: languages.IMonarchLanguage = {
 
         comment_multiline: [
             [/[^-\]]+/, "comment.block"],
-            [/--\]\]/, { token: "comment.block", next: "@pop" }],
+            [/\]\]/, { token: "comment.block", next: "@pop" }],
             [/./, "comment.block"],
         ],
     },
